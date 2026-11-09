@@ -42,7 +42,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 /* ───────────────────────── 4. App shell & workspace ─────────────────────── */
 .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
 .horizontal-main-container { display: flex; flex: 1 1 0; min-height: 0; width: 100%; }
-.workspace { display: flex; flex: 1 1 0; min-width: 0; background-color: var(--background-secondary); position: relative; }
+.workspace { display: grid; flex: 1 1 0; min-width: 0; background-color: var(--background-secondary); position: relative; }
 
 .titlebar { height: var(--header-height); background: var(--titlebar-background); border-bottom: var(--titlebar-border-width) solid var(--titlebar-border-color); }
 .titlebar-text { color: var(--titlebar-text-color); font-weight: var(--titlebar-text-weight); }
@@ -63,7 +63,17 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .side-dock-settings { margin-top: auto; }
 .side-dock-ribbon-action { --icon-size: var(--icon-l); --icon-stroke: var(--icon-l-stroke-width); }
 .sidebar-toggle-button { display: flex; align-items: center; height: var(--header-height); }
-.workspace-ribbon > .sidebar-toggle-button.mod-left { position: absolute; top: 0; left: var(--frame-left-space); z-index: 2; }
+
+/* Title-row toggles (Obsidian layout): left toggle rides the left sidebar's edge, or sits beside
+   the traffic lights when the sidebar is closed; bottom-panel and right-sidebar toggles live top-right. */
+.workspace > .workspace-corner-toggle { position: absolute; top: 0; z-index: 3; display: flex; align-items: center; gap: var(--size-2-1); height: var(--header-height); -webkit-app-region: no-drag; }
+.workspace > .workspace-corner-toggle.mod-left { left: calc(var(--ribbon-width) + var(--ws-left-w, 0px) - 36px); }
+.workspace.is-left-sidedock-collapsed > .workspace-corner-toggle.mod-left { left: var(--frame-left-space); }
+.workspace > .workspace-corner-toggle.mod-right { right: var(--size-4-2); }
+.workspace-corner-toggle .clickable-icon.is-active { color: var(--icon-color-active, var(--text-normal)); }
+.mod-left-split .workspace-tabs.mod-top-left-space > .workspace-tab-header-container { padding-left: max(var(--size-4-2), calc(var(--frame-left-space) - var(--ribbon-width))); padding-right: 40px; }
+.mod-root .workspace-tabs.mod-top-left-space > .workspace-tab-header-container { padding-left: calc(var(--frame-left-space) + 36px - var(--ribbon-width)); }
+.workspace-tabs.mod-top-right-space > .workspace-tab-header-container { padding-right: 72px; }
 
 /* Splits */
 .workspace-split { display: flex; position: relative; min-width: 0; min-height: 0; }
@@ -73,6 +83,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .workspace-split.mod-sidedock { flex: 0 0 auto; background-color: var(--background-secondary); }
 .workspace-split.mod-left-split { border-right: var(--divider-width) solid var(--divider-color); }
 .workspace-split.mod-right-split { border-left: var(--divider-width) solid var(--divider-color); }
+.workspace-split.mod-bottom-split { background-color: var(--background-primary); border-top: var(--divider-width) solid var(--divider-color); }
 .workspace-split > * { min-width: 0; min-height: 0; }
 .workspace-split.mod-root > .workspace-tabs + .workspace-tabs,
 .workspace-split.mod-root > .workspace-split + .workspace-tabs { border-left: var(--divider-width) solid var(--divider-color); }
@@ -89,7 +100,6 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
   padding: 0 var(--size-4-2);
   -webkit-app-region: drag;
 }
-.workspace-tabs.mod-top-left-space .workspace-tab-header-container { padding-left: calc(var(--frame-left-space) + 32px); }
 .workspace-tab-header-container-inner { display: flex; align-items: stretch; flex: 0 1 auto; min-width: 0; overflow: hidden; padding-top: var(--size-2-3); gap: 0; -webkit-app-region: no-drag; }
 .workspace-tab-header-spacer { flex: 1 1 0; }
 .workspace-tab-header-new-tab, .workspace-tab-header-tab-list { display: flex; align-items: center; padding: 0 var(--size-2-2); -webkit-app-region: no-drag; }
