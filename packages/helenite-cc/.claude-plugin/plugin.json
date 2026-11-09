@@ -1,0 +1,5 @@
+{
+  "name": "helenite-cc",
+  "version": "0.1.0",
+  "description": "Teaches Claude Code that it runs inside Helenite and how to inspect and change the workspace."
+}

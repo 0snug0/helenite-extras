@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" SessionStart" }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" UserPromptSubmit" }] }],
+    "PreToolUse": [{ "matcher": "AskUserQuestion|ExitPlanMode|Write|Edit|MultiEdit|NotebookEdit", "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" PreToolUse", "timeout": 3600 }] }],
+    "PermissionRequest": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" PermissionRequest", "timeout": 3600 }] }],
+    "PostToolUse": [{ "matcher": "Edit|Write|MultiEdit|AskUserQuestion|ExitPlanMode", "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" PostToolUse" }] }],
+    "Notification": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" Notification" }] }],
+    "Stop": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/hook-client.mjs\" Stop" }] }]
+  }
+}

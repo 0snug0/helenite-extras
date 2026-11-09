@@ -1,0 +1,1 @@
+{ "mcpServers": { "helenite": { "type": "http", "url": "${HELENITE_MCP_URL}", "headers": { "x-helenite-token": "${HELENITE_HOOK_TOKEN}" } } } }
