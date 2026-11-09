@@ -7,7 +7,15 @@
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./base.css": "./base.css"
+    "./base.css": "./dist/base.css"
   },
-  "files": ["base.css", "src", "README.md"]
+  "files": [
+    "css",
+    "scripts",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build-css.mjs"
+  }
 }

@@ -1,0 +1,369 @@
+/*
+ * helenite-base.css — Phase 0 theme spike
+ *
+ * Clean-room base stylesheet. It defines the CSS custom-property NAMES that
+ * Obsidian documents publicly (docs.obsidian.md/Reference/CSS+variables) and
+ * that MIT-licensed themes consume, with Helenite's own values, and it lays out
+ * the Obsidian-shaped DOM (class names from public docs / obsidian-typings).
+ * Nothing here is copied from Obsidian's app.css.
+ *
+ * Layering contract (same specificity as a theme, so themes win by order):
+ *   body                     -> scheme-independent variables
+ *   .theme-light/.theme-dark -> colour variables
+ *   component rules          -> consume variables, low specificity
+ */
+
+/* ───────────────────────── 1. Scheme-independent variables ───────────────── */
+body {
+  /* Fonts: theme slot -> user override -> default */
+  --font-default: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+  --font-monospace-default: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-interface-override: '??';
+  --font-text-override: '??';
+  --font-monospace-override: '??';
+  --font-editor-override: '??';
+  --font-interface-theme: var(--font-default);
+  --font-text-theme: var(--font-default);
+  --font-monospace-theme: var(--font-monospace-default);
+  --font-interface: var(--font-interface-override), var(--font-interface-theme), var(--font-default);
+  --font-text: var(--font-text-override), var(--font-text-theme), var(--font-default);
+  --font-monospace: var(--font-monospace-override), var(--font-monospace-theme), var(--font-monospace-default);
+  --font-print: var(--font-text);
+  --font-mermaid: var(--font-text);
+
+  --font-text-size: 16px;
+  --font-smallest: 0.8em;
+  --font-smaller: 0.875em;
+  --font-small: 0.933em;
+  --font-ui-smaller: 12px;
+  --font-ui-small: 13px;
+  --font-ui-medium: 15px;
+  --font-ui-large: 20px;
+
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+  --font-weight: var(--font-normal);
+  --bold-modifier: 200;
+  --bold-weight: calc(var(--font-weight) + var(--bold-modifier));
+  --normal-weight: var(--font-normal);
+
+  --line-height-normal: 1.55;
+  --line-height-tight: 1.3;
+  --p-spacing: 1rem;
+  --heading-spacing: calc(var(--p-spacing) * 2.25);
+
+  /* 4px spacing grid */
+  --size-2-1: 2px;
+  --size-2-2: 4px;
+  --size-2-3: 6px;
+  --size-4-1: 4px;
+  --size-4-2: 8px;
+  --size-4-3: 12px;
+  --size-4-4: 16px;
+  --size-4-5: 20px;
+  --size-4-6: 24px;
+  --size-4-8: 32px;
+  --size-4-9: 36px;
+  --size-4-12: 48px;
+  --size-4-16: 64px;
+  --size-4-18: 72px;
+
+  --radius-xs: 2px;
+  --radius-s: 4px;
+  --radius-m: 7px;
+  --radius-l: 11px;
+  --radius-xl: 15px;
+  --border-width: 1px;
+
+  --layer-cover: 5;
+  --layer-sidedock: 10;
+  --layer-status-bar: 15;
+  --layer-popover: 30;
+  --layer-slides: 45;
+  --layer-modal: 50;
+  --layer-notice: 60;
+  --layer-menu: 65;
+  --layer-tooltip: 70;
+  --layer-dragged-item: 80;
+
+  --icon-xs: 14px;
+  --icon-s: 16px;
+  --icon-m: 18px;
+  --icon-l: 18px;
+  --icon-xl: 32px;
+  --icon-size: var(--icon-m);
+  --icon-stroke: 1.75px;
+  --icon-xs-stroke-width: 2px;
+  --icon-s-stroke-width: 2px;
+  --icon-m-stroke-width: 1.75px;
+  --icon-l-stroke-width: 1.75px;
+  --icon-xl-stroke-width: 1.25px;
+  --icon-opacity: 0.8;
+  --icon-opacity-hover: 1;
+  --icon-opacity-active: 1;
+
+  --cursor: default;
+  --cursor-link: pointer;
+
+  /* Window chrome */
+  --header-height: 40px;
+  --ribbon-width: 44px;
+  --ribbon-padding: var(--size-4-2) var(--size-4-1) var(--size-4-3);
+  --divider-width: 1px;
+  --divider-width-hover: 3px;
+  --divider-vertical-height: calc(100% - var(--header-height));
+  --status-bar-font-size: var(--font-ui-smaller);
+  --status-bar-position: fixed;
+  --status-bar-radius: var(--radius-m) 0 0 0;
+  --status-bar-border-width: 1px 0 0 1px;
+  --titlebar-border-width: 0;
+  --titlebar-text-weight: var(--font-bold);
+  --frame-left-space: 80px;
+  --frame-right-space: 0px;
+  --sidebar-markdown-font-size: calc(var(--font-text-size) * 0.9);
+  --sidebar-tab-text-display: none;
+
+  /* Tabs */
+  --tab-font-size: var(--font-ui-small);
+  --tab-font-weight: inherit;
+  --tab-curve: 6px;
+  --tab-radius: var(--radius-s);
+  --tab-radius-active: 6px 6px 0 0;
+  --tab-width: 200px;
+  --tab-max-width: 320px;
+  --tab-outline-width: 1px;
+  --tab-stacked-pane-width: 700px;
+  --tab-stacked-header-width: var(--header-height);
+  --tab-stacked-font-size: var(--font-ui-small);
+  --tab-stacked-font-weight: 400;
+  --tab-stacked-text-align: left;
+  --tab-stacked-text-transform: rotate(0deg);
+  --tab-stacked-text-writing-mode: vertical-lr;
+  --tab-stacked-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.05);
+
+  /* Navigation / file explorer */
+  --nav-item-size: var(--font-ui-small);
+  --nav-item-padding: var(--size-2-2) var(--size-4-2) var(--size-2-2) var(--size-4-6);
+  --nav-item-parent-padding: var(--nav-item-padding);
+  --nav-item-children-padding-left: var(--size-2-2);
+  --nav-item-children-margin-left: var(--size-4-3);
+  --nav-item-weight: inherit;
+  --nav-item-weight-hover: inherit;
+  --nav-item-weight-active: inherit;
+  --nav-item-white-space: nowrap;
+  --nav-indentation-guide-width: 1px;
+  --nav-heading-weight: var(--font-medium);
+  --nav-heading-weight-hover: var(--font-medium);
+  --clickable-icon-radius: var(--radius-s);
+
+  /* Editor surface */
+  --file-line-width: 700px;
+  --file-folding-offset: 24px;
+  --file-margins: var(--size-4-8);
+  --file-header-font-size: var(--font-ui-small);
+  --file-header-font-weight: 400;
+  --file-header-border: var(--border-width) solid transparent;
+  --file-header-justify: center;
+  --editor-font-size: var(--font-text-size);
+
+  /* Headings */
+  --h1-size: 1.802em;
+  --h2-size: 1.602em;
+  --h3-size: 1.424em;
+  --h4-size: 1.266em;
+  --h5-size: 1.125em;
+  --h6-size: 1em;
+  --h1-weight: 700;
+  --h2-weight: 650;
+  --h3-weight: 620;
+  --h4-weight: 600;
+  --h5-weight: 600;
+  --h6-weight: 600;
+  --h1-line-height: 1.2;
+  --h2-line-height: 1.2;
+  --h3-line-height: 1.3;
+  --h4-line-height: 1.4;
+  --h5-line-height: var(--line-height-normal);
+  --h6-line-height: var(--line-height-normal);
+  --h1-font: inherit; --h2-font: inherit; --h3-font: inherit;
+  --h4-font: inherit; --h5-font: inherit; --h6-font: inherit;
+  --h1-style: normal; --h2-style: normal; --h3-style: normal;
+  --h4-style: normal; --h5-style: normal; --h6-style: normal;
+  --h1-variant: normal; --h2-variant: normal; --h3-variant: normal;
+  --h4-variant: normal; --h5-variant: normal; --h6-variant: normal;
+  --inline-title-font: var(--h1-font);
+  --inline-title-size: var(--h1-size);
+  --inline-title-weight: var(--h1-weight);
+  --inline-title-style: var(--h1-style);
+  --inline-title-variant: var(--h1-variant);
+  --inline-title-line-height: var(--h1-line-height);
+  --inline-title-margin-bottom: 0.5em;
+
+  /* Inline content */
+  --link-decoration: underline;
+  --link-decoration-hover: underline;
+  --link-decoration-thickness: auto;
+  --link-external-decoration: underline;
+  --link-external-decoration-hover: underline;
+  --link-unresolved-opacity: 0.7;
+  --link-unresolved-filter: none;
+  --link-unresolved-decoration-style: solid;
+  --link-weight: var(--font-weight);
+  --list-indent: 2.25em;
+  --list-spacing: 0.075em;
+  --list-bullet-size: 0.3em;
+  --list-bullet-border: none;
+  --list-bullet-radius: 50%;
+  --list-bullet-transform: none;
+  --list-numbered-style: decimal;
+  --checklist-done-decoration: line-through;
+  --checkbox-size: var(--font-text-size);
+  --checkbox-radius: var(--radius-s);
+  --checkbox-border-width: 1px;
+  --code-size: var(--font-smaller);
+  --code-radius: var(--radius-s);
+  --code-white-space: pre-wrap;
+  --code-spacing: 0.75em;
+  --blockquote-border-thickness: 2px;
+  --blockquote-font-style: normal;
+  --blockquote-size: inherit;
+  --hr-thickness: 2px;
+  --embed-padding: 0 0 0 var(--size-4-6);
+  --embed-max-height: 4000px;
+  --embed-canvas-max-height: 400px;
+  --embed-border-left: 2px solid var(--interactive-accent);
+  --embed-border-right: none;
+  --embed-border-top: none;
+  --embed-border-bottom: none;
+  --embed-block-shadow-hover: 0 0 0 1px var(--background-modifier-border), inset 0 0 0 1px var(--background-modifier-border);
+  --footnote-size: var(--font-smaller);
+  --tag-size: var(--font-smaller);
+  --tag-weight: inherit;
+  --tag-decoration: none;
+  --tag-decoration-hover: none;
+  --tag-padding-x: 0.65em;
+  --tag-padding-y: 0.25em;
+  --tag-radius: 2em;
+  --tag-border-width: 0px;
+  --table-border-width: 1px;
+  --table-header-border-width: var(--table-border-width);
+  --table-header-size: var(--font-smaller);
+  --table-header-weight: var(--font-semibold);
+  --table-text-size: var(--font-smaller);
+  --table-cell-vertical-alignment: top;
+  --table-column-min-width: 6ch;
+  --table-column-max-width: none;
+  --table-white-space: break-spaces;
+  --table-drag-handle-size: 20px;
+  --table-add-button-border-width: 1px;
+  --table-selection-border-width: 2px;
+  --table-selection-border-radius: var(--radius-s);
+
+  /* Callouts */
+  --callout-border-width: 0px;
+  --callout-border-opacity: 0.25;
+  --callout-padding: var(--size-4-3) var(--size-4-3) var(--size-4-3) var(--size-4-6);
+  --callout-radius: var(--radius-s);
+  --callout-blend-mode: var(--highlight-mix-blend-mode);
+  --callout-title-padding: 0;
+  --callout-title-size: inherit;
+  --callout-title-weight: var(--font-semibold);
+  --callout-content-padding: 0;
+  --callout-content-background: transparent;
+  --callout-icon: lucide-pencil;
+  --callout-bug: var(--color-red-rgb);
+  --callout-default: var(--color-blue-rgb);
+  --callout-error: var(--color-red-rgb);
+  --callout-example: var(--color-purple-rgb);
+  --callout-fail: var(--color-red-rgb);
+  --callout-important: var(--color-cyan-rgb);
+  --callout-info: var(--color-blue-rgb);
+  --callout-question: var(--color-orange-rgb);
+  --callout-success: var(--color-green-rgb);
+  --callout-summary: var(--color-cyan-rgb);
+  --callout-tip: var(--color-cyan-rgb);
+  --callout-todo: var(--color-blue-rgb);
+  --callout-warning: var(--color-orange-rgb);
+  --callout-quote: 158, 158, 158;
+
+  /* Properties */
+  --metadata-label-width: 9em;
+  --metadata-label-font-size: var(--font-ui-small);
+  --metadata-label-font-weight: inherit;
+  --metadata-input-height: calc(var(--font-text-size) * 1.75);
+  --metadata-input-font-size: var(--font-ui-small);
+  --metadata-padding: var(--size-4-2) 0;
+  --metadata-gap: 3px;
+  --metadata-property-radius: var(--radius-s);
+  --metadata-divider-width: 0;
+
+  /* Controls */
+  --input-height: 30px;
+  --input-radius: 5px;
+  --input-font-weight: var(--font-normal);
+  --input-border-width: 1px;
+  --button-radius: var(--input-radius);
+  --toggle-border-width: 2px;
+  --toggle-width: 40px;
+  --toggle-radius: 18px;
+  --toggle-thumb-height: 18px;
+  --toggle-thumb-width: 18px;
+  --toggle-thumb-radius: 18px;
+  --toggle-s-border-width: 2px;
+  --toggle-s-width: 34px;
+  --toggle-s-thumb-height: 15px;
+  --toggle-s-thumb-width: 15px;
+  --slider-thumb-border-width: 1px;
+  --slider-thumb-height: 18px;
+  --slider-thumb-width: 18px;
+  --slider-thumb-y: -6px;
+  --slider-thumb-radius: 50%;
+  --slider-track-height: 3px;
+  --dropdown-padding: 0 1.9em 0 0.8em;
+  --modal-width: 90vw;
+  --modal-height: 85vh;
+  --modal-max-width: 1100px;
+  --modal-max-height: 1000px;
+  --modal-max-width-narrow: 800px;
+  --modal-radius: var(--radius-l);
+  --modal-border-width: var(--border-width);
+  --dialog-width: 560px;
+  --dialog-max-width: 80vw;
+  --dialog-max-height: 85vh;
+  --prompt-width: 700px;
+  --prompt-max-width: 80vw;
+  --prompt-max-height: 70vh;
+  --prompt-border-width: var(--border-width);
+  --popover-width: 450px;
+  --popover-height: 400px;
+  --popover-max-height: 95vh;
+  --popover-pdf-width: 450px;
+  --popover-pdf-height: 400px;
+  --popover-font-size: var(--font-text-size);
+  --pill-radius: 2em;
+  --pill-border-width: var(--border-width);
+  --pill-padding-x: 0.65em;
+  --pill-padding-y: 0.25em;
+  --pill-weight: inherit;
+  --pill-decoration: none;
+  --pill-decoration-hover: none;
+  --menu-radius: var(--radius-m);
+  --menu-border-width: var(--border-width);
+  --swatch-radius: 14px;
+  --swatch-height: 24px;
+  --swatch-width: 24px;
+  --vault-profile-font-size: var(--font-ui-small);
+  --vault-profile-font-weight: var(--font-medium);
+  --canvas-dot-pattern: var(--color-base-30);
+  --zoom-factor: 1;
+  --scrollbar-radius: var(--radius-l);
+  --bases-table-header-icon-display: flex;
+  --bases-toolbar-opacity: 1;
+}

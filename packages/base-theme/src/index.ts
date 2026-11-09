@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 
-/** Absolute path of `base.css`, for bundlers and the desktop shell to copy or link. */
-export const baseCssPath: string = fileURLToPath(new URL('../base.css', import.meta.url));
+/** Absolute path of `dist/base.css` (run `pnpm build`), for bundlers and the desktop shell to copy or link. */
+export const baseCssPath: string = fileURLToPath(new URL('../dist/base.css', import.meta.url));
 
 /** Cascade order the host must follow: base, plugin styles, theme, snippets, Style Settings. */
 export const CASCADE_IDS = {

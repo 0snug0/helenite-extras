@@ -1,6 +1,6 @@
 # @helenite/base-theme
 
-`base.css` is Helenite's clean-room base stylesheet (derived from `spikes/themes/helenite-base.css`). It defines the CSS variable names Obsidian documents publicly, with Helenite's own values, and the component CSS that consumes them. Themes are deltas on top of it. The desktop shell links it first in the cascade.
+`css/*.css` is Helenite's clean-room base stylesheet (concatenated to `dist/base.css` by `pnpm build`) (derived from `spikes/themes/helenite-base.css`). It defines the CSS variable names Obsidian documents publicly, with Helenite's own values, and the component CSS that consumes them. Themes are deltas on top of it. The desktop shell links it first in the cascade.
 
 Nothing here is copied from Obsidian's `app.css`. Do not paste Obsidian CSS into this package.
 
