@@ -87,7 +87,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .workspace-split > * { min-width: 0; min-height: 0; }
 .workspace-split.mod-root > .workspace-tabs + .workspace-tabs,
 .workspace-split.mod-root > .workspace-split + .workspace-tabs { border-left: var(--divider-width) solid var(--divider-color); }
-.workspace-leaf-resize-handle { display: none; margin: 0; border: 0; }
+.workspace-leaf-resize-handle { margin: 0; border: 0; }
 .workspace-split.mod-sidedock > .workspace-tabs + .workspace-tabs { border-top: var(--divider-width) solid var(--divider-color); }
 
 /* Tab groups */
