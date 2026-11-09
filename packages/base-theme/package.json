@@ -1,0 +1,13 @@
+{
+  "name": "@helenite/base-theme",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Helenite's base stylesheet: Obsidian's documented CSS variable and class names with Helenite's own values.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./base.css": "./base.css"
+  },
+  "files": ["base.css", "src", "README.md"]
+}
