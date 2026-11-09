@@ -3,12 +3,14 @@
 // or the lead: `app.setting.addCoreSettingTab(createSecretsSettingTab(deps))`.
 import { Notice, PluginSettingTab, Setting, type App, type Plugin } from 'obsidian';
 import type { SecretEntry } from '../main/connector-host';
-import type { SecretStore } from '../main/secrets';
+import type { SecretAccess } from '../main/secrets';
 
 export interface SecretsTabDeps {
   app: App;
   plugin: Plugin;
-  secrets: SecretStore;
+  secrets: SecretAccess;
+  /** `'unavailable'` shows the keychain-unavailable banner. */
+  backend?: string;
   /** Current entries (re-read on every render so newly installed apps show up). */
   entries(): SecretEntry[];
   /** Run the Google Calendar consent flow (connector-host / google-auth `connect`). Omit to hide the button. */
@@ -24,7 +26,7 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
   tab.display = function display(this: PluginSettingTab) {
     const { containerEl } = this;
     containerEl.empty();
-    const note = deps.secrets.backend === 'unavailable' ? 'The system keychain is unavailable, so secrets cannot be saved right now.' : 'Stored in the system keychain. Helenite never shows a saved value again.';
+    const note = deps.backend === 'unavailable' ? 'The system keychain is unavailable, so secrets cannot be saved right now.' : 'Stored in the system keychain. Helenite never shows a saved value again.';
     new Setting(containerEl).setName('Secrets').setDesc(note).setHeading();
     const byOwner = new Map<string, SecretEntry[]>();
     for (const e of deps.entries()) byOwner.set(e.owner, [...(byOwner.get(e.owner) ?? []), e]);

@@ -2,7 +2,7 @@
 // The sandbox never sees the refresh token; the host refreshes the access token before a request (ensureAuth).
 import { GCAL_SECRETS } from '../connectors/google-calendar';
 import { buildAuthUrl, createPkce, exchangeCode, refreshAccessToken, startLoopback } from './oauth';
-import { connectorScope, type SecretStore } from './secrets';
+import { connectorScope, type SecretAccess } from './secrets';
 
 export const GOOGLE_ENDPOINTS = { auth: 'https://accounts.google.com/o/oauth2/v2/auth', token: 'https://oauth2.googleapis.com/token' };
 export const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
@@ -10,7 +10,7 @@ const EXPIRES = 'GCAL_ACCESS_EXPIRES';
 const SKEW_MS = 60_000;
 
 export interface GoogleAuthOptions {
-  secrets: SecretStore;
+  secrets: SecretAccess;
   /** Opens the consent URL in the user's browser (Electron `shell.openExternal`). Tests pass a function that drives a mock. */
   openUrl(url: string): void | Promise<void>;
   endpoints?: { auth: string; token: string };

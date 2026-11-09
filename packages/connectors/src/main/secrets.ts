@@ -24,6 +24,9 @@ export interface SecretStore {
   names(scope: string): string[];
 }
 
+/** What auth and the UI need. Session R's `SecretStore` (keyed by an id string) satisfies this when given our scope strings. */
+export type SecretAccess = Pick<SecretStore, 'has' | 'get' | 'set' | 'delete'>;
+
 export function createSecretStore(opts: { userDataDir: string; safeStorage: SafeStorageLike }): SecretStore {
   const file = path.join(opts.userDataDir, 'secrets.json');
   const load = (): Record<string, string> => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return {}; } };

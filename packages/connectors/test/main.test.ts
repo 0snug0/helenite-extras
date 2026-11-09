@@ -103,3 +103,20 @@ describe('google-calendar OAuth against a mock server', () => {
     await expect(auth.ensureAccessToken()).rejects.toThrow(/invalid_grant/);
   });
 });
+
+describe('ConnectorHost for the app runtime (R contract)', () => {
+  it('describes methods and invokes with a per-call, brokered ctx', async () => {
+    const { createConnectorRegistryHost } = await import('../src/main');
+    const { radarrMock, makeCtx, KEYS } = await import('./mocks');
+    const mock = await radarrMock(); closers.push(mock);
+    const seen: string[] = [];
+    const host = createConnectorRegistryHost({ ctxFor: (c) => { seen.push(`${c.appId}:${c.connectorId}`); return makeCtx({ secrets: { RADARR_API_KEY: KEYS.radarr }, bindings: { RADARR_API_KEY: 'http://localhost:7878' }, rewrite: { 'http://localhost:7878': mock.origin }, settings: { RADARR_URL: 'http://localhost:7878' } }); } });
+    expect(host.has('radarr')).toBe(true);
+    expect(host.has('nope')).toBe(false);
+    expect(host.describe('radarr')!.methods).toContain('getQueue');
+    expect((await host.invoke({ appId: 'dl', connectorId: 'radarr', method: 'getQueue', args: [], vaultRoot: '/v' }) as any[])[0].id).toBe(7);
+    expect(seen).toEqual(['dl:radarr']);
+    await expect(host.invoke({ appId: 'dl', connectorId: 'radarr', method: 'nope', args: [], vaultRoot: '/v' })).rejects.toMatchObject({ code: 'unknown-method' });
+    await expect(host.invoke({ appId: 'dl', connectorId: 'zzz', method: 'x', args: [], vaultRoot: '/v' })).rejects.toMatchObject({ code: 'unavailable' });
+  });
+});

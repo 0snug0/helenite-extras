@@ -1,8 +1,8 @@
 // Main-process side of connectors: auth hooks, secret entries for the Settings UI.
 import { getConnector } from '../registry';
-import type { ConnectorDef } from '../sdk';
+import type { ConnectorContext, ConnectorDef } from '../sdk';
 import type { GoogleAuth } from './google-auth';
-import { appScope, connectorScope, type SecretStore } from './secrets';
+import { appScope, connectorScope, type SecretAccess } from './secrets';
 
 export interface SecretEntry {
   scope: string;
@@ -18,7 +18,7 @@ export interface SecretEntry {
 
 export interface AppSecretDecl { id: string; name: string; secrets: { name: string; label?: string; required?: boolean }[]; connectors?: string[] }
 
-export function createConnectorHost(deps: { secrets: SecretStore; googleAuth?: GoogleAuth }) {
+export function createConnectorHost(deps: { secrets: SecretAccess; googleAuth?: GoogleAuth }) {
   return {
     /** The `ensureAuth` hook for a connector's context: refresh tokens right before use. */
     async ensureAuth(connectorId: string): Promise<void> {
@@ -42,3 +42,35 @@ export function createConnectorHost(deps: { secrets: SecretStore; googleAuth?: G
   };
 }
 export type ConnectorHost = ReturnType<typeof createConnectorHost>;
+
+// ---- Session R's ConnectorHost contract (`@helenite/apps-runtime` main/connectors.ts), implemented structurally. ----
+export interface ConnectorCall { appId: string; connectorId: string; method: string; args: unknown[]; vaultRoot: string }
+
+export interface RegistryHostOptions {
+  /** Build the context for one call: `fetch` must be the app's brokered net.fetch (grants, host-bound secrets, redaction). */
+  ctxFor(call: Pick<ConnectorCall, 'appId' | 'connectorId' | 'vaultRoot'>): ConnectorContext;
+  /** Token refresh hook (`createConnectorHost(...).ensureAuth`). */
+  ensureAuth?(connectorId: string): Promise<void>;
+}
+
+/** Runs `connector.client(ctx)[method](...args)` in main. Plug into `createAppRuntime({ connectors })`. */
+export function createConnectorRegistryHost(o: RegistryHostOptions) {
+  const clients = new Map<string, Record<string, unknown>>();
+  const probe = (id: string) => {
+    let c = clients.get(id);
+    if (!c) { c = getConnector(id)!.client({ fetch: async () => { throw new Error('probe'); }, settings: {} }) as Record<string, unknown>; clients.set(id, c); }
+    return c;
+  };
+  return {
+    has: (id: string) => !!getConnector(id),
+    describe: (id: string) => (getConnector(id) ? { methods: Object.keys(probe(id)).filter((k) => typeof probe(id)[k] === 'function') } : null),
+    async invoke(call: ConnectorCall): Promise<unknown> {
+      const def = getConnector(call.connectorId);
+      if (!def) throw Object.assign(new Error(`connector ${call.connectorId} is not installed`), { code: 'unavailable' });
+      if (!Object.keys(probe(call.connectorId)).includes(call.method) || call.method === 'constructor') throw Object.assign(new Error(`connector ${call.connectorId} has no method ${call.method}`), { code: 'unknown-method' });
+      const ctx = o.ctxFor(call);
+      const client = def.client({ ...ctx, ensureAuth: ctx.ensureAuth ?? o.ensureAuth }) as Record<string, (...a: unknown[]) => unknown>;
+      return await client[call.method](...call.args);
+    },
+  };
+}
