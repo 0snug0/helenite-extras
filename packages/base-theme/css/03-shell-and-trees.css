@@ -56,7 +56,17 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
   border-right: var(--divider-width) solid var(--divider-color);
   gap: var(--size-4-2);
 }
-.workspace-ribbon.mod-left { padding-top: calc(var(--header-height) + var(--size-4-1)); }
+/* Like Obsidian, the header row runs across the left ribbon to the window edge and the ribbon's divider starts below it. */
+.workspace-ribbon.mod-left { position: relative; border-right: none; padding-top: calc(var(--header-height) + var(--size-4-1)); }
+.workspace-ribbon.mod-left::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: var(--header-height); box-sizing: border-box;
+  background-color: var(--tab-container-background);
+  border-bottom: var(--tab-outline-width) solid var(--tab-outline-color); pointer-events: none;
+}
+.workspace-ribbon.mod-left::after {
+  content: ''; position: absolute; top: var(--header-height); bottom: 0; right: 0;
+  border-right: var(--divider-width) solid var(--divider-color); pointer-events: none;
+}
 .is-hidden-frameless .workspace-ribbon.mod-left { padding-top: var(--header-height); }
 .workspace-ribbon.is-collapsed { background-color: var(--ribbon-background-collapsed); }
 .side-dock-actions, .side-dock-settings { display: flex; flex-direction: column; align-items: center; gap: var(--size-4-1); }
