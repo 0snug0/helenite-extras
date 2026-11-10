@@ -85,10 +85,25 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .workspace-split.mod-right-split { border-left: var(--divider-width) solid var(--divider-color); }
 .workspace-split.mod-bottom-split { background-color: var(--background-primary); border-top: var(--divider-width) solid var(--divider-color); }
 .workspace-split > * { min-width: 0; min-height: 0; }
-.workspace-split.mod-root > .workspace-tabs + .workspace-tabs,
-.workspace-split.mod-root > .workspace-split + .workspace-tabs { border-left: var(--divider-width) solid var(--divider-color); }
+/* A resize handle sits between siblings, so dividers key off the handle, not the previous pane */
+.workspace-split.mod-root.mod-vertical > .workspace-leaf-resize-handle + .workspace-tabs,
+.workspace-split.mod-root.mod-vertical > .workspace-leaf-resize-handle + .workspace-split,
+.workspace-split.mod-root .workspace-split.mod-vertical > .workspace-leaf-resize-handle + * { border-left: var(--divider-width) solid var(--divider-color); }
+.workspace-split.mod-root.mod-horizontal > .workspace-leaf-resize-handle + *,
+.workspace-split.mod-root .workspace-split.mod-horizontal > .workspace-leaf-resize-handle + * { border-top: var(--divider-width) solid var(--divider-color); }
 .workspace-leaf-resize-handle { margin: 0; border: 0; }
-.workspace-split.mod-sidedock > .workspace-tabs + .workspace-tabs { border-top: var(--divider-width) solid var(--divider-color); }
+/* Resize handles light up on hover and while dragging */
+.workspace-leaf-resize-handle::after { content: ''; position: absolute; pointer-events: none; background-color: var(--divider-color-hover); opacity: 0; transition: opacity 120ms ease-in-out; }
+.workspace-leaf-resize-handle:hover::after { opacity: 1; transition-delay: 120ms; }
+.workspace-leaf-resize-handle.is-dragging::after { opacity: 1; transition: none; }
+/* Where two handles cross, both light up and drag together */
+.workspace-leaf-resize-handle.is-junction::after { opacity: 1; }
+.workspace-split.mod-vertical > .workspace-leaf-resize-handle::after { top: 0; bottom: 0; left: calc(50% - var(--divider-width-hover) / 2); width: var(--divider-width-hover); }
+.workspace-split.mod-horizontal > .workspace-leaf-resize-handle::after { left: 0; right: 0; top: calc(50% - var(--divider-width-hover) / 2); height: var(--divider-width-hover); }
+.workspace-split.mod-left-split > .workspace-leaf-resize-handle.mod-dock-edge::after { top: 0; bottom: 0; left: auto; right: 0; width: var(--divider-width-hover); height: auto; }
+.workspace-split.mod-right-split > .workspace-leaf-resize-handle.mod-dock-edge::after { top: 0; bottom: 0; left: 0; right: auto; width: var(--divider-width-hover); height: auto; }
+.workspace-split.mod-bottom-split > .workspace-leaf-resize-handle.mod-dock-edge::after { left: 0; right: 0; top: 0; bottom: auto; height: var(--divider-width-hover); width: auto; }
+.workspace-split.mod-sidedock > .workspace-leaf-resize-handle + .workspace-tabs { border-top: var(--divider-width) solid var(--divider-color); }
 
 /* Tab groups */
 .workspace-tabs { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; min-height: 0; position: relative; }
@@ -100,6 +115,9 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
   padding: 0 var(--size-4-2);
   -webkit-app-region: drag;
 }
+/* Only the top row of tab strips drags the window: a strip below another pane must not swallow its resize handle */
+.workspace-split.mod-horizontal > .workspace-leaf-resize-handle + * .workspace-tab-header-container,
+.workspace-split.mod-bottom-split .workspace-tab-header-container { -webkit-app-region: no-drag; }
 .workspace-tab-header-container-inner { display: flex; align-items: stretch; flex: 0 1 auto; min-width: 0; overflow: hidden; padding-top: var(--size-2-3); gap: 0; -webkit-app-region: no-drag; }
 .workspace-tab-header-spacer { flex: 1 1 0; }
 .workspace-tab-header-new-tab, .workspace-tab-header-tab-list { display: flex; align-items: center; padding: 0 var(--size-2-2); -webkit-app-region: no-drag; }
