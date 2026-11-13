@@ -5,7 +5,7 @@ description: Helenite workspace and dock layout, per-vault layouts, and the tool
 
 # Workspace and layout
 
-Helenite follows the Obsidian workspace model: a centre editor area (tabs and splits), a left sidebar, a right sidebar and a bottom dock (terminals). **Layout is per vault**: a change made in a project vault does not affect the global vault.
+Helenite follows the Obsidian workspace model: a centre editor area (tabs and splits), a left sidebar, a right sidebar and a bottom dock (terminals). **Layout is per vault**: a change made in a vault does not affect Home.
 
 Tools (all `mcp__helenite__*`):
 - `helenite_context`: the vault, layout tree, enabled plugins and apps (with scopes), and the active view. Call it first when a request depends on the current state.
