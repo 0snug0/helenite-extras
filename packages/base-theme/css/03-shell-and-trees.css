@@ -165,7 +165,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .workspace-tab-header-container-inner { display: flex; align-items: stretch; flex: 0 1 auto; min-width: 0; overflow: hidden; padding-top: var(--size-2-3); gap: 0; -webkit-app-region: no-drag; }
 .workspace-tab-header-spacer { flex: 1 1 0; }
 .workspace-tab-header-new-tab, .workspace-tab-header-tab-list { display: flex; align-items: center; padding: 0 var(--size-2-2); -webkit-app-region: no-drag; }
-/* Bottom panel: tabs on the left, the + (new chat; right-click for more) on the right. */
+/* Harness pane: tabs on the left, the + (new chat; right-click for more) on the right. */
 .mod-bottom-split .workspace-tab-header-container-inner { order: 1; }
 .mod-bottom-split .workspace-tab-header-spacer { order: 2; }
 .mod-bottom-split .workspace-tab-header-new-tab { order: 3; }
