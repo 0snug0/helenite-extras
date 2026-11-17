@@ -103,7 +103,7 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
       const set = (v: SettingValue) => saveSoon({ ...file, settings: { ...file.settings, [id]: { ...file.settings[id], [key]: v } } });
       const row = new Setting(el).setName(`${id} · ${spec.label}`);
       if (typeof spec.default === 'boolean') row.addToggle((x) => x.setValue(current() === true).onChange((v) => set(v)));
-      else row.addText((x) => x.setValue(String(current())).onChange((v) => {
+      else row.addText((x) => x.setPlaceholder(String(spec.default)).setValue(String(current())).onChange((v) => {
         if (typeof spec.default === 'number') { const n = Number(v); if (v.trim() !== '' && Number.isFinite(n)) set(n); } else set(v);
       }));
     }
