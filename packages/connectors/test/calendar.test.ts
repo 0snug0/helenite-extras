@@ -29,8 +29,8 @@ describe('calendar connector', () => {
   });
   it('rejects without ctx.accounts', async () => {
     const c = calendar.client(ctxOf());
-    await expect(c.events({ from: 'F', to: 'T' })).rejects.toThrow('accounts are not available in this build');
-    await expect(c.accounts()).rejects.toThrow('accounts are not available in this build');
+    await expect(c.events({ from: 'F', to: 'T' })).rejects.toThrow("Accounts aren't available in this vault");
+    await expect(c.accounts()).rejects.toThrow("Accounts aren't available in this vault");
   });
   it('declares no secrets and no hosts', () => {
     expect(calendar.secrets).toEqual([]);
@@ -51,6 +51,13 @@ describe('google-calendar alias', () => {
     const ctx = ctxOf(fakeAccounts());
     expect(await googleCalendar.client(ctx).listCalendars()).toEqual([{ id: 'g1', summary: 'Work', primary: true }]);
     expect(ctx.fetch).not.toHaveBeenCalled();
+  });
+  it('throws the first account error instead of returning partial or empty results', async () => {
+    const acc = {
+      ...fakeAccounts(),
+      calendarEvents: async () => ({ events: [ev('g1', 'a')], errors: [{ account: 'Work', message: 'Reconnect Work in Settings → Accounts' }, { account: 'Other', message: 'second' }] }),
+    };
+    await expect(googleCalendar.client(ctxOf(acc)).listEvents({ timeMin: 'F', timeMax: 'T' })).rejects.toThrow('Reconnect Work in Settings → Accounts');
   });
   it('returns no events when no Google account is granted', async () => {
     const acc = { ...fakeAccounts(), list: () => [] };

@@ -22,7 +22,9 @@ function accountBacked(acc: ConnectorAccounts) {
     async listEvents(opts: { calendarId?: string; timeMin: string; timeMax: string; max?: number }): Promise<CalendarEvent[]> {
       const ids = googleAccounts(acc).map((a) => a.id);
       if (!ids.length) return [];
-      const { events } = await acc.calendarEvents({ from: opts.timeMin, to: opts.timeMax, accounts: ids });
+      const { events, errors } = await acc.calendarEvents({ from: opts.timeMin, to: opts.timeMax, accounts: ids });
+      // The pre-accounts contract had no partial results: a failing account (e.g. "Reconnect …") is an error, not an empty list.
+      if (errors.length) throw new Error(errors[0].message);
       const mapped = events.map(({ id, summary, start, end, allDay, location, htmlLink }): CalendarEvent => ({ id, summary, start, end, allDay, location, htmlLink }));
       return opts.max ? mapped.slice(0, opts.max) : mapped;
     },

@@ -12,7 +12,7 @@ export const calendar = defineConnector({
   hosts: () => [],
   client(ctx: ConnectorContext) {
     const need = (): ConnectorAccounts => {
-      if (!ctx.accounts) throw new Error('accounts are not available in this build');
+      if (!ctx.accounts) throw new Error("Accounts aren't available in this vault");
       return ctx.accounts;
     };
     return {
