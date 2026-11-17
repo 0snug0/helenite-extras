@@ -6,11 +6,11 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const make = (connectGoogle?: () => Promise<void>) => {
+const make = () => {
   const secrets = createSecretStore({ userDataDir: mkdtempSync(join(tmpdir(), 'ui-')), safeStorage: createFakeSafeStorage() });
   const host = createConnectorHost({ secrets });
   const apps = [{ id: 'downloadrr', name: 'Downloadrr', connectors: ['radarr', 'google-calendar'], secrets: [{ name: 'EXTRA_KEY', label: 'Extra', required: true }] }];
-  const tab: any = createSecretsSettingTab({ app: new App() as any, plugin: new Plugin() as any, secrets, entries: () => host.entries(apps), connectGoogle });
+  const tab: any = createSecretsSettingTab({ app: new App() as any, plugin: new Plugin() as any, secrets, entries: () => host.entries(apps) });
   tab.display();
   return { secrets, tab, rows: () => tab.containerEl.settings as Setting[] };
 };
@@ -46,7 +46,7 @@ describe('Settings → Secrets tab', () => {
     expect(rows().find((r) => r.name === 'Google access token (managed)')!.texts).toHaveLength(0);
   });
   it('points Google Calendar at Settings → Accounts instead of offering a connect button', () => {
-    const { rows } = make(async () => {});
+    const { rows } = make();
     const g = rows().find((r) => r.name === 'Google Calendar' && !r.heading)!;
     expect(g.buttons).toHaveLength(0);
     expect(g.desc).toContain('Manage in Settings → Accounts');

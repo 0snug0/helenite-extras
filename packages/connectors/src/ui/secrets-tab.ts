@@ -13,10 +13,6 @@ export interface SecretsTabDeps {
   backend?: string;
   /** Current entries (re-read on every render so newly installed apps show up). */
   entries(): SecretEntry[];
-  /** @deprecated Google sign-in moved to Settings → Accounts; no longer rendered. */
-  connectGoogle?(): Promise<void>;
-  /** @deprecated see connectGoogle. */
-  disconnectGoogle?(): void;
 }
 
 export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab {
