@@ -1,0 +1,14 @@
+{
+  "records": {
+    "type": "object",
+    "required": ["id", "title", "link"],
+    "properties": {
+      "id": { "type": "string" },
+      "title": { "type": "string" },
+      "link": { "type": "string", "pattern": "^https://letterboxd\\.com/film/[a-z0-9-]+/$" },
+      "year": { "type": "integer" },
+      "tmdbId": { "type": "integer" }
+    }
+  },
+  "actions": {}
+}

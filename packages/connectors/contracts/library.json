@@ -1,0 +1,16 @@
+{
+  "records": {
+    "type": "object",
+    "required": ["id", "title", "kind", "monitored", "hasFile"],
+    "properties": {
+      "id": { "type": "string" },
+      "title": { "type": "string" },
+      "kind": { "enum": ["movie", "show"] },
+      "monitored": { "type": "boolean" },
+      "hasFile": { "type": "boolean" },
+      "year": { "type": "integer" },
+      "tmdbId": { "type": "integer" }
+    }
+  },
+  "actions": {}
+}
