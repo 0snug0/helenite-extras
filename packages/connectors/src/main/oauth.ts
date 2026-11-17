@@ -41,6 +41,11 @@ export async function startLoopback(expectedState: string, timeoutMs = 5 * 60_00
   return { redirectUri: `http://127.0.0.1:${(server.address() as AddressInfo).port}/callback`, code, close };
 }
 
+/** Token endpoint failure; `code` is the OAuth `error` field (e.g. `invalid_grant`). */
+export class TokenError extends Error {
+  constructor(public status: number, public code?: string) { super(`token endpoint: HTTP ${status}${code ? ` ${code}` : ''}`); }
+}
+
 export interface TokenSet { accessToken: string; refreshToken?: string; expiresAt: number }
 type FetchLike = typeof fetch;
 
@@ -49,7 +54,7 @@ async function tokenRequest(endpoint: string, params: Record<string, string>, fe
   const text = await res.text();
   let j: any = {};
   try { j = JSON.parse(text); } catch { /* handled below */ }
-  if (!res.ok || !j.access_token) throw new Error(`token endpoint: HTTP ${res.status}${j.error ? ` ${j.error}` : ''}`);
+  if (!res.ok || !j.access_token) throw new TokenError(res.status, typeof j.error === 'string' ? j.error : undefined);
   return { accessToken: j.access_token, refreshToken: j.refresh_token, expiresAt: now() + (Number(j.expires_in) || 3600) * 1000 };
 }
 
