@@ -98,6 +98,40 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .helenite-vault-circle:hover { background-color: color-mix(in srgb, var(--vault-color) 28%, transparent); color: var(--vault-color); }
 .helenite-vault-circle.is-active { color: #fff; background-color: var(--vault-color); border-color: var(--vault-color); box-shadow: 0 0 0 2px var(--ribbon-background), 0 0 0 3.5px color-mix(in srgb, var(--vault-color) 60%, transparent); }
 .helenite-vault-circle.is-active:hover { background-color: var(--vault-color); color: #fff; }
+/* Pinned zone: last used vault | pinned vaults (draggable), then "+" and the more-vaults button. */
+.helenite-rail-group { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--size-4-1); }
+.helenite-rail-recent:empty, .helenite-rail-pins:empty { display: none; }
+.helenite-rail-recent:not(:empty) + .helenite-rail-pins:not(:empty) { padding-top: var(--size-4-2); }
+.helenite-rail-recent:not(:empty) + .helenite-rail-pins:not(:empty)::before {
+  content: ''; position: absolute; top: 0; left: 50%; width: 60%; transform: translateX(-50%);
+  border-top: var(--divider-width) solid var(--divider-color);
+}
+.helenite-rail-pins .helenite-vault-circle { cursor: grab; }
+.helenite-vault-circle.is-dragging { z-index: 2; cursor: grabbing; transform: scale(1.12); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }
+.helenite-vault-circle.is-recent { border-style: dashed; }
+/* The current vault's own pin slot: ringed like the active circle, but not filled. */
+.helenite-vault-circle.is-current { border-color: var(--vault-color); box-shadow: 0 0 0 2px var(--ribbon-background), 0 0 0 3.5px color-mix(in srgb, var(--vault-color) 60%, transparent); }
+.helenite-vault-pin {
+  position: absolute; top: -4px; right: -5px;
+  width: 14px; height: 14px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); background-color: var(--ribbon-background);
+  border: 1px solid var(--background-modifier-border);
+  --icon-size: 8px; --icon-stroke: 2.5px;
+  cursor: pointer; transition: opacity 120ms ease, color 120ms ease;
+}
+.helenite-vault-pin svg { width: 8px; height: 8px; stroke-width: 2.5px; transform: rotate(45deg); }
+.helenite-vault-circle.is-pinned .helenite-vault-pin { color: var(--vault-color); }
+.helenite-vault-circle:not(.is-pinned) .helenite-vault-pin { opacity: 0; }
+.helenite-vault-circle:not(.is-pinned):hover .helenite-vault-pin { opacity: 1; }
+.helenite-vault-pin:hover { color: var(--text-normal); border-color: var(--vault-color); }
+.helenite-vault-circle.is-active .helenite-vault-pin { display: none; }
+.helenite-rail-more { position: relative; }
+.helenite-rail-more-count {
+  position: absolute; bottom: 0; right: -2px; min-width: 13px; height: 13px; padding: 0 3px; box-sizing: border-box;
+  border-radius: 7px; font-size: 9px; font-weight: 600; line-height: 13px; text-align: center;
+  color: var(--text-on-accent); background-color: var(--interactive-accent); pointer-events: none;
+}
 .side-dock-actions.mod-vault .side-dock-ribbon-action {
   --vault-color: hsl(var(--vault-hue, 220) 55% 52%);
   border-radius: var(--radius-s);
