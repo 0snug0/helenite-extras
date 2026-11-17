@@ -1,11 +1,11 @@
 ---
 name: helenite-content
-description: Minimal working syntax for notes in a Helenite vault: callouts, Mermaid, embeds, properties, Canvas, Dataview, DataviewJS, Tasks, Kanban, Meta Bind, Buttons and Templater. Use when writing a note that uses a plugin or rich markdown, or offering the user layout choices.
+description: Minimal working syntax for notes in a Helenite vault, covering callouts, Mermaid, embeds, properties, Canvas, Dataview, DataviewJS, Tasks, Kanban, Meta Bind, Buttons and Templater. Use when writing a note that uses a plugin or rich markdown, or offering the user layout choices.
 ---
 
 # Content syntax
 
-Smallest example that works for each. Before using a plugin, call `mcp__helenite__vault_capabilities` (`renders`: `yes`, `no`, `unverified`; `blocks`: languages it handles). Prefer plugins that render. After writing, run `note_render_check` on the note and report empty results or errors.
+Smallest example that works for each. Before using a plugin, call `mcp__helenite__vault_capabilities` (`renders`: `yes`, `no`, `unverified`; `blocks`: languages it handles). Prefer plugins that render. After creating or changing a note: `workspace_open` it, run `note_render_check` with its vault-relative path (for example `Projects/Plan.md`), `view_screenshot` it if the layout matters, then `plugin_logs` for each plugin used. Report empty results or errors.
 
 ## Core
 

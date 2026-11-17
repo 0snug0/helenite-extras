@@ -5,9 +5,9 @@ description: Session notes, helenite-ask widgets and frontmatter conventions in 
 
 # Session notes in Helenite
 
-Every Helenite session has a note `Chats/YYYY-MM-DD Session <id>.md`. Frontmatter: `helenite: session`, `session_id`, `profile`, `transcript_path`, `status` (idle, busy or waiting). Helenite owns the file: **never edit it with Write/Edit/Bash**; those are denied.
+Every Helenite session has a chat note `Chats/<uuid>.md` (stable Helenite uuid). Frontmatter: `helenite: session`, `helenite_session`, `session_id` (the id Claude reports, which changes on /clear), `title`, `profile`, `transcript_path`, `status` (idle, busy or waiting). Older notes named `Chats/YYYY-MM-DD Session <id8>.md` still exist. Helenite owns the file: **never edit it with Write/Edit/Bash**; those are denied.
 
-Sections: Goal, Decisions, Plan (checkboxes), Open questions, Changes, Notes.
+Sections: Goal, Decisions, Plan (checkboxes), Open questions, Changes, Notes. Open questions holds one summary callout per question, linking to its question file.
 
 - Read it: `mcp__helenite__summary_read` (optionally `section`).
 - Update it: `mcp__helenite__summary_update_section` with `section`, `text`, `mode` (`replace` or `append`). Keep Goal to one or two sentences, Decisions to a bullet each, Plan as `- [ ]` / `- [x]` items. Changes is appended automatically on every edit you make.

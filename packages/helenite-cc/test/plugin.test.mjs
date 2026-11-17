@@ -31,3 +31,11 @@ test('content skill and addendum cover the ask and render-check tools', () => {
   assert.match(addendum, /never list options in prose/i);
   assert.match(addendum, /Do not end a turn on an unanswered question/);
 });
+
+test('skill descriptions are valid YAML plain scalars', () => {
+  for (const s of readdirSync(join(root, 'skills'))) {
+    const fm = readFileSync(join(root, 'skills', s, 'SKILL.md'), 'utf8').split('\n---')[0];
+    const desc = fm.split('\n').find((l) => l.startsWith('description: ')).slice('description: '.length);
+    if (!/^["']/.test(desc)) assert.ok(!desc.includes(': ') && !desc.includes(' #'), `${s}: unquoted description has ': ' or ' #'`);
+  }
+});
