@@ -3,23 +3,45 @@
   "name": "Letterboxd account (sample)",
   "version": "0.1.0",
   "minAppVersion": "1.4.0",
-  "description": "Sample account-type plugin: a Letterboxd account (public diary and watchlist) that vaults can be granted.",
+  "description": "Sample plugin with an account type (a Letterboxd account that vaults can be granted) and a vault feature that uses it.",
   "author": "Helenite",
   "isDesktopOnly": true,
+  "main": "main.js",
   "helenite": {
-    "scope": "accounts",
-    "accountTypes": [
-      {
-        "type": "letterboxd",
-        "name": "Letterboxd",
-        "hosts": ["https://letterboxd.com"],
-        "secrets": [],
-        "capabilities": [
-          { "id": "diary.read", "label": "Read diary", "risk": "low", "paths": ["/*/rss/"] },
-          { "id": "watchlist.read", "label": "Read watchlist", "risk": "low", "paths": ["/*/watchlist/"] }
-        ],
-        "methods": { "diary": "diary.read", "watchlist": "watchlist.read" }
-      }
-    ]
+    "accounts": {
+      "main": "accounts.js",
+      "accountTypes": [
+        {
+          "type": "letterboxd",
+          "name": "Letterboxd",
+          "hosts": [
+            "https://letterboxd.com"
+          ],
+          "secrets": [],
+          "capabilities": [
+            {
+              "id": "diary.read",
+              "label": "Read diary",
+              "risk": "low",
+              "paths": [
+                "/*/rss/"
+              ]
+            },
+            {
+              "id": "watchlist.read",
+              "label": "Read watchlist",
+              "risk": "low",
+              "paths": [
+                "/*/watchlist/"
+              ]
+            }
+          ],
+          "methods": {
+            "diary": "diary.read",
+            "watchlist": "watchlist.read"
+          }
+        }
+      ]
+    }
   }
 }

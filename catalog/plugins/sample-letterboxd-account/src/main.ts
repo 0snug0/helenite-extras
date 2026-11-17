@@ -1,105 +1,64 @@
-// Sample account-type plugin. It shows the whole contract: the type is declared in manifest.json (that is
-// what main trusts), and this code supplies the connect form and the methods. Letterboxd's public RSS and
-// watchlist pages need no secret, so the account holds a username and nothing else.
-import { Plugin, type AccountTypeDef, type AccountView, type CallContext, type ConnectContext } from 'obsidian';
+// The vault-feature entry of the sample plugin (`main.js`). It loads in a vault under the normal enable rules and uses the
+// account only through `app.accounts.call`; the account type itself lives in accounts.ts.
+import { Notice, Plugin, PluginSettingTab, Setting, type App, type Editor } from 'obsidian';
+import type { DiaryEntry } from './accounts';
 
-const ORIGIN = 'https://letterboxd.com';
-const USERNAME = /^[A-Za-z0-9_-]+$/;
-const HEADERS = { Accept: 'text/html,application/xml', 'User-Agent': 'Helenite/0.1 (personal vault app)' };
-
-export interface DiaryEntry { title: string; year: number | null; rating: number | null; watchedDate: string | null; rewatch: boolean; link: string }
-export interface WatchlistFilm { slug: string; title: string }
-
-const codePoint = (n: number) => (Number.isInteger(n) && n > 0 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n) : '');
-// `&amp;` goes last so `&amp;lt;` decodes to `&lt;`, not `<`.
-export const decode = (s: string) => s.replace(/<!\[CDATA\[|\]\]>/g, '').replace(/&#x([0-9a-f]+);/gi, (_, h) => codePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (_, d) => codePoint(parseInt(d, 10))).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
-const tag = (xml: string, name: string) => { const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`)); return m ? decode(m[1]).trim() : null; };
-const num = (s: string | null) => (s == null || s === '' || Number.isNaN(Number(s)) ? null : Number(s));
-
-export function parseDiaryRss(xml: string): DiaryEntry[] {
-  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)]
-    .map((m) => m[1])
-    .filter((it) => tag(it, 'letterboxd:filmTitle'))
-    .map((it) => ({
-      title: tag(it, 'letterboxd:filmTitle')!,
-      year: num(tag(it, 'letterboxd:filmYear')),
-      rating: num(tag(it, 'letterboxd:memberRating')),
-      watchedDate: tag(it, 'letterboxd:watchedDate'),
-      rewatch: tag(it, 'letterboxd:rewatch') === 'Yes',
-      link: tag(it, 'link') ?? '',
-    }));
+interface Settings {
+  /** Label of the Letterboxd account to read, as shown in Settings, Accounts. */
+  accountLabel: string;
 }
 
-/** Poster tiles carry `data-film-slug` (older markup `data-item-slug`) and a name attribute. */
-export function parseWatchlist(html: string): { films: WatchlistFilm[]; hasNext: boolean } {
-  const films: WatchlistFilm[] = [];
-  const seen = new Set<string>();
-  for (const m of html.matchAll(/<(?:div|li)\b[^>]*data-(?:film-slug|item-slug)="([^"]+)"[^>]*>/g)) {
-    const slug = m[1].replace(/^\/film\/|\/$/g, '');
-    if (seen.has(slug)) continue;
-    seen.add(slug);
-    const name = m[0].match(/data-(?:film-name|item-name)="([^"]*)"/)?.[1];
-    films.push({ slug, title: decode(name ?? slug.replace(/-/g, ' ')) });
-  }
-  return { films, hasNext: /class="next"/.test(html) };
+export function diaryMarkdown(entries: DiaryEntry[]): string {
+  const lines = entries.map((e) => {
+    const year = e.year ? ` (${e.year})` : '';
+    const rating = e.rating != null ? ` ★ ${e.rating}` : '';
+    const when = e.watchedDate ? ` · ${e.watchedDate}` : '';
+    return `- [${e.title}${year}](${e.link})${rating}${when}${e.rewatch ? ' · rewatch' : ''}`;
+  });
+  return lines.length ? `${lines.join('\n')}\n` : '';
 }
 
-/** The username comes from the account's saved config, never from the caller. */
-function userOf(account: AccountView): string {
-  const name = String(account.config?.username ?? account.identity ?? '').trim();
-  if (!USERNAME.test(name)) throw new Error('letterboxd: this account has no valid username');
-  return name;
-}
+export default class LetterboxdVaultPlugin extends Plugin {
+  settings: Settings = { accountLabel: '' };
 
-async function page(ctx: CallContext, path: string): Promise<string> {
-  const r = await ctx.fetch({ url: `${ORIGIN}${path}`, headers: HEADERS });
-  if (r.status < 200 || r.status >= 300) throw new Error(`letterboxd: ${path} returned ${r.status}`);
-  return r.text;
-}
-
-export const letterboxd: AccountTypeDef = {
-  type: 'letterboxd',
-  connect(el: HTMLElement, ctx: ConnectContext) {
-    el.createEl('p', { text: 'Your Letterboxd username. Only your public diary and watchlist are read; no password is needed.' });
-    const input = el.createEl('input', { type: 'text', placeholder: 'Username', value: '' });
-    const error = el.createEl('p', { cls: 'mod-warning' });
-    const button = el.createEl('button', { text: ctx.accountId ? 'Save' : 'Connect', cls: 'mod-cta' });
-    button.addEventListener('click', async () => {
-      const username = input.value.trim();
-      if (!USERNAME.test(username)) {
-        error.setText('Use letters, digits, “-” and “_” only.');
-        return;
-      }
-      button.disabled = true;
-      error.setText('');
-      try {
-        await ctx.save({ identity: username, label: `Letterboxd (${username})`, config: { username }, held: ['diary.read', 'watchlist.read'] });
-      } catch (e) {
-        error.setText(e instanceof Error ? e.message : String(e));
-        button.disabled = false;
-      }
+  async onload(): Promise<void> {
+    this.settings = { accountLabel: '', ...((await this.loadData()) ?? {}) };
+    this.addCommand({
+      id: 'insert-latest-diary',
+      name: 'Insert latest Letterboxd diary entries',
+      editorCallback: (editor: Editor) => void this.insertDiary(editor),
     });
-  },
-  methods: {
-    async diary(account, ctx) {
-      return parseDiaryRss(await page(ctx, `/${userOf(account)}/rss/`));
-    },
-    async watchlist(account, ctx, args?: { maxPages?: number }) {
-      const user = userOf(account);
-      const max = Math.min(Math.max(Math.floor(Number(args?.maxPages ?? 5)) || 1, 1), 20);
-      const films: WatchlistFilm[] = [];
-      for (let p = 1; p <= max; p++) {
-        const r = parseWatchlist(await page(ctx, `/${user}/watchlist/page/${p}/`));
-        films.push(...r.films);
-        if (!r.hasNext) break;
-      }
-      return films;
-    },
-  },
-};
+    this.addSettingTab(new LetterboxdSettingTab(this.app, this));
+  }
 
-export default class LetterboxdAccountPlugin extends Plugin {
-  onload(): void {
-    this.registerAccountType(letterboxd);
+  async insertDiary(editor: Editor): Promise<void> {
+    const account = this.settings.accountLabel.trim();
+    if (!account) {
+      new Notice('Set the Letterboxd account label in this plugin’s settings first.');
+      return;
+    }
+    try {
+      const entries = (await this.app.accounts.call({ account, method: 'diary', args: { limit: 5 } })) as DiaryEntry[];
+      editor.replaceSelection(diaryMarkdown(entries));
+    } catch (e) {
+      new Notice(`Letterboxd: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+}
+
+class LetterboxdSettingTab extends PluginSettingTab {
+  constructor(app: App, private plugin: LetterboxdVaultPlugin) {
+    super(app, plugin);
+  }
+
+  display(): void {
+    this.containerEl.empty();
+    new Setting(this.containerEl)
+      .setName('Account label')
+      .setDesc('The Letterboxd account to read, exactly as listed in Settings, Accounts. The vault must be granted "Read diary" on it.')
+      .addText((t) => t.setPlaceholder('Letterboxd (me)').setValue(this.plugin.settings.accountLabel).onChange(async (v) => {
+        this.plugin.settings.accountLabel = v;
+        await this.plugin.saveData(this.plugin.settings);
+      }));
   }
 }

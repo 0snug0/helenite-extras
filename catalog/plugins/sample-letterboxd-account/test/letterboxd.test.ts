@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { decode, letterboxd, parseDiaryRss, parseWatchlist } from '../src/main';
+import { decode, letterboxd, parseDiaryRss, parseWatchlist } from '../src/accounts';
 
 const RSS = `<rss><channel><item><title>Heat - 4.5</title><link>https://letterboxd.com/me/film/heat/</link>
 <letterboxd:watchedDate>2026-01-02</letterboxd:watchedDate><letterboxd:rewatch>No</letterboxd:rewatch><letterboxd:filmTitle>Heat</letterboxd:filmTitle>
@@ -28,7 +28,7 @@ describe('decode', () => {
 describe('manifest', () => {
   it('gives each capability its own path so they are distinguishable', async () => {
     const m = JSON.parse((await import('node:fs')).readFileSync(new URL('../manifest.json', import.meta.url), 'utf8'));
-    const caps = m.helenite.accountTypes[0].capabilities;
+    const caps = m.helenite.accounts.accountTypes[0].capabilities;
     expect(Object.fromEntries(caps.map((c: any) => [c.id, c.paths]))).toEqual({ 'diary.read': ['/*/rss/'], 'watchlist.read': ['/*/watchlist/'] });
   });
 });
@@ -51,5 +51,14 @@ describe('methods', () => {
     await expect(letterboxd.methods.diary(account({ config: { username: '../x' }, identity: '../x' }), { fetch }, undefined)).rejects.toThrow('valid username');
     expect(fetch).not.toHaveBeenCalled();
     await expect(letterboxd.methods.diary(account(), { fetch }, undefined)).rejects.toThrow('404');
+  });
+});
+
+describe('logo', () => {
+  it('the type names its logo, a currentColor Simple Icons path', async () => {
+    const { letterboxd } = await import('../src/accounts');
+    const { LOGO_ICON, LOGO_SVG } = await import('../src/logo');
+    expect(letterboxd.icon).toBe(LOGO_ICON);
+    expect(LOGO_SVG).toMatch(/^<svg [^>]*viewBox="0 0 24 24"><path fill="currentColor" d="M[^"]+"\/><\/svg>$/);
   });
 });
