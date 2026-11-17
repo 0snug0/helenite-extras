@@ -101,10 +101,16 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     function renderSetting(el: HTMLElement, id: string, key: string, spec: SettingSpec): void {
       const current = (): SettingValue => file.settings[id]?.[key] ?? spec.default;
       const set = (v: SettingValue) => saveSoon({ ...file, settings: { ...file.settings, [id]: { ...file.settings[id], [key]: v } } });
+      // A cleared field drops the key, so the default applies again.
+      const unset = () => {
+        const { [key]: _gone, ...rest } = file.settings[id] ?? {};
+        saveSoon({ ...file, settings: { ...file.settings, [id]: rest } });
+      };
       const row = new Setting(el).setName(`${id} · ${spec.label}`);
       if (typeof spec.default === 'boolean') row.addToggle((x) => x.setValue(current() === true).onChange((v) => set(v)));
       else row.addText((x) => x.setPlaceholder(String(spec.default)).setValue(String(current())).onChange((v) => {
-        if (typeof spec.default === 'number') { const n = Number(v); if (v.trim() !== '' && Number.isFinite(n)) set(n); } else set(v);
+        if (v.trim() === '') return unset();
+        if (typeof spec.default === 'number') { const n = Number(v); if (Number.isFinite(n)) set(n); } else set(v);
       }));
     }
   }

@@ -83,4 +83,22 @@ describe('Settings → Data tab', () => {
       expect(saved).toEqual([{ bindings: { 'download-queue': ['sabnzbd', 'qbittorrent'] }, settings: { sabnzbd: { SABNZBD_URL: 'http://nas:8080' } } }]);
     } finally { vi.useRealTimers(); }
   });
+
+  it('clearing a text or number setting removes the key so the default applies', async () => {
+    vi.useFakeTimers();
+    try {
+      const { tab, saved, rows } = make({
+        connectors: [
+          { id: 'sabnzbd', kind: 'built-in', state: 'built-in', provides: ['download-queue'], settings: { SABNZBD_URL: { default: 'http://localhost:8080', label: 'SABnzbd URL' } } },
+          { id: 'qbittorrent', kind: 'vault', state: 'new', provides: ['download-queue'], settings: { limit: { default: 10, label: 'Limit' } } },
+        ],
+        data: { bindings: { 'download-queue': ['sabnzbd', 'qbittorrent'] }, settings: { sabnzbd: { SABNZBD_URL: 'http://nas:8080' }, qbittorrent: { limit: 5 } } },
+      });
+      await tab.display();
+      rows().find((r) => r.name === 'sabnzbd · SABnzbd URL')!.texts[0].change('');
+      rows().find((r) => r.name === 'qbittorrent · Limit')!.texts[0].change('  ');
+      await vi.advanceTimersByTimeAsync(450);
+      expect(saved.at(-1)!.settings).toEqual({ sabnzbd: {}, qbittorrent: {} });
+    } finally { vi.useRealTimers(); }
+  });
 });
