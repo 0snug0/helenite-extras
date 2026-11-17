@@ -111,11 +111,21 @@ describe('list', () => {
 
   it('keeps an own __proto__ key in a record as data', async () => {
     const hostile = JSON.parse('{"id":1,"title":"t","__proto__":{"polluted":true}}');
-    const c = contract({ type: 'object', properties: { id: { type: 'integer' }, title: { type: 'string' }, __proto__: { type: 'object' } } });
+    const c = contract(JSON.parse('{"type":"object","properties":{"id":{"type":"integer"},"title":{"type":"string"},"__proto__":{"type":"object"}}}'));
     const { svc } = setup([source('a', { list: () => [hostile] })], ['a'], new Map([['download-queue', c]]));
     const r = await svc.list('download-queue');
     expect(({} as any).polluted).toBeUndefined();
+    expect(Object.hasOwn(r.records[0], '__proto__')).toBe(true);
     expect(Object.getPrototypeOf(r.records[0])).toBe(Object.prototype);
+    expect(r.records[0].$source).toBe('a');
+  });
+
+  it('queries a source once when a binding repeats its id', async () => {
+    const a = source('a', { list: () => [good(1)] });
+    const { svc } = setup([a], ['a', 'a']);
+    const r = await svc.list('download-queue');
+    expect(r.records).toHaveLength(1);
+    expect(a.invoke).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -128,6 +138,18 @@ describe('act', () => {
     const out = await svc.act('download-queue', 'remove', rec, [true]);
     expect(out).toEqual({ method: 'removeItem', args: [{ id: 1, title: 't1' }, true] });
     expect(b.invoke).not.toHaveBeenCalled();
+  });
+
+  it('keeps an own __proto__ key on the record handed to the connector', async () => {
+    const c = contract(JSON.parse('{"records":{"type":"object","properties":{"id":{"type":"integer"},"__proto__":{"type":"object"}}},"actions":{"pause":{"args":[]}}}'));
+    const a = source('a', { provides: { 'download-queue': { actions: { pause: 'pauseItem' } } } });
+    const { svc } = setup([a], ['a'], new Map([['download-queue', c]]));
+    await svc.act('download-queue', 'pause', JSON.parse('{"id":1,"$source":"a","__proto__":{"x":1}}'), []);
+    const passed = a.invoke.mock.calls[0][1][0] as Record<string, unknown>;
+    expect(Object.hasOwn(passed, '__proto__')).toBe(true);
+    expect(Object.hasOwn(passed, '$source')).toBe(false);
+    expect(Object.getPrototypeOf(passed)).toBe(Object.prototype);
+    expect((passed as any).x).toBeUndefined();
   });
 
   it('rejects wrong arg count or type as bad-request', async () => {

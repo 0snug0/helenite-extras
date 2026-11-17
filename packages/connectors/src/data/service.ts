@@ -70,7 +70,7 @@ export function createDataService(deps: DataServiceDeps) {
   };
   const boundIds = (name: string): string[] => {
     const b = deps.data().bindings;
-    return own(b, name) && Array.isArray(b[name]) ? b[name].filter((id) => typeof id === 'string') : [];
+    return own(b, name) && Array.isArray(b[name]) ? [...new Set(b[name].filter((id) => typeof id === 'string'))] : [];
   };
 
   async function listFrom(id: string, contract: Contract): Promise<{ records: DataRecord[]; error?: SourceError }> {
