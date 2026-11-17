@@ -55,6 +55,12 @@ export interface SettingSpec {
   label: string;
 }
 
+/** Maps a reference contract onto client methods: `list` returns contract records; each action is called `method(record, ...args)`. */
+export interface ProvidesSpec {
+  list?: string;
+  actions?: Record<string, string>;
+}
+
 export interface ConnectorDef<C = unknown> {
   id: string;
   name: string;
@@ -64,6 +70,8 @@ export interface ConnectorDef<C = unknown> {
   /** Origins (`scheme://host:port`) this connector talks to, given resolved settings. Must be a subset of the manifest's `net`. */
   hosts(settings: Record<string, SettingValue>): string[];
   client(ctx: ConnectorContext): C;
+  /** Reference contracts (by name, e.g. `download-queue`) this connector can serve. */
+  provides?: Record<string, ProvidesSpec>;
 }
 
 export function defineConnector<C>(def: ConnectorDef<C>): ConnectorDef<C> {

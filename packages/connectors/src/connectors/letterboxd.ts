@@ -63,6 +63,7 @@ export const letterboxd = defineConnector({
   secrets: [],
   settings: { LETTERBOXD_USER: { default: '', label: 'Letterboxd username' } },
   hosts: () => [ORIGIN],
+  provides: { watchlist: { list: 'listWatchlist' } },
   client(ctx: ConnectorContext) {
     const page = async (path: string) => (await request('letterboxd', ctx, { url: `${ORIGIN}${path}`, headers: { Accept: 'text/html,application/xml', 'User-Agent': 'Helenite/0.1 (personal vault app)' } })).text;
     const user = (u?: string) => {
@@ -70,7 +71,7 @@ export const letterboxd = defineConnector({
       if (!/^[A-Za-z0-9_-]+$/.test(name)) throw new Error('letterboxd: set LETTERBOXD_USER to a username');
       return name;
     };
-    return {
+    const client = {
       async getDiary(u?: string): Promise<DiaryEntry[]> { return parseDiaryRss(await page(`/${user(u)}/rss/`)); },
       async getWatchlist(u?: string, maxPages = 10): Promise<WatchlistFilm[]> {
         const out: WatchlistFilm[] = [];
@@ -85,6 +86,8 @@ export const letterboxd = defineConnector({
         if (!/^[a-z0-9-]+$/.test(slug)) throw new Error('letterboxd: bad film slug');
         return parseFilmPage(await page(`/film/${slug}/`), `${ORIGIN}/film/${slug}/`);
       },
+      async listWatchlist() { return (await client.getWatchlist()).map((f) => ({ id: f.slug, title: f.title, link: `${ORIGIN}/film/${f.slug}/` })); },
     };
+    return client;
   },
 });

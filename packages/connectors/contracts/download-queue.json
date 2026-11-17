@@ -1,0 +1,20 @@
+{
+  "records": {
+    "type": "object",
+    "required": ["id", "name", "status", "progress", "sizeBytes", "leftBytes"],
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "status": { "enum": ["queued", "downloading", "paused", "completed", "failed"] },
+      "progress": { "type": "number", "minimum": 0, "maximum": 1 },
+      "sizeBytes": { "type": "number" },
+      "leftBytes": { "type": "number" },
+      "etaSeconds": { "type": "number" }
+    }
+  },
+  "actions": {
+    "pause": { "args": [] },
+    "resume": { "args": [] },
+    "remove": { "args": [{ "type": "boolean" }] }
+  }
+}

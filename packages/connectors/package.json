@@ -7,6 +7,8 @@
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./data": "./src/data/index.ts",
+    "./data/schema": "./src/data/schema.ts",
     "./main": "./src/main/index.ts",
     "./ui": "./src/ui/index.ts"
   },
