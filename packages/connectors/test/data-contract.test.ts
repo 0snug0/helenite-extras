@@ -46,6 +46,23 @@ describe('checkSchema', () => {
   });
 });
 
+describe('prototype-safe handling', () => {
+  it('project ignores inherited names and __proto__', () => {
+    const out = project(JSON.parse('{"constructor":1,"__proto__":{"x":1}}'), { properties: { id: {} } });
+    expect(out).toEqual({});
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+  });
+  it('validate reports a constructor key as unexpected', () => {
+    expect(validate(JSON.parse('{"constructor":1}'), { type: 'object', properties: {}, additionalProperties: false })).toHaveLength(1);
+  });
+  it('checkSchema returns errors for malformed schemas instead of throwing', () => {
+    for (const bad of [{ properties: { a: null } }, { anyOf: {} }, { anyOf: 5 }, { properties: 3 }]) {
+      const r = parseContract('c', JSON.stringify(bad));
+      expect('error' in r).toBe(true);
+    }
+  });
+});
+
 describe('validate', () => {
   it('still validates', () => {
     expect(validate({ id: 'a' }, { type: 'object', properties: { id: { type: 'integer' } } })).toHaveLength(1);

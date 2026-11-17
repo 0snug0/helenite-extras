@@ -10,6 +10,6 @@ export function project(value: unknown, schema: JsonSchema): unknown {
   if (extra && extra !== false) return value;
   const props: Record<string, JsonSchema> = schema.properties ?? {};
   const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(value as Record<string, unknown>)) if (k in props) out[k] = project(v, props[k]);
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) if (Object.hasOwn(props, k)) Object.defineProperty(out, k, { value: project(v, props[k]), enumerable: true, writable: true, configurable: true });
   return out;
 }

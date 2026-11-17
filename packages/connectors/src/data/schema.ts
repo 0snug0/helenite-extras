@@ -37,7 +37,7 @@ export function validate(value: unknown, schema: Schema, at = '$'): string[] {
     const o = value as Record<string, unknown>;
     for (const r of schema.required ?? []) if (!(r in o)) errs.push(`${at}: missing required "${r}"`);
     for (const [k, v] of Object.entries(o)) {
-      if (schema.properties?.[k]) errs.push(...validate(v, schema.properties[k], `${at}.${k}`));
+      if (Object.hasOwn(schema.properties ?? {}, k) && schema.properties[k]) errs.push(...validate(v, schema.properties[k], `${at}.${k}`));
       else if (schema.additionalProperties === false) errs.push(`${at}: unexpected property "${k}"`);
       else if (schema.additionalProperties && typeof schema.additionalProperties === 'object') errs.push(...validate(v, schema.additionalProperties, `${at}.${k}`));
     }
@@ -47,14 +47,22 @@ export function validate(value: unknown, schema: Schema, at = '$'): string[] {
 
 // Static schema lint: unknown keywords anywhere, and the reserved `$source` key declared under any `properties`.
 export function checkSchema(schema: JsonSchema, at = '$'): string[] {
+  if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return [`${at}: schema must be an object`];
   const errs: string[] = [];
   for (const k of Object.keys(schema)) if (!KNOWN.has(k)) errs.push(`${at}: unsupported schema keyword "${k}"`);
-  for (const [k, v] of Object.entries<JsonSchema>(schema.properties ?? {})) {
-    if (k === '$source') errs.push(`${at}.properties: "$source" is reserved`);
-    errs.push(...checkSchema(v, `${at}.${k}`));
+  if (schema.properties !== undefined) {
+    if (!schema.properties || typeof schema.properties !== 'object' || Array.isArray(schema.properties)) errs.push(`${at}: properties must be an object`);
+    else
+      for (const [k, v] of Object.entries<JsonSchema>(schema.properties)) {
+        if (k === '$source') errs.push(`${at}.properties: "$source" is reserved`);
+        errs.push(...checkSchema(v, `${at}.${k}`));
+      }
   }
-  if (schema.items) errs.push(...checkSchema(schema.items, `${at}[]`));
+  if (schema.items !== undefined) errs.push(...checkSchema(schema.items, `${at}[]`));
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') errs.push(...checkSchema(schema.additionalProperties, `${at}.*`));
-  (schema.anyOf ?? []).forEach((s: JsonSchema, i: number) => errs.push(...checkSchema(s, `${at}.anyOf[${i}]`)));
+  if (schema.anyOf !== undefined) {
+    if (!Array.isArray(schema.anyOf)) errs.push(`${at}: anyOf must be an array`);
+    else schema.anyOf.forEach((s: JsonSchema, i: number) => errs.push(...checkSchema(s, `${at}.anyOf[${i}]`)));
+  }
   return errs;
 }
