@@ -46,7 +46,8 @@ export class TokenError extends Error {
   constructor(public status: number, public code?: string) { super(`token endpoint: HTTP ${status}${code ? ` ${code}` : ''}`); this.name = 'TokenError'; }
 }
 
-export interface TokenSet { accessToken: string; refreshToken?: string; expiresAt: number }
+/** `scope`: the space-separated scopes the server actually granted, when it says (Google does). */
+export interface TokenSet { accessToken: string; refreshToken?: string; expiresAt: number; scope?: string }
 type FetchLike = typeof fetch;
 
 async function tokenRequest(endpoint: string, params: Record<string, string>, fetchImpl: FetchLike, now: () => number): Promise<TokenSet> {
@@ -55,7 +56,7 @@ async function tokenRequest(endpoint: string, params: Record<string, string>, fe
   let j: any = {};
   try { j = JSON.parse(text); } catch { /* handled below */ }
   if (!res.ok || !j.access_token) throw new TokenError(res.status, typeof j.error === 'string' ? j.error : undefined);
-  return { accessToken: j.access_token, refreshToken: j.refresh_token, expiresAt: now() + (Number(j.expires_in) || 3600) * 1000 };
+  return { accessToken: j.access_token, refreshToken: j.refresh_token, expiresAt: now() + (Number(j.expires_in) || 3600) * 1000, ...(typeof j.scope === 'string' ? { scope: j.scope } : {}) };
 }
 
 export const exchangeCode = (o: { tokenEndpoint: string; clientId: string; clientSecret?: string; code: string; verifier: string; redirectUri: string; fetchImpl?: FetchLike; now?: () => number }) =>
