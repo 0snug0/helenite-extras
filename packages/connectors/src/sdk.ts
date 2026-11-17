@@ -17,6 +17,18 @@ export interface NetResponse {
 }
 export type SettingValue = string | number | boolean;
 
+/**
+ * Account-backed data for connectors. Structural on purpose: connectors must not import @helenite/accounts
+ * (which depends on connectors). The host passes a vault-scoped VaultAccounts; only granted accounts appear.
+ */
+export interface ConnectorCalendarEvent {
+  id: string; calendarId: string; summary: string; start: string; end: string; allDay: boolean; location?: string; htmlLink?: string; account: string;
+}
+export interface ConnectorAccounts {
+  calendarEvents(o: { from: string; to: string; accounts?: string[] }): Promise<{ events: ConnectorCalendarEvent[]; errors: { account: string; message: string }[] }>;
+  list(): { id: string; label: string; provider: string; services: string[] }[];
+}
+
 export interface ConnectorContext {
   /** The host's `api.net.fetch`: origin-scoped, CORS-free, fills `{{secret:NAME}}` placeholders. Never throws on HTTP status. */
   fetch(req: NetRequest): Promise<NetResponse>;
@@ -24,6 +36,8 @@ export interface ConnectorContext {
   settings: Record<string, SettingValue>;
   /** Host-side hook for connectors that refresh tokens (google-calendar). Defaults to a no-op. */
   ensureAuth?(connectorId: string): Promise<void>;
+  /** Vault-scoped accounts, when the host has them. Unset in builds or vaults without accounts. */
+  accounts?: ConnectorAccounts;
   /** Injectable for tests. */
   sleep?(ms: number): Promise<void>;
 }

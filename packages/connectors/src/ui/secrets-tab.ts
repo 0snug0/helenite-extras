@@ -13,8 +13,9 @@ export interface SecretsTabDeps {
   backend?: string;
   /** Current entries (re-read on every render so newly installed apps show up). */
   entries(): SecretEntry[];
-  /** Run the Google Calendar consent flow (connector-host / google-auth `connect`). Omit to hide the button. */
+  /** @deprecated Google sign-in moved to Settings → Accounts; no longer rendered. */
   connectGoogle?(): Promise<void>;
+  /** @deprecated see connectGoogle. */
   disconnectGoogle?(): void;
 }
 
@@ -35,7 +36,7 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
       new Setting(containerEl).setName(owner).setHeading();
       for (const e of list) renderEntry(this, e);
     }
-    if (deps.connectGoogle) renderGoogle(this);
+    renderAccountsPointer(this);
   };
 
   const rerender = (t: PluginSettingTab) => t.display();
@@ -53,14 +54,8 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
     if (e.isSet) row.addButton((b) => b.setButtonText('Remove').setWarning().onClick(() => { deps.secrets.delete(e.scope, e.name); rerender(t); }));
   }
 
-  function renderGoogle(t: PluginSettingTab) {
-    const connected = deps.secrets.has('connector:google-calendar', 'GCAL_REFRESH_TOKEN');
-    const s = new Setting(t.containerEl).setName('Google Calendar').setDesc(connected ? 'Connected.' : 'Not connected. Save the OAuth client ID above first, then connect.');
-    s.addButton((b) => b.setButtonText(connected ? 'Reconnect' : 'Connect').onClick(async () => {
-      try { await deps.connectGoogle!(); new Notice('Google Calendar connected.'); } catch (err) { new Notice(`Connect failed: ${(err as Error).message}`); }
-      rerender(t);
-    }));
-    if (connected && deps.disconnectGoogle) s.addButton((b) => b.setButtonText('Disconnect').setWarning().onClick(() => { deps.disconnectGoogle!(); rerender(t); }));
+  function renderAccountsPointer(t: PluginSettingTab) {
+    new Setting(t.containerEl).setName('Google Calendar').setDesc('Calendar and mail sign-ins are accounts now. Manage in Settings → Accounts.');
   }
   return tab;
 }

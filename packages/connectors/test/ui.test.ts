@@ -45,13 +45,10 @@ describe('Settings → Secrets tab', () => {
     expect(notices).toContain('Enter a value first.');
     expect(rows().find((r) => r.name === 'Google access token (managed)')!.texts).toHaveLength(0);
   });
-  it('Connect Google runs the flow and re-renders', async () => {
-    let ran = 0;
-    const { secrets, rows } = make(async () => { ran++; secrets.set(connectorScope('google-calendar'), 'GCAL_REFRESH_TOKEN', 'r'); });
+  it('points Google Calendar at Settings → Accounts instead of offering a connect button', () => {
+    const { rows } = make(async () => {});
     const g = rows().find((r) => r.name === 'Google Calendar' && !r.heading)!;
-    expect(g.buttons[0].text).toBe('Connect');
-    await g.buttons[0].click();
-    expect(ran).toBe(1);
-    expect(rows().find((r) => r.name === 'Google Calendar' && !r.heading)!.buttons[0].text).toBe('Reconnect');
+    expect(g.buttons).toHaveLength(0);
+    expect(g.desc).toContain('Manage in Settings → Accounts');
   });
 });

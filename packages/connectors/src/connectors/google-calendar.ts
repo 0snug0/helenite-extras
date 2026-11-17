@@ -1,4 +1,4 @@
-import { defineConnector, query, requestJson, secretRef, type ConnectorContext } from '../sdk';
+import { defineConnector, query, requestJson, secretRef, type ConnectorAccounts, type ConnectorContext } from '../sdk';
 
 const API = 'https://www.googleapis.com';
 export const GCAL_SECRETS = { access: 'GCAL_ACCESS_TOKEN', refresh: 'GCAL_REFRESH_TOKEN', clientId: 'GCAL_CLIENT_ID', clientSecret: 'GCAL_CLIENT_SECRET' } as const;
@@ -10,6 +10,24 @@ const norm = (e: any): CalendarEvent => ({
   start: e.start?.dateTime ?? e.start?.date, end: e.end?.dateTime ?? e.end?.date,
   allDay: !e.start?.dateTime, location: e.location, htmlLink: e.htmlLink,
 });
+
+// With accounts present this connector is an alias: Google accounts granted to the vault, no GCAL_* secrets, no ctx.fetch.
+const googleAccounts = (acc: ConnectorAccounts) => acc.list().filter((a) => a.provider === 'google' && a.services.includes('calendar'));
+
+function accountBacked(acc: ConnectorAccounts) {
+  return {
+    async listCalendars(): Promise<{ id: string; summary: string; primary: boolean }[]> {
+      return googleAccounts(acc).map((a, i) => ({ id: a.id, summary: a.label, primary: i === 0 }));
+    },
+    async listEvents(opts: { calendarId?: string; timeMin: string; timeMax: string; max?: number }): Promise<CalendarEvent[]> {
+      const ids = googleAccounts(acc).map((a) => a.id);
+      if (!ids.length) return [];
+      const { events } = await acc.calendarEvents({ from: opts.timeMin, to: opts.timeMax, accounts: ids });
+      const mapped = events.map(({ id, summary, start, end, allDay, location, htmlLink }): CalendarEvent => ({ id, summary, start, end, allDay, location, htmlLink }));
+      return opts.max ? mapped.slice(0, opts.max) : mapped;
+    },
+  };
+}
 
 export const googleCalendar = defineConnector({
   id: 'google-calendar',
@@ -24,6 +42,8 @@ export const googleCalendar = defineConnector({
   settings: {},
   hosts: () => [API],
   client(ctx: ConnectorContext) {
+    const acc = ctx.accounts;
+    if (acc) return accountBacked(acc);
     const get = async <T>(path: string, params = {}): Promise<T> => {
       await ctx.ensureAuth?.('google-calendar');
       return requestJson<T>('google-calendar', ctx, { url: `${API}/calendar/v3${path}${query(params)}`, headers: { Authorization: `Bearer ${secretRef(GCAL_SECRETS.access)}` } });
