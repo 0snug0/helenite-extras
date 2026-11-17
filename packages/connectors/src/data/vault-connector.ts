@@ -45,6 +45,16 @@ const bareOrigin = (s: string): boolean => {
   }
 };
 
+/** Origin of an http(s) URL, else null (file:, data: and friends have the opaque origin "null"). */
+const httpOrigin = (v: unknown): string | null => {
+  try {
+    const u = new URL(String(v));
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.origin : null;
+  } catch {
+    return null;
+  }
+};
+
 export function parseVaultConnectorManifest(
   text: string,
   folderId: string,
@@ -82,7 +92,10 @@ export function parseVaultConnectorManifest(
 
   const hostSettings = raw.hostSettings ?? [];
   if (!isStringArray(hostSettings)) return { error: 'hostSettings must be an array of setting names' };
-  for (const h of hostSettings) if (!has(settings, h)) return { error: `hostSettings "${h}" is not a declared setting` };
+  for (const h of hostSettings) {
+    if (!has(settings, h)) return { error: `hostSettings "${h}" is not a declared setting` };
+    if (!httpOrigin(settings[h].default)) return { error: `hostSettings "${h}" default must be an http(s) URL` };
+  }
 
   const secrets: SecretSpec[] = [];
   const rawSecrets = raw.secrets ?? [];
@@ -136,14 +149,14 @@ export function resolvedOrigins(m: VaultConnectorManifest, settings: Record<stri
   const out = new Set(m.hosts);
   for (const key of m.hostSettings) {
     const v = Object.hasOwn(settings, key) ? settings[key] : m.settings[key]?.default;
-    try {
-      out.add(originOf(v));
-    } catch {
-      // unparseable value: no origin to allow
-    }
+    const origin = httpOrigin(v);
+    if (origin) out.add(origin);
   }
   return [...out];
 }
+
+// Fatal decoding keeps string<->bytes exact, so hashing the string equals hashing the file bytes.
+const STRICT_UTF8 = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true });
 
 /** Reads a regular file without following a symlink at the leaf. */
 function readRegularFile(file: string): string {
@@ -153,7 +166,7 @@ function readRegularFile(file: string): string {
   const fd = fs.openSync(file, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
   try {
     if (!fs.fstatSync(fd).isFile()) throw new Error('is not a regular file');
-    return fs.readFileSync(fd, 'utf8');
+    return STRICT_UTF8.decode(fs.readFileSync(fd));
   } finally {
     fs.closeSync(fd);
   }
@@ -184,7 +197,7 @@ export function readVaultConnectors(vaultRoot: string): { found: VaultConnectorF
         texts.push(readRegularFile(path.join(dir, e.name, file)));
       } catch (err) {
         const code = (err as NodeJS.ErrnoException).code;
-        failure = code === 'ENOENT' ? `missing ${file}` : code === 'ELOOP' ? `${file} is a symlink` : `${file} ${(err as Error).message}`;
+        failure = err instanceof TypeError ? `${file} is not valid UTF-8` : code === 'ENOENT' ? `missing ${file}` : code === 'ELOOP' ? `${file} is a symlink` : `${file} ${(err as Error).message}`;
         break;
       }
     }

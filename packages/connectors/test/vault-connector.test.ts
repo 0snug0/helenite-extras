@@ -38,12 +38,15 @@ describe('parseVaultConnectorManifest', () => {
     expect('manifest' in parse({ ...base, secrets: [{ name: 'K', label: 'k', required: false, host: 'https://api.example.com' }] })).toBe(true);
   });
   it.each(['constructor', '__proto__', 'prototype', 'toString', 'valueOf', '1bad', 'a-b', ''])('rejects method name %j', (m) => {
-    expect(err(parse({ ...base, provides: { x: { list: m } } }))).toMatch(/not allowed/);
+    expect(err(parse({ ...base, provides: { 'x-y': { list: m } } }))).toMatch(/list method/);
     expect(err(parse({ ...base, provides: { 'x-y': { actions: { remove: m } } } }))).toMatch(/not allowed/);
   });
   it('rejects hostile action and setting names written as JSON own keys', () => {
     expect(err(parseVaultConnectorManifest('{"id":"a-b","name":"n","provides":{"x-y":{"actions":{"__proto__":"m"}}}}', 'a-b', new Set()))).toMatch(/not allowed/);
     expect(err(parseVaultConnectorManifest('{"id":"a-b","name":"n","settings":{"__proto__":{"default":1,"label":"l"}}}', 'a-b', new Set()))).toMatch(/not allowed/);
+  });
+  it('rejects a non-http(s) default for a hostSetting', () => {
+    expect(err(parse({ ...base, settings: { baseUrl: { default: 'file:///x', label: 'U' } } }))).toMatch(/hostSettings|http/);
   });
   it('rejects bad JSON and bad shapes', () => {
     expect(err(parseVaultConnectorManifest('{', 'a-b', new Set()))).toMatch(/JSON/);
@@ -77,6 +80,9 @@ describe('resolvedOrigins', () => {
   it('unions hosts with the origin of each hostSetting value, falling back to the default', () => {
     expect(resolvedOrigins(m, {}).sort()).toEqual(['http://localhost:7878', 'https://api.example.com']);
     expect(resolvedOrigins(m, { baseUrl: 'https://box.lan:9000/x' }).sort()).toEqual(['https://api.example.com', 'https://box.lan:9000']);
+  });
+  it('drops non-http(s) setting values', () => {
+    for (const v of ['file:///etc/passwd', 'data:,x', 'javascript:1', 'blob:https://a.com/x']) expect(resolvedOrigins(m, { baseUrl: v })).toEqual(['https://api.example.com']);
   });
   it('ignores an unparseable value', () => {
     expect(resolvedOrigins(m, { baseUrl: 'not a url' })).toEqual(['https://api.example.com']);
@@ -126,6 +132,15 @@ describe('readVaultConnectors', () => {
     expect(r.found).toEqual([]);
     expect(r.errors).toHaveLength(1);
     expect(JSON.stringify(r)).not.toContain('TOPSECRET');
+  });
+  it.each(['connector.js', 'connector.json'])('reports invalid UTF-8 in %s as an error', (name) => {
+    const v = vault();
+    put(v, 'Connectors/x-y/connector.json', '{}');
+    put(v, 'Connectors/x-y/connector.js', 'x');
+    fs.writeFileSync(path.join(v, 'Connectors/x-y', name), Buffer.from([0x61, 0xff, 0x62]));
+    const r = readVaultConnectors(v);
+    expect(r.found).toEqual([]);
+    expect(r.errors).toHaveLength(1);
   });
   it('refuses a symlinked connector folder', () => {
     const v = vault();
