@@ -8,14 +8,12 @@ import type { SettingSpec, SettingValue } from '../sdk';
 
 export interface DataStatusView {
   contracts: ContractStatus[];
-  connectors: { id: string; kind: 'built-in' | 'vault'; state: string; error?: string }[];
+  connectors: { id: string; kind: 'built-in' | 'vault'; state: string; error?: string; provides: string[]; settings: Record<string, SettingSpec> }[];
   data: DataFile;
 }
 
 export interface DataClient {
   status(): Promise<DataStatusView>;
-  /** Only the vault connector's manifest settings are read from this. */
-  review(id: string): Promise<{ manifest: { settings: Record<string, SettingSpec> } | null }>;
   save(f: DataFile): Promise<void>;
 }
 
@@ -26,6 +24,7 @@ export interface DataTabDeps {
   openReview(id: string): void;
 }
 
+const SAVE_DEBOUNCE_MS = 400;
 const BADGE: Record<string, string> = { ready: 'ready', 'waiting-review': 'waiting for review', rejected: 'rejected', missing: 'missing' };
 
 export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
@@ -52,20 +51,24 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
       return;
     }
     if (mine !== token) return;
-    // Setting specs for vault connectors come from their manifest; fetched only for connectors that are bound somewhere.
-    const vault = new Set(status.connectors.filter((c) => c.kind === 'vault').map((c) => c.id));
-    const bound = new Set(status.contracts.flatMap((c) => c.sources.map((s) => s.id)));
-    const specs = new Map<string, Record<string, SettingSpec>>();
-    await Promise.all([...bound].filter((id) => vault.has(id)).map(async (id) => {
-      try { const r = await deps.data.review(id); if (r.manifest) specs.set(id, r.manifest.settings); } catch { /* shown without settings */ }
-    }));
-    if (mine !== token) return;
+    const byId = new Map(status.connectors.map((x) => [x.id, x]));
+    const vault = new Set(status.connectors.filter((x) => x.kind === 'vault').map((x) => x.id));
 
     let file: DataFile = status.data;
+    const write = async (next: DataFile) => {
+      try { await deps.data.save(next); } catch (e) { new Notice(`Could not save: ${(e as Error).message}`); }
+    };
     const save = async (next: DataFile, rerender: boolean) => {
       file = next;
-      try { await deps.data.save(next); } catch (e) { new Notice(`Could not save: ${(e as Error).message}`); }
+      await write(next);
       if (rerender) await render(t);
+    };
+    // Typing saves after a pause, not on every keystroke.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const saveSoon = (next: DataFile) => {
+      file = next;
+      clearTimeout(timer);
+      timer = setTimeout(() => void write(file), SAVE_DEBOUNCE_MS);
     };
     const bindingsOf = (contract: string) => file.bindings[contract] ?? [];
 
@@ -83,10 +86,9 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
         if (i < c.sources.length - 1) row.addButton((b) => b.setButtonText('Move down').onClick(() => move(1)));
         row.addButton((b) => b.setButtonText('Remove').setWarning().onClick(() => save({ ...file, bindings: { ...file.bindings, [c.name]: bindingsOf(c.name).filter((x) => x !== s.id) } }, true)));
         if (vault.has(s.id)) row.addButton((b) => b.setButtonText('Review').onClick(() => deps.openReview(s.id)));
-        for (const [key, spec] of Object.entries(specs.get(s.id) ?? {})) renderSetting(containerEl, s.id, key, spec);
+        for (const [key, spec] of Object.entries(byId.get(s.id)?.settings ?? {})) renderSetting(containerEl, s.id, key, spec);
       });
-      // DataStatus doesn't say which connectors provide which contract, so every connector not yet bound is offered.
-      const candidates = status.connectors.filter((x) => !bindingsOf(c.name).includes(x.id));
+      const candidates = status.connectors.filter((x) => x.provides.includes(c.name) && !bindingsOf(c.name).includes(x.id));
       if (candidates.length) {
         let pick = candidates[0].id;
         new Setting(containerEl).setName('Add a connector').addDropdown((d) => {
@@ -98,11 +100,11 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
 
     function renderSetting(el: HTMLElement, id: string, key: string, spec: SettingSpec): void {
       const current = (): SettingValue => file.settings[id]?.[key] ?? spec.default;
-      const set = (v: SettingValue) => save({ ...file, settings: { ...file.settings, [id]: { ...file.settings[id], [key]: v } } }, false);
+      const set = (v: SettingValue) => saveSoon({ ...file, settings: { ...file.settings, [id]: { ...file.settings[id], [key]: v } } });
       const row = new Setting(el).setName(`${id} · ${spec.label}`);
-      if (typeof spec.default === 'boolean') row.addToggle((x) => x.setValue(current() === true).onChange((v) => void set(v)));
+      if (typeof spec.default === 'boolean') row.addToggle((x) => x.setValue(current() === true).onChange((v) => set(v)));
       else row.addText((x) => x.setValue(String(current())).onChange((v) => {
-        if (typeof spec.default === 'number') { const n = Number(v); if (v.trim() !== '' && Number.isFinite(n)) void set(n); } else void set(v);
+        if (typeof spec.default === 'number') { const n = Number(v); if (v.trim() !== '' && Number.isFinite(n)) set(n); } else set(v);
       }));
     }
   }
