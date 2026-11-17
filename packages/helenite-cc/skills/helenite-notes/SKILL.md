@@ -11,6 +11,6 @@ Sections: Goal, Decisions, Plan (checkboxes), Open questions, Changes, Notes.
 
 - Read it: `mcp__helenite__summary_read` (optionally `section`).
 - Update it: `mcp__helenite__summary_update_section` with `section`, `text`, `mode` (`replace` or `append`). Keep Goal to one or two sentences, Decisions to a bullet each, Plan as `- [ ]` / `- [x]` items. Changes is appended automatically on every edit you make.
-- Ask the user with `AskUserQuestion` (or `mcp__helenite__wizard` for several fields). Each becomes a `helenite-ask` block under Open questions; the user answers in the note, and you receive the answer as the tool result. Never ask in prose.
+- Ask the user with `mcp__helenite__ask` (or `mcp__helenite__wizard` for several fields); `AskUserQuestion` is fine for a quick choice with no context. Each question is a file `Chats/<uuid>/<uuid>-N.md` (frontmatter `helenite: ask`) that opens as its own tab, and you receive the answer as the tool result. The session note gets a collapsible summary callout per question: `[!question]-` pending, `[!success]-` answered, `[!failure]-` dismissed. Never ask in prose.
 - The user may also edit the note's prose. Helenite sends you the diff as a `<note_edit>` message when you are idle; treat it as an instruction.
-- Answered blocks stay in the note as a record. Do not rewrite or delete them.
+- Question files and their callouts stay as a record. You may read them, but never write, rewrite or delete question files or the chat note directly.
