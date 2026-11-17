@@ -6,9 +6,9 @@ import path from 'node:path';
 import { getConnector } from '../registry';
 
 export interface SafeStorageLike {
-  isEncryptionAvailable(): boolean;
-  encryptString(plain: string): Buffer;
-  decryptString(cipher: Buffer): string;
+  isAsyncEncryptionAvailable(): Promise<boolean>;
+  encryptStringAsync(plain: string): Promise<Buffer>;
+  decryptStringAsync(cipher: Buffer): Promise<{ result: string; shouldReEncrypt?: boolean }>;
 }
 
 export const appScope = (appId: string) => `app:${appId}`;
@@ -16,6 +16,10 @@ export const connectorScope = (id: string) => `connector:${id}`;
 
 export interface SecretStore {
   readonly backend: string;
+  /** Resolves once availability is known and stored values are decrypted. Use the store only after it. */
+  readonly ready: Promise<void>;
+  /** Resolves once every earlier set/delete has reached the file. */
+  flush(): Promise<void>;
   has(scope: string, name: string): boolean;
   get(scope: string, name: string): string | null;
   set(scope: string, name: string, value: string): void;
@@ -27,6 +31,13 @@ export interface SecretStore {
 /** What auth and the UI need. Session R's `SecretStore` (keyed by an id string) satisfies this when given our scope strings. */
 export type SecretAccess = Pick<SecretStore, 'has' | 'get' | 'set' | 'delete'>;
 
+const UNAVAILABLE = 'keychain encryption is not available in this process';
+
+/**
+ * Electron deprecated safeStorage's sync calls, so the store decrypts every value once (`ready`) and serves reads
+ * from memory. Writes update memory at once and reach the file in the background, in call order (`flush()` waits).
+ * This process owns the file: a value another process writes appears after a restart.
+ */
 export function createSecretStore(opts: { userDataDir: string; safeStorage: SafeStorageLike }): SecretStore {
   const file = path.join(opts.userDataDir, 'secrets.json');
   const load = (): Record<string, string> => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return {}; } };
@@ -36,37 +47,86 @@ export function createSecretStore(opts: { userDataDir: string; safeStorage: Safe
     fs.writeFileSync(tmp, JSON.stringify(all, null, 1), { mode: 0o600 });
     fs.renameSync(tmp, file);
   };
-  const usable = () => !!opts.safeStorage.isEncryptionAvailable();
   const key = (scope: string, name: string) => `${scope}/${name}`;
+
+  const stored = new Set(Object.keys(load())); // keys present, known without decrypting
+  const plain = new Map<string, string>();
+  const failed = new Map<string, unknown>(); // keys whose ciphertext would not decrypt
+  let available = false;
+  let loaded = false;
+  let writes: Promise<void> = Promise.resolve();
+  const enqueue = (op: () => Promise<void>) => {
+    writes = writes.then(op).catch((err) => console.error('[secrets] write failed', err));
+  };
+  const persist = (k: string, value: string) =>
+    enqueue(async () => {
+      const enc = (await opts.safeStorage.encryptStringAsync(value)).toString('base64');
+      if (plain.get(k) !== value) return; // superseded by a later set or delete
+      const all = load();
+      all[k] = enc;
+      save(all);
+    });
+
+  const ready = (async () => {
+    available = await opts.safeStorage.isAsyncEncryptionAvailable().catch(() => false);
+    if (!available) return;
+    for (const [k, enc] of Object.entries(load())) {
+      try {
+        const { result, shouldReEncrypt } = await opts.safeStorage.decryptStringAsync(Buffer.from(enc, 'base64'));
+        plain.set(k, result);
+        if (shouldReEncrypt) persist(k, result);
+      } catch (err) {
+        failed.set(k, err);
+      }
+    }
+    loaded = true;
+  })();
+  const usable = () => {
+    if (!available) throw new Error(UNAVAILABLE);
+    if (!loaded) throw new Error('secret store is not ready yet');
+  };
+
   return {
-    backend: usable() ? 'safeStorage (keychain)' : 'unavailable',
-    has: (scope, name) => key(scope, name) in load(),
+    get backend() { return available ? 'safeStorage (keychain)' : 'unavailable'; },
+    ready,
+    flush: () => writes,
+    has: (scope, name) => stored.has(key(scope, name)),
     get(scope, name) {
-      const enc = load()[key(scope, name)];
-      if (enc == null) return null;
-      if (!usable()) throw new Error('keychain encryption is not available in this process');
-      return opts.safeStorage.decryptString(Buffer.from(enc, 'base64'));
+      const k = key(scope, name);
+      if (!stored.has(k)) return null;
+      usable();
+      if (failed.has(k)) throw failed.get(k);
+      return plain.get(k)!;
     },
     set(scope, name, value) {
-      if (!usable()) throw new Error('keychain encryption is not available in this process');
-      const all = load();
-      all[key(scope, name)] = opts.safeStorage.encryptString(String(value)).toString('base64');
-      save(all);
+      usable();
+      const k = key(scope, name);
+      const v = String(value);
+      stored.add(k);
+      plain.set(k, v);
+      failed.delete(k);
+      persist(k, v);
     },
     delete(scope, name) {
-      const all = load();
-      if (delete all[key(scope, name)]) save(all);
+      const k = key(scope, name);
+      if (!stored.delete(k)) return;
+      plain.delete(k);
+      failed.delete(k);
+      enqueue(async () => {
+        const all = load();
+        if (delete all[k]) save(all);
+      });
     },
-    names: (scope) => Object.keys(load()).filter((k) => k.startsWith(`${scope}/`)).map((k) => k.slice(scope.length + 1)),
+    names: (scope) => [...stored].filter((k) => k.startsWith(`${scope}/`)).map((k) => k.slice(scope.length + 1)),
   };
 }
 
 /** Reversible stand-in for safeStorage, for tests and CI where no keychain exists. NOT encryption. */
 export function createFakeSafeStorage(): SafeStorageLike {
   return {
-    isEncryptionAvailable: () => true,
-    encryptString: (s) => Buffer.from(`fake:${s}`, 'utf8'),
-    decryptString: (b) => b.toString('utf8').replace(/^fake:/, ''),
+    isAsyncEncryptionAvailable: async () => true,
+    encryptStringAsync: async (s) => Buffer.from(`fake:${s}`, 'utf8'),
+    decryptStringAsync: async (b) => ({ result: b.toString('utf8').replace(/^fake:/, '') }),
   };
 }
 

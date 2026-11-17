@@ -11,13 +11,15 @@ const closers: Mock[] = [];
 afterAll(() => Promise.all(closers.map((m) => m.close())));
 
 describe('secret store', () => {
-  it('encrypts at rest (0600), lists names only, resolves app then connector scope', () => {
+  it('encrypts at rest (0600), lists names only, resolves app then connector scope', async () => {
     const d = dir();
     const s = createSecretStore({ userDataDir: d, safeStorage: createFakeSafeStorage() });
+    await s.ready;
     s.set(appScope('dl'), 'RADARR_API_KEY', 'hunter2');
     s.set(connectorScope('google-calendar'), 'GCAL_ACCESS_TOKEN', 'tok');
     expect(s.get(appScope('dl'), 'RADARR_API_KEY')).toBe('hunter2');
     expect(s.names(appScope('dl'))).toEqual(['RADARR_API_KEY']);
+    await s.flush();
     expect(statSync(join(d, 'secrets.json')).mode & 0o777).toBe(0o600);
     expect(readFileSync(join(d, 'secrets.json'), 'utf8')).not.toContain('hunter2');
     expect(resolveSecret(s, 'dl', 'RADARR_API_KEY')).toBe('hunter2');
@@ -26,9 +28,29 @@ describe('secret store', () => {
     expect(resolveSecret(s, 'other', 'RADARR_API_KEY', ['google-calendar'])).toBeNull();
     s.delete(appScope('dl'), 'RADARR_API_KEY');
     expect(s.has(appScope('dl'), 'RADARR_API_KEY')).toBe(false);
+    await s.flush();
+    const reopened = createSecretStore({ userDataDir: d, safeStorage: createFakeSafeStorage() });
+    await reopened.ready;
+    expect(reopened.has(appScope('dl'), 'RADARR_API_KEY')).toBe(false);
+    expect(reopened.get(connectorScope('google-calendar'), 'GCAL_ACCESS_TOKEN')).toBe('tok');
   });
-  it('refuses to write when the keychain is unavailable', () => {
-    const s = createSecretStore({ userDataDir: dir(), safeStorage: { ...createFakeSafeStorage(), isEncryptionAvailable: () => false } });
+  it('keeps the last of rapid writes, in call order', async () => {
+    const d = dir();
+    const s = createSecretStore({ userDataDir: d, safeStorage: createFakeSafeStorage() });
+    await s.ready;
+    s.set('a', 'K', 'one');
+    s.set('a', 'K', 'two');
+    s.set('a', 'L', 'x');
+    s.delete('a', 'L');
+    await s.flush();
+    const reopened = createSecretStore({ userDataDir: d, safeStorage: createFakeSafeStorage() });
+    await reopened.ready;
+    expect(reopened.get('a', 'K')).toBe('two');
+    expect(reopened.names('a')).toEqual(['K']);
+  });
+  it('refuses to write when the keychain is unavailable', async () => {
+    const s = createSecretStore({ userDataDir: dir(), safeStorage: { ...createFakeSafeStorage(), isAsyncEncryptionAvailable: async () => false } });
+    await s.ready;
     expect(s.backend).toBe('unavailable');
     expect(() => s.set('a', 'B', 'x')).toThrow(/not available/);
   });
@@ -39,6 +61,7 @@ describe('google-calendar OAuth against a mock server', () => {
     const { mock, state } = await googleMock();
     closers.push(mock);
     const secrets = createSecretStore({ userDataDir: dir(), safeStorage: createFakeSafeStorage() });
+    await secrets.ready;
     const scope = connectorScope('google-calendar');
     secrets.set(scope, 'GCAL_CLIENT_ID', 'client-1');
     const opened: string[] = [];
