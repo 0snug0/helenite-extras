@@ -5,6 +5,19 @@ export type JsonSchema = Record<string, any>;
 type Schema = JsonSchema;
 const KNOWN = new Set(['type', 'enum', 'const', 'properties', 'required', 'additionalProperties', 'items', 'minItems', 'maxItems', 'minimum', 'maximum', 'minLength', 'maxLength', 'pattern', 'anyOf', 'description', 'title', '$schema', 'default']);
 
+/** Longer patterns are refused: a contract is vault-controlled and a regex runs on every record. */
+export const MAX_PATTERN = 200;
+const patternError = (p: unknown): string | null => {
+  if (typeof p !== 'string') return 'pattern must be a string';
+  if (p.length > MAX_PATTERN) return `pattern is longer than ${MAX_PATTERN} chars`;
+  try {
+    new RegExp(p);
+    return null;
+  } catch {
+    return 'pattern is not a valid regular expression';
+  }
+};
+
 const typeOf = (v: unknown) => (v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v);
 const isType = (v: unknown, t: string) => (t === 'number' ? typeof v === 'number' : t === 'integer' ? Number.isInteger(v) : typeOf(v) === t);
 
@@ -26,7 +39,11 @@ export function validate(value: unknown, schema: Schema, at = '$'): string[] {
   if (typeof value === 'string') {
     if (schema.minLength != null && value.length < schema.minLength) errs.push(`${at}: shorter than ${schema.minLength}`);
     if (schema.maxLength != null && value.length > schema.maxLength) errs.push(`${at}: longer than ${schema.maxLength}`);
-    if (schema.pattern && !new RegExp(schema.pattern).test(value)) errs.push(`${at}: does not match ${schema.pattern}`);
+    if (schema.pattern !== undefined) {
+      const bad = patternError(schema.pattern);
+      if (bad) errs.push(`${at}: ${bad}`);
+      else if (!new RegExp(schema.pattern).test(value)) errs.push(`${at}: does not match ${schema.pattern}`);
+    }
   }
   if (Array.isArray(value)) {
     if (schema.minItems != null && value.length < schema.minItems) errs.push(`${at}: fewer than ${schema.minItems} items`);
@@ -35,7 +52,7 @@ export function validate(value: unknown, schema: Schema, at = '$'): string[] {
   }
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     const o = value as Record<string, unknown>;
-    for (const r of schema.required ?? []) if (!(r in o)) errs.push(`${at}: missing required "${r}"`);
+    for (const r of schema.required ?? []) if (!Object.hasOwn(o, r)) errs.push(`${at}: missing required "${r}"`);
     for (const [k, v] of Object.entries(o)) {
       if (Object.hasOwn(schema.properties ?? {}, k) && schema.properties[k]) errs.push(...validate(v, schema.properties[k], `${at}.${k}`));
       else if (schema.additionalProperties === false) errs.push(`${at}: unexpected property "${k}"`);
@@ -45,11 +62,15 @@ export function validate(value: unknown, schema: Schema, at = '$'): string[] {
   return errs;
 }
 
-// Static schema lint: unknown keywords anywhere, and the reserved `$source` key declared under any `properties`.
+// Static schema lint: unknown keywords anywhere, patterns that don't compile or are too long, and the reserved `$source` key declared under any `properties`.
 export function checkSchema(schema: JsonSchema, at = '$'): string[] {
   if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return [`${at}: schema must be an object`];
   const errs: string[] = [];
   for (const k of Object.keys(schema)) if (!KNOWN.has(k)) errs.push(`${at}: unsupported schema keyword "${k}"`);
+  if (schema.pattern !== undefined) {
+    const bad = patternError(schema.pattern);
+    if (bad) errs.push(`${at}: ${bad}`);
+  }
   if (schema.properties !== undefined) {
     if (!schema.properties || typeof schema.properties !== 'object' || Array.isArray(schema.properties)) errs.push(`${at}: properties must be an object`);
     else

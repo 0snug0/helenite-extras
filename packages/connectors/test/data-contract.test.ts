@@ -41,6 +41,13 @@ describe('checkSchema', () => {
     expect(checkSchema({ additionalProperties: { format: 'x' } })[0]).toContain('format');
     expect(checkSchema({ anyOf: [{ type: 'string' }, { foo: 1 }] })[0]).toContain('foo');
   });
+  it('compiles pattern: an invalid regex or one over 200 chars is an error', () => {
+    expect(checkSchema({ type: 'string', pattern: '(' })[0]).toMatch(/pattern/);
+    expect(checkSchema({ type: 'string', pattern: 'a'.repeat(201) })[0]).toMatch(/200/);
+    expect(checkSchema({ type: 'string', pattern: 'a'.repeat(200) })).toEqual([]);
+    expect(checkSchema({ pattern: 5 })[0]).toMatch(/pattern/);
+    expect('error' in parseContract('c', JSON.stringify({ properties: { a: { pattern: '[' } } }))).toBe(true);
+  });
   it('accepts a clean schema', () => {
     expect(checkSchema({ type: 'array', items: { type: 'object', properties: { id: { type: 'integer' } }, additionalProperties: false } })).toEqual([]);
   });
@@ -51,6 +58,10 @@ describe('prototype-safe handling', () => {
     const out = project(JSON.parse('{"constructor":1,"__proto__":{"x":1}}'), { properties: { id: {} } });
     expect(out).toEqual({});
     expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+  });
+  it('required counts own keys only, never inherited ones', () => {
+    expect(validate({}, { type: 'object', required: ['constructor', 'toString'] })).toHaveLength(2);
+    expect(validate(JSON.parse('{"constructor":1}'), { type: 'object', required: ['constructor'] })).toEqual([]);
   });
   it('validate reports a constructor key as unexpected', () => {
     expect(validate(JSON.parse('{"constructor":1}'), { type: 'object', properties: {}, additionalProperties: false })).toHaveLength(1);
