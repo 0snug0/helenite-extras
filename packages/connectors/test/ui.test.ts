@@ -6,11 +6,11 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const make = (connectGoogle?: () => Promise<void>) => {
+const make = () => {
   const secrets = createSecretStore({ userDataDir: mkdtempSync(join(tmpdir(), 'ui-')), safeStorage: createFakeSafeStorage() });
   const host = createConnectorHost({ secrets });
   const apps = [{ id: 'downloadrr', name: 'Downloadrr', connectors: ['radarr', 'google-calendar'], secrets: [{ name: 'EXTRA_KEY', label: 'Extra', required: true }] }];
-  const tab: any = createSecretsSettingTab({ app: new App() as any, plugin: new Plugin() as any, secrets, entries: () => host.entries(apps), connectGoogle });
+  const tab: any = createSecretsSettingTab({ app: new App() as any, plugin: new Plugin() as any, secrets, entries: () => host.entries(apps) });
   tab.display();
   return { secrets, tab, rows: () => tab.containerEl.settings as Setting[] };
 };
@@ -45,13 +45,10 @@ describe('Settings → Secrets tab', () => {
     expect(notices).toContain('Enter a value first.');
     expect(rows().find((r) => r.name === 'Google access token (managed)')!.texts).toHaveLength(0);
   });
-  it('Connect Google runs the flow and re-renders', async () => {
-    let ran = 0;
-    const { secrets, rows } = make(async () => { ran++; secrets.set(connectorScope('google-calendar'), 'GCAL_REFRESH_TOKEN', 'r'); });
+  it('points Google Calendar at Settings → Accounts instead of offering a connect button', () => {
+    const { rows } = make();
     const g = rows().find((r) => r.name === 'Google Calendar' && !r.heading)!;
-    expect(g.buttons[0].text).toBe('Connect');
-    await g.buttons[0].click();
-    expect(ran).toBe(1);
-    expect(rows().find((r) => r.name === 'Google Calendar' && !r.heading)!.buttons[0].text).toBe('Reconnect');
+    expect(g.buttons).toHaveLength(0);
+    expect(g.desc).toContain('Manage in Settings → Accounts');
   });
 });
