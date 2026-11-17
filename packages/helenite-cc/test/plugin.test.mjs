@@ -18,5 +18,24 @@ test('manifest, variants and skills are well formed', () => {
   assert.ok(existsSync(join(root, 'prompts/addendum.md')));
   // Default load must not double-register hooks or the MCP server.
   assert.ok(!existsSync(join(root, 'hooks/hooks.json')) && !existsSync(join(root, '.mcp.json')));
-  assert.ok(readdirSync(join(root, 'skills')).length === 4);
+  assert.ok(readdirSync(join(root, 'skills')).length === 5);
+});
+
+test('content skill and addendum cover the ask and render-check tools', () => {
+  const md = readFileSync(join(root, 'skills/helenite-content/SKILL.md'), 'utf8');
+  assert.match(md, /^---\nname: helenite-content\ndescription: .*Dataview.*\n---/);
+  const addendum = readFileSync(join(root, 'prompts/addendum.md'), 'utf8');
+  assert.match(addendum, /mcp__helenite__ask/);
+  assert.match(addendum, /vault_capabilities/);
+  assert.match(addendum, /note_render_check/);
+  assert.match(addendum, /never list options in prose/i);
+  assert.match(addendum, /Do not end a turn on an unanswered question/);
+});
+
+test('skill descriptions are valid YAML plain scalars', () => {
+  for (const s of readdirSync(join(root, 'skills'))) {
+    const fm = readFileSync(join(root, 'skills', s, 'SKILL.md'), 'utf8').split('\n---')[0];
+    const desc = fm.split('\n').find((l) => l.startsWith('description: ')).slice('description: '.length);
+    if (!/^["']/.test(desc)) assert.ok(!desc.includes(': ') && !desc.includes(' #'), `${s}: unquoted description has ': ' or ' #'`);
+  }
 });
