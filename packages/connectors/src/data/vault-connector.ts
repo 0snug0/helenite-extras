@@ -163,7 +163,8 @@ function readRegularFile(file: string): string {
   const st = fs.lstatSync(file);
   if (st.isSymbolicLink()) throw new Error('is a symlink');
   if (!st.isFile()) throw new Error('is not a regular file');
-  const fd = fs.openSync(file, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+  // O_NONBLOCK: a file swapped for a FIFO after the lstat above must not block main on open.
+  const fd = fs.openSync(file, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
   try {
     if (!fs.fstatSync(fd).isFile()) throw new Error('is not a regular file');
     return STRICT_UTF8.decode(fs.readFileSync(fd));

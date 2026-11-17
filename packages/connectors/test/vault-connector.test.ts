@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { connectorHash, parseVaultConnectorManifest, readVaultConnectors, resolvedOrigins } from '../src/data';
 
 const base = {
@@ -107,6 +107,19 @@ describe('readVaultConnectors', () => {
     put(v, 'Connectors/a-b/connector.json', '{}');
     put(v, 'Connectors/a-b/connector.js', 'code');
     expect(readVaultConnectors(v)).toEqual({ found: [{ id: 'a-b', path: 'Connectors/a-b', manifestText: '{}', code: 'code' }], errors: [] });
+  });
+  it('opens with O_NONBLOCK, so a file swapped for a FIFO after the lstat check never blocks the read', () => {
+    const v = vault();
+    put(v, 'Connectors/a-b/connector.json', '{}');
+    put(v, 'Connectors/a-b/connector.js', 'code');
+    const open = vi.spyOn(fs, 'openSync');
+    try {
+      readVaultConnectors(v);
+      expect(open).toHaveBeenCalledTimes(2);
+      for (const [, flags] of open.mock.calls) expect(Number(flags) & fs.constants.O_NONBLOCK).toBe(fs.constants.O_NONBLOCK);
+    } finally {
+      open.mockRestore();
+    }
   });
   it('returns nothing when there is no Connectors folder', () => {
     expect(readVaultConnectors(vault())).toEqual({ found: [], errors: [] });
