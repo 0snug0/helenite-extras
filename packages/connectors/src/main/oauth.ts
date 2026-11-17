@@ -43,7 +43,7 @@ export async function startLoopback(expectedState: string, timeoutMs = 5 * 60_00
 
 /** Token endpoint failure; `code` is the OAuth `error` field (e.g. `invalid_grant`). */
 export class TokenError extends Error {
-  constructor(public status: number, public code?: string) { super(`token endpoint: HTTP ${status}${code ? ` ${code}` : ''}`); }
+  constructor(public status: number, public code?: string) { super(`token endpoint: HTTP ${status}${code ? ` ${code}` : ''}`); this.name = 'TokenError'; }
 }
 
 export interface TokenSet { accessToken: string; refreshToken?: string; expiresAt: number }
