@@ -7,13 +7,19 @@ export class Button { text = ''; flags: string[] = []; click: () => unknown = ()
   setButtonText(t: string) { this.text = t; return this; } setCta() { this.flags.push('cta'); return this; } setWarning() { this.flags.push('warning'); return this; }
   onClick(cb: () => unknown) { this.click = cb; return this; } }
 export class Text { inputEl: any = { type: 'text', autocomplete: '' }; change: (v: string) => unknown = () => {}; placeholder = '';
-  setPlaceholder(t: string) { this.placeholder = t; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
+  value = ''; setValue(v: string) { this.value = v; return this; } setPlaceholder(t: string) { this.placeholder = t; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
+export class Dropdown { options: string[] = []; value = ''; change: (v: string) => unknown = () => {};
+  addOption(v: string, _l: string) { this.options.push(v); return this; } setValue(v: string) { this.value = v; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
+export class Toggle { value = false; change: (v: boolean) => unknown = () => {};
+  setValue(v: boolean) { this.value = v; return this; } onChange(cb: (v: boolean) => unknown) { this.change = cb; return this; } }
 export class Setting {
   static all: Setting[] = [];
-  name = ''; desc = ''; heading = false; texts: Text[] = []; buttons: Button[] = [];
+  name = ''; desc = ''; heading = false; texts: Text[] = []; dropdowns: Dropdown[] = []; toggles: Toggle[] = []; buttons: Button[] = [];
   constructor(public host: any) { (host.settings ??= []).push(this); Setting.all.push(this); }
   setName(n: string) { this.name = n; return this; } setDesc(d: string) { this.desc = d; return this; } setHeading() { this.heading = true; return this; }
   addText(cb: (t: Text) => unknown) { const t = new Text(); this.texts.push(t); cb(t); return this; }
+  addDropdown(cb: (d: Dropdown) => unknown) { const d = new Dropdown(); this.dropdowns.push(d); cb(d); return this; }
+  addToggle(cb: (t: Toggle) => unknown) { const t = new Toggle(); this.toggles.push(t); cb(t); return this; }
   addButton(cb: (b: Button) => unknown) { const b = new Button(); this.buttons.push(b); cb(b); return this; }
 }
 export class PluginSettingTab {
