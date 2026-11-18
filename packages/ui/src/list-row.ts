@@ -1,3 +1,4 @@
+import { countBadge, type CountBadgeOptions } from "./badges";
 import { button } from "./button";
 import { renderIcon } from "./icons";
 import { openMenu, type MenuItemSpec } from "./menu";
@@ -7,6 +8,8 @@ export interface ListRowAction {
   icon: string;
   label: string;
   onClick: () => void;
+  /** Set as the button's `data-action`, for tests and snippets. */
+  id?: string;
 }
 
 export interface ListRowOptions {
@@ -16,6 +19,8 @@ export interface ListRowOptions {
   meta?: string;
   /** A small label after the title ("not installed"). */
   tag?: string;
+  /** A count badge after the title, before the meta (open questions). Hidden at 0, as `countBadge`. */
+  badge?: { count: number } & CountBadgeOptions;
   active?: boolean;
   dot?: { tone: Tone; label: string; pulse?: boolean };
   /** Icon buttons shown when the row is hovered, focused or active. */
@@ -25,7 +30,8 @@ export interface ListRowOptions {
   menu?: () => MenuItemSpec[];
   /**
    * Also emit Obsidian's file-tree classes, so a theme's look for them applies: `tree-item` (`tree-item-self
-   * is-clickable nav-file-title`, as Obsidian's file explorer) or `nav-file-title` (that class alone).
+   * is-clickable nav-file-title`, as Obsidian's file explorer) or `nav-file-title` (that class alone, in a `nav-file`
+   * wrapper, as Obsidian draws a file row).
    */
   obsidianClass?: "tree-item" | "nav-file-title";
 }
@@ -34,7 +40,9 @@ export interface ListRowOptions {
 export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
   const tree = o.obsidianClass === "tree-item";
   const obsidian = o.obsidianClass !== undefined;
-  const row = make(parent, "div", ["hel-list-row"]);
+  // Obsidian's file rows sit in a `nav-file` element; themes style the pair.
+  const host = o.obsidianClass === "nav-file-title" ? make(parent, "div", ["nav-file"]) : parent;
+  const row = make(host, "div", ["hel-list-row"]);
   if (tree) row.classList.add("tree-item-self", "is-clickable");
   if (obsidian) row.classList.add("nav-file-title");
   if (o.active) row.classList.add("is-active");
@@ -48,12 +56,17 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
     const tag = make(row, "span", ["hel-list-row-tag"], o.tag);
     if (obsidian) tag.classList.add("nav-file-tag");
   }
+  if (o.badge) {
+    const { count, ...badge } = o.badge;
+    countBadge(row, count, badge);
+  }
   if (o.meta !== undefined) make(row, "div", ["hel-list-row-meta"], o.meta);
   if (o.actions?.length) {
     const box = make(row, "div", ["hel-list-row-actions"]);
     for (const a of o.actions) {
       const b = button(box, { variant: "icon", icon: a.icon, label: a.label, onClick: (e) => (e.stopPropagation(), a.onClick()) });
       b.el.classList.add("hel-list-row-action");
+      if (a.id) b.el.dataset.action = a.id;
     }
   }
   const { onClick, menu } = o;

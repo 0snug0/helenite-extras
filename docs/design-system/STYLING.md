@@ -62,7 +62,8 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text), `is-differen
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. |
 | `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
 | `hel-status-text` | `ui.statusText`. Tones as for badges. |
-| `hel-count-badge` | `ui.countBadge`. `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. |
+| `hel-count-badge` | `ui.countBadge`. `is-accent` (default), `is-danger` or `is-warning` is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header or beside a ribbon icon it is a centred pill with a small gap. |
+| `hel-count-badge-icon` | The optional icon before a count badge's number. |
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
 | `hel-chip` | `ui.chip`. Tones as for badges. |
 | `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. |
