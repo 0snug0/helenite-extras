@@ -1,5 +1,6 @@
-/* @helenite/ui-kit: the parts @helenite/ui does not provide (cards, posters, picker, calendar strip). Every @helenite/ui
-   part (buttons, tables, states, badges, form controls, tabs, toolbar) is styled by design-system.css.
+/* @helenite/ui-kit: the parts @helenite/ui does not provide (card grid, posters, picker, calendar strip). Every @helenite/ui
+   part (buttons, tables, states, badges, form controls, tabs, toolbar, card, lists) is styled by design-system.css; a
+   card grid's cards are `ui.card`'s hel-card, hel-card-body and hel-card-title, styled there too.
    Styled only by theme variables (--background-*, --text-*, --interactive-*, --size-*, --radius-*).
    No literal colours: a theme switch reaches the frame because the host forwards every --* property. */
 
@@ -7,14 +8,11 @@
 
 /* cards and posters */
 .hel-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--hel-card-min, 150px), 1fr)); gap: var(--size-4-3); }
-.hel-card { position: relative; border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m); background: var(--background-secondary); overflow: hidden; }
 .hel-card-main { all: unset; display: flex; flex-direction: column; width: 100%; cursor: pointer; color: var(--text-normal); }
 .hel-card-main:hover { background: var(--background-modifier-hover); }
 .hel-card-poster, .hel-poster { aspect-ratio: 2 / 3; background: var(--background-modifier-hover); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .hel-card-poster img, .hel-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hel-poster-initial { font-size: var(--font-ui-large); color: var(--text-faint); }
-.hel-card-body { padding: var(--size-4-2) var(--size-4-3); display: flex; flex-direction: column; gap: var(--size-4-1); }
-.hel-card-title { font-size: var(--font-ui-small); font-weight: var(--font-semibold); }
 .hel-card-sub, .hel-card-meta { font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-card-badges { display: flex; flex-wrap: wrap; gap: var(--size-4-1); }
 .hel-card-remove { position: absolute; top: var(--size-4-1); right: var(--size-4-1); border: 0; border-radius: var(--radius-s); background: var(--background-primary); color: var(--text-muted); cursor: pointer; opacity: 0; }

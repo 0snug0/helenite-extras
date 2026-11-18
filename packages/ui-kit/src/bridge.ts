@@ -7,15 +7,16 @@
  * `HostUi` mirrors `api.ui.*` and `api.secrets.prompt`. Until R lands, `setBridge` takes any object
  * of this shape, and `inlineBridge` is a DOM fallback (tests, and a dev preview outside the host).
  */
-import type { Field } from "@helenite/ui";
-export type { Field } from "@helenite/ui";
+import { setMenuRenderer } from "@helenite/ui";
+import type { Field, FieldValues, MenuItemSpec } from "@helenite/ui";
+export type { Field, FieldValues, MenuItemSpec } from "@helenite/ui";
 
 export type Block = { text: string } | { code: string } | { list: string[] };
 
 export interface ModalAction { id: string; label: string; primary?: boolean; danger?: boolean }
 export interface ModalSpec { title: string; body?: Block[]; fields?: Field[]; actions?: ModalAction[]; width?: "narrow" | "normal" | "wide" }
 /** `action` is the clicked action id, or `null` when dismissed (Escape, backdrop). */
-export interface ModalResult { action: string | null; values: Record<string, string | boolean> }
+export interface ModalResult { action: string | null; values: FieldValues }
 
 export interface MenuItem { id?: string; label?: string; icon?: string; danger?: boolean; disabled?: boolean; separator?: boolean }
 export interface MenuSpec { items: MenuItem[]; /** Client coordinates inside the frame; the host translates them. */ at?: { x: number; y: number } }
@@ -49,7 +50,7 @@ export function getBridge(): KitApi {
 export const modal = (spec: ModalSpec) => getBridge().ui.modal(spec);
 export const notice = (text: string, opts?: { kind?: NoticeKind; timeoutMs?: number }) => { void getBridge().ui.notice(text, opts); };
 
-type Values = Record<string, string | boolean>;
+type Values = FieldValues;
 
 /**
  * Overlays: same option objects as the `helenite` module's overlays, minus `app`. They are drawn by the
@@ -66,9 +67,6 @@ export interface ConfirmOptions { title: string; message: string; action: string
 export interface PromptOptions { title: string; label?: string; value?: string; placeholder?: string; action: string }
 export interface ChooseOptions<T extends string> { title: string; options: { value: T; text: string; detail?: string; disabled?: boolean }[] }
 export interface FormOptions { title: string; fields: Field[]; action: string; danger?: boolean }
-export type MenuItemSpec =
-  | { title: string; icon?: string; danger?: boolean; disabled?: boolean; onClick: () => unknown }
-  | "separator";
 
 export async function confirm(o: ConfirmOptions): Promise<boolean> {
   const r = await modal({ title: o.title, body: [{ text: o.message }], actions: actions(o) });
@@ -112,6 +110,11 @@ export async function menu(items: MenuItemSpec[], at: { x: number; y: number }):
   const chosen = id == null ? undefined : items[Number(id)];
   if (chosen && chosen !== "separator") await chosen.onClick();
 }
+
+// A part's context menu (ui.listRow's `menu`) opens as a host menu through the bridge.
+setMenuRenderer((items, at) => {
+  menu(items, "clientX" in at ? { x: at.clientX, y: at.clientY } : at).catch((err) => console.error(err));
+});
 
 /** Opens the host's secret dialog. The value goes host → main → keychain and never enters the frame. */
 export function promptSecret(name: string): Promise<unknown> {

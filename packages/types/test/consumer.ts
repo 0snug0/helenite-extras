@@ -2,6 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -40,3 +41,20 @@ ui.statusText(document.body, 'Partly works', tone);
 ui.countBadge(document.body, 3, { pulse: true }).set(0);
 ui.tabs(document.body, { tabs: [{ id: 'a', text: 'A' }], value: 'a', onSelect: (id: 'a') => id }).setBadge('a', 2);
 ui.emptyState(document.body, 'No accounts yet.', { variant: 'inline' });
+
+// The content parts.
+ui.callout(document.body, { tone: 'accent', text: 'Waiting', action: { text: 'Answer now' }, live: true }).setTone('danger');
+const c: CardHandle = ui.card(document.body, { title: 'Claude Code', icon: 'terminal', tone: 'muted', compact: true });
+c.setTone('accent');
+const caps: CheckListHandle<'mail' | 'cal'> = ui.checkList(document.body, { options: [{ value: 'mail', text: 'Mail', detail: 'd' }, { value: 'cal', text: 'Calendar' }], value: ['mail'] });
+// @ts-expect-error: not one of the check list's values.
+caps.setValue(['files']);
+ui.choiceList(document.body, { options: [{ value: 'a', text: 'A', key: '1' }], value: 'a', onChange: (v: string) => v });
+ui.choiceList(document.body, { multi: true, options: [{ value: 'a', text: 'A' }], value: ['a'], onChange: (v: string[]) => v });
+const g = ui.listGroup(document.body, { title: 'Today', count: 2 });
+const rowEl: HTMLElement = ui.listRow(g.body, { title: 'Row', obsidianClass: 'tree-item', menu: () => [{ title: 'Open', onClick: () => undefined }] });
+ui.composer(rowEl, { submitOn: 'mod-enter', onSubmit: async (text: string) => text }).setBusy(false);
+ui.keyValue(document.body, [{ key: 'Hosts', value: ['a.com'], isNew: () => true }]);
+const multi: Field = { id: 'caps', kind: 'multi', label: 'Capabilities', options: [{ value: 'read', label: 'Read' }] };
+const box: Field = { id: 'sync', kind: 'checkbox', label: 'Sync', detail: 'Every hour' };
+void ui.form({}, { title: 'Connect Git', fields: [multi, box], action: 'Connect' }).then((v: FieldValues | null) => v?.caps);

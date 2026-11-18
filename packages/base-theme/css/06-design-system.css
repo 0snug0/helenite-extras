@@ -109,6 +109,88 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-tab:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
 .hel-tab-badge { margin-left: var(--size-4-1); font-size: var(--font-ui-smaller); color: var(--text-faint); }
 
+/* callout: also Obsidian's callout (with data-callout), so a theme's callout colours apply; the part sets its own
+   spacing and keeps mix-blend-mode off, since it holds a button */
+.hel-callout { --callout-color: var(--callout-info); display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2) var(--size-4-3); margin: 0 0 var(--size-4-3); padding: var(--size-4-2) var(--size-4-3); border-style: solid; border-width: var(--callout-border-width); border-color: rgba(var(--callout-color), var(--callout-border-opacity)); border-radius: var(--callout-radius); background-color: rgba(var(--callout-color), 0.1); color: var(--text-normal); font-size: var(--font-ui-small); mix-blend-mode: normal; }
+.hel-callout[hidden] { display: none; }
+.hel-callout.is-warning { --callout-color: var(--callout-warning); }
+.hel-callout.is-danger { --callout-color: var(--callout-error); }
+.hel-callout.is-success { --callout-color: var(--callout-success); }
+.hel-callout.is-accent { background-color: color-mix(in srgb, var(--interactive-accent) 12%, transparent); border-color: color-mix(in srgb, var(--interactive-accent) 25%, transparent); }
+.hel-callout-text { flex: 1 1 12em; min-width: 0; }
+.hel-callout-action { flex: none; }
+
+/* card (ui.card, and ui-kit's card grid) */
+.hel-card { position: relative; border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m); background: var(--background-secondary); overflow: hidden; }
+.hel-card-head { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-3) 0; }
+.hel-card-head:empty { display: none; }
+.hel-card-icon { display: inline-flex; color: var(--icon-color); }
+.hel-card-title { font-size: var(--font-ui-small); font-weight: var(--font-semibold); }
+.hel-card-body { padding: var(--size-4-2) var(--size-4-3); display: flex; flex-direction: column; gap: var(--size-4-1); font-size: var(--font-ui-small); }
+.hel-card.is-compact > .hel-card-head { padding: var(--size-4-1) var(--size-4-2) 0; }
+.hel-card.is-compact > .hel-card-body { padding: var(--size-4-1) var(--size-4-2); }
+.hel-card.is-accent { border-color: var(--interactive-accent); }
+.hel-card.is-warning { border-color: var(--text-warning); }
+.hel-card.is-muted { background: var(--background-primary); color: var(--text-muted); }
+
+/* check list and choice list */
+.hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
+.hel-check { display: flex; align-items: flex-start; gap: var(--size-4-2); font-size: var(--font-ui-small); color: var(--text-normal); cursor: var(--cursor); }
+.hel-check > input[type=checkbox] { flex-shrink: 0; margin: 0; }
+.hel-check.is-disabled { opacity: 0.5; cursor: default; }
+.hel-check-body { display: flex; flex-direction: column; gap: var(--size-2-1); }
+.hel-check-detail { display: block; font-size: var(--font-ui-smaller); color: var(--text-muted); }
+.hel-choice-list { display: flex; flex-direction: column; gap: var(--size-2-1); }
+.hel-choice { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); cursor: pointer; }
+.hel-choice:hover, .hel-choice:focus-visible { background-color: var(--background-modifier-hover); }
+.hel-choice.is-selected { border-color: var(--interactive-accent); }
+.hel-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.hel-choice-icon { display: inline-flex; flex: none; color: var(--icon-color); }
+.hel-choice-body { flex: 1 1 auto; min-width: 0; }
+.hel-choice-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); }
+.hel-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-choice-key { flex: none; padding: 0 var(--size-2-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); color: var(--text-muted); }
+
+/* list rows and groups (sidebar panes). With obsidianClass a row also carries Obsidian's tree classes; the :where()
+   looks below then lose to base.css and to a theme. */
+.hel-list-row { position: relative; display: flex; align-items: center; gap: var(--size-4-2); }
+:where(.hel-list-row) { padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); color: var(--nav-item-color); font-size: var(--nav-item-size); line-height: var(--line-height-tight); }
+:where(.hel-list-row[tabindex]) { cursor: var(--cursor); }
+:where(.hel-list-row):hover { background-color: var(--nav-item-background-hover); color: var(--nav-item-color-hover); }
+:where(.hel-list-row.is-active) { background-color: var(--nav-item-background-active); color: var(--nav-item-color-active); }
+.hel-list-row:focus-visible, .hel-list-group-header:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: -2px; }
+.hel-list-row-icon { display: inline-flex; flex: none; color: var(--icon-color); }
+.hel-list-row-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:where(.hel-list-row-tag) { flex: none; padding: 0 var(--size-2-2); border-radius: var(--radius-s); background-color: var(--background-secondary-alt); color: var(--text-faint); font-size: var(--font-ui-smaller); }
+.hel-list-row-meta { flex: none; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-list-row-actions { display: flex; flex: none; gap: var(--size-2-1); opacity: 0; }
+.hel-list-row:hover > .hel-list-row-actions, .hel-list-row:focus-within > .hel-list-row-actions, .hel-list-row.is-active > .hel-list-row-actions { opacity: 1; }
+.hel-list-row-actions > .hel-list-row-action { padding: var(--size-2-1); }
+.hel-list-group-header { display: flex; align-items: center; gap: var(--size-2-3); padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); font-size: var(--font-ui-smaller); font-weight: var(--font-semibold); color: var(--text-muted); cursor: var(--cursor); }
+.hel-list-group-header:hover { background-color: var(--background-modifier-hover); }
+.hel-list-group-chevron { display: inline-flex; color: var(--nav-collapse-icon-color); }
+.hel-list-group-chevron svg { width: var(--icon-xs); height: var(--icon-xs); }
+:where(.hel-list-group-chevron.is-collapsed) svg { transform: rotate(-90deg); }
+.hel-list-group-count { margin-left: auto; font-weight: var(--font-normal); color: var(--text-faint); }
+.hel-list-group-body[hidden] { display: none; }
+
+/* composer */
+.hel-composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--size-4-2); align-items: end; }
+/* base.css gives a textarea an input's one-line height; the composer's grows with its rows */
+.hel-composer-input { width: 100%; height: auto; padding: var(--size-4-1) var(--size-4-2); box-sizing: border-box; resize: vertical; font-family: inherit; font-size: var(--font-ui-small); }
+:where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
+.hel-composer-hint { grid-column: 1 / -1; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-composer.is-busy { cursor: progress; }
+
+/* key-value list */
+.hel-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--size-4-1) var(--size-4-4); margin: 0 0 var(--size-4-3); font-size: var(--font-ui-small); }
+.hel-kv-row { display: contents; }
+.hel-kv-key { color: var(--text-muted); }
+.hel-kv-value { margin: 0; color: var(--text-normal); overflow-wrap: anywhere; }
+.hel-kv-value > ul { margin: 0; padding-left: var(--size-4-4); }
+.hel-kv-value.is-empty { color: var(--text-faint); }
+.hel-kv-value li.is-new { color: var(--text-accent); }
+
 /* modals (confirm, prompt, choose, form) */
 .hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
 .hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
@@ -118,12 +200,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-modal-error { color: var(--text-error); font-size: var(--font-ui-small); min-height: 1.2em; margin-top: var(--size-2-2); }
 .hel-modal-error:empty { min-height: 0; }
 .hel-modal-actions { display: flex; justify-content: flex-end; gap: var(--size-4-2); margin-top: var(--size-4-4); }
-.hel-modal-choices { display: flex; flex-direction: column; gap: var(--size-2-1); max-height: 50vh; overflow-y: auto; }
-.hel-modal-choice { padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); cursor: pointer; }
-.hel-modal-choice:hover, .hel-modal-choice:focus-visible { background-color: var(--background-modifier-hover); }
-.hel-modal-choice.is-selected { border-color: var(--interactive-accent); }
-.hel-modal-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
-.hel-modal-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-modal-choices { max-height: 50vh; overflow-y: auto; }
+.hel-modal-field > .hel-check-detail { margin-top: var(--size-2-1); padding-left: calc(var(--checkbox-size) + var(--size-4-2)); }
 
 /* settings: sub-pages, summary rows, scope bar */
 .vertical-tab-content-container.has-subpage > :not(.hel-subpage) { display: none; }
