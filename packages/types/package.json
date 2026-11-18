@@ -1,0 +1,12 @@
+{
+  "name": "@helenite/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Types for the `helenite` module plugins import: `import { ui, version } from 'helenite'`.",
+  "types": "dist/helenite.d.ts",
+  "files": ["dist/helenite.d.ts"],
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "node build.mjs && tsc --noEmit -p ."
+  }
+}
