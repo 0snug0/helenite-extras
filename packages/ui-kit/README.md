@@ -33,6 +33,8 @@ Same options objects as the `helenite` module's overlays, without the `app` argu
 
 The host draws each one over the whole window with its own dialog and menu, labelled with your app's icon, name and id; your app cannot style or place it (`choose` is wide; nothing else changes the size). The host checks the spec (a title up to 120 characters, up to 20 body blocks, 20 fields and 3 actions besides Cancel, and up to 50 menu items): a bad one rejects with an error whose `code` is `invalid-spec`. A `form` field with `secret: true` rejects with `secret-field`; use `promptSecret(name)` for secrets. One modal at a time: a second one while the first is open rejects with `modal-open`, and more than 5 in 10 seconds with `modal-rate`. A menu opens over your frame: `{ x, y }` is kept inside it. When the view closes, an open modal or menu closes and resolves as a cancel.
 
+An app can still draw its own modal by lifting its frame over the whole window with `api.ui.overlay(true)` (and `false` to put it back). The host then draws a "From <app> · <id>" strip across the top of the window, above the frame, which the app cannot cover or restyle. Prefer the overlays above.
+
 ## Kit parts
 
 `cardGrid` (its cards are `ui.card`'s `hel-card`, styled by design-system.css), `posterRow`, `picker`, `calendarStrip`. Classes are `hel-*`. Each takes an options object and returns `{ el, ...handle }`; append `el` yourself.

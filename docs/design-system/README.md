@@ -437,6 +437,8 @@ Differences from the plugin versions: `prompt` has no `validate`, because a call
 
 An app's modal is never mistaken for one of Helenite's own prompts: the host puts the app's icon before the title and a "From <app name> · <app id>" line above the body, and the app has no way to style or place the modal (only `width: 'wide'`). A form field with `secret` is refused, since secrets are typed only into the host's own secret prompt (`promptSecret`). The host checks each spec (a title up to 120 characters, up to 20 body blocks, 20 fields and 3 actions besides Cancel, and up to 50 menu items) and rejects a bad one with `invalid-spec` (`secret-field` for a secret). An app has one modal open at a time (a second rejects with `modal-open`, and more than 5 in 10 seconds with `modal-rate`), its menus open over its own frame, and an open modal or menu closes, resolving as a cancel, when the view closes. `notice` honours `kind` and `timeoutMs`.
 
+An app that draws its own modal instead, by lifting its frame over the whole window with `api.ui.overlay(true)`, is labelled too: the host draws a "From <app name> · <app id>" strip across the top of the window, above the frame and out of the app's reach, until the frame is put back. Prefer the overlays above, which look like the rest of Helenite.
+
 ### theme: isolate
 
 By default an app inherits the user's theme and snippets (`theme: inherit`). To opt out, set it in `app.md`:

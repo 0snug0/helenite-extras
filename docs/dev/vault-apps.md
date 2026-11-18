@@ -103,6 +103,7 @@ Helenite imports `entry` as an ES module and calls its default export with `root
 | `api.connectors.<id>.<method>(...)` | the id in `connectors` |
 | `api.data.list(contract)`, `api.data.act(contract, action, record)` | the contract in `data` |
 | `api.ui.modal(spec)`, `api.ui.menu(spec)`, `api.ui.notice(text, { kind?, timeoutMs? })` | nothing: drawn by the host (see the UI kit below, which builds these specs) |
+| `api.ui.overlay(on)` | nothing: lifts the frame over the whole window, below a host strip (see below) |
 | `api.agent.ask(text)` | `agent: true` |
 | `api.settings`, `api.app`, `api.view` | nothing: read-only values |
 
@@ -119,6 +120,12 @@ Every call is a message to the host, checked against the manifest in the main pr
   - Every app modal is labelled by the host with the app's icon, name and id ("From Downloadrr · downloadrr"). The app cannot style or place it: the spec carries only text, fields and action labels, and only `width: "wide"` changes its size.
   - The host checks every spec: a title up to 120 characters, up to 20 body blocks, 20 fields and 3 actions besides Cancel, and up to 50 menu items, ids made of letters, digits and `_ . : -`. A bad spec rejects with `invalid-spec`. A field with `secret` rejects with `secret-field`: ask for a secret only with `promptSecret(name)` (`api.secrets.prompt`), whose dialog only the host draws.
   - One modal per frame at a time: a second `modal` while one is open rejects with `modal-open`, and more than 5 in 10 seconds rejects with `modal-rate`. A new menu replaces an open one, and opens over the app's own frame (`at` is kept inside it). A preset `select`, `choice` or `multi` value that is not one of the options is dropped. When the view closes, an open modal or menu closes and resolves as dismissed.
+
+### The full-window lift
+
+`api.ui.overlay(true)` lifts the view's frame over the whole window, for an app that draws its own modal (such as an embed's); `api.ui.overlay(false)` puts it back. It predates host modals: prefer `api.ui.modal` (the kit's `confirm`, `form` and the rest), which the host draws and labels for you.
+
+A lifted frame can draw anything, so the host keeps it from passing for Helenite. It draws its own 32px strip across the top of the window, "From <app name> · <app id>" with the app's icon, and the frame starts below it. The strip is in the host page, outside the frame, so the app cannot cover, hide or restyle it. It goes when the frame is put back or the view closes.
 
 The kit's reference is `packages/ui-kit/README.md`, and the parts are in [docs/design-system/README.md](../design-system/README.md#vault-apps).
 
