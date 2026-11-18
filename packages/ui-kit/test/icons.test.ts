@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { button, KIT_ICONS, kitIconRenderer, renderIcon } from "../src";
 
 // The icons STANDARD_ACTIONS (obsidian-api ui/design/actions.ts) names, plus the more button's.
-const STANDARD = ["chevron-left", "x", "rotate-ccw", "undo-2", "home", "settings", "power", "trash-2", "external-link"];
+const STANDARD = ["chevron-left", "x", "rotate-ccw", "undo-2", "home", "settings", "power", "trash-2", "external-link", "circle-minus", "plus", "arrow-up", "arrow-down", "refresh-cw"];
 
 describe("ui-kit icon renderer", () => {
   it("is installed on import: a ui-kit icon button's icon span holds an svg", () => {
