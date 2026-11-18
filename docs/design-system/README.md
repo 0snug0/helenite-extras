@@ -22,7 +22,7 @@ That writes `packages/types/dist/helenite.d.ts`, a `declare module 'helenite'` f
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `MenuItemSpec`, `ActionId`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `MenuItemSpec`, `ActionId`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -56,7 +56,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -93,16 +93,95 @@ A column's `cell` returns the text, or returns nothing and fills the `td` itself
 ui.emptyState(el, 'Nothing here yet.');
 ui.loadingState(el);                       // "Loading…"
 ui.errorState(el, 'Could not load.', retry); // adds a "Try again" button when retry is given
+ui.emptyState(el, 'No accounts yet.', { variant: 'inline' });
+ui.errorState(el, 'Could not connect.', retry, { variant: 'inline', retryLabel: 'Reconnect' });
 ```
 
-### ui.badge, ui.statusDot
+`variant` says where the state sits:
+
+| Variant | Looks like | Use it in |
+| --- | --- | --- |
+| `centered` (default) | Centred, with padding | A page or a large panel |
+| `inline` | A left-aligned description line (the empty state also carries Obsidian's `setting-item-description`) | A settings list |
+| `pane` | Left-aligned, small (the empty state also carries Obsidian's `pane-empty`) | A sidebar pane |
+
+### ui.badge, ui.statusDot, ui.statusText
 
 ```ts
 ui.badge(el, 'Beta', 'accent');
 ui.statusDot(el, 'success', 'Connected');  // the label is read by screen readers
+ui.statusDot(el, 'warning', 'Waiting for you', { pulse: true });
+ui.statusText(el, 'Not signed in', 'danger');
 ```
 
-Tones: `default`, `accent`, `danger`, `success`.
+Tones: `default`, `accent`, `danger`, `success`, `warning`. `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
+
+### ui.countBadge
+
+```ts
+const unread = ui.countBadge(tabHeader, 3, { label: 'unread' }); // read as "3 unread"
+unread.set(0);  // hidden at 0
+unread.set(12); // "9+": above `max` (default 9) it shows max and a plus
+```
+
+It is a `role="status"` live region: screen readers hear the exact count with the label ("12 unread"), not "9+".
+
+`pulse: true` blinks it like a pulsing dot.
+
+### ui.chip
+
+```ts
+ui.chip(el, 'project');
+ui.chip(el, 'draft', { tone: 'accent', title: 'Status', onRemove: () => removeTag('draft') });
+```
+
+A tag-like label. With `onRemove` it has an × button; a click removes the chip from the page and then calls `onRemove`.
+
+### ui.field and the input parts
+
+`ui.field` draws a label, a slot for one control (`control`), an optional hint and an error line. An input part drawn into `control` is named by the label and described by the hint, so it needs no `label` of its own.
+
+```ts
+const name = ui.field(el, { label: 'Name', hint: 'Shown in the sidebar.' });
+ui.textInput(name.control, { value: note.name, onInput: (v) => name.setError(v.trim() ? null : 'Enter a name.') });
+
+const kind = ui.field(el, { label: 'Kind', inline: true });              // label and control on one row
+const pick = ui.dropdown(kind.control, { options: [{ value: 'local', text: 'Local' }, { value: 'synced', text: 'Synced' }], value: 'local', onChange: setKind });
+
+const sync = ui.toggle(el, { value: true, label: 'Sync this vault', onChange: setSync });
+ui.textInput(el, { secret: true, label: 'API key', onEnter: save });  // a password input
+ui.slider(el, { min: 10, max: 30, value: 16, label: 'Font size', onChange: setSize });
+ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) });
+```
+
+| Part | Returns | Notes |
+| --- | --- | --- |
+| `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null) }` | `setError` shows the message and marks the control invalid; `null` clears it. |
+| `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter? })` | the `<input>` | `type` is `text` (default) or `number`; `secret` hides the text. |
+| `toggle(parent, { value, label, disabled?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. |
+| `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |
+| `slider(parent, { min, max, step?, value, label, onChange })` | the `<input type="range">` | `onChange` runs as it moves. |
+| `searchInput(parent, { placeholder?, value?, delayMs?, onSearch })` | the `<input>` | In Obsidian's `search-input-container`, with a clear button (a keyboard button too). Typing waits `delayMs` (120) before `onSearch`; Enter, the clear button and Escape (which empties the box) search at once. |
+
+`label` on an input part is its accessible name when there is no visible label; give one whenever the part is not in a field.
+
+### ui.tabs, ui.toolbar
+
+```ts
+const t = ui.tabs(el, {
+  tabs: [{ id: 'installed', text: 'Installed', badge: 12 }, { id: 'browse', text: 'Browse' }],
+  value: 'installed',
+  onSelect: (id) => drawPanel(id),
+});
+t.setBadge('installed', 11);   // 0 hides it
+t.setValue('browse');          // moves the selection without calling onSelect
+
+const bar = ui.toolbar(el, { label: 'Filters' });  // a role=toolbar row; draw controls into it
+ui.searchInput(bar, { onSearch: filter });
+ui.button(bar, { text: 'Refresh', onClick: reload });
+```
+
+Tabs follow the WAI-ARIA tabs pattern: the arrow keys, Home and End move between tabs. You draw the panel in `onSelect`.
 
 ### ui.confirm, ui.prompt, ui.choose, ui.form
 
@@ -172,10 +251,10 @@ ui.settings.scopeBar(containerEl, { editingDefaults: false, onChange: (d) => set
 Vault apps (the sandboxed micro-apps that live in the vault) get the same parts from the package `@helenite/ui-kit`, not from `helenite`:
 
 ```ts
-import { button, segmented, table, emptyState, badge, statusDot, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
+import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, cardGrid, picker, and the rest) take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, picker, tabs and the rest) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { badge, emptyState, errorState, loadingState, statusDot } from "../src";
+import { badge, emptyState, errorState, loadingState, statusDot, statusText } from "../src";
 
 const host = () => document.body.appendChild(document.createElement("div"));
 
@@ -37,5 +37,39 @@ describe("states", () => {
     expect(d.classList.contains("hel-status-dot")).toBe(true);
     expect(d.classList.contains("is-success")).toBe(true);
     expect(d.getAttribute("aria-label")).toBe("Running");
+  });
+});
+
+describe("states: variants, warning tone, statusText, pulse", () => {
+  it("emptyState variants: centered by default, inline is a settings description, pane is Obsidian's pane-empty", () => {
+    expect([...emptyState(host(), "x").classList]).toEqual(["hel-empty"]);
+    expect([...emptyState(host(), "x", { variant: "inline" }).classList]).toEqual(["hel-empty", "is-inline", "setting-item-description"]);
+    expect([...emptyState(host(), "x", { variant: "pane" }).classList]).toEqual(["hel-empty", "is-pane", "pane-empty"]);
+  });
+
+  it("errorState takes a variant and a retry label", () => {
+    const retry = vi.fn();
+    const e = errorState(host(), "Failed", retry, { variant: "inline", retryLabel: "Reconnect" });
+    expect([...e.classList]).toEqual(["hel-error", "is-inline"]);
+    const b = e.querySelector<HTMLButtonElement>("button.hel-button")!;
+    expect(b.textContent).toBe("Reconnect");
+    b.click();
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(errorState(host(), "x", undefined, { variant: "pane" }).classList.contains("is-pane")).toBe(true);
+    expect([...errorState(host(), "x").classList]).toEqual(["hel-error"]);
+  });
+
+  it("the warning tone reaches badge, statusDot and statusText", () => {
+    expect(badge(host(), "Stale", "warning").classList.contains("is-warning")).toBe(true);
+    expect(statusDot(host(), "warning", "Busy").classList.contains("is-warning")).toBe(true);
+    const t = statusText(host(), "Partly works", "warning");
+    expect([...t.classList]).toEqual(["hel-status-text", "is-warning"]);
+    expect(t.textContent).toBe("Partly works");
+    expect(t.tagName).toBe("SPAN");
+  });
+
+  it("statusDot pulses only when asked", () => {
+    expect(statusDot(host(), "warning", "Waiting", { pulse: true }).classList.contains("is-pulse")).toBe(true);
+    expect(statusDot(host(), "success", "Idle").classList.contains("is-pulse")).toBe(false);
   });
 });

@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { calendarStrip, cardGrid, checkbox, field, installObsidianDom, isoDay, picker, posterRow, searchInput, select, tabs, textInput } from "../src";
+import * as kit from "../src";
+import { calendarStrip, cardGrid, installObsidianDom, isoDay, picker, posterRow } from "../src";
 import { emptyState } from "@helenite/ui";
 
 const key = (el: Element, k: string) => el.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true }));
@@ -66,57 +67,15 @@ describe("picker", () => {
   });
 });
 
-describe("tabs", () => {
-  it("selects by click and with arrow keys (roving tabindex, wrapping)", () => {
-    const onSelect = vi.fn();
-    const t = tabs({ tabs: [{ id: "a", label: "A" }, { id: "b", label: "B", badge: 3 }, { id: "c", label: "C" }], onSelect });
-    document.body.append(t.el);
-    expect(t.value()).toBe("a");
-    expect(t.el.querySelector("[data-tab=b]")!.textContent).toBe("B3");
-    key(t.el, "ArrowLeft");
-    expect(t.value()).toBe("c");
-    key(t.el, "ArrowRight");
-    expect(t.value()).toBe("a");
-    (t.el.querySelector("[data-tab=b]") as HTMLElement).click();
-    expect(onSelect).toHaveBeenLastCalledWith("b");
-    expect(t.el.querySelector("[data-tab=b]")!.getAttribute("tabindex")).toBe("0");
-    expect(t.el.querySelector("[data-tab=a]")!.getAttribute("tabindex")).toBe("-1");
-    expect(t.el.getAttribute("role")).toBe("tablist");
-    t.select("zzz");
-    expect(t.value()).toBe("b");
-  });
-});
-
-describe("form controls", () => {
-  it("fire callbacks and keep values", () => {
-    const onInput = vi.fn(), onEnter = vi.fn(), onSel = vi.fn(), onChk = vi.fn();
-    const i = textInput({ value: "x", onInput, onEnter });
-    expect(i.value).toBe("x");
-    i.value = "y"; i.dispatchEvent(new Event("input")); key(i, "Enter");
-    expect(onInput).toHaveBeenCalledWith("y"); expect(onEnter).toHaveBeenCalledWith("y");
-    const s = select({ options: [{ value: "1", label: "One" }, { value: "2", label: "Two" }], value: "2", onChange: onSel });
-    expect(s.value).toBe("2");
-    s.value = "1"; s.dispatchEvent(new Event("change"));
-    expect(onSel).toHaveBeenCalledWith("1");
-    const c = checkbox({ label: "On", checked: true, onChange: onChk });
-    const ci = c.querySelector("input")!; ci.checked = false; ci.dispatchEvent(new Event("change"));
-    expect(onChk).toHaveBeenCalledWith(false);
-  });
-  it("field links label and control by id", () => {
-    const f = field("Name", textInput({}), "hint");
-    const input = f.querySelector("input")!;
-    expect(f.querySelector("label")!.getAttribute("for")).toBe(input.id);
-    expect(f.querySelector(".hel-field-hint")!.textContent).toBe("hint");
-  });
-  it("searchInput debounces", () => {
-    vi.useFakeTimers();
-    const onSearch = vi.fn();
-    const s = searchInput({ delayMs: 100, onSearch });
-    for (const v of ["a", "ab", "abc"]) { s.value = v; s.dispatchEvent(new Event("input")); }
-    vi.advanceTimersByTime(99); expect(onSearch).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(2); expect(onSearch).toHaveBeenCalledTimes(1);
-    expect(onSearch).toHaveBeenCalledWith("abc");
-    vi.useRealTimers();
+describe("parts lifted into @helenite/ui", () => {
+  it("draws the (parent, options) controls into a frame element", () => {
+    const root = document.body.appendChild(document.createElement("div"));
+    const bar = kit.toolbar(root, { label: "Filters" });
+    kit.searchInput(bar, { onSearch: () => {} });
+    kit.dropdown(bar, { options: [{ value: "a", text: "A" }], compact: true });
+    kit.toggle(bar, { value: true, label: "Only mine" });
+    kit.tabs(root, { tabs: [{ id: "a", text: "A" }], value: "a", onSelect: () => {} });
+    expect(root.querySelectorAll(".hel-toolbar .hel-search, .hel-toolbar .hel-select, .hel-toolbar .hel-toggle, .hel-tabs")).toHaveLength(4);
   });
 });
 

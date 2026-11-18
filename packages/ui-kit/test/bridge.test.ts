@@ -7,13 +7,11 @@ import { choose, confirm, form, getBridge, menu, modal, notice, openUrl, prompt,
 import { fakeHost } from "./setup";
 
 describe("re-exports from @helenite/ui", () => {
-  it("button/segmented/table/states are the same functions", () => {
-    for (const k of ["button", "segmented", "table", "emptyState", "errorState", "loadingState", "badge", "statusDot", "setIconRenderer", "renderIcon"] as const) {
-      expect(kit[k], k).toBe(ui[k]);
-    }
+  it("every @helenite/ui export is the same function", () => {
+    for (const k of Object.keys(ui) as (keyof typeof ui)[]) expect((kit as Record<string, unknown>)[k], k).toBe(ui[k]);
   });
-  it("drops the parts @helenite/ui replaced", () => {
-    for (const k of ["sortableTable", "toggle", "sortRows"]) expect(k in kit, k).toBe(false);
+  it("drops the parts @helenite/ui replaced, and the old o-only control shapes", () => {
+    for (const k of ["sortableTable", "sortRows", "select", "checkbox"]) expect(k in kit, k).toBe(false);
   });
 });
 
@@ -125,6 +123,6 @@ describe("stylesheet", () => {
     expect(css).not.toMatch(/hk-/);
   });
   it("does not restyle parts @helenite/ui provides", () => {
-    expect(css).not.toMatch(/\.hel-(button|table|badge|empty|error|loading|segmented|status-dot)\b/);
+    expect(css).not.toMatch(/\.hel-(button|table|badge|empty|error|loading|segmented|status-dot|status-text|count-badge|chip|field|input|search|select|toggle|slider|tabs?|toolbar)\b/);
   });
 });
