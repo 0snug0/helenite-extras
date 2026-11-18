@@ -54,6 +54,52 @@ describe("checkList", () => {
 });
 
 describe("choiceList", () => {
+  it("indicator: none by default; radio or check draws a mark per row that follows the selection", () => {
+    const plain = choiceList(host(), { options: [{ value: "a", text: "A" }], onChange: () => {} });
+    expect(plain.el.querySelector(".hel-choice-indicator")).toBeNull();
+    const radio = choiceList(host(), { indicator: "radio", options: [{ value: "a", text: "A" }, { value: "b", text: "B" }], value: "a", onChange: () => {} });
+    const marks = [...radio.el.querySelectorAll(".hel-choice-indicator")];
+    expect(marks.length).toBe(2);
+    expect(marks.every((m) => m.classList.contains("is-radio") && m.getAttribute("aria-hidden") === "true")).toBe(true);
+    expect(marks[0].closest(".hel-choice")!.classList.contains("is-selected")).toBe(true);
+    const check = choiceList(host(), { multi: true, indicator: "check", options: [{ value: "a", text: "A" }], onChange: () => {} });
+    expect(check.el.querySelector(".hel-choice-indicator.is-check")).not.toBeNull();
+  });
+
+  it("badge sits in the row; trailing draws beside the option, outside it, and stays reachable", () => {
+    const onPick = vi.fn();
+    const act = vi.fn();
+    const c = choiceList(host(), {
+      options: [
+        { value: "a", text: "A", badge: { text: "Found", tone: "success" } },
+        { value: "b", text: "B", disabled: true, trailing: (el) => { const b = el.ownerDocument.createElement("button"); b.textContent = "How to install"; b.onclick = act; el.appendChild(b); } },
+      ],
+      onChange: onPick,
+    });
+    const a = c.el.querySelector<HTMLElement>('[data-value="a"]')!;
+    expect(a.querySelector(".hel-badge.is-success.hel-choice-badge")!.textContent).toBe("Found");
+    const b = c.el.querySelector<HTMLElement>('[data-value="b"]')!;
+    const item = b.parentElement!;
+    expect(item.classList.contains("hel-choice-item")).toBe(true);
+    const extra = item.querySelector(":scope > .hel-choice-extra")!;
+    expect(b.contains(extra)).toBe(false);
+    expect(b.querySelector("button")).toBeNull();
+    // Keys and clicks in the extra slot neither pick nor move: the button works on its own.
+    const btn = extra.querySelector("button")!;
+    btn.click();
+    key(btn, "Enter");
+    expect(act).toHaveBeenCalledTimes(1);
+    expect(onPick).not.toHaveBeenCalled();
+    // Rows without an extra stay direct children of the list.
+    expect(a.parentElement).toBe(c.el);
+  });
+
+  it("in a field the field's label names the list", () => {
+    const f = field(host(), { label: "Start from" });
+    const c = choiceList(f.control, { options: [{ value: "a", text: "A" }], onChange: () => {} });
+    expect(c.el.getAttribute("aria-labelledby")).toBe(f.el.querySelector("label")!.id);
+  });
+
   it("single: rows show text, detail, icon, tag and key; picking selects one and calls onChange", () => {
     const onChange = vi.fn();
     const c = choiceList(host(), {

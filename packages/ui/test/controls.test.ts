@@ -14,6 +14,23 @@ afterEach(() => {
 });
 
 describe("field", () => {
+  it("setHint changes the hint, or adds one that describes the control", () => {
+    const f = field(host(), { label: "Location" });
+    const input = textInput(f.control, {});
+    expect(f.el.querySelector(".hel-field-hint")).toBeNull();
+    f.setHint("Creates /u/my-vault");
+    const hint = f.el.querySelector<HTMLElement>(".hel-field-hint")!;
+    expect(hint.textContent).toBe("Creates /u/my-vault");
+    expect(hint.nextElementSibling!.classList.contains("hel-field-error")).toBe(true);
+    expect(input.getAttribute("aria-describedby")!.split(" ")).toContain(hint.id);
+    f.setHint("");
+    expect(hint.textContent).toBe("");
+    const g = field(host(), { label: "Name", hint: "Old" });
+    g.setHint("New");
+    expect(g.el.querySelectorAll(".hel-field-hint").length).toBe(1);
+    expect(g.el.querySelector(".hel-field-hint")!.textContent).toBe("New");
+  });
+
   it("has a label, a control slot, a hint, and an error line hidden until set", () => {
     const f = field(host(), { label: "Name", hint: "Shown in the sidebar." });
     expect(f.el.classList.contains("hel-field")).toBe(true);
@@ -182,6 +199,13 @@ describe("toggle", () => {
     expect(input.checked).toBe(true);
     expect(box.classList.contains("is-enabled")).toBe(true);
     expect(onChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("hideLabel names the switch without drawing the label text", () => {
+    const t = toggle(host(), { value: true, label: "Allow Codex in all vaults", hideLabel: true });
+    expect(t.el.querySelector(".hel-toggle-label")).toBeNull();
+    expect(t.el.textContent).toBe("");
+    expect(t.el.querySelector("input")!.getAttribute("aria-label")).toBe("Allow Codex in all vaults");
   });
 
   it("disabled does not flip", () => {

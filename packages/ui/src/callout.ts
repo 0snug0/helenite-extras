@@ -18,6 +18,8 @@ export interface CalloutHandle {
   el: HTMLElement;
   setText(t: string): void;
   setTone(t: CalloutTone): void;
+  /** Replaces the action button (`null` removes it). */
+  setAction(a: ButtonOptions | null): void;
   hide(): void;
   show(): void;
 }
@@ -33,7 +35,15 @@ export function callout(parent: HTMLElement, o: CalloutOptions): CalloutHandle {
   const text = make(el, "div", ["hel-callout-text"]);
   if (typeof o.text === "string") text.textContent = o.text;
   else text.appendChild(o.text);
-  if (o.action) button(el, o.action).el.classList.add("hel-callout-action");
+  let actionEl: HTMLElement | null = null;
+  const setAction = (a: ButtonOptions | null): void => {
+    actionEl?.remove();
+    actionEl = null;
+    if (!a) return;
+    actionEl = button(el, a).el;
+    actionEl.classList.add("hel-callout-action");
+  };
+  if (o.action) setAction(o.action);
   let tone: CalloutTone = o.tone ?? "info";
   const setTone = (t: CalloutTone): void => {
     el.classList.remove(`is-${tone}`);
@@ -48,6 +58,7 @@ export function callout(parent: HTMLElement, o: CalloutOptions): CalloutHandle {
       text.textContent = t;
     },
     setTone,
+    setAction,
     hide() {
       el.hidden = true;
     },

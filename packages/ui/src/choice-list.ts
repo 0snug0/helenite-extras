@@ -1,5 +1,5 @@
 import { renderIcon } from "./icons";
-import { badge, make } from "./states";
+import { badge, make, type Tone } from "./states";
 
 export interface ChoiceOption<T> {
   value: T;
@@ -12,12 +12,24 @@ export interface ChoiceOption<T> {
   disabled?: boolean;
   /** A key that picks this option while the list has focus; shown as a hint. */
   key?: string;
+  /** A badge at the end of the row ("Found"). */
+  badge?: { text: string; tone?: Tone };
+  /**
+   * Draws something the user can act on beside the option (a "How to install" link), in a `hel-choice-extra` slot that
+   * is the row's sibling, not inside the option, so it is reached by Tab and not read as part of the option.
+   */
+  trailing?: (el: HTMLElement) => void;
 }
 
 interface ChoiceListBase<T> {
   options: ChoiceOption<T>[];
   /** The list's accessible name. */
   label?: string;
+  /**
+   * A mark before each row showing whether it is picked: `radio` (a radio dot, for a single list), `check` (a
+   * checkbox, for a multi list) or `none` (the default, for a list where a pick acts at once, as in `ui.choose`).
+   */
+  indicator?: "radio" | "check" | "none";
 }
 
 /** Pick one: `onChange` gets the value. */
@@ -39,6 +51,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
   const el = make(parent, "div", ["hel-choice-list"]);
   el.setAttribute("role", "listbox");
   if (o.label) el.setAttribute("aria-label", o.label);
+  else if (parent.classList.contains("hel-field-control") && parent.dataset.labelledby) el.setAttribute("aria-labelledby", parent.dataset.labelledby);
   if (o.multi) {
     el.classList.add("is-multi");
     el.setAttribute("aria-multiselectable", "true");
@@ -68,18 +81,24 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     }
   };
 
+  const indicator = o.indicator ?? "none";
   for (const opt of o.options) {
-    const row = make(el, "div", ["hel-choice"]);
+    // An option with something beside it sits with that in a plain wrapper; the option itself holds nothing to act on.
+    const holder = opt.trailing ? make(el, "div", ["hel-choice-item"]) : el;
+    const row = make(holder, "div", ["hel-choice"]);
     row.setAttribute("role", "option");
     row.dataset.value = String(opt.value);
     row.tabIndex = opt.disabled ? -1 : 0;
+    if (indicator !== "none") make(row, "span", ["hel-choice-indicator", `is-${indicator}`]).setAttribute("aria-hidden", "true");
     if (opt.icon) renderIcon(make(row, "span", ["hel-choice-icon"]), opt.icon);
     const body = make(row, "div", ["hel-choice-body"]);
     const title = make(body, "div", ["hel-choice-title"]);
     make(title, "span", ["hel-choice-text"], opt.text);
     if (opt.tag) badge(title, opt.tag, "accent").classList.add("hel-choice-tag");
     if (opt.detail) make(body, "div", ["hel-choice-detail"], opt.detail);
+    if (opt.badge) badge(row, opt.badge.text, opt.badge.tone).classList.add("hel-choice-badge");
     if (opt.key) make(row, "kbd", ["hel-choice-key"], opt.key);
+    if (opt.trailing) opt.trailing(make(holder, "div", ["hel-choice-extra"]));
     if (opt.disabled) {
       row.classList.add("is-disabled");
       row.setAttribute("aria-disabled", "true");

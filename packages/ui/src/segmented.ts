@@ -22,6 +22,8 @@ export function segmented<T extends string>(
     el.setAttribute("aria-labelledby", label.id);
     label.textContent = o.label;
     el.appendChild(label);
+  } else if (parent.classList.contains("hel-field-control") && parent.dataset.labelledby) {
+    el.setAttribute("aria-labelledby", parent.dataset.labelledby);
   }
   let current = o.value;
   const buttons = new Map<T, HTMLButtonElement>();

@@ -6,13 +6,14 @@
 // at those names. An import that leaves that set fails the build, so the file never depends on packages a plugin
 // author does not have, except the stand-ins in OPAQUE.
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../..');
-const tmp = join(here, 'dist/.emit');
+// Per process: plugin typechecks build these types in parallel, and a shared folder made them remove each other's.
+const tmp = join(here, `dist/.emit-${process.pid}`);
 const out = join(tmp, 'out');
 const ENTRY = 'packages/obsidian-api/src/helenite-module';
 const PACKAGES = { '@helenite/ui': 'packages/ui/src/index' };
@@ -85,6 +86,9 @@ const parts = [
   ...[...blocks].map(([key, body]) => `\ndeclare module '${idOf(key)}' {\n${indent(body)}\n}`),
   '',
 ];
-writeFileSync(join(here, 'dist/helenite.d.ts'), parts.join('\n'));
+// Written beside it and renamed, so a parallel typecheck never reads a half-written file.
+const next = join(tmp, 'helenite.d.ts');
+writeFileSync(next, parts.join('\n'));
+renameSync(next, join(here, 'dist/helenite.d.ts'));
 rmSync(tmp, { recursive: true, force: true });
 console.log(`wrote dist/helenite.d.ts (${blocks.size} modules)`);
