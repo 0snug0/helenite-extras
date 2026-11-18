@@ -78,7 +78,6 @@ body {
 .hel-gallery-heading { margin: 0 0 var(--size-4-3); }
 .hel-gallery-demo { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; margin-bottom: var(--size-4-3); }
 .hel-gallery-demo > .hel-section, .hel-gallery-demo > .setting-item, .hel-gallery-demo > .hel-table, .hel-gallery-demo > .hel-empty, .hel-gallery-demo > .hel-loading, .hel-gallery-demo > .hel-error { flex: 1 1 100%; }
-.hel-gallery-action { display: inline-flex; flex-direction: column; align-items: center; gap: var(--size-2-2); min-width: 80px; }
-.hel-gallery-caption { color: var(--text-faint); font-size: var(--font-ui-smaller); }
-.hel-gallery-row { display: flex; gap: var(--size-4-2); align-items: center; flex: 1 1 100%; }
+/* The last section can scroll to the top of the tab, so every section can be shot there. */
+.hel-gallery-section:last-child { min-height: 100vh; border-bottom: 0; }
 .hel-gallery-code { margin: 0; padding: var(--size-4-3); background-color: var(--background-secondary); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); overflow-x: auto; white-space: pre; }
