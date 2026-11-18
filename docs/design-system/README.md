@@ -116,7 +116,7 @@ ui.statusDot(el, 'warning', 'Waiting for you', { pulse: true });
 ui.statusText(el, 'Not signed in', 'danger');
 ```
 
-Tones: `default`, `accent`, `danger`, `success`, `warning`. `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
+Tones: `default`, `accent`, `danger`, `success`, `warning`. The element `statusText` returns also has `setTone(tone)`, for a status that changes (set its text with `setText`). `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
 
 ### ui.countBadge
 
@@ -163,7 +163,7 @@ ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) }
 | Part | Returns | Notes |
 | --- | --- | --- |
 | `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null), setHint(text) }` | `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
-| `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter? })` | the `<input>` | `type` is `text` (default) or `number`; `secret` hides the text. |
+| `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter?, multiline?, rows? })` | the `<input>` (a `<textarea>` with `multiline`) | `type` is `text` (default) or `number`; `secret` hides the text. `multiline: true` makes a box of several lines (`rows`, default 3) for a longer answer; Enter starts a new line there and `onEnter` is not called. |
 | `toggle(parent, { value, label, disabled?, hideLabel?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. `hideLabel` keeps the label as the switch's accessible name without showing it, for a row that shows the name elsewhere. |
 | `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |
 | `slider(parent, { min, max, step?, value, label, onChange })` | the `<input type="range">` | `onChange` runs as it moves. |
@@ -211,6 +211,8 @@ c.setTone('warning');
 
 A bordered block with a head (icon and title; hidden when there is neither) and a `body` you draw into. Add actions or a status to `head`. Tones: `default`, `accent`, `warning`, `muted` (a finished or inactive item). `compact` has less padding.
 
+`attention: true` is for a card that waits on the user, such as an agent's question: a thick border and a tint in its tone (`accent`, or `warning` for a permission), the icon in the tone's colour, the interface font at a readable size (set on the card, so a terminal or editor font around it never leaks in; code inside stays monospace), roomier choice-list rows with a tinted pick and key hints in muted text that brighten when a row is hovered, focused or picked, and a focus ring while focus is inside. `sticky: true` keeps it at the top of its scrolling pane, raised by a shadow. The handle's `titleEl` is the title element (null without a title); `pulse()` pulses the outline a few times to draw the eye (nothing moves under reduced motion), and `setBusy(true)` dims the card and ignores the pointer while something it started runs.
+
 ### ui.checkList, ui.choiceList
 
 ```ts
@@ -232,7 +234,7 @@ ui.choiceList(el, {
 
 `checkList` is a group of checkboxes, each with an optional `detail` line and `disabled`. In a field, the field's label names the group; otherwise pass `label`. `setValue` does not call `onChange`.
 
-In a field, the field's label names a `choiceList` or a `segmented` too. `choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`. `indicator: 'radio'` (or `'check'` for a multi list) draws a radio dot or a checkbox before each row, for a list whose pick is a setting rather than an action (the default, `'none'`, suits a list where a pick acts at once, as in `ui.choose`). An option's `badge` (`{ text, tone }`) goes at the end of its row; its `trailing` draws something to act on (a link) in a slot beside the option, outside it, so Tab reaches it and it is not read as part of the option.
+In a field, the field's label names a `choiceList` or a `segmented` too. `choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`. `indicator: 'radio'` (or `'check'` for a multi list) draws a radio dot or a checkbox before each row, for a list whose pick is a setting rather than an action (the default, `'none'`, suits a list where a pick acts at once, as in `ui.choose`). An option's `preview` draws more about it under its detail (a rendered example of what it would make), inside the row, so it must hold nothing to act on. An option's `badge` (`{ text, tone }`) goes at the end of its row; its `trailing` draws something to act on (a link) in a slot beside the option, outside it, so Tab reaches it and it is not read as part of the option.
 
 ### ui.listRow, ui.listGroup
 
@@ -262,7 +264,7 @@ const box = ui.composer(el, {
 box.focus();
 ```
 
-A text box with a send button. `submitOn: 'enter'` (default) sends on Enter; `'mod-enter'` sends on Cmd/Ctrl+Enter and leaves Enter for new lines. Blank text is not sent. When `onSubmit` returns a promise, the composer is busy until it settles. The box is cleared once `onSubmit` returns or its promise resolves; when it throws or rejects, the text stays. Other options: `rows` (3), `submitLabel` ("Send"), `submitIcon` (an icon button instead of a text one). The handle has `input`, `setBusy`, `focus` and `clear`.
+A text box with a send button. `submitOn: 'enter'` (default) sends on Enter; `'mod-enter'` sends on Cmd/Ctrl+Enter and leaves Enter for new lines. Blank text is not sent. When `onSubmit` returns a promise, the composer is busy until it settles. The box is cleared once `onSubmit` returns or its promise resolves; when it throws or rejects, or returns (or resolves to) `false` because nothing was sent, the text stays. An IME's Enter never sends. `allowEmpty: true` sends an empty box too, for a send button that starts something whose text is optional. Other options: `rows` (3), `submitLabel` ("Send"), `submitIcon` (an icon button instead of a text one). The handle has `input`, `setBusy`, `focus` and `clear`.
 
 ### ui.keyValue
 

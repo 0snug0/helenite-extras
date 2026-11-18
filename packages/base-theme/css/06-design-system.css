@@ -100,6 +100,9 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-field-control { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; min-width: 0; }
 .hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
+/* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */
+.hel-input.is-multiline { height: auto; box-sizing: border-box; }
+:where(textarea.hel-input) { width: 100%; padding: var(--size-4-1) var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); resize: vertical; }
 :where(input.hel-input) { height: var(--input-height); padding: 0 var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
 :where(.search-input-container) { position: relative; }
 /* base.css gives the search pane's container a margin; a search box in a toolbar or field sits flush */
@@ -151,6 +154,34 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-card.is-accent { border-color: var(--interactive-accent); }
 .hel-card.is-warning { border-color: var(--text-warning); }
 .hel-card.is-muted { background: var(--background-primary); color: var(--text-muted); }
+/* attention: a card that waits on the user (an agent's question). It sets the interface font itself, so a terminal or
+   editor font around it never leaks in; monospace is kept for code inside it. */
+.hel-card.is-attention { overflow: visible; border-width: 2px; border-color: var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 7%, var(--background-primary)); color: var(--text-normal); outline: none; font-family: var(--font-interface); }
+.hel-card.is-attention :is(input, textarea, select, button) { font-family: inherit; }
+.hel-card.is-attention :is(code, pre, kbd) { font-family: var(--font-monospace); }
+.hel-card.is-attention.is-warning { border-color: var(--color-orange); background: color-mix(in srgb, var(--color-orange) 9%, var(--background-primary)); }
+.hel-card.is-attention > .hel-card-head { flex-wrap: wrap; row-gap: var(--size-2-2); padding: var(--size-4-3) var(--size-4-4) 0; }
+.hel-card.is-attention > .hel-card-body { padding: var(--size-4-3) var(--size-4-4) var(--size-4-4); gap: var(--size-4-2); font-size: var(--font-ui-medium); line-height: var(--line-height-normal, 1.5); }
+.hel-card.is-attention .hel-card-title { font-size: var(--font-ui-medium); }
+.hel-card.is-attention .hel-card-icon { color: var(--text-accent); }
+.hel-card.is-attention.is-warning .hel-card-icon { color: var(--color-orange); }
+/* Choice lists in an attention card: roomier rounded rows, a tinted pick, and key hints that stay quiet until the row is hovered, focused or picked */
+.hel-card.is-attention .hel-choice-list { gap: var(--size-4-2); }
+.hel-card.is-attention .hel-choice { gap: var(--size-4-3); padding: var(--size-4-3) var(--size-4-4); border-radius: var(--radius-m); background-color: var(--background-primary); transition: border-color 0.12s, background-color 0.12s; }
+.hel-card.is-attention .hel-choice:hover { border-color: color-mix(in srgb, var(--interactive-accent) 55%, var(--background-modifier-border)); background-color: var(--background-primary-alt); }
+.hel-card.is-attention .hel-choice.is-selected { border-color: var(--interactive-accent); background-color: color-mix(in srgb, var(--interactive-accent) 14%, var(--background-primary)); }
+.hel-card.is-attention .hel-choice-text { font-weight: var(--font-medium, 500); }
+.hel-card.is-attention .hel-choice-detail { font-size: var(--font-ui-small); }
+.hel-card.is-attention .hel-choice-key { color: var(--text-muted); border-color: transparent; background-color: var(--background-modifier-hover); transition: color 0.12s, border-color 0.12s; }
+.hel-card.is-attention .hel-choice:is(:hover, :focus-visible, .is-selected) .hel-choice-key { color: var(--text-normal); border-color: var(--background-modifier-border); }
+@media (prefers-reduced-motion: reduce) { .hel-card.is-attention .hel-choice, .hel-card.is-attention .hel-choice-key { transition: none; } }
+.hel-card.is-attention:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent); }
+.hel-card.is-sticky { position: sticky; top: 0; z-index: 6; box-shadow: 0 4px 18px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
+.hel-card.is-sticky.is-attention:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent), 0 4px 18px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
+.hel-card.is-busy { opacity: 0.6; pointer-events: none; }
+.hel-card.is-pulse { animation: hel-card-pulse 0.8s ease-in-out 3; }
+@keyframes hel-card-pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--interactive-accent) 35%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .hel-card.is-pulse { animation: none; } }
 
 /* check list and choice list */
 .hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
@@ -168,6 +199,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-choice-body { flex: 1 1 auto; min-width: 0; }
 .hel-choice-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); }
 .hel-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-choice-preview { margin-top: var(--size-4-2); padding: var(--size-4-2); max-height: 240px; overflow: auto; background: var(--background-secondary); border-radius: var(--radius-s); font-size: var(--font-ui-small); }
 .hel-choice-key { flex: none; padding: 0 var(--size-2-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-choice-badge { flex: none; }
 .hel-choice-indicator { flex: none; position: relative; width: 14px; height: 14px; border: 1px solid var(--text-faint); background-color: var(--background-primary); }

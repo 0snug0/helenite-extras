@@ -82,6 +82,8 @@ describe("card", () => {
     expect(c.head.classList.contains("hel-card-head")).toBe(true);
     expect(c.head.querySelector(".hel-card-title")!.textContent).toBe("Claude Code");
     expect(c.head.querySelector<HTMLElement>(".hel-card-icon")!.dataset.icon).toBe("terminal");
+    expect(c.titleEl).toBe(c.head.querySelector(".hel-card-title"));
+    expect(card(host(), {}).titleEl).toBeNull();
     expect(c.body.classList.contains("hel-card-body")).toBe(true);
     expect(c.body.parentElement).toBe(c.el);
   });
@@ -97,6 +99,29 @@ describe("card", () => {
     c.setTone("default");
     expect(c.el.classList.contains("is-muted")).toBe(false);
     expect(card(host(), {}).el.className).toBe("hel-card");
+  });
+
+  it("attention and sticky are classes; setBusy dims it with aria-busy; pulse adds is-pulse for a while", () => {
+    vi.useFakeTimers();
+    try {
+      const c = card(host(), { title: "Claude is asking you", tone: "accent", attention: true, sticky: true });
+      expect(["is-attention", "is-sticky", "is-accent"].every((x) => c.el.classList.contains(x))).toBe(true);
+      expect(card(host(), { tone: "warning" }).el.classList.contains("is-attention")).toBe(false);
+      c.setBusy(true);
+      expect(c.el.classList.contains("is-busy")).toBe(true);
+      expect(c.el.getAttribute("aria-busy")).toBe("true");
+      c.setBusy(false);
+      expect(c.el.classList.contains("is-busy")).toBe(false);
+      expect(c.el.hasAttribute("aria-busy")).toBe(false);
+      c.pulse();
+      expect(c.el.classList.contains("is-pulse")).toBe(true);
+      vi.advanceTimersByTime(2399);
+      expect(c.el.classList.contains("is-pulse")).toBe(true);
+      vi.advanceTimersByTime(1);
+      expect(c.el.classList.contains("is-pulse")).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
@@ -130,6 +155,32 @@ describe("keyValue", () => {
 });
 
 describe("composer", () => {
+  it("false from onSubmit keeps the text; allowEmpty sends an empty box; an IME's Enter does not send", async () => {
+    const kept = composer(host(), { onSubmit: () => false });
+    kept.input.value = "hello";
+    key(kept.input, "Enter");
+    expect(kept.input.value).toBe("hello");
+    const later = composer(host(), { onSubmit: async () => false });
+    later.input.value = "hi";
+    key(later.input, "Enter");
+    await tick();
+    expect(later.input.value).toBe("hi");
+    const start = vi.fn();
+    const empty = composer(host(), { allowEmpty: true, onSubmit: start });
+    key(empty.input, "Enter");
+    expect(start).toHaveBeenCalledWith("");
+    expect(composer(host(), { onSubmit: start }).input.value).toBe("");
+    const ime = vi.fn();
+    const c = composer(host(), { onSubmit: ime });
+    c.input.value = "にほん";
+    c.input.dispatchEvent(new Event("compositionstart"));
+    key(c.input, "Enter");
+    expect(ime).not.toHaveBeenCalled();
+    c.input.dispatchEvent(new Event("compositionend"));
+    key(c.input, "Enter");
+    expect(ime).toHaveBeenCalledWith("にほん");
+  });
+
   it("Enter submits the text and clears it; Shift+Enter and an empty box do not submit", async () => {
     const onSubmit = vi.fn();
     const c = composer(host(), { placeholder: "Ask anything", onSubmit });

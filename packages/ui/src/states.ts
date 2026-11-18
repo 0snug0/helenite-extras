@@ -57,7 +57,20 @@ export function statusDot(parent: HTMLElement, tone: Tone, label: string, o: { p
   return el;
 }
 
+/** The element `statusText` returns: a span that can also change its tone. */
+export type StatusTextElement = HTMLElement & {
+  /** Recolours the status (its text is the span's own: `setText` / `textContent`). */
+  setTone(t: Tone): void;
+};
+
 /** A short status in words ("Connected", "Not signed in"), coloured by tone. */
-export function statusText(parent: HTMLElement, text: string, tone: Tone = "default"): HTMLElement {
-  return make(parent, "span", ["hel-status-text", `is-${tone}`], text);
+export function statusText(parent: HTMLElement, text: string, tone: Tone = "default"): StatusTextElement {
+  const el = make(parent, "span", ["hel-status-text", `is-${tone}`], text) as StatusTextElement;
+  let current = tone;
+  el.setTone = (t) => {
+    el.classList.remove(`is-${current}`);
+    current = t;
+    el.classList.add(`is-${t}`);
+  };
+  return el;
 }
