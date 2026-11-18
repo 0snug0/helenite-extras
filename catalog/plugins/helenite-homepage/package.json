@@ -1,0 +1,1 @@
+{ "name": "@helenite/helenite-homepage", "version": "0.1.0", "private": true, "type": "module", "scripts": { "build": "node ../core-build/build.mjs helenite-homepage", "typecheck": "pnpm --filter @helenite/types build && tsc --noEmit -p .", "test": "node ../core-build/build.mjs helenite-homepage && vitest run" } }
