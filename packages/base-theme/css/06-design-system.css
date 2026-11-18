@@ -37,6 +37,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-table-buttons > .clickable-icon { width: var(--size-4-8, 32px); height: var(--size-4-8, 32px); padding: 0; }
 .hel-table td.is-link { cursor: pointer; }
 .hel-table td.is-default { color: var(--text-faint); }
+.hel-table td.is-different { color: var(--text-accent); }
 
 /* states */
 .hel-empty, .hel-loading { color: var(--text-muted); padding: var(--size-4-4); text-align: center; }

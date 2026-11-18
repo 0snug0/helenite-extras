@@ -2,7 +2,8 @@
 // move up / move down, per-connector settings, and a Review button for vault connectors. Written against a structural
 // `DataClient` (matching `window.helenite.data`) so this package never imports desktop code. Every name, id and message
 // shown here is vault-controlled, so it only ever goes through `setName` / `setDesc` (text), never HTML.
-import { Notice, PluginSettingTab, Setting, type App, type Plugin } from 'obsidian';
+import { PluginSettingTab, Setting, type App, type Plugin } from 'obsidian';
+import { ui } from 'helenite';
 import type { ContractStatus, DataFile } from '../data';
 import type { SettingSpec, SettingValue } from '../sdk';
 
@@ -28,7 +29,7 @@ const SAVE_DEBOUNCE_MS = 400;
 const BADGE: Record<string, string> = { ready: 'ready', 'waiting-review': 'waiting for review', rejected: 'rejected', missing: 'missing' };
 
 export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
-  const tab = new PluginSettingTab(deps.app, deps.plugin);
+  const tab: PluginSettingTab = new (class extends PluginSettingTab { display(): void {} })(deps.app, deps.plugin);
   tab.id = 'data';
   tab.name = 'Data sources';
   tab.icon = 'database';
@@ -42,12 +43,12 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     const mine = ++token;
     const { containerEl } = t;
     containerEl.empty();
-    new Setting(containerEl).setName('Data sources').setDesc("Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order.").setHeading();
+    const top = ui.settings.section(containerEl, 'Data sources', { desc: "Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order." });
     let status: DataStatusView;
     try {
       status = await deps.data.status();
     } catch (e) {
-      if (mine === token) new Setting(containerEl).setName(`Could not load data settings: ${(e as Error).message}`);
+      if (mine === token) ui.errorState(top, `Could not load data settings: ${(e as Error).message}`, undefined, { variant: 'inline' });
       return;
     }
     if (mine !== token) return;
@@ -56,7 +57,7 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
 
     let file: DataFile = status.data;
     const write = async (next: DataFile) => {
-      try { await deps.data.save(next); } catch (e) { new Notice(`Could not save: ${(e as Error).message}`); }
+      try { await deps.data.save(next); } catch (e) { ui.notice(`Could not save: ${(e as Error).message}`, { kind: 'error' }); }
     };
     const save = async (next: DataFile, rerender: boolean) => {
       file = next;
@@ -72,29 +73,39 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     };
     const bindingsOf = (contract: string) => file.bindings[contract] ?? [];
 
-    if (!status.contracts.length) new Setting(containerEl).setName('No data contracts yet.').setDesc('A vault template can ship contracts; none is installed.');
+    if (!status.contracts.length) new Setting(top).setName('No data contracts yet.').setDesc('A vault template can ship contracts; none is installed.');
     for (const c of status.contracts) {
-      new Setting(containerEl).setName(c.name).setDesc(c.error ?? (c.actions.length ? `Actions: ${c.actions.join(', ')}` : '')).setHeading();
+      const section = ui.settings.section(containerEl, c.name, { desc: c.error ?? (c.actions.length ? `Actions: ${c.actions.join(', ')}` : '') });
+      section.dataset.contract = c.name;
       c.sources.forEach((s, i) => {
-        const row = new Setting(containerEl).setName(s.id).setDesc(BADGE[s.status] ?? s.status);
+        const row = new Setting(section).setName(s.id).setDesc(BADGE[s.status] ?? s.status);
+        row.settingEl.dataset.source = `${c.name}/${s.id}`;
         const move = (by: number) => {
           const ids = [...bindingsOf(c.name)];
           [ids[i], ids[i + by]] = [ids[i + by], ids[i]];
           return save({ ...file, bindings: { ...file.bindings, [c.name]: ids } }, true);
         };
-        if (i > 0) row.addButton((b) => b.setButtonText('Move up').onClick(() => move(-1)));
-        if (i < c.sources.length - 1) row.addButton((b) => b.setButtonText('Move down').onClick(() => move(1)));
-        row.addButton((b) => b.setButtonText('Remove').setWarning().onClick(() => save({ ...file, bindings: { ...file.bindings, [c.name]: bindingsOf(c.name).filter((x) => x !== s.id) } }, true)));
-        if (vault.has(s.id)) row.addButton((b) => b.setButtonText('Review').onClick(() => deps.openReview(s.id)));
-        for (const [key, spec] of Object.entries(byId.get(s.id)?.settings ?? {})) renderSetting(containerEl, s.id, key, spec);
+        const at = row.controlEl;
+        if (i > 0) ui.action(at, 'moveUp', { onClick: () => move(-1) });
+        if (i < c.sources.length - 1) ui.action(at, 'moveDown', { onClick: () => move(1) });
+        ui.action(at, 'remove', {
+          app: deps.app,
+          subject: s.id,
+          message: `Remove ${s.id} from ${c.name}?`,
+          onClick: () => save({ ...file, bindings: { ...file.bindings, [c.name]: bindingsOf(c.name).filter((x) => x !== s.id) } }, true),
+        });
+        if (vault.has(s.id)) ui.action(at, 'open', { label: 'Review', onClick: () => deps.openReview(s.id) });
+        for (const [key, spec] of Object.entries(byId.get(s.id)?.settings ?? {})) renderSetting(section, s.id, key, spec);
       });
       const candidates = status.connectors.filter((x) => x.provides.includes(c.name) && !bindingsOf(c.name).includes(x.id));
       if (candidates.length) {
         let pick = candidates[0].id;
-        new Setting(containerEl).setName('Add a connector').addDropdown((d) => {
+        const add = new Setting(section).setName('Add a connector').addDropdown((d) => {
           for (const x of candidates) d.addOption(x.id, x.kind === 'vault' ? `${x.id} (vault)` : x.id);
           d.setValue(pick).onChange((v) => { pick = v; });
-        }).addButton((b) => b.setButtonText('Add').setCta().onClick(() => save({ ...file, bindings: { ...file.bindings, [c.name]: [...bindingsOf(c.name), pick] } }, true)));
+        });
+        add.settingEl.dataset.add = c.name;
+        ui.button(add.controlEl, { text: 'Add', variant: 'primary', onClick: () => save({ ...file, bindings: { ...file.bindings, [c.name]: [...bindingsOf(c.name), pick] } }, true) });
       }
     }
 
@@ -107,6 +118,7 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
         saveSoon({ ...file, settings: { ...file.settings, [id]: rest } });
       };
       const row = new Setting(el).setName(`${id} · ${spec.label}`);
+      row.settingEl.dataset.setting = `${id}/${key}`;
       if (typeof spec.default === 'boolean') row.addToggle((x) => x.setValue(current() === true).onChange((v) => set(v)));
       else row.addText((x) => x.setPlaceholder(String(spec.default)).setValue(String(current())).onChange((v) => {
         if (v.trim() === '') return unset();

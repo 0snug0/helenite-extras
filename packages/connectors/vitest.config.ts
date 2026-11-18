@@ -1,8 +1,12 @@
 import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
-// The UI test runs against a tiny recording fake of the `obsidian` classes the tab uses (no DOM needed).
+const api = fileURLToPath(new URL('../obsidian-api/src/index.ts', import.meta.url));
+const helenite = fileURLToPath(new URL('../obsidian-api/src/helenite-module.ts', import.meta.url));
+
+// The Settings tabs (test/ui.test.ts, test/data-tab.test.ts) run against the real `obsidian` implementation (obsidian-api)
+// in jsdom, as the core plugins do; they opt in with `@vitest-environment jsdom` and import ./ui-setup. The rest run in node.
 export default defineConfig({
-  resolve: { alias: { obsidian: fileURLToPath(new URL('./test/fake-obsidian.ts', import.meta.url)) } },
+  resolve: { alias: { obsidian: api, helenite } },
   test: { include: ['test/**/*.test.ts'], testTimeout: 20000 },
 });
