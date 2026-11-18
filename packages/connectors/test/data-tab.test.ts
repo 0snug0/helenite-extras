@@ -29,10 +29,18 @@ describe('Settings → Data tab', () => {
   it('is a tab named Data that shows each contract with its sources and status badges', async () => {
     const { tab, rows } = make();
     await tab.display();
-    expect([tab.id, tab.name]).toEqual(['data', 'Data']);
+    expect([tab.id, tab.name]).toEqual(['data', 'Data sources']);
     expect(rows().find((r) => r.name === 'download-queue')!.heading).toBe(true);
     expect(rows().find((r) => r.name === 'sabnzbd')!.desc).toBe('ready');
     expect(rows().find((r) => r.name === 'qbittorrent')!.desc).toBe('waiting for review');
+  });
+
+  it('is titled Data sources, with the vault-scoped description', async () => {
+    const { tab, rows } = make();
+    await tab.display();
+    expect(tab.name).toBe('Data sources');
+    const h = rows().find((r) => r.heading && r.name === 'Data sources')!;
+    expect(h.desc).toBe("Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order.");
   });
 
   it('moving a source down saves swapped bindings', async () => {
