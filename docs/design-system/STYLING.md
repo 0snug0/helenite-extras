@@ -143,12 +143,6 @@ Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these.
 | `hel-dot` | One event dot. |
 | `hel-cal-more` | The "+n" overflow count. |
 
-### Gallery
-
-These style Settings, Design system. Plugins should not use them.
-
-`hel-gallery-section`, `hel-gallery-heading`, `hel-gallery-demo`, `hel-gallery-code`.
-
 ## Example
 
 Make a primary button's pressed colour a theme colour, and give badges square corners:
