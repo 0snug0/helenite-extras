@@ -14,7 +14,14 @@ export interface SecretEntry {
   isSet: boolean;
   /** Managed secrets (OAuth tokens) are written by a connect flow, not typed in. */
   managed: boolean;
+  /** Who owns it: Home only, shared from Home (policy-gated in vaults), or one vault's own. Absent means the vault's own. */
+  class?: 'home' | 'shared' | 'vault';
+  /** Home's Vaults policy for a shared secret; sent to Home only. */
+  policy?: SecretVaultsPolicy;
 }
+
+/** Which vaults may use a shared secret, keyed by vault uuid. There is no on/off default for a secret. */
+export type SecretVaultsPolicy = 'all' | 'none' | { only: string[] } | { except: string[] };
 
 export interface AppSecretDecl { id: string; name: string; secrets: { name: string; label?: string; required?: boolean }[]; connectors?: string[] }
 

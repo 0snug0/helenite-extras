@@ -30,7 +30,7 @@ const BADGE: Record<string, string> = { ready: 'ready', 'waiting-review': 'waiti
 export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
   const tab = new PluginSettingTab(deps.app, deps.plugin);
   tab.id = 'data';
-  tab.name = 'Data';
+  tab.name = 'Data sources';
   tab.icon = 'database';
   let token = 0;
   // `display` is synchronous in the Obsidian API; the returned promise is for callers (and tests) that want to wait.
@@ -42,7 +42,7 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     const mine = ++token;
     const { containerEl } = t;
     containerEl.empty();
-    new Setting(containerEl).setName('Data').setDesc('Which connectors serve each data contract, in the order they are asked.').setHeading();
+    new Setting(containerEl).setName('Data sources').setDesc("Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order.").setHeading();
     let status: DataStatusView;
     try {
       status = await deps.data.status();
