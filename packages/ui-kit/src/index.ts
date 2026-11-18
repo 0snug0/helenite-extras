@@ -1,3 +1,4 @@
+export * from "./icons";
 export * from "./dom";
 export * from "./bridge";
 export * from "./components/controls";

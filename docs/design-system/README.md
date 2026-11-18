@@ -175,7 +175,9 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, cardGrid, picker, and the rest) take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, so they look the same as in plugins, and the active theme and snippets restyle them (see [STYLING.md](./STYLING.md)).
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, cardGrid, picker, and the rest) take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, picker, tabs and the rest) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+
+An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
 Overlays take the same options as the plugin versions, minus `app`, and are drawn by the host through the capability bridge. Connect the bridge first, with the `api` your app's default export receives. Without it, every overlay and `notice` throws:
 

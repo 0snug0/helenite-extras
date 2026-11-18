@@ -16,6 +16,15 @@ body {
 .hel-button-icon:empty { display: none; }
 .hel-button-icon { display: inline-flex; align-items: center; }
 .hel-button-icon + .hel-button-text { margin-left: var(--size-2-2); }
+/* Variant looks for app frames, which load this file but not base.css. Same specificity and values as base.css's
+   button.mod-cta / button.mod-warning / .clickable-icon / .svg-icon rules (:where() adds nothing), so the host renders
+   unchanged and a theme's rules on those classes still win in both places. */
+button:where(.hel-button).mod-cta { background-color: var(--interactive-accent); color: var(--text-on-accent); box-shadow: none; }
+button:where(.hel-button).mod-cta:hover { background-color: var(--interactive-accent-hover); }
+button:where(.hel-button).mod-warning { background-color: var(--background-modifier-error); color: var(--text-on-accent); box-shadow: none; }
+:where(.hel-button).clickable-icon { display: flex; align-items: center; justify-content: center; background: transparent; border: 0; box-shadow: none; padding: var(--size-2-2) var(--size-2-3); border-radius: var(--clickable-icon-radius); color: var(--icon-color); opacity: var(--icon-opacity); cursor: var(--cursor); }
+:where(.hel-button).clickable-icon:hover { background-color: var(--background-modifier-hover); opacity: var(--icon-opacity-hover); color: var(--icon-color-hover); }
+:where(.hel-button-icon) > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); flex-shrink: 0; }
 
 /* table (moved from core-settings .helenite-inventory* / .helenite-across-*) */
 .hel-table { width: 100%; border-collapse: collapse; }
@@ -73,11 +82,3 @@ body {
 .menu-item.is-danger { color: var(--text-error); }
 .menu-item.is-danger .menu-item-icon { color: var(--text-error); }
 
-/* Design system gallery (Home's Design system tab) */
-.hel-gallery-section { padding-bottom: var(--size-4-4); margin-bottom: var(--size-4-4); border-bottom: 1px solid var(--background-modifier-border); }
-.hel-gallery-heading { margin: 0 0 var(--size-4-3); }
-.hel-gallery-demo { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; margin-bottom: var(--size-4-3); }
-.hel-gallery-demo > .hel-section, .hel-gallery-demo > .setting-item, .hel-gallery-demo > .hel-table, .hel-gallery-demo > .hel-empty, .hel-gallery-demo > .hel-loading, .hel-gallery-demo > .hel-error { flex: 1 1 100%; }
-/* The last section can scroll to the top of the tab, so every section can be shot there. */
-.hel-gallery-section:last-child { min-height: 100vh; border-bottom: 0; }
-.hel-gallery-code { margin: 0; padding: var(--size-4-3); background-color: var(--background-secondary); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); overflow-x: auto; white-space: pre; }

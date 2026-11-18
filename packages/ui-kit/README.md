@@ -14,6 +14,8 @@ const yes = await confirm({ title: "Remove?", message: "This cannot be undone.",
 
 `button`, `segmented`, `table`, `emptyState`, `errorState`, `loadingState`, `badge`, `statusDot`, `setIconRenderer`, `renderIcon`, and the `Field` type. They are the same functions, with the same `(parent, options)` signatures as in the `helenite` module.
 
+A frame has no Obsidian `setIcon`, so importing the kit installs `kitIconRenderer`: the icons in `KIT_ICONS` (the standard action icons, `more-horizontal`, `chevron-right`, `chevron-down`, `check`, `plus`, `search`) are drawn as inline SVG; other names only get `data-icon`. Call `setIconRenderer` to replace it.
+
 ## Overlays
 
 Same options objects as the `helenite` module's overlays, without the `app` argument. Each one sends a declarative spec to the host: a Cancel action first, then your `action` label as the primary (or `danger`) action. Nothing reads "OK".
