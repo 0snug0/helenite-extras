@@ -94,7 +94,7 @@ export const letterboxdMock = () => serve((req, res) => {
 
 /** Mock Google: consent page (drives itself via `approve`), token endpoint with PKCE check and refresh, calendar API. */
 export async function googleMock() {
-  const state = { codes: new Map<string, { challenge: string; redirect: string }>(), tokens: 0, refreshes: 0, accessTtl: 3600, badRefresh: false };
+  const state = { codes: new Map<string, { challenge: string; redirect: string }>(), tokens: 0, refreshes: 0, accessTtl: 3600, badRefresh: false, lastClientId: '' };
   const mock = await serve((req, res, body) => {
     const u = new URL(req.url!, 'http://x');
     if (u.pathname === '/auth') {
@@ -106,6 +106,7 @@ export async function googleMock() {
     }
     if (u.pathname === '/token' && req.method === 'POST') {
       const p = new URLSearchParams(body);
+      state.lastClientId = p.get('client_id') ?? '';
       if (p.get('grant_type') === 'authorization_code') {
         const c = state.codes.get(p.get('code') ?? '');
         const ok = c && c.redirect === p.get('redirect_uri') && createHash('sha256').update(p.get('code_verifier') ?? '').digest('base64url') === c.challenge;
