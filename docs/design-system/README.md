@@ -371,6 +371,7 @@ ui.action(cell, 'delete', { app, subject: 'Notes', onClick: remove }); // asks t
 
 ```ts
 const rows = ui.settings.section(containerEl, 'Items');          // heading + container; put rows in the container
+ui.settings.section(containerEl, 'Secrets', { desc: 'Stored in the system keychain.' });  // a heading with a description
 new ui.settings.row(rows).setName('Name').addText((t) => t.setValue(v));  // Obsidian's Setting
 ui.settings.summaryRow(rows, { name: 'Sync', desc: 'On', onClick: openSync, chevron: true });
 ui.settings.subpageRow(app, rows, { name: 'Items', desc: '3 items', title: 'Items', render: (page) => fill(page) });
