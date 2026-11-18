@@ -102,6 +102,7 @@ Helenite imports `entry` as an ES module and calls its default export with `root
 | `api.workspace.openUrl(url)`, `api.workspace.openApp(id)` | nothing (`http` and `https` links only) |
 | `api.connectors.<id>.<method>(...)` | the id in `connectors` |
 | `api.data.list(contract)`, `api.data.act(contract, action, record)` | the contract in `data` |
+| `api.ui.modal(spec)`, `api.ui.menu(spec)`, `api.ui.notice(text, { kind?, timeoutMs? })` | nothing: drawn by the host (see the UI kit below, which builds these specs) |
 | `api.agent.ask(text)` | `agent: true` |
 | `api.settings`, `api.app`, `api.view` | nothing: read-only values |
 
@@ -114,9 +115,10 @@ Every call is a message to the host, checked against the manifest in the main pr
 - **The parts that draw into the page** are the same functions as `ui.*` in plugins, with the same `(parent, options)` signatures: `button`, `segmented`, `table`, `emptyState`, `errorState`, `loadingState`, `badge`, `statusDot`, `statusText`, `countBadge`, `chip`, `field`, `textInput`, `searchInput`, `slider`, `toggle`, `dropdown`, `tabs`, `toolbar`, `callout`, `card`, `checkList`, `choiceList`, `listRow`, `listGroup`, `composer`, `keyValue`. Every frame loads the design-system stylesheet, so they need no CSS from the app.
 - **The kit's own parts** (`cardGrid`, `posterRow`, `picker`, `calendarStrip`) need `packages/ui-kit/src/ui-kit.css`: copy it into the app and `@import` it from `view.css`.
 - **Icons**: a frame has no Obsidian icon set. The kit draws the standard action icons and a few more (`more-horizontal`, `chevron-right`, `chevron-down`, `check`, `plus`, `search`) as inline SVG; other names only set `data-icon`. Pass your own renderer to `setIconRenderer` for more.
-- **Overlays** go through the host: call `setBridge(api)` first, or they throw.
-  - `notice(text)` works today, but the host drops its options for now, so `kind` and `timeoutMs` are ignored.
-  - `confirm`, `prompt`, `choose`, `form` and `menu` (and a `listRow`'s `menu`) need the host to draw app modals and menus, which is not built yet, so they do not open in an app today. Their signatures are final; code written against them will work when that lands. `prompt` has no `validate`, because a callback cannot cross the bridge.
+- **Overlays** go through the host: call `setBridge(api)` first, or they throw. `confirm`, `prompt`, `choose`, `form`, `menu` (and a `listRow`'s `menu`) and `notice` send a declarative spec to the host, which draws the modal or menu over the whole window with the same dialog and menu plugins use, and sends back the answer. `notice` honours `kind` and `timeoutMs`. `prompt` has no `validate`, because a callback cannot cross the bridge.
+  - Every app modal is labelled by the host with the app's icon, name and id ("From Downloadrr · downloadrr"). The app cannot style or place it: the spec carries only text, fields and action labels, and only `width: "wide"` changes its size.
+  - The host checks every spec: a title up to 120 characters, up to 20 body blocks, 20 fields and 3 actions besides Cancel, and up to 50 menu items, ids made of letters, digits and `_ . : -`. A bad spec rejects with `invalid-spec`. A field with `secret` rejects with `secret-field`: ask for a secret only with `promptSecret(name)` (`api.secrets.prompt`), whose dialog only the host draws.
+  - One modal per frame at a time: a second `modal` while one is open rejects with `modal-open`, and more than 5 in 10 seconds rejects with `modal-rate`. A new menu replaces an open one, and opens over the app's own frame (`at` is kept inside it). A preset `select`, `choice` or `multi` value that is not one of the options is dropped. When the view closes, an open modal or menu closes and resolves as dismissed.
 
 The kit's reference is `packages/ui-kit/README.md`, and the parts are in [docs/design-system/README.md](../design-system/README.md#vault-apps).
 
