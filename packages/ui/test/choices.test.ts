@@ -195,6 +195,21 @@ describe("choiceList", () => {
   });
 });
 
+describe("choiceList preview", () => {
+  it("draws an option's preview inside its row, under the detail", () => {
+    const el = document.body.appendChild(document.createElement("div"));
+    choiceList(el, {
+      options: [{ value: "a", text: "A", detail: "first" }, { value: "b", text: "B", detail: "second", preview: (box) => { box.textContent = "## B"; } }],
+      onChange: () => {},
+    });
+    const previews = el.querySelectorAll(".hel-choice-preview");
+    expect(previews.length).toBe(1);
+    expect(previews[0].textContent).toBe("## B");
+    expect(previews[0].closest('[role="option"]')!.getAttribute("data-value")).toBe("b");
+    expect(previews[0].previousElementSibling!.classList.contains("hel-choice-detail")).toBe(true);
+  });
+});
+
 describe("frame safety (choice parts)", () => {
   it("draw into the parent's document", () => {
     const doc = document.implementation.createHTMLDocument("frame");

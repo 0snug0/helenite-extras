@@ -12,6 +12,11 @@ export interface ChoiceOption<T> {
   disabled?: boolean;
   /** A key that picks this option while the list has focus; shown as a hint. */
   key?: string;
+  /**
+   * Draws more about the option under its detail (a rendered preview of what it would make), in a
+   * `hel-choice-preview` block inside the row. It is read as part of the option, so draw nothing to act on into it.
+   */
+  preview?: (el: HTMLElement) => void;
   /** A badge at the end of the row ("Found"). */
   badge?: { text: string; tone?: Tone };
   /**
@@ -96,6 +101,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     make(title, "span", ["hel-choice-text"], opt.text);
     if (opt.tag) badge(title, opt.tag, "accent").classList.add("hel-choice-tag");
     if (opt.detail) make(body, "div", ["hel-choice-detail"], opt.detail);
+    if (opt.preview) opt.preview(make(body, "div", ["hel-choice-preview"]));
     if (opt.badge) badge(row, opt.badge.text, opt.badge.tone).classList.add("hel-choice-badge");
     if (opt.key) make(row, "kbd", ["hel-choice-key"], opt.key);
     if (opt.trailing) opt.trailing(make(holder, "div", ["hel-choice-extra"]));

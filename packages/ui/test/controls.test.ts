@@ -94,6 +94,24 @@ describe("textInput", () => {
   });
 });
 
+describe("textInput multiline", () => {
+  it("is a textarea with rows and a label; Enter does not call onEnter; onInput gets the text", () => {
+    const onEnter = vi.fn();
+    const onInput = vi.fn();
+    const el = textInput(document.body.appendChild(document.createElement("div")), { multiline: true, rows: 4, label: "Notes", value: "a", onEnter, onInput });
+    expect(el.tagName).toBe("TEXTAREA");
+    expect(el.classList.contains("hel-input") && el.classList.contains("is-multiline")).toBe(true);
+    expect(el.getAttribute("rows")).toBe("4");
+    expect(el.getAttribute("aria-label")).toBe("Notes");
+    expect(el.value).toBe("a");
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(onEnter).not.toHaveBeenCalled();
+    el.value = "a\nb";
+    el.dispatchEvent(new Event("input"));
+    expect(onInput).toHaveBeenCalledWith("a\nb");
+  });
+});
+
 describe("searchInput", () => {
   it("sits in Obsidian's search-input-container with a clear button and debounces", () => {
     vi.useFakeTimers();

@@ -81,7 +81,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-field-control` | The slot the control is drawn into. |
 | `hel-field-hint` | The hint line. |
 | `hel-field-error` | The error line from `setError`. Hidden while there is no error. |
-| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input. |
+| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`). |
 | `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. |
 | `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. `is-compact` is shorter. |
 | `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled. |
@@ -99,7 +99,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. `is-solid` fills it with the tone's colour (`--hel-callout-solid-fg` text, a contrasting action button). |
 | `hel-callout-text` | The callout's text. |
 | `hel-callout-action` | The callout's button (a `hel-button`). |
-| `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. |
+| `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. `is-attention` (a card waiting on the user: thick toned border, tint, focus ring), `is-sticky` (pinned to the top of its pane, with a shadow), `is-busy` (dimmed while its action runs) and `is-pulse` (briefly, from `pulse()`). |
 | `hel-card-head` | The card's head: icon and title. Hidden while empty. |
 | `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head, the vault rows of Accounts). |
 | `hel-card-title` | The card's title. |
@@ -122,6 +122,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-choice-text` | The option's text. |
 | `hel-choice-tag` | The option's tag (a `hel-badge`). |
 | `hel-choice-detail` | The option's second line. |
+| `hel-choice-preview` | The option's `preview`, under its detail inside the row. |
 | `hel-choice-key` | The key hint (a `<kbd>`). |
 | `hel-choice-indicator` | The mark before a row when the list has an `indicator`: `is-radio` (a radio dot) or `is-check` (a checkbox), filled when the row is selected. |
 | `hel-choice-badge` | The option's `badge` at the end of the row (a `hel-badge`). |

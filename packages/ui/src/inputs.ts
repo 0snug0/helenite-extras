@@ -9,7 +9,11 @@ export interface TextInputOptions {
   /** The accessible name, when there is no visible label (a field's label names it otherwise). */
   label?: string;
   onInput?: (v: string) => void;
+  /** Called on Enter. In a multiline box Enter starts a new line and this is not called. */
   onEnter?: (v: string) => void;
+  /** A `<textarea>` for an answer of several lines, `rows` high (default 3). */
+  multiline?: boolean;
+  rows?: number;
 }
 
 function input(parent: HTMLElement, type: string, cls: string[], label?: string): HTMLInputElement {
@@ -22,16 +26,33 @@ function input(parent: HTMLElement, type: string, cls: string[], label?: string)
   return el;
 }
 
-export function textInput(parent: HTMLElement, o: TextInputOptions = {}): HTMLInputElement {
-  const el = input(parent, o.secret ? "password" : o.type ?? "text", o.secret ? ["hel-input", "is-secret"] : ["hel-input"], o.label);
+/** A text box. With `multiline: true` it is a `<textarea>` (`hel-input is-multiline`). */
+export function textInput(parent: HTMLElement, o: TextInputOptions & { multiline: true }): HTMLTextAreaElement;
+export function textInput(parent: HTMLElement, o?: TextInputOptions & { multiline?: false }): HTMLInputElement;
+export function textInput(parent: HTMLElement, o: TextInputOptions = {}): HTMLInputElement | HTMLTextAreaElement {
+  let el: HTMLInputElement | HTMLTextAreaElement;
+  if (o.multiline) {
+    el = parent.ownerDocument.createElement("textarea");
+    el.classList.add("hel-input", "is-multiline");
+    el.setAttribute("rows", String(o.rows ?? 3));
+    if (o.label) el.setAttribute("aria-label", o.label);
+    joinField(parent, el);
+    parent.appendChild(el);
+  } else {
+    el = input(parent, o.secret ? "password" : o.type ?? "text", o.secret ? ["hel-input", "is-secret"] : ["hel-input"], o.label);
+    if (o.secret) el.autocomplete = "off";
+  }
   if (o.placeholder !== undefined) el.placeholder = o.placeholder;
-  if (o.secret) el.autocomplete = "off";
   el.value = o.value ?? "";
-  el.addEventListener("input", () => o.onInput?.(el.value));
-  el.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.isComposing) o.onEnter?.(el.value);
-  });
-  return el;
+  const box = el;
+  box.addEventListener("input", () => o.onInput?.(box.value));
+  // Not instanceof: a frame's elements come from another realm.
+  if (!o.multiline) {
+    (box as HTMLInputElement).addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.isComposing) o.onEnter?.(box.value);
+    });
+  }
+  return box;
 }
 
 export interface SearchInputOptions {
