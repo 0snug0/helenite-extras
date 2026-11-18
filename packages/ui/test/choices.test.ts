@@ -129,6 +129,17 @@ describe("choiceList", () => {
     expect(onChange).toHaveBeenCalledTimes(2);
   });
 
+  it("rows carry data-value; a single list's array value is one value, not a list of them", () => {
+    const c = choiceList<string | string[]>(host(), { options: [{ value: ["a", "b"], text: "Both" }, { value: "a", text: "A" }], value: ["a", "b"], onChange: () => {} });
+    const rows = [...c.el.querySelectorAll<HTMLElement>(".hel-choice")];
+    expect(rows.map((r) => r.dataset.value)).toEqual(["a,b", "a"]);
+    const both = c.el.querySelectorAll(".hel-choice.is-selected");
+    // The value ['a','b'] is not the option ['a','b'] by identity, and is not read as two values either.
+    expect([...both].map((r) => r.textContent)).toEqual([]);
+    const multi = choiceList(host(), { multi: true, options: [{ value: "a", text: "A" }, { value: "b", text: "B" }], value: ["b"], onChange: () => {} });
+    expect([...multi.el.querySelectorAll(".hel-choice.is-selected")].map((r) => r.textContent)).toEqual(["B"]);
+  });
+
   it("single setValue moves the selection without onChange", () => {
     const onChange = vi.fn();
     const c = choiceList(host(), { options: [{ value: "a", text: "A" }, { value: "b", text: "B" }], value: "a", onChange });

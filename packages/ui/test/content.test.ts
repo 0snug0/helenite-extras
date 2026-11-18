@@ -159,11 +159,14 @@ describe("composer", () => {
     key(c.input, "Enter");
     expect(c.el.classList.contains("is-busy")).toBe(true);
     expect(send.disabled).toBe(true);
+    // Read-only while it runs, so nothing typed meanwhile is wiped when it clears.
+    expect(c.input.readOnly).toBe(true);
     key(c.input, "Enter");
     expect(onSubmit).toHaveBeenCalledTimes(1);
     finish();
     await tick();
     expect(c.el.classList.contains("is-busy")).toBe(false);
+    expect(c.input.readOnly).toBe(false);
     expect(c.input.value).toBe("");
     c.input.value = "two";
     key(c.input, "Enter");

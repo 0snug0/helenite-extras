@@ -48,6 +48,8 @@ describe("listRow", () => {
     const resume = vi.fn();
     const row = listRow(host(), { title: "A", onClick, actions: [{ icon: "play", label: "Resume", onClick: resume }] });
     expect(row.tabIndex).toBe(0);
+    expect(row.getAttribute("role")).toBe("button");
+    expect(listRow(host(), { title: "T", onClick, obsidianClass: "tree-item" }).getAttribute("role")).toBe("treeitem");
     row.click();
     expect(onClick).toHaveBeenCalledTimes(1);
     key(row, "Enter");
@@ -57,7 +59,9 @@ describe("listRow", () => {
     expect(resume).toHaveBeenCalledTimes(1);
     key(action, "Enter");
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(listRow(host(), { title: "B" }).hasAttribute("tabindex")).toBe(false);
+    const plain = listRow(host(), { title: "B" });
+    expect(plain.hasAttribute("tabindex")).toBe(false);
+    expect(plain.hasAttribute("role")).toBe(false);
   });
 
   it("a right-click opens the menu through the installed renderer, built fresh each time", () => {
@@ -84,6 +88,8 @@ describe("listGroup", () => {
     expect(header.querySelector(".hel-list-group-count")!.textContent).toBe("3");
     expect(header.getAttribute("aria-expanded")).toBe("true");
     expect(g.body.classList.contains("hel-list-group-body")).toBe(true);
+    expect(g.body.id).toBeTruthy();
+    expect(header.getAttribute("aria-controls")).toBe(g.body.id);
     expect(g.body.hidden).toBe(false);
     header.click();
     expect(onToggle).toHaveBeenLastCalledWith(true);

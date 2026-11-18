@@ -59,6 +59,7 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
   const { onClick, menu } = o;
   if (onClick) {
     row.tabIndex = 0;
+    row.setAttribute("role", obsidian ? "treeitem" : "button");
     row.addEventListener("click", onClick);
     row.addEventListener("keydown", (e) => {
       // Keys on an action button stay with the button.
@@ -75,6 +76,8 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
   }
   return row;
 }
+
+let groupCounter = 0;
 
 export interface ListGroupOptions {
   title: string;
@@ -95,6 +98,8 @@ export function listGroup(parent: HTMLElement, o: ListGroupOptions): { el: HTMLE
   make(header, "span", ["hel-list-group-title"], o.title);
   if (o.count !== undefined) make(header, "span", ["hel-list-group-count"], String(o.count));
   const body = make(el, "div", ["hel-list-group-body"]);
+  body.id = `hel-list-group-${++groupCounter}-body`;
+  header.setAttribute("aria-controls", body.id);
   let collapsed = o.collapsed ?? false;
   const paint = (): void => {
     el.classList.toggle("is-collapsed", collapsed);

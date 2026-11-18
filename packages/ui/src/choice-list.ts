@@ -43,7 +43,8 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     el.classList.add("is-multi");
     el.setAttribute("aria-multiselectable", "true");
   }
-  const toSet = (v: T | T[] | undefined): Set<T> => new Set(v === undefined ? [] : Array.isArray(v) ? v : [v]);
+  // A multi list's value is an array of values; a single list's value is one value, even when T is itself an array.
+  const toSet = (v: T | T[] | undefined): Set<T> => new Set(v === undefined ? [] : o.multi ? (v as T[]) : [v as T]);
   let selected = toSet(o.value);
   const rows: [ChoiceOption<T>, HTMLElement][] = [];
   const paint = (): void => {
@@ -70,6 +71,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
   for (const opt of o.options) {
     const row = make(el, "div", ["hel-choice"]);
     row.setAttribute("role", "option");
+    row.dataset.value = String(opt.value);
     row.tabIndex = opt.disabled ? -1 : 0;
     if (opt.icon) renderIcon(make(row, "span", ["hel-choice-icon"]), opt.icon);
     const body = make(row, "div", ["hel-choice-body"]);
@@ -92,7 +94,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
       if (!current) return;
       e.preventDefault();
       const enabled = rows.filter(([x]) => !x.disabled).map(([, r]) => r);
-      enabled[enabled.indexOf(current[1]) + (e.key === "ArrowDown" ? 1 : -1)]?.focus();
+      enabled[enabled.indexOf(current[1]) + (e.key === "ArrowDown" ? 1 : -1)]?.focus({ preventScroll: true });
       return;
     }
     if ((e.key === "Enter" || e.key === " ") && current) {
@@ -103,7 +105,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     const keyed = rows.find(([x]) => x.key !== undefined && x.key.toLowerCase() === e.key.toLowerCase());
     if (keyed && !keyed[0].disabled) {
       e.preventDefault();
-      keyed[1].focus();
+      keyed[1].focus({ preventScroll: true });
       pick(keyed[0]);
     }
   });

@@ -51,6 +51,8 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
   const setBusy = (b: boolean): void => {
     busy = b;
     el.classList.toggle("is-busy", b);
+    // Read-only while busy, so text typed during a send is not wiped when the box clears.
+    input.readOnly = b;
     send.setBusy(b);
   };
   const clear = (): void => {
