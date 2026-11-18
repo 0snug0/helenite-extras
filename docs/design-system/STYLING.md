@@ -1,6 +1,6 @@
 # Styling contract
 
-Helenite's design-system parts are styled by `packages/base-theme/css/06-design-system.css`. This page lists every class and variable in that file, so a theme or plugin can restyle a part without reading the stylesheet.
+Helenite's design-system parts are styled by `packages/base-theme/css/06-design-system.css`. The extra parts that vault apps get from `@helenite/ui-kit` are styled by `packages/ui-kit/src/ui-kit.css`. This page lists every class and variable in both files, so a theme or plugin can restyle a part without reading the stylesheet.
 
 ## Rules
 
@@ -9,12 +9,21 @@ Helenite's design-system parts are styled by `packages/base-theme/css/06-design-
 - Variants are `is-<variant>` (`is-link`, `is-danger`). States are `is-<state>` (`is-busy`, `is-selected`).
 - The `--hel-*` variables are declared on `body`, not `:root`. They refer to theme variables such as `--interactive-accent`, and those are defined on `body` (`.theme-light` / `.theme-dark`). A `:root` declaration would resolve them to nothing. Override them on `body` or a descendant.
 
+## Themes and snippets in vault apps
+
+A vault app runs in a sandboxed frame. Every frame loads its stylesheets in this order: the app base, the design-system stylesheet (the parts' styles), the app's own `view.css`, the active theme, then the enabled snippets. Later wins, so a theme or snippet that restyles a `hel-*` class also restyles it inside apps. When the user changes the theme or toggles a snippet, open app frames update live.
+
+An app that sets `theme: isolate` in its `app.md` frontmatter skips the theme and snippet CSS. It still gets the theme's variables and the design-system stylesheet. The default is `theme: inherit`; any other value is a manifest error.
+
+Forwarding does not widen the app's access. An `inherit` app can read the theme's and snippets' CSS text in its own document, but the frame's content security policy is unchanged: network use is still blocked (`img-src` is limited to the app's `net` hosts, and `font-src` allows `data:` only).
+
 ## Variables
 
 | Variable | Default | Used by |
 | --- | --- | --- |
 | `--hel-segment-active-bg` | `var(--interactive-accent)` | The pressed segment of `hel-segmented`, and `hel-button.is-active` |
 | `--hel-segment-active-fg` | `var(--text-on-accent)` | The text colour on those |
+| `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
 
 ## Classes
 
@@ -87,6 +96,52 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text).
 | `hel-notice` | The notice made by `ui.notice`. Kinds: `is-info`, `is-success`, `is-error`. |
 
 `menu-item.is-danger` is Obsidian's `menu-item` with a red label and icon; `ui.menu` adds it for `danger: true` items.
+
+### Vault app parts (`@helenite/ui-kit`)
+
+Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these.
+
+| Class | What it is |
+| --- | --- |
+| `hel-toolbar` | A row of controls made by `toolbar`. |
+| `hel-input` | A text or search input. |
+| `hel-select` | A `select` control. |
+| `hel-check` | A checkbox with its label. |
+| `hel-field` | A labelled control from `field`. |
+| `hel-field-label` | The field's label. |
+| `hel-field-hint` | The field's hint line. |
+| `hel-tabs` | The tab strip from `tabs`. |
+| `hel-tab` | One tab. `is-active` marks the chosen one. |
+| `hel-tab-badge` | The count shown on a tab. |
+| `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. |
+| `hel-card` | One card. |
+| `hel-card-main` | The card's clickable area. |
+| `hel-card-poster` | The poster slot of a card. |
+| `hel-card-body` | The text block of a card. |
+| `hel-card-title` | A card's title. |
+| `hel-card-sub` | A card's subtitle. |
+| `hel-card-meta` | A card's meta line. |
+| `hel-card-badges` | The badge row of a card. |
+| `hel-card-remove` | A card's remove button. |
+| `hel-poster` | A poster image, or its initial when there is no image. |
+| `hel-poster-initial` | The initial shown in place of a missing poster. |
+| `hel-poster-item` | One item in a poster row. |
+| `hel-poster-title` | A poster item's title. |
+| `hel-poster-sub` | A poster item's subtitle. |
+| `hel-row-title` | The heading of a poster row. |
+| `hel-row-track` | The scrolling track of a poster row. |
+| `hel-picker` | The picker from `picker`. |
+| `hel-picker-list` | The picker's option list. |
+| `hel-option` | One option. States: `is-selected`, `is-active`, `is-disabled`. |
+| `hel-option-detail` | An option's second line. |
+| `hel-option-none` | The "No matches" line. |
+| `hel-cal` | The calendar strip from `calendarStrip`. |
+| `hel-cal-day` | One day. States: `is-today`, `is-selected`. |
+| `hel-cal-dow` | The weekday name. |
+| `hel-cal-num` | The day number. |
+| `hel-cal-dots` | The row of event dots. |
+| `hel-dot` | One event dot. |
+| `hel-cal-more` | The "+n" overflow count. |
 
 ### Gallery
 
