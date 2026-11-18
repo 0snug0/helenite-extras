@@ -191,7 +191,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-kv-value.is-empty { color: var(--text-faint); }
 .hel-kv-value li.is-new { color: var(--text-accent); }
 
-/* modals (confirm, prompt, choose, form) */
+/* modals (confirm, prompt, choose, form, dialog) */
+.hel-modal.is-wide { width: var(--modal-max-width-narrow); }
 .hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
 .hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
 .hel-modal .hel-modal-input { width: 100%; }
@@ -210,11 +211,22 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-summary-row.is-clickable { cursor: pointer; }
 .hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
 .hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding-bottom: var(--size-4-3); }
+/* settings card: a ui.card around a setting-item head; no fill, as the Accounts and Harnesses cards */
+.hel-card.hel-settings-card { background: none; overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
+.hel-settings-card .setting-item { border-top: none; }
+.hel-settings-card > .hel-card-body { padding: 0; gap: 0; font-size: inherit; }
+.hel-settings-card .setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
+.hel-settings-card .setting-item-description > .hel-status-text { display: block; font-size: inherit; }
+/* vault scope: the vault list under its row */
+.hel-vault-scope-list { padding-bottom: var(--size-4-3); }
+.hel-vault-scope-note { padding-top: 0; margin: 0 0 var(--size-4-2); }
 
 /* notice variants and danger menu items */
 .hel-notice.is-info { border-left: 3px solid var(--interactive-accent); }
 .hel-notice.is-success { border-left: 3px solid var(--color-green); }
 .hel-notice.is-error { border-left: 3px solid var(--color-red); }
+.hel-notice.is-clickable { cursor: pointer; }
+.hel-notice-action { margin-left: var(--size-4-2); }
 .menu-item.is-danger { color: var(--text-error); }
 .menu-item.is-danger .menu-item-icon { color: var(--text-error); }
 

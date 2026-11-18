@@ -58,3 +58,32 @@ ui.keyValue(document.body, [{ key: 'Hosts', value: ['a.com'], isNew: () => true 
 const multi: Field = { id: 'caps', kind: 'multi', label: 'Capabilities', options: [{ value: 'read', label: 'Read' }] };
 const box: Field = { id: 'sync', kind: 'checkbox', label: 'Sync', detail: 'Every hour' };
 void ui.form({}, { title: 'Connect Git', fields: [multi, box], action: 'Connect' }).then((v: FieldValues | null) => v?.caps);
+
+// The host parts.
+import type { DialogContext, NoticeHandle, SettingsCardHandle, VaultScope } from 'helenite';
+void ui.dialog<string>({}, {
+  title: 'Import notes', width: 'wide', cancel: false, doc: document,
+  render: (body: HTMLElement, ctx: DialogContext<string>) => { body.append('x'); ctx.setError(null); return () => undefined; },
+  actions: [{ text: 'Import', variant: 'primary', onClick: async (ctx) => ctx.close('done') }],
+}).then((r: string | null) => r);
+void ui.confirm({}, { title: 'Remove account', message: 'Remove it?', action: 'Remove', onConfirm: async () => undefined });
+void ui.form({}, { title: 'Repair access', message: 'm', fields: [], action: 'Repair', onSubmit: async (v: FieldValues) => v });
+ui.menu([{ title: 'All vaults', checked: true, tooltip: 't', onClick: () => undefined }], { x: 0, y: 0 }, { doc: document });
+ui.menuButton(document.body, { text: 'Add permission…', items: () => [], variant: 'primary' }).setDisabled(true);
+const n: NoticeHandle = ui.notice('Saved', { action: { text: 'Undo', onClick: () => undefined }, onClick: () => undefined });
+n.setText('Saved again');
+n.hide();
+ui.paneHeader(document.body, [{ icon: 'plus', label: 'New', onClick: (e: MouseEvent) => e }]);
+const sc: SettingsCardHandle = ui.settings.card(document.body, { name: 'Claude Code', icon: 'terminal', status: { text: 'Ready', tone: 'warning' } });
+sc.head.setDesc('claude');
+sc.setStatus(null);
+const scope: VaultScope = { except: ['a'] };
+ui.settings.vaultScope(sc.body, { value: scope, vaults: [{ id: 'a', name: 'A', disabled: 'Off', on: true }], kinds: ['all', 'all-off', 'only'], homeNote: true, onChange: (v: VaultScope) => v }).setValue('none');
+const inlineScope = ui.settings.vaultScope(sc.head.controlEl, { value: 'all-off', vaults: [], inline: true, disabled: true, onChange: () => undefined });
+inlineScope.setDisabled(false);
+// @ts-expect-error: row is null when inline.
+inlineScope.row.setName('x');
+ui.action(document.body, 'remove', { onClick: () => undefined, app: {}, subject: 'Gmail', confirmText: 'Remove', message: 'Remove Gmail?' });
+ui.action(document.body, 'reset', { onClick: () => undefined, variant: 'icon' });
+// @ts-expect-error: not a vault scope.
+ui.settings.vaultScope(document.body, { value: 'some', vaults: [], onChange: () => undefined });

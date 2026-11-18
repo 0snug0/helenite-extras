@@ -1,5 +1,18 @@
 export type MenuItemSpec =
-  | { title: string; icon?: string; danger?: boolean; disabled?: boolean; onClick: () => unknown }
+  | {
+      title: string;
+      icon?: string;
+      danger?: boolean;
+      disabled?: boolean;
+      /**
+       * A check mark when true; false marks an item that can be checked but is not (a menu of options, one or more on).
+       * Host-only: the helenite module's `ui.menu` draws it; ui-kit's bridge menu (vault apps) ignores it.
+       */
+      checked?: boolean;
+      /** Shown on hover. Host-only, like `checked`: ui-kit's bridge menu ignores it. */
+      tooltip?: string;
+      onClick: () => unknown;
+    }
   | "separator";
 
 /** Opens a context menu at a mouse event or a point (client coordinates in the parent's document). */

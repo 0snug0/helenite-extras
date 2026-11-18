@@ -22,7 +22,7 @@ That writes `packages/types/dist/helenite.d.ts`, a `declare module 'helenite'` f
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `ActionId`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -56,7 +56,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -281,22 +281,59 @@ const pick = await ui.choose(app, { title: 'Pick a template', options: [{ value:
 const v = await ui.form(app, { title: 'Add a vault', action: 'Add vault', fields: [{ id: 'path', kind: 'text', label: 'Path' }, { id: 'sync', kind: 'checkbox', label: 'Sync it' }] });
 ```
 
+To run the work inside the modal, pass `onConfirm` (confirm) or `onSubmit` (form, which gets the values). The modal stays open while it runs: the action button shows busy, the other buttons are disabled, and every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing until the work settles. So an `onConfirm` that never settles keeps the modal open for good; give network calls a timeout. When it returns, the modal closes and resolves as usual (`true`, or the values). When it throws, its message is shown above the buttons, the buttons work again, and the modal stays open for a retry or a cancel. A form's `message` is a paragraph above its fields.
+
+```ts
+await ui.confirm(app, { title: 'Remove account', message: 'Remove the AWS account?', action: 'Remove', danger: true, onConfirm: () => api.remove(id) });
+await ui.form(app, { title: 'Repair access', action: 'Repair', message: 'Asks AWS for the missing permissions.', fields, onSubmit: (v) => api.repair(v) });
+```
+
 Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
-### ui.menu, ui.moreButton
+### ui.dialog
+
+```ts
+const account = await ui.dialog<Account>(app, {
+  title: 'Connect account', width: 'wide',
+  render: (body, ctx) => { drawFields(body); return () => stopPolling(); },  // the cleanup runs when it closes
+  actions: [{ text: 'Connect', variant: 'primary', onClick: async (ctx) => ctx.close(await api.connect(read())) }],
+});
+```
+
+A modal with a body you draw. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
+
+### ui.menu, ui.moreButton, ui.menuButton
 
 ```ts
 ui.menu([{ title: 'Rename', icon: 'pencil', onClick: rename }, 'separator', { title: 'Delete', icon: 'trash-2', danger: true, onClick: del }], event);
+ui.menu([{ title: 'Date', checked: true, onClick: byDate }, { title: 'Folder', checked: false, onClick: byFolder }], event, { doc: el.ownerDocument });
 ui.moreButton(el, () => [{ title: 'Rename', onClick: rename }]);  // "..." icon button; the list is built each time it opens
+ui.menuButton(el, { text: 'Add permission…', items: () => addable.map((c) => ({ title: c, onClick: () => add(c) })) });
 ```
 
-`ui.menu` opens at a mouse event or an `{ x, y }` point.
+`ui.menu` opens at a mouse event or an `{ x, y }` point, in the event's document (else the active one); `doc` names the document to draw in, for a popout or the Settings window. An item can be `checked` (a check mark; `false` marks an option that is off) and have a `tooltip`. Both are host-only: a vault app's bridge menu (`@helenite/ui-kit`) ignores them. `moreButton` and `menuButton` open their menu under the button, in the button's document. `menuButton` is a text button (`variant` as for `ui.button`).
 
 ### ui.notice
 
 ```ts
 ui.notice('Imported 12 notes', { kind: 'success' });  // kind: info (default), success, error; timeoutMs optional
+const n = ui.notice('2 items need review.', { timeoutMs: 0, action: { text: 'Review', onClick: openReview } });
+n.setText('3 items need review.');
+n.hide();
 ```
+
+It returns a handle with `setText` and `hide`. `action` adds a button after the text; a click runs it and hides the notice. `onClick` runs when the notice itself is clicked (a click always hides it). `timeoutMs: 0` keeps it until then.
+
+### ui.paneHeader
+
+```ts
+ui.paneHeader(this.contentEl, [
+  { icon: 'list-tree', label: 'Group by', id: 'group-by', onClick: (e) => ui.menu(groupItems(), e) },
+  { icon: 'plus', label: 'New chat', onClick: newChat },
+]);
+```
+
+The row of icon buttons at the top of a sidebar pane. It is Obsidian's `nav-header` with `nav-action-button`s, so a theme's look applies. It puts itself first in the element and returns the header. `label` is each button's accessible name; `id` becomes its `data-action`.
 
 ### ui.action and ui.STANDARD_ACTIONS
 
@@ -318,8 +355,15 @@ ui.action(cell, 'delete', { app, subject: 'Notes', onClick: remove }); // asks t
 | `turnOff` | Icon: power | Disabling a thing without deleting it |
 | `delete` | Danger: Delete | Removing a thing for good |
 | `open` | Button: Open | Opening a thing elsewhere |
+| `remove` | Danger: Remove | Taking a thing out of a list or off an account, when it is not destroyed |
+| `add` | Primary: Add | Adding a new item |
+| `moveUp` | Icon: arrow up | Moving an item up in an ordered list |
+| `moveDown` | Icon: arrow down | Moving an item down |
+| `reconnect` | Primary: Reconnect | Signing a connection in again |
 
-`delete` needs `app` and `subject`, and always confirms with a danger modal ("Delete X? This cannot be undone."). Only your `onClick` runs on a yes.
+`delete` and `remove` need `app` and `subject`, and always confirm with a danger modal: "Delete X? This cannot be undone." or "Remove X?". Only your `onClick` runs on a yes. Change the copy with `title`, `message` and `confirmText` (the modal's action button), for example a delete that moves to the trash: `{ title: 'Move Ideas.md to the trash', message: 'Move Ideas.md to the trash?', confirmText: 'Move to trash' }`.
+
+`variant: 'icon'` draws any action as an icon button, with its label as the accessible name (a Reset beside a hotkey).
 
 ### ui.settings
 
@@ -332,6 +376,21 @@ ui.settings.scopeBar(containerEl, { editingDefaults: false, onChange: (d) => set
 ```
 
 `subpageRow` opens a drill-in page with a Back button and fills it with `render` each time it opens. `openSubpage(app, title, render)` does the same without a row. `scopeBar` is the "Editing: Home / Vault Defaults" switch for a setting that has both layers.
+
+```ts
+const c = ui.settings.card(containerEl, { name: 'Claude Code', desc: 'claude', icon: 'terminal', status: { text: 'Installed', tone: 'success' } });
+c.head.addDropdown((d) => d.addOption('a', 'A'));   // the head is a Setting
+c.setStatus({ text: 'Not found on this computer', tone: 'warning' });
+ui.settings.vaultScope(c.body, {
+  value: policy, vaults: [{ id: 'work', name: 'Work' }, { id: 'old', name: 'Archive', disabled: 'Closed vault' }],
+  homeNote: true, confirmAll: () => ui.confirm(app, { title: 'Allow all vaults', message: 'Let every vault use it?', action: 'Allow all' }),
+  onChange: (v) => save(v),   // 'all' | 'none' | { only: ids } | { except: ids }
+});
+```
+
+`card` is a bordered card for a settings tab: its `head` is a `Setting` with the icon, name, description and an optional status line (`setStatus(null)` removes it), and `body` is for more rows.
+
+`vaultScope` is the row that says which vaults may use something: a dropdown of Allow all, Only these vaults, All except these vaults and Not available in vaults, and for a list, a check list of the vaults under it. `kinds` picks and orders the choices; add `'all-off'` to offer "Allow all, off by default" (every vault may use it, but it is off until a vault turns it on). The labels are fixed, so every page says the same thing. A new list starts from the vaults allowed today; from `'all-off'`, "Only these vaults" starts from the vaults marked `on: true` (where it is on today), so vaults where it is only off by default stay out. "Only these vaults" with nothing to list shows an empty list and calls `onChange` only once a vault is ticked. `confirmAll` is asked before Allow all, and a no puts the dropdown back. A vault's `disabled` is the reason it cannot be changed, shown under its name. `homeNote` adds "Home can always use it." above the list. `inline: true` draws the dropdown and the list straight into the element you pass (a table cell, or a card's `head.controlEl`) instead of in a settings row of its own; the handle's `row` is then `null`. `disabled` (and `setDisabled`) shows the scope without letting it change, for something that is always allowed. `setValue` shows a value without calling `onChange`; a value whose kind is not in `kinds` is ignored.
 
 ## Vault apps
 
@@ -383,14 +442,15 @@ An isolated app still gets the theme's variables and the design-system styleshee
 | Get one line of text | `ui.prompt` |
 | Pick one of several named options | `ui.choose` (inline, without a modal: `ui.choiceList`) |
 | Collect several values at once | `ui.form` |
+| Show your own content, or several actions | `ui.dialog` |
 | Tell the user something happened | `ui.notice`, not a modal |
 
-Prefer a standard action (`ui.action`) to a hand-made button whenever one of the nine fits.
+Prefer a standard action (`ui.action`) to a hand-made button whenever one of the fourteen fits.
 
 ## Copy rules
 
 - A modal's title is a verb phrase: "Rename note", "Add a vault", "Discard changes". Not "Confirm" or "Are you sure?".
 - The action button repeats the verb: Rename, Add vault, Discard. Never "OK".
 - Escape and a click on the backdrop mean cancel.
-- Deleting always asks first, and the modal says it cannot be undone.
+- Deleting always asks first, and the modal says it cannot be undone. Removing asks first too, without saying that.
 - Use sentence case. Name the thing ("Delete Notes", not "Delete").

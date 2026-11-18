@@ -5,7 +5,7 @@ Helenite's design-system parts are styled by `packages/base-theme/css/06-design-
 ## Rules
 
 - Parts use Obsidian's documented CSS variables (`--text-muted`, `--interactive-accent`, `--size-4-2`, and so on). A `--hel-*` variable exists only where Obsidian has none, and its default is an Obsidian variable.
-- Every part's root element has a `hel-<part>` class. Where Obsidian has a class for the same thing, the root also has it: `mod-cta`, `mod-warning`, `clickable-icon`, `setting-item`, `callout`, `dropdown`, `checkbox-container`.
+- Every part's root element has a `hel-<part>` class. Where Obsidian has a class for the same thing, the root also has it: `mod-cta`, `mod-warning`, `clickable-icon`, `setting-item`, `callout`, `dropdown`, `checkbox-container`, `modal-button-container`, `nav-header`.
 - Variants are `is-<variant>` (`is-link`, `is-danger`). States are `is-<state>` (`is-busy`, `is-selected`).
 - The `--hel-*` variables are declared on `body`, not `:root`. They refer to theme variables such as `--interactive-accent`, and those are defined on `body` (`.theme-light` / `.theme-dark`). A `:root` declaration would resolve them to nothing. Override them on `body` or a descendant.
 
@@ -38,7 +38,7 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `hel-segmented-label` | The group's label, such as "Editing:". |
 | `hel-segment` | One option in the group. `aria-pressed="true"` marks the chosen one. |
 
-Button states and variants: `is-link`, `is-active`, `is-busy`.
+Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton` is `is-menu` (with `aria-haspopup="menu"`).
 
 ### Tables
 
@@ -158,14 +158,15 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose` and `ui.form`. Also has `is-confirm`, `is-prompt`, `is-choose` or `is-form`. |
-| `hel-modal-message` | The message paragraph of a confirm modal. |
+| `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. |
+| `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
+| `hel-modal-message` | The message paragraph of a confirm modal, and a form's `message`. |
 | `hel-modal-label` | A field label. |
 | `hel-modal-input` | A text input. |
 | `hel-modal-field` | One field row in a form. |
 | `hel-modal-check` | A checkbox row. Its `detail` follows as a `hel-check-detail`. |
-| `hel-modal-error` | The inline validation message. Collapses when empty. |
-| `hel-modal-actions` | The button row at the bottom (Cancel, then the action). |
+| `hel-modal-error` | The inline validation message, and the message of a failed `onConfirm`, `onSubmit` or dialog action. Collapses when empty. |
+| `hel-modal-actions` | The button row at the bottom (Cancel, then the action). Also Obsidian's `modal-button-container`; `hel-modal-actions`' own spacing wins over base.css's, and a theme's `modal-button-container` rules apply. While an action runs, its button is `is-busy` and the others are disabled. |
 | `hel-modal-choices` | The scrolling list of choices: a `hel-choice-list`. |
 | `hel-modal-choice` | One choice: a `hel-choice` (see Choice lists). |
 
@@ -179,14 +180,26 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-subpage-header` | The page header: Back button and title. |
 | `hel-subpage-title` | The title text. |
 | `hel-scope-bar` | The "Editing: Home / Vault Defaults" bar from `ui.settings.scopeBar`. |
+| `hel-settings-card` | `ui.settings.card`: a `hel-card` with no fill whose first child is a `setting-item` (the head; its icon is a `hel-card-icon` in the name, its status a `hel-status-text` under the description), then the `hel-card-body`. |
+| `hel-vault-scope` | `ui.settings.vaultScope`: its `setting-item` row (with a `dropdown`) and the list under it. Not drawn with `inline: true`, where the `dropdown` and the list go straight into the given element. |
+| `hel-vault-scope-list` | The vault list: a `hel-check-list`. Has the `hidden` attribute while the scope is all or none. |
+| `hel-vault-scope-note` | A line in the list ("Home can always use it.", "No other vaults yet."). Also `setting-item-description`. |
 
 ### Notices and menus
 
 | Class | What it is |
 | --- | --- |
-| `hel-notice` | The notice made by `ui.notice`. Kinds: `is-info`, `is-success`, `is-error`. |
+| `hel-notice` | The notice made by `ui.notice`. Kinds: `is-info`, `is-success`, `is-error`. `is-clickable` when it has `onClick`. |
+| `hel-notice-text` | The notice's text, when it has an action. |
+| `hel-notice-action` | The notice's action button (a `hel-button`). |
 
-`menu-item.is-danger` is Obsidian's `menu-item` with a red label and icon; `ui.menu` adds it for `danger: true` items.
+`menu-item.is-danger` is Obsidian's `menu-item` with a red label and icon; `ui.menu` adds it for `danger: true` items. A `checked` item is Obsidian's `menu-item.mod-checked` with its check icon.
+
+### Pane header
+
+| Class | What it is |
+| --- | --- |
+| `hel-pane-header` | `ui.paneHeader`. Also Obsidian's `nav-header`; holds a `nav-buttons-container` (`role=toolbar`) of icon `hel-button`s that are also `nav-action-button`. Styled by base.css and the theme only. |
 
 ### Vault app parts (`@helenite/ui-kit`)
 
