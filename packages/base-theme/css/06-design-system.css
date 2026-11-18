@@ -10,7 +10,7 @@
 
 .hel-button.is-link { background: none; box-shadow: none; border: none; padding: 0; color: var(--text-accent); cursor: pointer; text-decoration: underline; }
 .hel-button.is-link:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
-.hel-button.is-active { background-color: var(--interactive-accent); color: var(--text-on-accent); }
+.hel-button.is-active { background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); }
 .hel-button.is-busy { cursor: progress; opacity: 0.7; }
 .hel-button-icon:empty { display: none; }
 .hel-button-icon { display: inline-flex; align-items: center; }
