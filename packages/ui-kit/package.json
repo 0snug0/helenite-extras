@@ -7,5 +7,6 @@
   "main": "src/index.ts",
   "exports": { ".": "./src/index.ts", "./ui-kit.css": "./src/ui-kit.css" },
   "scripts": { "typecheck": "tsc --noEmit -p .", "test": "vitest run" },
+  "dependencies": { "@helenite/ui": "workspace:*" },
   "devDependencies": { "happy-dom": "^20.0.0" }
 }
