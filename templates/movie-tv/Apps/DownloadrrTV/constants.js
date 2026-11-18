@@ -5,7 +5,7 @@ export const AVAIL_DAYS = 1, AVAIL_VERSION = 1;
 export const SCORE_DAYS = 14;
 export const KEYS = {
 	avail: "availability",      // tmdbId -> { kind, on, checked }, from TMDB (was downloadrr-tv-availability.json)
-	scores: "scores",           // tvdbId -> { lb, rt, aud, rtUrl, checked }, scraped (was downloadrr-tv-scores.json)
+	scores: "scores",           // tvdbId -> { sz, rt, aud, rtUrl, imdb, imdbUrl, checked }, scraped (was downloadrr-tv-scores.json)
 	ids: "ids",                 // note path -> { tvdbId, title, poster }, from Sonarr lookups (was downloadrr-tv-ids.json)
 	services: "downloadrr-tv-services",
 	sort: "downloadrr-tv-sort",
@@ -27,8 +27,10 @@ export const ICONS = {
 	check: icon('<path d="M20 6 9 17l-5-5"/>'),
 };
 export const LOGOS = {
-	lb: '<svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><circle cx="5" cy="6" r="4.5" fill="#FF8000"/><circle cx="11" cy="6" r="4.5" fill="#00E054"/><circle cx="17" cy="6" r="4.5" fill="#40BCF4"/></svg>',
+	sz: '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect width="14" height="14" rx="3.5" fill="#6d5dfc"/><path d="M9.6 4.6c-.5-.6-1.4-1-2.5-1-1.5 0-2.6.8-2.6 2 0 2.4 4.9 1.5 4.9 3.4 0 .7-.8 1.2-2 1.2-1.1 0-2-.4-2.6-1.1" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>',
 	rt: '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="8" r="5.5" fill="#FA320A"/><rect x="4" y="1" width="6" height="3" rx="1.5" fill="#00912D"/></svg>',
 	aud: '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="4.5" cy="4" r="2.5" fill="#FFD700"/><circle cx="9.5" cy="4" r="2.5" fill="#FFD700"/><circle cx="7" cy="3" r="2.5" fill="#FFD700"/><path d="M3 5h8l-1.2 8H4.2z" fill="#FA320A"/></svg>',
 };
-export const ACTIVE_COLS = [["title", "Show"], ["episodes", "Episodes", false, false], ["date", "DL date"], ["status", "Status"], ["size", "Size", true], ["progress", "Progress"], ["lb", "Letterboxd rating", true], ["rt", "Rotten Tomatoes critics", true], ["aud", "Rotten Tomatoes audience", true]];
+export const ACTIVE_COLS = [["title", "Show"], ["episodes", "Episodes", false, false], ["date", "DL date"], ["status", "Status"], ["size", "Size", true], ["progress", "Progress"], ["sz", "Serializd rating", true], ["rt", "Rotten Tomatoes critics", true], ["aud", "Rotten Tomatoes audience", true]];
+// The payload behind a Serializd show page (its Stats box): averageRating 0–10. Not behind Cloudflare, unlike www.serializd.com.
+export const SERIALIZD = "https://serializddesktop.onrender.com/mobile/page/show_v2_part_1";

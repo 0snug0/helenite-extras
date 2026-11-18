@@ -90,7 +90,7 @@ function sortActive(items, key = "title", dir = "asc", statusOf = () => null, sc
 		size: i => i.size || null,
 		status: i => { const s = statusOf(i); return s && s.kind in STATUS_RANK ? STATUS_RANK[s.kind] * 1000 + (s.percent ?? 0) : null; },
 		progress: i => statusOf(i)?.percent ?? null,
-		lb: i => scoresOf(i)?.lb ?? null,
+		sz: i => scoresOf(i)?.sz ?? null,
 		rt: i => scoresOf(i)?.rt ?? null,
 		aud: i => scoresOf(i)?.aud ?? null,
 	}[key] ?? (i => i.series.title.toLowerCase());
@@ -167,10 +167,11 @@ function buildShows(notes, series, queue, known = true, ids = {}) {
 		const prev = shows.get(key);
 		if (prev) {
 			if (n.pending && !prev.pending) { prev.pending = true; prev.path = n.path; }
+			if (n.watching) prev.watching = true;
 			if ((n.added ?? "") > prev.added) prev.added = n.added;
 			continue;
 		}
-		shows.set(key, { key, tmdbId: n.tmdbId, title: n.title, year: n.year, added: n.added ?? "", poster: n.poster, url: n.url, path: n.path, pending: n.pending });
+		shows.set(key, { key, tmdbId: n.tmdbId, title: n.title, year: n.year, added: n.added ?? "", poster: n.poster, url: n.url, path: n.path, pending: n.pending, watching: !!n.watching });
 	}
 	const fromNotes = [...shows.values()]
 		.map(f => {
@@ -182,7 +183,7 @@ function buildShows(notes, series, queue, known = true, ids = {}) {
 	const claimed = new Set(fromNotes.map(f => f.series?.id).filter(id => id != null));
 	const fromSonarr = known ? series.filter(s => !claimed.has(s.id)).map(s => ({
 		key: `sonarr:${s.id}`, tmdbId: s.tmdbId || null, tvdbId: s.tvdbId, title: s.title, year: s.year, added: String(s.added ?? "").slice(0, 10),
-		poster: posterOf(s), url: null, path: null, pending: false, series: s, status: showStatus(s, queue),
+		poster: posterOf(s), url: s.tmdbId ? `https://www.serializd.com/show/${s.tmdbId}` : null, path: null, pending: false, watching: false, series: s, status: showStatus(s, queue),
 	})) : [];
 	return [...fromNotes, ...fromSonarr].sort((a, b) => a.title.localeCompare(b.title));
 }

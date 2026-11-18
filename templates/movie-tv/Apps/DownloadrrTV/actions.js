@@ -82,12 +82,12 @@ export function install(ctx) {
 		state.removing = null;
 		draw();
 	}
-	// Takes the show off both lists by clearing its notes' flags. The note stays: it also holds the show's watches
-	// and history. The daily Letterboxd sync sets on_watchlist again for as long as Letterboxd still lists it.
+	// Takes the show off the watchlist and pending by clearing its notes' flags. The note stays: it also holds the show's
+	// watches and history. The hourly Serializd sync sets on_watchlist / watching again while Serializd still lists it.
 	async function clearNotes(match) {
 		for (let i = notes.length - 1; i >= 0; i--) {
 			if (!match(notes[i])) continue;
-			await api.notes.update(notes[i].path, { on_watchlist: false, pending: false });   // was vault.process + films-lib setKeys
+			await api.notes.update(notes[i].path, { on_watchlist: false, watching: false, pending: false });   // was vault.process + films-lib setKeys
 			notes.splice(i, 1);
 		}
 	}

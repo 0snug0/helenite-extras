@@ -80,7 +80,7 @@ export function install(ctx) {
 		sort.addEventListener("change", () => { state.sort = sort.value; ctx.save(KEYS.sort, state.sort); draw(); });
 
 		const shown = lib.sortShows(shows, state.sort).filter(f => lib.matchesFilter(f, state.filter) && (!state.streaming || base.matchesServices(availOf(f), myServices())) && matchesQuery(f));
-		if (!shown.length) emptyState(root, notes.length ? "No shows match this filter." : "No TV shows on the watchlist or pending.");
+		if (!shown.length) emptyState(root, notes.length ? "No shows match this filter." : "No TV shows on your Serializd lists or pending.");
 
 		const grid = root.createDiv({ cls: "dl-grid" });
 		for (const show of shown) {
@@ -90,7 +90,7 @@ export function install(ctx) {
 			// A div with a background image, not an <img>: Minimal zooms any img:active on click.
 			const link = card.createEl("a", { cls: "dl-poster-link", attr: { href: show.url ?? "#", title: show.title } });
 			if (show.url) link.addEventListener("click", openUrl(show.url));
-			const art = link.createDiv({ cls: "dl-poster", attr: { role: "img", "aria-label": `${show.title} on Letterboxd` } });
+			const art = link.createDiv({ cls: "dl-poster", attr: { role: "img", "aria-label": `${show.title} on Serializd` } });
 			if (show.poster) art.style.backgroundImage = `url("${show.poster}")`;
 			else { art.addClass("dl-poster-missing"); art.setText(show.title); }
 
@@ -100,10 +100,10 @@ export function install(ctx) {
 			const availText = base.availabilityLabel(avail, today());
 			if (availText) card.createDiv({ cls: `dl-avail dl-avail-${avail.kind}`, text: availText, attr: { title: "Where to watch in the US (TMDB / JustWatch)" } });
 			const sc = show.tvdbId && state.scores[show.tvdbId];
-			fl.scoreRow(card, { lb: sc?.lb, rt: sc?.rt, aud: sc?.aud, lbUrl: show.url, rtUrl: sc?.rtUrl, imdb: sc?.imdb, imdbUrl: sc?.imdbUrl }, url => api.workspace.openUrl(url));
+			fl.scoreRow(card, { lb: sc?.sz, lbTip: "Serializd average, out of 5", lbDigits: 2, rt: sc?.rt, aud: sc?.aud, lbUrl: show.url, rtUrl: sc?.rtUrl, imdb: sc?.imdb, imdbUrl: sc?.imdbUrl }, url => api.workspace.openUrl(url));
 			const tag = card.createDiv({ cls: "dl-source" });
-			if (show.path) tag.createEl("a", { text: show.pending ? "Pending" : "Watchlist", attr: { href: "#", title: show.path } }).addEventListener("click", openNote(show.path));
-			else tag.createSpan({ text: "Sonarr", attr: { title: "In Sonarr, not on the Letterboxd watchlist" } });
+			if (show.path) tag.createEl("a", { text: show.pending ? "Pending" : show.watching ? "Watching" : "Watchlist", attr: { href: "#", title: show.path } }).addEventListener("click", openNote(show.path));
+			else tag.createSpan({ text: "Sonarr", attr: { title: "In Sonarr, not on a Serializd list" } });
 
 			badge(card, ...statusChip(show)).classList.add("dl-chip");
 			const ps = plex.showState(plexOf(show));

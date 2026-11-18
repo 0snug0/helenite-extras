@@ -60,22 +60,23 @@ export default async function mount(host, api) {
 	if (!have.SONARR_API_KEY) state.error = "Set the Sonarr API key in Downloadrr TV's settings.";
 	else ctx.client = createClient({ url: settings.SONARR_URL, key: secret("SONARR_API_KEY"), request: api.net.fetch });
 
-	// TV notes: tmdb_type "tv", or no TMDB movie id at all (Letterboxd's feed gives TV series none).
-	// dv.pages('"Films"').where(...) -> notes.query: every film note's frontmatter, from the host's metadata index.
-	const filmPages = await api.notes.query({ from: `${fl.FILMS}/**/*.md` });
-	const isTv = n => n.tmdb_type === "tv" || !fl.num(n.tmdb_id);
-	for (const p of filmPages) {
+	// Show notes (serializd_sync.py) on the Serializd watchlist, currently watching, or pending. notes.query reads every
+	// note's frontmatter from the host's metadata index, so the page needs no Serializd account or network call.
+	const showPages = await api.notes.query({ from: `${fl.SHOWS}/**/*.md` });
+	for (const p of showPages) {
 		const n = p.frontmatter;
-		if (!((n.on_watchlist || n.pending) && isTv(n))) continue;
+		if (!(n.on_watchlist || n.watching || n.pending)) continue;
+		const tmdbId = fl.num(n.tmdb_id) || null;
 		ctx.notes.push({
 			path: p.path,
 			pending: !!n.pending,
+			watching: !!n.watching,
 			title: fl.nameOf(p),
 			year: n.year,
-			added: [fl.iso(n.watchlist_added), fl.iso(n.pending_added)].sort().at(-1),
-			tmdbId: fl.num(n.tmdb_id) && n.tmdb_type === "tv" ? Number(n.tmdb_id) : null,
+			added: [fl.iso(n.watchlist_added), fl.iso(n.watching_added), fl.iso(n.pending_added)].filter(Boolean).sort().at(-1),
+			tmdbId,
 			poster: n.poster || null,
-			url: n.letterboxd_url,
+			url: n.serializd_url || (tmdbId ? fl.serializdUrl(tmdbId) : null),
 		});
 	}
 

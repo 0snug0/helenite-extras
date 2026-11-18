@@ -50,7 +50,7 @@ export function install(ctx) {
 				// Only what is on disk expands; a download is just its row until it has imported.
 				if (qi) td.createSpan({ cls: "dl-chev" });
 				else chevron(td, state.open.has(series.id), "Show the seasons on disk", () => toggleSeries(series));
-				if (note?.url) td.createEl("a", { text: series.title, attr: { href: note.url, title: `${series.title} on Letterboxd` } }).addEventListener("click", openUrl(note.url));
+				if (note?.url) td.createEl("a", { text: series.title, attr: { href: note.url, title: `${series.title} on Serializd` } }).addEventListener("click", openUrl(note.url));
 				else td.createSpan({ text: series.title });
 			},
 			episodes: item => item.detail,
@@ -72,7 +72,7 @@ export function install(ctx) {
 				prog.createDiv({ cls: `dl-bar dl-bar-${kind}` }).createDiv({ cls: "dl-bar-fill" }).style.width = `${pct}%`;
 				prog.createSpan({ cls: "dl-bar-label", text: `${pct}%` });
 			},
-			lb: score("lb", x => x.toFixed(2)),
+			sz: score("sz", x => x.toFixed(2)),
 			rt: score("rt", x => `${x}%`),
 			// Last cell of the row: the kit has appended this row to the body already, so the on-disk tree rows go right after it.
 			aud: (item, td) => { score("aud", x => `${x}%`)(item, td); if (!item.queue && state.open.has(item.series.id)) drawTree(td.parentElement.parentElement, item.series); },

@@ -1,5 +1,5 @@
 // Downloadrr TV: services. Ported from the vault's downloadrr_tv/view.js; `ctx` is the shared view context built in view.js.
-import { KEYS, AVAIL_DAYS, AVAIL_VERSION, SCORE_DAYS } from "./constants.js";
+import { KEYS, AVAIL_DAYS, AVAIL_VERSION, SCORE_DAYS, SERIALIZD } from "./constants.js";
 
 export function install(ctx) {
 	const { state, api, base, lib, plex, notes } = ctx;
@@ -72,13 +72,15 @@ export function install(ctx) {
 		if (done) await api.store.set(KEYS.avail, state.avail).catch(e => console.error(e));
 		if (!sortFocused()) draw();
 	}
-	// Letterboxd average (from the note's Letterboxd page) and the RT critics/audience scores for each show, scraped from
+	// Serializd average (out of 5, from the payload behind the show page's Stats box; Serializd stores 0–10) and the RT
+	// critics/audience scores for each show, scraped from
 	// the public pages. The RT page comes from Wikidata by TheTVDB id (P4835 -> P1258), cached SCORE_DAYS. A show with
 	// nothing found is not cached, so it is tried again next load.
 	async function fillScores() {
 		if (!requestUrl || !api.settings.SCRAPE_SCORES) return;
 		const day = today();
-		const stale = c => !c || !c.checked || (Date.parse(day) - Date.parse(c.checked)) / 86400000 >= SCORE_DAYS;
+		// Entries from before the Serializd score (no `sz` key) count as stale, so every show picks it up once.
+		const stale = c => !c || !c.checked || !("sz" in c) || (Date.parse(day) - Date.parse(c.checked)) / 86400000 >= SCORE_DAYS;
 		const todo = new Map();
 		for (const s of lib.buildShows(notes, state.series, state.queue, true, state.ids)) if (s.tvdbId && stale(state.scores[s.tvdbId])) todo.set(s.tvdbId, s);
 		const need = [...todo.values()];
@@ -86,8 +88,9 @@ export function install(ctx) {
 		const get = async (url, headers = {}) => { try { const r = await requestUrl({ url, headers, throw: false }); return r.status < 300 ? r.text : ""; } catch (e) { return ""; } };
 		const num = (text, re) => { const m = text.match(re); return m ? Number(m[1]) : null; };
 		const one = async show => {
-			const lbPage = show.url ? await get(show.url) : "";
-			const lb = num(lbPage, /"aggregateRating":\{[^}]*?"ratingValue":([\d.]+)/);
+			const tmdbId = show.tmdbId || show.series?.tmdbId;
+			let sz = null;
+			if (tmdbId) { try { const avg = JSON.parse(await get(`${SERIALIZD}/${tmdbId}`, { "X-Requested-With": "serializd_vercel", Accept: "application/json" })).averageRating; sz = typeof avg === "number" && avg > 0 ? Math.round(avg * 50) / 100 : null; } catch (e) { /* leave null */ } }
 			let rt = null, aud = null, rtUrl = null;
 			try {
 				const q = `SELECT ?rt WHERE { ?i wdt:P4835 "${show.tvdbId}"; wdt:P1258 ?rt }`;
@@ -105,7 +108,7 @@ export function install(ctx) {
 			const imdbUrl = imdbId ? `https://www.imdb.com/title/${imdbId}/` : null;
 			let imdb = null;
 			if (imdbId && ctx.omdbKey) { try { const v = JSON.parse(await get(`https://www.omdbapi.com/?i=${imdbId}&apikey=${ctx.omdbKey}`)).imdbRating; imdb = v && v !== "N/A" ? Number(v) : null; } catch (e) { /* leave null */ } }
-			if (lb != null || rt != null || aud != null || imdb != null) state.scores[show.tvdbId] = { lb, rt, aud, rtUrl, imdb, imdbUrl, checked: day };
+			if (sz != null || rt != null || aud != null || imdb != null) state.scores[show.tvdbId] = { sz, rt, aud, rtUrl, imdb, imdbUrl, checked: day };
 		};
 		let done = 0;
 		const worker = async () => { while (need.length) { await one(need.shift()); if (++done % 3 === 0 && !sortFocused()) draw(); } };

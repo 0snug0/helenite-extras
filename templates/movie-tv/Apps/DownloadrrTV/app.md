@@ -3,7 +3,7 @@ helenite-app: 1
 id: downloadrr-tv
 name: Downloadrr TV
 version: 0.1.0
-description: Every TV show on the Letterboxd watchlist or pending, with Sonarr status, SABnzbd progress, Plex watch state, per-season and per-episode search and a release picker.
+description: Every TV show on the Serializd watchlist, currently watching or pending, with Sonarr status, SABnzbd progress, Plex watch state, per-season and per-episode search and a release picker.
 views:
   - id: main
     title: Downloadrr TV
@@ -16,7 +16,7 @@ settings:
   SABNZBD_URL: { default: "http://localhost:8080", label: SABnzbd URL }
   PLEX_URL: { default: "http://localhost:32400", label: Plex URL }
   TMDB_URL: { default: "https://api.themoviedb.org", label: TMDB API URL }
-  SCRAPE_SCORES: { default: true, label: Scrape Letterboxd and Rotten Tomatoes scores }
+  SCRAPE_SCORES: { default: true, label: Fetch Serializd and Rotten Tomatoes scores }
 secrets:
   - { name: SONARR_API_KEY, label: Sonarr API key, required: true, hosts: ["http://localhost:8989", "http://localhost:17989", "http://localhost:18989"] }
   - { name: SABNZBD_API_KEY, label: SABnzbd API key, hosts: ["http://localhost:8080", "http://localhost:18080"] }
@@ -30,9 +30,8 @@ net:
   - http://localhost:32400
   - https://api.themoviedb.org
   - https://image.tmdb.org
-  - https://a.ltrbxd.com
   # score scraping (SCRAPE_SCORES)
-  - https://letterboxd.com
+  - https://serializddesktop.onrender.com
   - https://query.wikidata.org
   - https://www.rottentomatoes.com
   - https://www.omdbapi.com
@@ -43,8 +42,8 @@ net:
   - http://localhost:18400
   - http://localhost:18083
 vault:
-  read: ["50_Personal/Letterboxd/Films/**"]
-  write: ["50_Personal/Letterboxd/Films/**"]
+  read: ["50_Personal/Serializd/Shows/**"]
+  write: ["50_Personal/Serializd/Shows/**"]
 connectors: [sonarr, sabnzbd, plex, tmdb]
 ---
 # Downloadrr TV
@@ -53,10 +52,10 @@ Port of the original vault's `99_Internal/Views/downloadrr_tv` DataviewJS view (
 the same behaviour. The view is split into ES modules (`actions`, `draw`, `panels`, `modal`, `active`, `search`, `polling`, `services`)
 that share one context object built in `view.js`.
 
-- **Cards** are the film notes that are `on_watchlist` or `pending` and are TV (`tmdb_type: tv`, or no `tmdb_id`), plus every Sonarr show no note stands for.
+- **Cards** are the Serializd show notes (`50_Personal/Serializd/Shows`, written by `serializd_sync.py`) that are `on_watchlist`, `watching` or `pending`, plus every Sonarr show no note stands for. The poster opens the show on Serializd; the first score is the Serializd average.
 - **State** (Sonarr id lookups, streaming availability, scraped scores, sort choices) lives in the app store, not in `99_Internal/Data/*.json` or `localStorage`.
 - **Secrets** are entered in Settings → Secrets and kept in the keychain; the view only sees `{{secret:NAME}}` placeholders.
-- **Watchlist x** clears `on_watchlist`/`pending` on the note with `api.notes.update` (the daily Letterboxd sync sets it again while the show is still listed).
+- **Watchlist x** clears `on_watchlist`/`watching`/`pending` on the note with `api.notes.update` (the Serializd sync sets them again while the show is still listed).
 - `base.js` is the movie page's `lib.js` (env parsing, sizes, SABnzbd slot states, row status) and `add-search.js` the shared "find to monitor" box; both are copied here because an app only serves its own folder.
 
 - **UI** uses `@helenite/ui-kit` (the `ui-kit.js` bundle beside the view): buttons, tables, badges, status dots, the filter control and empty/loading/error states.
