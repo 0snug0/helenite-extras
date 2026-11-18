@@ -6,6 +6,11 @@ export interface TableColumn<R> {
   /** Return a string to set the cell text, or nothing to fill `td` yourself. */
   cell: (row: R, td: HTMLTableCellElement) => string | void;
   className?: string;
+  /**
+   * Size the column to its content and never wrap it (class `is-fit`): for short values such as a version, a toggle,
+   * a dropdown or a button. Leave it off the column with long text (a name and description), which takes the rest.
+   */
+  fit?: boolean;
 }
 
 export interface TableGroup<R> {
@@ -30,6 +35,12 @@ export interface TableHandle<R> {
   setGroups(groups: TableGroup<R>[]): void;
 }
 
+/** A column's classes on one of its cells: its className, and is-fit when it sizes to its content. */
+function classes<R>(cell: HTMLTableCellElement, c: TableColumn<R>): void {
+  if (c.className) cell.classList.add(...c.className.split(/\s+/).filter(Boolean));
+  if (c.fit) cell.classList.add("is-fit");
+}
+
 export function table<R>(parent: HTMLElement, o: TableOptions<R>): TableHandle<R> {
   const doc = parent.ownerDocument;
   const el = doc.createElement("table");
@@ -40,7 +51,7 @@ export function table<R>(parent: HTMLElement, o: TableOptions<R>): TableHandle<R
   for (const c of o.columns) {
     const th = doc.createElement("th");
     th.textContent = c.title;
-    if (c.className) th.classList.add(...c.className.split(/\s+/).filter(Boolean));
+    classes(th, c);
     headRow.appendChild(th);
   }
   if (o.actions) headRow.appendChild(doc.createElement("th")).classList.add("hel-table-actions");
@@ -53,7 +64,7 @@ export function table<R>(parent: HTMLElement, o: TableOptions<R>): TableHandle<R
     if (o.rowData) Object.assign(tr.dataset, o.rowData(row));
     for (const c of o.columns) {
       const td = tr.insertCell();
-      if (c.className) td.classList.add(...c.className.split(/\s+/).filter(Boolean));
+      classes(td, c);
       const text = c.cell(row, td);
       if (typeof text === "string") td.textContent = text;
     }

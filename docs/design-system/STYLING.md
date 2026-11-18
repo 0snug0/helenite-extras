@@ -52,7 +52,7 @@ Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton`
 | `hel-table-actions` | The right-aligned actions column (header and cells). |
 | `hel-table-buttons` | The wrapper around a row's action buttons. |
 
-Cell states: `is-link` (clickable cell), `is-default` (faint text), `is-different` (accent text: a value that differs from the one beside it).
+Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its content, on one line), `is-link` (clickable cell), `is-default` (faint text), `is-different` (accent text: a value that differs from the one beside it).
 
 ### States, badges and dots
 

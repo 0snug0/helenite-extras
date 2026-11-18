@@ -19,6 +19,26 @@ describe("table", () => {
     expect([...trs[1].querySelectorAll("td")].map((e) => e.textContent)).toEqual(["b", "2"]);
   });
 
+  it("fit marks the column's th and every td is-fit, alongside its className; other columns have no is-fit", () => {
+    const t = table(host(), {
+      columns: [cols[0], { ...cols[1], fit: true, className: "count" }],
+      rows,
+      groups: [{ title: "G", rows: [rows[0]] }],
+    });
+    const fit = (el: Element) => el.classList.contains("is-fit");
+    expect([...t.el.querySelectorAll("thead th")].map(fit)).toEqual([false, true]);
+    expect(t.el.querySelector("thead th.is-fit")!.classList.contains("count")).toBe(true);
+    for (const tr of t.el.querySelectorAll("tbody tr.hel-table-row")) expect([...tr.querySelectorAll("td")].map(fit)).toEqual([false, true]);
+    expect(fit(t.el.querySelector("tr.hel-table-group td")!)).toBe(false);
+    t.setRows([rows[1]]);
+    expect([...t.el.querySelectorAll("tbody td")].map(fit)).toEqual([false, true]);
+  });
+
+  it("without fit no cell is-fit", () => {
+    const t = table(host(), { columns: cols, rows, actions: () => {} });
+    expect(t.el.querySelectorAll(".is-fit").length).toBe(0);
+  });
+
   it("a cell() that returns void leaves td for it to fill (no text set)", () => {
     const t = table(host(), {
       columns: [{ key: "x", title: "X", cell: (r: R, td) => void td.appendChild(document.createElement("input")) }],
