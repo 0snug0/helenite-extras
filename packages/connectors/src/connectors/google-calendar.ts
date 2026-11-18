@@ -34,7 +34,7 @@ function accountBacked(acc: ConnectorAccounts) {
 export const googleCalendar = defineConnector({
   id: 'google-calendar',
   name: 'Google Calendar',
-  description: 'Read-only calendar events. Connect once in Settings → Secrets; tokens live in the keychain and are refreshed by the host.',
+  description: 'Read-only calendar events from the Google accounts granted to this vault (Settings → Accounts).',
   secrets: [
     { name: GCAL_SECRETS.access, label: 'Google access token (managed)', required: false, host: API },
     { name: GCAL_SECRETS.refresh, label: 'Google refresh token (managed)', required: false, host: 'https://oauth2.googleapis.com' },

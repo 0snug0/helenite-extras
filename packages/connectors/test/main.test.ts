@@ -114,7 +114,31 @@ describe('google-calendar OAuth against a mock server', () => {
     await expect(lb.code).rejects.toThrow(/state mismatch/);
     const { auth, secrets, scope } = await setup();
     secrets.delete(scope, 'GCAL_CLIENT_ID');
-    await expect(auth.connect(1000)).rejects.toThrow(/client ID/);
+    await expect(auth.connect(1000)).rejects.toThrow(/Google OAuth client in Settings → Accounts/);
+  });
+
+  it('uses the one Google OAuth client from Settings → Accounts before its own old GCAL_* client', async () => {
+    const { secrets, scope, auth, opened } = await setup();
+    secrets.delete(scope, 'GCAL_CLIENT_ID');
+    secrets.set('provider:google', 'GOOGLE_CLIENT_ID', 'shared-client');
+    expect(auth.status().hasClientId).toBe(true);
+    await auth.connect(5000);
+    expect(new URL(opened[0]).searchParams.get('client_id')).toBe('shared-client');
+    secrets.set(scope, 'GCAL_CLIENT_ID', 'client-1');
+    await auth.connect(5000);
+    expect(new URL(opened[1]).searchParams.get('client_id')).toBe('shared-client');
+    expect(secrets.get(scope, 'GCAL_TOKEN_CLIENT')).toBe('shared');
+  });
+
+  it('refreshes with the client that issued the token: an old token keeps its own GCAL_* client', async () => {
+    const { state, secrets, scope, auth, clock } = await setup();
+    await auth.connect(5000); // issued by client-1 (no shared client yet)
+    secrets.delete(scope, 'GCAL_TOKEN_CLIENT'); // as a token from before the issuer was recorded
+    secrets.set('provider:google', 'GOOGLE_CLIENT_ID', 'shared-client');
+    clock.t += 3600_000;
+    await auth.ensureAccessToken();
+    expect(state.refreshes).toBe(1);
+    expect(state.lastClientId).toBe('client-1');
   });
 
   it('times out when the user never approves, and surfaces a revoked refresh token', async () => {

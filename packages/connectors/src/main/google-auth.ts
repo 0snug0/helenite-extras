@@ -8,6 +8,8 @@ export const GOOGLE_ENDPOINTS = { auth: 'https://accounts.google.com/o/oauth2/v2
 export const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
 const EXPIRES = 'GCAL_ACCESS_EXPIRES';
 const SKEW_MS = 60_000;
+/** Where Settings → Accounts keeps Google's OAuth client (`PROVIDER_GOOGLE_SCOPE` in @helenite/accounts). */
+const PROVIDER_GOOGLE = 'provider:google';
 
 export interface GoogleAuthOptions {
   secrets: SecretAccess;
@@ -23,39 +25,51 @@ export function createGoogleAuth(o: GoogleAuthOptions) {
   const ep = o.endpoints ?? GOOGLE_ENDPOINTS;
   const now = o.now ?? Date.now;
   const get = (n: string) => o.secrets.get(scope, n);
-  const store = (t: { accessToken: string; refreshToken?: string; expiresAt: number }) => {
+  const store = (t: { accessToken: string; refreshToken?: string; expiresAt: number }, issuer?: string) => {
     o.secrets.set(scope, GCAL_SECRETS.access, t.accessToken);
     o.secrets.set(scope, EXPIRES, String(t.expiresAt));
     if (t.refreshToken) o.secrets.set(scope, GCAL_SECRETS.refresh, t.refreshToken);
+    if (issuer) o.secrets.set(scope, 'GCAL_TOKEN_CLIENT', issuer);
   };
-  const creds = () => {
+  // Which client issued the stored refresh token: 'own' (this connector's GCAL_* client) or 'shared' (provider:google).
+  // Tokens from before this was recorded were all issued by the own client.
+  const ISSUER = 'GCAL_TOKEN_CLIENT';
+  const own = () => {
     const clientId = get(GCAL_SECRETS.clientId);
-    if (!clientId) throw new Error('set the Google OAuth client ID in Settings → Secrets first');
-    return { clientId, clientSecret: get(GCAL_SECRETS.clientSecret) ?? undefined };
+    return clientId ? { clientId, clientSecret: get(GCAL_SECRETS.clientSecret) ?? undefined, issuer: 'own' } : null;
   };
+  const shared = () => {
+    const clientId = o.secrets.get(PROVIDER_GOOGLE, 'GOOGLE_CLIENT_ID');
+    return clientId ? { clientId, clientSecret: o.secrets.get(PROVIDER_GOOGLE, 'GOOGLE_CLIENT_SECRET') ?? undefined, issuer: 'shared' } : null;
+  };
+  const missing = () => new Error('set up your Google OAuth client in Settings → Accounts → Add account → Google first');
+  /** A new sign-in: the one Google OAuth client (Settings → Accounts) first, the old GCAL_* client only if that is unset. */
+  const forConnect = () => shared() ?? own() ?? (() => { throw missing(); })();
+  /** A refresh: the client that issued the token. */
+  const forRefresh = () => (get(ISSUER) === 'shared' ? shared() : own() ?? shared()) ?? (() => { throw missing(); })();
 
   return {
-    status: () => ({ connected: o.secrets.has(scope, GCAL_SECRETS.refresh), hasClientId: o.secrets.has(scope, GCAL_SECRETS.clientId) }),
+    status: () => ({ connected: o.secrets.has(scope, GCAL_SECRETS.refresh), hasClientId: o.secrets.has(PROVIDER_GOOGLE, 'GOOGLE_CLIENT_ID') || o.secrets.has(scope, GCAL_SECRETS.clientId) }),
     /** Interactive consent. Resolves once tokens are stored. */
     async connect(timeoutMs?: number): Promise<void> {
-      const { clientId, clientSecret } = creds();
+      const { clientId, clientSecret, issuer } = forConnect();
       const pkce = createPkce();
       const lb = await startLoopback(pkce.state, timeoutMs);
       try {
         await o.openUrl(buildAuthUrl({ authEndpoint: ep.auth, clientId, redirectUri: lb.redirectUri, scope: GCAL_SCOPE, state: pkce.state, challenge: pkce.challenge, extra: { access_type: 'offline', prompt: 'consent' } }));
         const code = await lb.code;
-        store(await exchangeCode({ tokenEndpoint: ep.token, clientId, clientSecret, code, verifier: pkce.verifier, redirectUri: lb.redirectUri, fetchImpl: o.fetchImpl, now }));
+        store(await exchangeCode({ tokenEndpoint: ep.token, clientId, clientSecret, code, verifier: pkce.verifier, redirectUri: lb.redirectUri, fetchImpl: o.fetchImpl, now }), issuer);
       } finally { lb.close(); }
     },
     /** Make sure a fresh access token is stored. Throws `not connected` before the first connect. */
     async ensureAccessToken(): Promise<void> {
       const refreshToken = get(GCAL_SECRETS.refresh);
-      if (!refreshToken) throw new Error('google-calendar is not connected: use Settings → Secrets → Connect Google Calendar');
+      if (!refreshToken) throw new Error('google-calendar is not connected: add a Google account in Settings → Accounts');
       if (get(GCAL_SECRETS.access) && Number(get(EXPIRES)) - SKEW_MS > now()) return;
-      const { clientId, clientSecret } = creds();
+      const { clientId, clientSecret } = forRefresh();
       store(await refreshAccessToken({ tokenEndpoint: ep.token, clientId, clientSecret, refreshToken, fetchImpl: o.fetchImpl, now }));
     },
-    disconnect() { for (const n of [GCAL_SECRETS.access, GCAL_SECRETS.refresh, EXPIRES]) o.secrets.delete(scope, n); },
+    disconnect() { for (const n of [GCAL_SECRETS.access, GCAL_SECRETS.refresh, EXPIRES, 'GCAL_TOKEN_CLIENT']) o.secrets.delete(scope, n); },
   };
 }
 export type GoogleAuth = ReturnType<typeof createGoogleAuth>;
