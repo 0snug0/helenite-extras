@@ -48,7 +48,7 @@ What it does, for people reading the note.
 | `helenite-app` | Must be `1`. |
 | `id` | Lowercase letters, digits and hyphens, starting with a letter (`^[a-z][a-z0-9-]{1,40}$`). |
 | `name`, `version`, `description` | Shown to the user. |
-| `views` | At least one. `id`, `title`, `icon`, `entry` (default `view.js`) and `style` are paths inside the app folder; `placement` is any of `tab`, `embed`, `sidebar`, `dock` (default `[tab]`). |
+| `views` | At least one, each with an `id`, a `title` and an `icon`. `entry` (default `view.js`) and `style` are paths inside the app folder; `placement` is any of `tab`, `embed`, `sidebar`, `dock` (default `[tab]`). |
 | `theme` | `inherit` (default) or `isolate`: whether the frame loads the user's theme and snippets ([themes.md](./themes.md#what-reaches-vault-apps)). Anything else is an error. |
 | `net` | Bare origins (`https://host:port`) the app may fetch from, matched exactly. |
 | `vault.read`, `vault.write` | Globs of vault paths the app may read and write. |

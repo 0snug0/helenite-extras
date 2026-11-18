@@ -11,9 +11,9 @@ Start from the template: `node packages/create-helenite/bin.mjs my-theme --templ
 | A theme | `<config>/themes/<Theme name>/theme.css`, with `manifest.json` (`name`, `version`, `author`) beside it |
 | A snippet | `<config>/snippets/<name>.css` |
 
-`<config>` is `~/.helenite/.obsidian` for Home and `<vault>/.helenite` for a vault. Helenite looks in the vault's folder first, then in Home's, so a theme or snippet installed in Home is found from every vault.
+`<config>` is `~/.helenite/.obsidian` for Home and `<vault>/.helenite` for a vault. When it loads the chosen theme and snippets, Helenite looks in the vault's folder first, then in Home's, so a theme or snippet installed in Home works in every vault.
 
-Pick a theme under **Themes** in Settings, **Appearance**, and turn snippets on in the same tab. The choice is saved in `appearance.json` (`cssTheme`, `enabledCssSnippets`); a vault's `appearance.json` overrides Home's Vault Defaults key by key. Edits to `appearance.json` apply at once. Edits to `theme.css` do not: pick another theme and back, or restart. The loader is `packages/obsidian-api/src/custom-css.ts`.
+Pick a theme under **Themes** in Settings, **Appearance**, and turn snippets on in the same tab. That tab lists only the window's own `themes` and `snippets` folders: a vault's Appearance shows what is in `<vault>/.helenite`, not Home's. To use a theme installed in Home, pick it in Home's Appearance, for Home or for the Vault Defaults that vaults follow. The choice is saved in `appearance.json` (`cssTheme`, `enabledCssSnippets`); a vault's `appearance.json` overrides Home's Vault Defaults key by key. Edits to `appearance.json` apply at once. Edits to `theme.css` do not: pick another theme and back, or restart. The loader is `packages/obsidian-api/src/custom-css.ts`.
 
 ## The cascade
 
