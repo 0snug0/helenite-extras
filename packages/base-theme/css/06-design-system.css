@@ -87,6 +87,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 :where(input.hel-input) { height: var(--input-height); padding: 0 var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
 :where(.search-input-container) { position: relative; }
+/* base.css gives the search pane's container a margin; a search box in a toolbar or field sits flush */
+.search-input-container:has(> .hel-search) { margin: 0; }
 :where(.search-input-container > input.hel-search) { width: 100%; box-sizing: border-box; }
 .hel-select.is-compact { height: calc(var(--input-height) - var(--size-4-2)); font-size: var(--font-ui-smaller); }
 .hel-toggle { display: inline-flex; align-items: center; gap: var(--size-4-2); font-size: var(--font-ui-small); color: var(--text-normal); cursor: var(--cursor); }
