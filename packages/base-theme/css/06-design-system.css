@@ -215,7 +215,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-card.hel-settings-card { background: none; overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
 .hel-settings-card .setting-item { border-top: none; }
 .hel-settings-card > .hel-card-body { padding: 0; gap: 0; font-size: inherit; }
-.hel-settings-card .setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
+.setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
 .hel-settings-card .setting-item-description > .hel-status-text { display: block; font-size: inherit; }
 /* vault scope: the vault list under its row */
 .hel-vault-scope-list { padding-bottom: var(--size-4-3); }

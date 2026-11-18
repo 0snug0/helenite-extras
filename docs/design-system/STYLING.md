@@ -98,7 +98,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-callout-action` | The callout's button (a `hel-button`). |
 | `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. |
 | `hel-card-head` | The card's head: icon and title. Hidden while empty. |
-| `hel-card-icon` | The head's icon. |
+| `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head, the vault rows of Accounts). |
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 

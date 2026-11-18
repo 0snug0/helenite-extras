@@ -1,6 +1,7 @@
 // The vault-feature entry of the sample plugin (`main.js`). It loads in a vault under the normal enable rules and uses the
 // account only through `app.accounts.call`; the account type itself lives in accounts.ts.
-import { Notice, Plugin, PluginSettingTab, Setting, type App, type Editor } from 'obsidian';
+import { Plugin, PluginSettingTab, Setting, type App, type Editor } from 'obsidian';
+import { ui } from 'helenite';
 import type { DiaryEntry } from './accounts';
 
 interface Settings {
@@ -34,14 +35,14 @@ export default class LetterboxdVaultPlugin extends Plugin {
   async insertDiary(editor: Editor): Promise<void> {
     const account = this.settings.accountLabel.trim();
     if (!account) {
-      new Notice('Set the Letterboxd account label in this plugin’s settings first.');
+      ui.notice('Set the Letterboxd account label in this plugin’s settings first.');
       return;
     }
     try {
       const entries = (await this.app.accounts.call({ account, method: 'diary', args: { limit: 5 } })) as DiaryEntry[];
       editor.replaceSelection(diaryMarkdown(entries));
     } catch (e) {
-      new Notice(`Letterboxd: ${e instanceof Error ? e.message : String(e)}`);
+      ui.notice(`Letterboxd: ${e instanceof Error ? e.message : String(e)}`, { kind: 'error' });
     }
   }
 }

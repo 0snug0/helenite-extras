@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-// The sample's tests run without a DOM, so the settings tab base class and Notice are stand-ins.
+// The sample's tests run without a DOM, so the settings tab base class and ui.notice are stand-ins.
 const notices = vi.hoisted(() => [] as string[]);
 vi.mock('obsidian', async (orig) => ({
   ...(await orig<object>()),
   PluginSettingTab: class { constructor(public app: unknown, public plugin: unknown) {} },
-  Notice: class { constructor(msg: string) { notices.push(msg); } },
 }));
+vi.mock('helenite', () => ({ ui: { notice: (msg: string) => void notices.push(msg) } }));
 
 import LetterboxdVaultPlugin, { diaryMarkdown } from '../src/main';
 import LetterboxdAccountsEntry, { letterboxd } from '../src/accounts';

@@ -3,6 +3,7 @@
 // form and the methods. Letterboxd's public RSS and watchlist pages need no secret, so the account holds a username
 // and nothing else.
 import { addIcon, Plugin, removeIcon, type AccountTypeDef, type AccountView, type CallContext, type ConnectContext } from 'obsidian';
+import { ui } from 'helenite';
 import { LOGO_ICON, LOGO_SVG } from './logo';
 
 const ORIGIN = 'https://letterboxd.com';
@@ -63,25 +64,17 @@ export const letterboxd: AccountTypeDef = {
   type: 'letterboxd',
   icon: LOGO_ICON,
   connect(el: HTMLElement, ctx: ConnectContext) {
-    el.createEl('p', { text: 'Your Letterboxd username. Only your public diary and watchlist are read; no password is needed.' });
-    const input = el.createEl('input', { type: 'text', placeholder: 'Username', value: '' });
-    const error = el.createEl('p', { cls: 'mod-warning' });
-    const button = el.createEl('button', { text: ctx.accountId ? 'Save' : 'Connect', cls: 'mod-cta' });
-    button.addEventListener('click', async () => {
+    const field = ui.field(el, { label: 'Username', hint: 'Your Letterboxd username. Only your public diary and watchlist are read; no password is needed.' });
+    const input = ui.textInput(field.control, { placeholder: 'Username', onInput: () => field.setError(null) });
+    ui.button(el, { text: ctx.accountId ? 'Save' : 'Connect', variant: 'primary', onClick: async () => {
       const username = input.value.trim();
-      if (!USERNAME.test(username)) {
-        error.setText('Use letters, digits, “-” and “_” only.');
-        return;
-      }
-      button.disabled = true;
-      error.setText('');
+      if (!USERNAME.test(username)) return field.setError('Use letters, digits, “-” and “_” only.');
       try {
         await ctx.save({ identity: username, label: `Letterboxd (${username})`, config: { username }, held: ['diary.read', 'watchlist.read'] });
       } catch (e) {
-        error.setText(e instanceof Error ? e.message : String(e));
-        button.disabled = false;
+        field.setError(e instanceof Error ? e.message : String(e));
       }
-    });
+    } });
   },
   methods: {
     async diary(account, ctx, args?: { limit?: number }) {
