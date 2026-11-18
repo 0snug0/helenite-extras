@@ -298,7 +298,7 @@ await ui.confirm(app, { title: 'Remove account', message: 'Remove the AWS accoun
 await ui.form(app, { title: 'Repair access', action: 'Repair', message: 'Asks AWS for the missing permissions.', fields, onSubmit: (v) => api.repair(v) });
 ```
 
-A `choose` option can have a `detail` line and an `icon`.
+A `choose` option can have a `detail` line and an `icon`. In `confirm`, `prompt` and `form`, Cancel's button is `data-action="cancel"` and the action button `data-action="action"`, for tests.
 
 Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). Each field's row carries its `id` as `data-field`, for tests. The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
