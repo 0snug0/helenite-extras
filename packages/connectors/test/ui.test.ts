@@ -54,6 +54,9 @@ describe('Settings → Secrets tab', () => {
     expect(desc(row('Extra'))).toContain('· set');
     expect(buttons(row('Extra'))).toEqual(['Replace', 'Remove']);
     expect(document.body.textContent).not.toContain('s3cret');
+    expect(row('Extra').querySelector('input')!.value).toBe('');
+    expect(notices().join(' ')).toContain('EXTRA_KEY saved to the keychain.');
+    expect(notices().some((n) => n!.includes('s3cret'))).toBe(false);
     button(row('Extra'), 'Remove').click();
     await tick(5);
     expect(document.querySelector('.modal')!.textContent).toContain('Remove EXTRA_KEY from the keychain?');

@@ -43,12 +43,12 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     const mine = ++token;
     const { containerEl } = t;
     containerEl.empty();
-    new Setting(containerEl).setName('Data sources').setDesc("Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order.").setHeading();
+    const top = ui.settings.section(containerEl, 'Data sources', { desc: "Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order." });
     let status: DataStatusView;
     try {
       status = await deps.data.status();
     } catch (e) {
-      if (mine === token) ui.errorState(containerEl, `Could not load data settings: ${(e as Error).message}`, undefined, { variant: 'inline' });
+      if (mine === token) ui.errorState(top, `Could not load data settings: ${(e as Error).message}`, undefined, { variant: 'inline' });
       return;
     }
     if (mine !== token) return;
@@ -73,11 +73,12 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     };
     const bindingsOf = (contract: string) => file.bindings[contract] ?? [];
 
-    if (!status.contracts.length) new Setting(containerEl).setName('No data contracts yet.').setDesc('A vault template can ship contracts; none is installed.');
+    if (!status.contracts.length) new Setting(top).setName('No data contracts yet.').setDesc('A vault template can ship contracts; none is installed.');
     for (const c of status.contracts) {
-      new Setting(containerEl).setName(c.name).setDesc(c.error ?? (c.actions.length ? `Actions: ${c.actions.join(', ')}` : '')).setHeading();
+      const section = ui.settings.section(containerEl, c.name, { desc: c.error ?? (c.actions.length ? `Actions: ${c.actions.join(', ')}` : '') });
+      section.dataset.contract = c.name;
       c.sources.forEach((s, i) => {
-        const row = new Setting(containerEl).setName(s.id).setDesc(BADGE[s.status] ?? s.status);
+        const row = new Setting(section).setName(s.id).setDesc(BADGE[s.status] ?? s.status);
         row.settingEl.dataset.source = `${c.name}/${s.id}`;
         const move = (by: number) => {
           const ids = [...bindingsOf(c.name)];
@@ -94,12 +95,12 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
           onClick: () => save({ ...file, bindings: { ...file.bindings, [c.name]: bindingsOf(c.name).filter((x) => x !== s.id) } }, true),
         });
         if (vault.has(s.id)) ui.action(at, 'open', { label: 'Review', onClick: () => deps.openReview(s.id) });
-        for (const [key, spec] of Object.entries(byId.get(s.id)?.settings ?? {})) renderSetting(containerEl, s.id, key, spec);
+        for (const [key, spec] of Object.entries(byId.get(s.id)?.settings ?? {})) renderSetting(section, s.id, key, spec);
       });
       const candidates = status.connectors.filter((x) => x.provides.includes(c.name) && !bindingsOf(c.name).includes(x.id));
       if (candidates.length) {
         let pick = candidates[0].id;
-        const add = new Setting(containerEl).setName('Add a connector').addDropdown((d) => {
+        const add = new Setting(section).setName('Add a connector').addDropdown((d) => {
           for (const x of candidates) d.addOption(x.id, x.kind === 'vault' ? `${x.id} (vault)` : x.id);
           d.setValue(pick).onChange((v) => { pick = v; });
         });

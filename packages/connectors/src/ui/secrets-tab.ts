@@ -42,24 +42,24 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
     const { containerEl } = this;
     containerEl.empty();
     const note = deps.backend === 'unavailable' ? 'The system keychain is unavailable, so secrets cannot be saved right now.' : 'Stored in the system keychain. Helenite never shows a saved value again.';
-    new Setting(containerEl).setName('Secrets').setDesc(note).setHeading();
+    const top = ui.settings.section(containerEl, 'Secrets', { desc: note });
     const entries = deps.entries();
-    if (deps.isHome) renderHome(this, entries);
+    if (deps.isHome) renderHome(this, top, entries);
     else renderVault(this, entries);
   };
 
   const rerender = (t: PluginSettingTab) => t.display();
 
-  function renderHome(t: PluginSettingTab, entries: SecretEntry[]) {
+  function renderHome(t: PluginSettingTab, el: HTMLElement, entries: SecretEntry[]) {
     if (deps.policy?.unreadable?.()) {
-      ui.callout(t.containerEl, { tone: 'warning', text: "The vault access file can't be read. Change any secret's Vaults setting to rewrite it." }).el.dataset.unreadable = '';
+      ui.callout(el, { tone: 'warning', text: "The vault access file can't be read. Change any secret's Vaults setting to rewrite it." }).el.dataset.unreadable = '';
     }
-    if (!entries.length) ui.emptyState(t.containerEl, 'No app or connector declares a secret yet.', { variant: 'inline' });
+    if (!entries.length) ui.emptyState(el, 'No app or connector declares a secret yet.', { variant: 'inline' });
     for (const e of entries) {
-      const row = secretRow(t.containerEl, e, `${e.name} · ${e.owner}${e.required ? ' · required' : ''} · ${setState(e)}`);
+      const row = secretRow(el, e, `${e.name} · ${e.owner}${e.required ? ' · required' : ''} · ${setState(e)}`);
       if (e.class !== 'shared') row.controlEl.createSpan({ text: 'Home only' });
       renderValue(t, row, e);
-      if (e.class === 'shared') renderPolicy(t, e);
+      if (e.class === 'shared') renderPolicy(t, el, e);
     }
   }
 
@@ -71,10 +71,10 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
   }
 
   /** A shared secret's Vaults row under it: ui.settings.vaultScope (the policy has no "off by default"). */
-  function renderPolicy(t: PluginSettingTab, e: SecretEntry) {
+  function renderPolicy(t: PluginSettingTab, parent: HTMLElement, e: SecretEntry) {
     const key = `${e.scope}/${e.name}`;
     const vaults = (deps.policy?.vaults() ?? []).map((v) => ({ id: v.uuid, name: v.name }));
-    const el = t.containerEl.createDiv();
+    const el = parent.createDiv();
     el.dataset.access = key;
     ui.settings.vaultScope(el, {
       value: (e.policy ?? 'all') as VaultScope,
@@ -93,9 +93,9 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
   function renderVault(t: PluginSettingTab, entries: SecretEntry[]) {
     const shared = entries.filter((e) => e.class === 'shared');
     const own = entries.filter((e) => e.class !== 'shared' && e.class !== 'home');
-    new Setting(t.containerEl).setName('From Home').setDesc('Shared by Home. Change them in Home’s Settings → Secrets.').setHeading();
-    if (!shared.length) ui.emptyState(t.containerEl, 'Nothing from Home.', { variant: 'inline' });
-    for (const e of shared) secretRow(t.containerEl, e, `${e.name} · ${e.owner} · ${setState(e)}`);
+    const fromHome = ui.settings.section(t.containerEl, 'From Home', { desc: 'Shared by Home. Change them in Home’s Settings → Secrets.' });
+    if (!shared.length) ui.emptyState(fromHome, 'Nothing from Home.', { variant: 'inline' });
+    for (const e of shared) secretRow(fromHome, e, `${e.name} · ${e.owner} · ${setState(e)}`);
     const mine = ui.settings.section(t.containerEl, 'This vault');
     if (!own.length) ui.emptyState(mine, 'No app or connector in this vault declares a secret yet.', { variant: 'inline' });
     const byOwner = new Map<string, SecretEntry[]>();
