@@ -155,7 +155,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-kv` | `ui.keyValue`, a `<dl>`. |
 | `hel-kv-row` | One key and its value. |
 | `hel-kv-key` | The key (`<dt>`). |
-| `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list item is `is-new` when `isNew` marks it. |
+| `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list item is `is-new` when `isNew` marks it, plus `is-warning` with `newTone: 'warning'`. |
 
 ### Modals
 

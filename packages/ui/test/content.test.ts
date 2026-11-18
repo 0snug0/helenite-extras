@@ -202,6 +202,20 @@ describe("composer", () => {
   });
 });
 
+describe("keyValue newTone", () => {
+  it("marks new items with the accent badge by default, the warning badge and is-warning with newTone warning", () => {
+    const el = keyValue(host(), [
+      { key: "a", value: ["x"], isNew: () => true },
+      { key: "b", value: ["y"], isNew: () => true, newTone: "warning" },
+    ]);
+    const [a, b] = [...el.querySelectorAll("li.is-new")];
+    expect(a.classList.contains("is-warning")).toBe(false);
+    expect(a.querySelector(".hel-badge")!.classList.contains("is-accent")).toBe(true);
+    expect(b.classList.contains("is-warning")).toBe(true);
+    expect(b.querySelector(".hel-badge")!.classList.contains("is-warning")).toBe(true);
+  });
+});
+
 describe("frame safety (content parts)", () => {
   it("draw into the parent's document", () => {
     const doc = document.implementation.createHTMLDocument("frame");
