@@ -39,3 +39,19 @@
 .hel-status-dot.is-danger { background-color: var(--text-error); }
 .hel-status-dot.is-success { background-color: var(--text-success); }
 .hel-table-row.is-clickable { cursor: pointer; }
+
+/* modals (confirm, prompt, choose, form) */
+.hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
+.hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
+.hel-modal .hel-modal-input { width: 100%; }
+.hel-modal .hel-modal-field { margin-bottom: var(--size-4-3); }
+.hel-modal .hel-modal-check { display: flex; gap: var(--size-4-2); align-items: center; }
+.hel-modal-error { color: var(--text-error); font-size: var(--font-ui-small); min-height: 1.2em; margin-top: var(--size-2-2); }
+.hel-modal-error:empty { min-height: 0; }
+.hel-modal-actions { display: flex; justify-content: flex-end; gap: var(--size-4-2); margin-top: var(--size-4-4); }
+.hel-modal-choices { display: flex; flex-direction: column; gap: var(--size-2-1); max-height: 50vh; overflow-y: auto; }
+.hel-modal-choice { padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); cursor: pointer; }
+.hel-modal-choice:hover, .hel-modal-choice:focus-visible { background-color: var(--background-modifier-hover); }
+.hel-modal-choice.is-selected { border-color: var(--interactive-accent); }
+.hel-modal-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.hel-modal-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }

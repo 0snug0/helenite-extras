@@ -8,3 +8,4 @@ export { table } from "./table";
 export type { TableOptions, TableColumn, TableGroup, TableHandle } from "./table";
 export { emptyState, errorState, loadingState, badge, statusDot } from "./states";
 export type { Tone } from "./states";
+export type { Field } from "./fields";
