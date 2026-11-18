@@ -52,11 +52,11 @@ If the manifest already has a `helenite` object, put the range in its `version`:
 { "helenite": { "version": "^0.1.0" } }
 ```
 
-Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.0` means 0.1.0 or later but below 0.2.0. Any other form is refused as unreadable. If the range is not met, the plugin stays disabled and Helenite shows a notice saying why.
+Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.0` means 0.1.0 or later but below 0.2.0. Any other form is refused as unreadable. If the range is not met, the plugin is not loaded, and a notice explains why.
 
 ## Parts
 
-Every part that draws UI takes the element to draw into as its first argument and appends to it.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
