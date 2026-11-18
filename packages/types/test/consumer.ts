@@ -78,7 +78,11 @@ const sc: SettingsCardHandle = ui.settings.card(document.body, { name: 'Claude C
 sc.head.setDesc('claude');
 sc.setStatus(null);
 const scope: VaultScope = { except: ['a'] };
-ui.settings.vaultScope(sc.body, { value: scope, vaults: [{ id: 'a', name: 'A', disabled: 'Off' }], kinds: ['all', 'only'], homeNote: true, onChange: (v: VaultScope) => v }).setValue('none');
+ui.settings.vaultScope(sc.body, { value: scope, vaults: [{ id: 'a', name: 'A', disabled: 'Off', on: true }], kinds: ['all', 'all-off', 'only'], homeNote: true, onChange: (v: VaultScope) => v }).setValue('none');
+const inlineScope = ui.settings.vaultScope(sc.head.controlEl, { value: 'all-off', vaults: [], inline: true, disabled: true, onChange: () => undefined });
+inlineScope.setDisabled(false);
+// @ts-expect-error: row is null when inline.
+inlineScope.row.setName('x');
 ui.action(document.body, 'remove', { onClick: () => undefined, app: {}, subject: 'Gmail', confirmText: 'Remove', message: 'Remove Gmail?' });
 ui.action(document.body, 'reset', { onClick: () => undefined, variant: 'icon' });
 // @ts-expect-error: not a vault scope.
