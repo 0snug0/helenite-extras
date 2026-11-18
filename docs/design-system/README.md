@@ -197,7 +197,7 @@ err.hide();
 err.setText('Could not create the vault.'); err.show();
 ```
 
-A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
+A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `solid: true` fills the banner with the tone's colour (on-accent text, a contrasting action button), for something that must not be missed, such as an agent waiting on the user. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
 
 ### ui.card
 

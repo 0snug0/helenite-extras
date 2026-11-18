@@ -23,6 +23,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | --- | --- | --- |
 | `--hel-segment-active-bg` | `var(--interactive-accent)` | The pressed segment of `hel-segmented`, and `hel-button.is-active` |
 | `--hel-segment-active-fg` | `var(--text-on-accent)` | The text colour on those |
+| `--hel-count-badge-attention-fg` | `var(--text-on-accent)` | The number on a danger `hel-count-badge` (on `--color-red`: about 6:1 in the default dark theme, 5:1 in light) |
+| `--hel-callout-solid-fg` | `var(--text-on-accent)` | The text on a solid `hel-callout` |
 | `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
 
 ## Classes
@@ -62,7 +64,7 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text), `is-differen
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. |
 | `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
 | `hel-status-text` | `ui.statusText`. Tones as for badges. |
-| `hel-count-badge` | `ui.countBadge`. `is-accent` (default), `is-danger` or `is-warning` is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header or beside a ribbon icon it is a centred pill with a small gap. |
+| `hel-count-badge` | `ui.countBadge`. `is-accent` (default), `is-danger` (red, `--hel-count-badge-attention-fg` text) or `is-warning` (normal text on an orange tint) is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header or beside a ribbon icon it is a centred pill with a small gap. |
 | `hel-count-badge-icon` | The optional icon before a count badge's number. |
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
 | `hel-chip` | `ui.chip`. Tones as for badges. |
@@ -94,7 +96,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 | Class | What it is |
 | --- | --- |
-| `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. |
+| `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. `is-solid` fills it with the tone's colour (`--hel-callout-solid-fg` text, a contrasting action button). |
 | `hel-callout-text` | The callout's text. |
 | `hel-callout-action` | The callout's button (a `hel-button`). |
 | `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. |
