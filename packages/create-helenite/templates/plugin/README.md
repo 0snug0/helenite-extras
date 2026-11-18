@@ -48,6 +48,8 @@ cp <helenite>/packages/types/dist/helenite.d.ts types/helenite.d.ts
 `import { ui } from 'helenite'` fails in Obsidian, which has no such module. To support both apps, require it in a `try` and fall back to Obsidian's own UI:
 
 ```ts
+import { Notice } from 'obsidian';
+
 let hel: typeof import('helenite') | undefined;
 try { hel = require('helenite'); } catch {}
 

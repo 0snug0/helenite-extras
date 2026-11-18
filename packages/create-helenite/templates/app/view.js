@@ -11,7 +11,7 @@ export default async function mount(root, api) {
 
 	let clicks = (await api.store.get("clicks")) ?? [];
 
-	const box = card(root, { title: "{{name}}" });
+	const box = card(root, { title: {{nameJs}} });
 	const list = table(box.body, {
 		columns: [{ key: "at", title: "Clicked at", cell: (c) => new Date(c.at).toLocaleTimeString() }],
 		rows: clicks,

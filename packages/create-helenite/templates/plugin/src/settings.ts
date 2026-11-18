@@ -11,9 +11,12 @@ export interface Settings {
   greetings: Greeting[];
 }
 
+/** The plugin's name, as in manifest.json. */
+export const PLUGIN_NAME = {{nameJs}};
+
 export const DEFAULT_SETTINGS: Settings = {
   helloOnStart: false,
-  greetings: [{ id: 'hello', text: 'Hello from {{name}}!' }],
+  greetings: [{ id: 'hello', text: `Hello from ${PLUGIN_NAME}!` }],
 };
 
 /** What `loadData()` returned (null on the first run), with every missing setting filled in from the defaults. */

@@ -10,8 +10,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES = ['plugin', 'theme', 'app'];
 // The vault app id rule (apps-runtime's APP_ID), used for every template: lowercase letters, digits and hyphens.
 const ID = /^[a-z][a-z0-9-]{1,40}$/;
-// The name lands in JSON, YAML and folder names: no quotes, backslashes, path separators or control characters.
-const BAD_NAME = /["\\/:*?<>|\u0000-\u001f]|\{\{/;
+// The name is a folder name for themes and apps, so no slash and no leading dot; and no control characters or line
+// separators (U+2028, U+2029). Quotes, backslashes and the like are fine: each place a name lands escapes it.
+const BAD_NAME = /[/\u0000-\u001f\u007f\u2028\u2029]|^\./;
 const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app [--name "My thing"] [--id my-thing]';
 
 function fail(message) {
@@ -49,7 +50,7 @@ function names(args) {
   if (!ID.test(id)) fail(`"${id}" is not a valid id: use 2 to 41 lowercase letters, digits and hyphens, starting with a letter (--id my-thing).`);
   if (args.template === 'plugin' && id.startsWith('core-')) fail(`"${id}" starts with core-, which Helenite keeps for its built-in plugins.`);
   const name = (args.name ?? titleOf(id)).trim();
-  if (!name || BAD_NAME.test(name)) fail(`"${name}" is not a valid name: leave out quotes, backslashes, slashes and : * ? < > |.`);
+  if (!name || BAD_NAME.test(name)) fail(`${JSON.stringify(name)} is not a valid name: leave out slashes, line breaks and control characters, and do not start it with a dot.`);
   return { id, name };
 }
 
@@ -69,7 +70,15 @@ const { id, name } = names(args);
 const dest = resolve(args.dir);
 ensureEmpty(dest);
 
-const vars = { id, name };
+// Placeholders: {{name}} is for prose (Markdown, comments that end at the line); the others escape it for where it lands.
+const vars = {
+  id,
+  name,
+  nameJs: JSON.stringify(name), // a JS/TS string literal, quotes included
+  nameJson: JSON.stringify(name), // a JSON string, quotes included
+  nameYaml: JSON.stringify(name), // a YAML double-quoted scalar (JSON's escapes are YAML's), quotes included
+  nameCss: name.replaceAll('*/', '* /'), // inside a CSS /* comment */
+};
 const extra = {};
 if (args.template === 'plugin') {
   const types = heleniteTypes();
@@ -82,7 +91,7 @@ mkdirSync(dest, { recursive: true });
 cpSync(join(here, 'templates', args.template), dest, { recursive: true });
 for (const file of files(dest)) {
   const text = readFileSync(file, 'utf8');
-  const filled = text.replace(/\{\{(id|name|helenite)\}\}/g, (_, k) => vars[k] ?? fail(`template ${relative(dest, file)} uses {{${k}}}, which ${args.template} does not set`));
+  const filled = text.replace(/\{\{(id|name|nameJs|nameJson|nameYaml|nameCss|helenite)\}\}/g, (_, k) => vars[k] ?? fail(`template ${relative(dest, file)} uses {{${k}}}, which ${args.template} does not set`));
   if (filled !== text) writeFileSync(file, filled);
 }
 // npm pack leaves out files named .gitignore, so the templates carry it as `gitignore`.

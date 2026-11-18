@@ -1,5 +1,5 @@
 /*
- * {{name}}: a theme for Helenite (and Obsidian).
+ * {{nameCss}}: a theme for Helenite (and Obsidian).
  *
  * Helenite loads this file after its base theme and the plugins' styles, then the enabled snippets after it. A rule
  * here therefore wins over the defaults at the same specificity. Change variables first; restyle classes only when a

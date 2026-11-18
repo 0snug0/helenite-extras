@@ -13,7 +13,7 @@ await build({
   platform: 'node',
   format: 'cjs',
   target: 'chrome140',
-  external: ['obsidian', 'helenite', 'electron', '@codemirror/*', '@lezer/*'],
+  external: ['obsidian', 'helenite', 'electron', 'moment', '@codemirror/*', '@lezer/*'],
   sourcemap: 'inline',
   logLevel: 'warning',
 });

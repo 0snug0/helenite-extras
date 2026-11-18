@@ -1,13 +1,13 @@
 ---
 helenite-app: 1
 id: {{id}}
-name: "{{name}}"
+name: {{nameYaml}}
 version: 0.1.0
 description: "A starter Helenite app: a card with a table, a button and a notice."
 theme: inherit
 views:
   - id: main
-    title: "{{name}}"
+    title: {{nameYaml}}
     icon: app-window
     entry: view.js
     style: view.css

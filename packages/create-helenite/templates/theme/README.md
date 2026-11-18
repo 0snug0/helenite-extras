@@ -11,7 +11,7 @@ A theme is a folder with `manifest.json` and `theme.css`, named after the theme.
 - Home: `~/.helenite/.obsidian/themes/{{name}}/`
 - One vault: `<vault>/.helenite/themes/{{name}}/`
 
-Then pick "{{name}}" under Themes in Settings, Appearance, in the same window (Home's or that vault's). The choice is saved in that config folder's `appearance.json` as `"cssTheme": "{{name}}"`. Light or dark follows "Base color scheme" on the same page. When a vault's theme is set to a name, Helenite looks for that folder in the vault's config folder first, then in Home's.
+Then pick "{{name}}" under Themes in Settings, Appearance, in the same window (Home's or that vault's). The choice is saved in that config folder's `appearance.json` as `"cssTheme": {{nameJson}}`. Light or dark follows "Base color scheme" on the same page. When a vault's theme is set to a name, Helenite looks for that folder in the vault's config folder first, then in Home's.
 
 The theme works in Obsidian too: copy the folder to `<vault>/.obsidian/themes/{{name}}/`.
 

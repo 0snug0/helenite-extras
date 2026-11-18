@@ -22,7 +22,7 @@ Start with [getting-started.md](./getting-started.md): a working plugin in five 
   node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app [--name "My thing"] [--id my-thing]
   ```
 
-  It never writes into a folder that is not empty. `--id` defaults to the name made lowercase with hyphens, or to the folder's name. Ids are 2 to 41 lowercase letters, digits and hyphens, starting with a letter; a plugin id may not start with `core-`.
+  It never writes into a folder that is not empty. `--id` defaults to the name made lowercase with hyphens, or to the folder's name. Ids are 2 to 41 lowercase letters, digits and hyphens, starting with a letter; a plugin id may not start with `core-`. A name may hold quotes, backslashes and any Unicode, but no slash or line break, and may not start with a dot.
 - **`@helenite/types`** (`packages/types`): the types of the `helenite` module, generated from the runtime module so they cannot drift. The plugin template gets a copy in `types/helenite.d.ts`.
 - **`@helenite/ui-kit`** (`packages/ui-kit`): the design-system parts for vault apps. The app template gets a bundle in `ui-kit.js`.
 - **The plugin test harness** (`plugins/core-build/test/harness.ts`): loads a built plugin into a real Helenite `App` under vitest and jsdom. See [testing.md](./testing.md).
