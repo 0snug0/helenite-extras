@@ -160,6 +160,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | --- | --- |
 | `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. |
 | `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
+| `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |
 | `hel-modal-message` | The message paragraph of a confirm modal, and a form's `message`. |
 | `hel-modal-label` | A field label. |
 | `hel-modal-input` | A text input. |

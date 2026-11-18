@@ -277,7 +277,7 @@ Each takes the app first and returns a promise. A cancel (Cancel button, Escape,
 ```ts
 const ok = await ui.confirm(app, { title: 'Discard changes', message: 'Discard the changes to this note?', action: 'Discard', danger: true });
 const name = await ui.prompt(app, { title: 'Rename note', label: 'Name', value: note.name, action: 'Rename', validate: (v) => (v.trim() ? null : 'Enter a name.') });
-const pick = await ui.choose(app, { title: 'Pick a template', options: [{ value: 'blank', text: 'Blank', detail: 'An empty note' }] });
+const pick = await ui.choose(app, { title: 'Pick a template', options: [{ value: 'blank', text: 'Blank', detail: 'An empty note', icon: 'file' }] });
 const v = await ui.form(app, { title: 'Add a vault', action: 'Add vault', fields: [{ id: 'path', kind: 'text', label: 'Path' }, { id: 'sync', kind: 'checkbox', label: 'Sync it' }] });
 ```
 
@@ -287,6 +287,8 @@ To run the work inside the modal, pass `onConfirm` (confirm) or `onSubmit` (form
 await ui.confirm(app, { title: 'Remove account', message: 'Remove the AWS account?', action: 'Remove', danger: true, onConfirm: () => api.remove(id) });
 await ui.form(app, { title: 'Repair access', action: 'Repair', message: 'Asks AWS for the missing permissions.', fields, onSubmit: (v) => api.repair(v) });
 ```
+
+A `choose` option can have a `detail` line and an `icon`.
 
 Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
@@ -300,7 +302,7 @@ const account = await ui.dialog<Account>(app, {
 });
 ```
 
-A modal with a body you draw. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
+A modal with a body you draw. `icon` puts an icon before the title. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
 
 ### ui.menu, ui.moreButton, ui.menuButton
 
@@ -369,7 +371,7 @@ ui.action(cell, 'delete', { app, subject: 'Notes', onClick: remove }); // asks t
 
 ```ts
 const rows = ui.settings.section(containerEl, 'Items');          // heading + container; put rows in the container
-ui.settings.row(rows).setName('Name').addText((t) => t.setValue(v));  // Obsidian's Setting
+new ui.settings.row(rows).setName('Name').addText((t) => t.setValue(v));  // Obsidian's Setting
 ui.settings.summaryRow(rows, { name: 'Sync', desc: 'On', onClick: openSync, chevron: true });
 ui.settings.subpageRow(app, rows, { name: 'Items', desc: '3 items', title: 'Items', render: (page) => fill(page) });
 ui.settings.scopeBar(containerEl, { editingDefaults: false, onChange: (d) => setScope(d) });
@@ -420,7 +422,7 @@ await menu([{ title: 'Rename', onClick: rename }], { x: e.clientX, y: e.clientY 
 notice('Imported 12 notes');
 ```
 
-Differences from the plugin versions: `prompt` has no `validate`, because a callback cannot cross the bridge. `choose` shows a list with a "Select" action. `menu` takes a point inside the frame. A `listRow`'s `menu` opens through the bridge as well, so it needs `setBridge` too.
+Differences from the plugin versions: `prompt` has no `validate`, because a callback cannot cross the bridge. `choose` shows a list with a "Select" action, and no option icons. `menu` takes a point inside the frame. A `listRow`'s `menu` opens through the bridge as well, so it needs `setBridge` too.
 
 **Host support is not complete yet.** `notice` works in an app today once `setBridge(api)` has been called, but the frame's `api.ui.notice` drops its options, so `kind` and `timeoutMs` are not honoured yet. `confirm`, `prompt`, `choose`, `form` and `menu` need the host to render app modals and menus, and that renderer is not built yet, so they do not open in an app today. Their signatures are fixed, so code written against them will start working when the host support lands.
 

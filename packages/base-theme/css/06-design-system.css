@@ -193,6 +193,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 
 /* modals (confirm, prompt, choose, form, dialog) */
 .hel-modal.is-wide { width: var(--modal-max-width-narrow); }
+.hel-modal-title-icon { display: inline-flex; margin-right: var(--size-4-2); vertical-align: -0.15em; color: var(--icon-color); }
 .hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
 .hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
 .hel-modal .hel-modal-input { width: 100%; }
