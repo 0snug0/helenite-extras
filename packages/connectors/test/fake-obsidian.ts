@@ -8,13 +8,13 @@ export class Button { text = ''; flags: string[] = []; click: () => unknown = ()
   onClick(cb: () => unknown) { this.click = cb; return this; } }
 export class Text { inputEl: any = { type: 'text', autocomplete: '' }; change: (v: string) => unknown = () => {}; placeholder = '';
   value = ''; setValue(v: string) { this.value = v; return this; } setPlaceholder(t: string) { this.placeholder = t; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
-export class Dropdown { options: string[] = []; value = ''; change: (v: string) => unknown = () => {};
-  addOption(v: string, _l: string) { this.options.push(v); return this; } setValue(v: string) { this.value = v; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
+export class Dropdown { options: string[] = []; labels: string[] = []; value = ''; change: (v: string) => unknown = () => {};
+  addOption(v: string, l: string) { this.options.push(v); this.labels.push(l); return this; } setValue(v: string) { this.value = v; return this; } onChange(cb: (v: string) => unknown) { this.change = cb; return this; } }
 export class Toggle { value = false; change: (v: boolean) => unknown = () => {};
   setValue(v: boolean) { this.value = v; return this; } onChange(cb: (v: boolean) => unknown) { this.change = cb; return this; } }
 export class Setting {
   static all: Setting[] = [];
-  name = ''; desc = ''; heading = false; texts: Text[] = []; dropdowns: Dropdown[] = []; toggles: Toggle[] = []; buttons: Button[] = [];
+  name = ''; desc = ''; heading = false; controlEl = { spans: [] as string[], createSpan(o: { text: string }) { this.spans.push(o.text); return {}; } }; texts: Text[] = []; dropdowns: Dropdown[] = []; toggles: Toggle[] = []; buttons: Button[] = [];
   constructor(public host: any) { (host.settings ??= []).push(this); Setting.all.push(this); }
   setName(n: string) { this.name = n; return this; } setDesc(d: string) { this.desc = d; return this; } setHeading() { this.heading = true; return this; }
   addText(cb: (t: Text) => unknown) { const t = new Text(); this.texts.push(t); cb(t); return this; }

@@ -9,6 +9,7 @@ declare module 'obsidian' {
   export class ToggleComponent { setValue(v: boolean): this; onChange(cb: (v: boolean) => unknown): this; }
   export class Setting {
     constructor(containerEl: HTMLElement);
+    controlEl: HTMLElement;
     setName(n: string): this; setDesc(d: string): this; setHeading(): this;
     addText(cb: (t: TextComponent) => unknown): this; addButton(cb: (b: ButtonComponent) => unknown): this;
     addDropdown(cb: (d: DropdownComponent) => unknown): this; addToggle(cb: (t: ToggleComponent) => unknown): this;
@@ -18,4 +19,4 @@ declare module 'obsidian' {
     id: string; name: string; icon: string; containerEl: HTMLElement; display(): void;
   }
 }
-interface HTMLElement { empty(): void }
+interface HTMLElement { empty(): void; createSpan(o?: { text?: string; cls?: string }): HTMLElement }
