@@ -1,0 +1,21 @@
+# create-helenite
+
+Scaffolds a Helenite plugin, theme or vault app. Private: it is not on npm, so run it from a Helenite checkout.
+
+```
+node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app [--name "My thing"] [--id my-thing]
+```
+
+| Template | Writes |
+| --- | --- |
+| `plugin` | `manifest.json` (with a `helenite` range), `src/main.ts` (a command, a ribbon icon opening a `ui.form`, a settings tab with a section, a toggle and a sub-page holding a `ui.table`), `src/settings.ts`, a vitest test, `build.mjs` (esbuild; `obsidian` and `helenite` external), `tsconfig.json`, and `types/helenite.d.ts` (the `@helenite/types` file, built fresh from this checkout). |
+| `theme` | `manifest.json` and `theme.css`: Obsidian and `--hel-*` variables for light and dark, and the public classes. |
+| `app` | `app.md` (`theme: inherit`), `view.js` using `@helenite/ui-kit`, `view.css`, and `ui-kit.js` (the kit, bundled from this checkout). |
+
+It refuses a folder that is not empty and an invalid id or name, and prints the next steps. `--id` defaults to the name in lowercase with hyphens, or to the folder's name.
+
+Templates are in `templates/<template>/`. `{{id}}`, `{{name}}` and (plugin) `{{helenite}}` are filled in; `gitignore` is renamed to `.gitignore` (npm pack drops files named `.gitignore`).
+
+`pnpm pack` runs `vendor.mjs` first, which saves the types and the ui-kit bundle in `vendor/`, so the tarball also works away from a checkout.
+
+Guide: [docs/dev](../../docs/dev/README.md). Tests: `plugins/core-build/test/create-helenite.test.ts`.

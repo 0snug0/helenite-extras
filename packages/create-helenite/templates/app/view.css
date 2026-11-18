@@ -1,0 +1,9 @@
+/*
+ * The app's own CSS. The frame already loads the design-system stylesheet, so the parts in view.js (button, card,
+ * table) need nothing here. Use Obsidian's CSS variables (var(--text-muted), var(--size-4-2)) rather than fixed
+ * colours, so the app follows the user's theme.
+ *
+ * ui-kit's own parts (cardGrid, posterRow, picker, calendarStrip) need ui-kit.css, which create-helenite does not
+ * copy: take packages/ui-kit/src/ui-kit.css from the Helenite repository, put it beside this file and add
+ *   @import "./ui-kit.css";
+ */
