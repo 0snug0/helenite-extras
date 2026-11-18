@@ -55,3 +55,17 @@
 .hel-modal-choice.is-selected { border-color: var(--interactive-accent); }
 .hel-modal-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
 .hel-modal-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+
+/* settings: sub-pages, summary rows, scope bar */
+.vertical-tab-content-container.has-subpage > :not(.hel-subpage) { display: none; }
+.hel-subpage-header { display: flex; align-items: center; gap: var(--size-4-2); padding-bottom: var(--size-4-3); margin-bottom: var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); }
+.hel-subpage-title { font-weight: var(--font-semibold); font-size: var(--font-ui-medium); }
+.hel-summary-row.is-clickable { cursor: pointer; }
+.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
+.hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding-bottom: var(--size-4-3); }
+
+/* notice variants and danger menu items */
+.hel-notice.is-info { border-left: 3px solid var(--interactive-accent); }
+.hel-notice.is-success { border-left: 3px solid var(--color-green); }
+.hel-notice.is-error { border-left: 3px solid var(--color-red); }
+.menu-item.is-danger { color: var(--text-error); }
