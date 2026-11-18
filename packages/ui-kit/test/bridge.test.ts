@@ -97,6 +97,23 @@ describe("host bridge", () => {
     await menu([{ title: "Open", onClick: open }], { x: 0, y: 0 });
     expect(open).not.toHaveBeenCalled();
   });
+  it("a listRow's context menu opens as a host menu at the event's point", async () => {
+    const h = fakeHost({ menu: "0" });
+    setBridge(h.api);
+    const open = vi.fn();
+    const row = kit.listRow(document.body, { title: "A", menu: () => [{ title: "Open", onClick: open }] });
+    row.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: 7, clientY: 9 }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(h.calls.menu[0].at).toEqual({ x: 7, y: 9 });
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+  it("form passes a multi field through and resolves its string-array value", async () => {
+    const h = fakeHost({ modal: { action: "action", values: { caps: ["read", "write"] } } });
+    setBridge(h.api);
+    const fields = [{ id: "caps", kind: "multi" as const, label: "Capabilities", options: [{ value: "read", label: "Read" }, { value: "write", label: "Write", detail: "Commits" }] }];
+    expect(await form({ title: "Connect Git", fields, action: "Connect" })).toEqual({ caps: ["read", "write"] });
+    expect(h.calls.modal[0].fields).toEqual(fields);
+  });
   it('no ModalSpec the kit builds has an action labelled "OK"', async () => {
     const h = fakeHost({ modal: { action: "action", values: {} } });
     setBridge(h.api);
@@ -123,6 +140,8 @@ describe("stylesheet", () => {
     expect(css).not.toMatch(/hk-/);
   });
   it("does not restyle parts @helenite/ui provides", () => {
-    expect(css).not.toMatch(/\.hel-(button|table|badge|empty|error|loading|segmented|status-dot|status-text|count-badge|chip|field|input|search|select|toggle|slider|tabs?|toolbar)\b/);
+    expect(css).not.toMatch(/\.hel-(button|table|badge|empty|error|loading|segmented|status-dot|status-text|count-badge|chip|field|input|search|select|toggle|slider|tabs?|toolbar|callout|check|choice|list-row|list-group|composer|kv)\b/);
+    // ui.card's own classes; a card grid's other card-* classes (main, poster, remove...) stay here.
+    expect(css).not.toMatch(/\.hel-card(-head|-icon|-title|-body)?\s*[{,]/);
   });
 });
