@@ -6,6 +6,8 @@ To see every part running, open **Settings, Design system**. Each part is shown 
 
 For restyling, see [STYLING.md](./STYLING.md). A working plugin is in `plugins/sample-design-system`.
 
+New to building for Helenite? Start with the developer guide, [docs/dev](../dev/README.md): it scaffolds a plugin, theme or vault app (`node packages/create-helenite/bin.mjs`) and explains where these parts fit.
+
 ## Types
 
 The types live in the workspace package `@helenite/types`. It is private and not published to npm yet, so there is no `npm install` for it. In this repository, build it:
