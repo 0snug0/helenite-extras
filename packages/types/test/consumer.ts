@@ -1,5 +1,6 @@
 // Compiled against dist/helenite.d.ts and the DOM libs only (tsconfig.json): what a plugin author sees.
 import { ui, version } from 'helenite';
+import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -13,3 +14,13 @@ void ui.confirm({}, { title: 'Delete note', message: 'Delete it?', action: 'Dele
 
 // @ts-expect-error: not a standard action id.
 ui.action(document.body, 'explode', { onClick: () => undefined });
+
+// The public types are exported type-only.
+const opts: ButtonOptions = { text: 'Save', variant: 'primary' };
+ui.button(document.body, opts);
+const fields: Field[] = [{ id: 'name', kind: 'text', label: 'Name' }];
+void ui.form({}, { title: 'Rename note', fields, action: 'Rename' });
+const items: MenuItemSpec[] = [{ title: 'Rename', onClick: () => undefined }, 'separator'];
+ui.menu(items, { x: 0, y: 0 });
+const id: ActionId = 'delete';
+ui.action(document.body, id, { onClick: () => undefined, app: {}, subject: 'note' });
