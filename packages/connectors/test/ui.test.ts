@@ -113,6 +113,19 @@ describe('Settings → Secrets in Home', () => {
   });
 });
 
+describe('Settings → Secrets in Home with an unreadable policy file', () => {
+  it('shows one line saying so', () => {
+    const secrets = { has: () => false, get: () => null, set: () => {}, delete: () => {} };
+    const tab: any = createSecretsSettingTab({
+      app: new App() as any, plugin: new Plugin() as any, secrets, isHome: true, entries: homeRows,
+      policy: { vaults: () => [], set: () => {}, unreadable: () => true },
+    });
+    tab.display();
+    const names = (tab.containerEl.settings as Setting[]).map((r) => r.name);
+    expect(names.filter((n) => n === "The vault access file can't be read. Change any secret's Vaults setting to rewrite it.")).toHaveLength(1);
+  });
+});
+
 describe('Settings → Secrets in a vault', () => {
   it('shows a read-only From Home section and an editable This vault section', () => {
     const rowsIn: SecretEntry[] = [

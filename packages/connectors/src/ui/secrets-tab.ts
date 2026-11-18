@@ -12,6 +12,8 @@ export interface SecretsPolicyAccess {
   vaults(): { uuid: string; name: string }[];
   /** Writes one shared secret's policy (`key` is `<scope>/<name>`); null resets it to "Allow all". */
   set(key: string, policy: SecretVaultsPolicy | null): void;
+  /** Home's policy file exists but can't be read: every vault is denied until a policy is written. */
+  unreadable?(): boolean;
 }
 
 export interface SecretsTabDeps {
@@ -58,6 +60,7 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
   const rerender = (t: PluginSettingTab) => t.display();
 
   function renderHome(t: PluginSettingTab, entries: SecretEntry[]) {
+    if (deps.policy?.unreadable?.()) new Setting(t.containerEl).setName("The vault access file can't be read. Change any secret's Vaults setting to rewrite it.");
     if (!entries.length) new Setting(t.containerEl).setName('No app or connector declares a secret yet.');
     for (const e of entries) {
       const row = new Setting(t.containerEl).setName(e.label).setDesc(`${e.name} · ${e.owner}${e.required ? ' · required' : ''} · ${setState(e)}`);
