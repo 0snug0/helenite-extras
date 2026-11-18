@@ -4,6 +4,8 @@ export interface ToggleOptions {
   value: boolean;
   label: string;
   disabled?: boolean;
+  /** Names the switch without showing the label (a row that shows the name elsewhere). */
+  hideLabel?: boolean;
   onChange?: (v: boolean) => void;
 }
 
@@ -27,10 +29,14 @@ export function toggle(parent: HTMLElement, o: ToggleOptions): ToggleHandle {
   input.type = "checkbox";
   input.setAttribute("role", "switch");
   box.appendChild(input);
-  const text = doc.createElement("span");
-  text.classList.add("hel-toggle-label");
-  text.textContent = o.label;
-  el.append(box, text);
+  el.appendChild(box);
+  if (o.hideLabel) input.setAttribute("aria-label", o.label);
+  else {
+    const text = doc.createElement("span");
+    text.classList.add("hel-toggle-label");
+    text.textContent = o.label;
+    el.appendChild(text);
+  }
 
   const setValue = (v: boolean): void => {
     input.checked = v;

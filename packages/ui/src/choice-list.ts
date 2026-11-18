@@ -39,6 +39,7 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
   const el = make(parent, "div", ["hel-choice-list"]);
   el.setAttribute("role", "listbox");
   if (o.label) el.setAttribute("aria-label", o.label);
+  else if (parent.classList.contains("hel-field-control") && parent.dataset.labelledby) el.setAttribute("aria-labelledby", parent.dataset.labelledby);
   if (o.multi) {
     el.classList.add("is-multi");
     el.setAttribute("aria-multiselectable", "true");

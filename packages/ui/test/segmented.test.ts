@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { segmented } from "../src";
+import { field, segmented } from "../src";
 
 const host = () => document.body.appendChild(document.createElement("div"));
 const opts = [
@@ -8,6 +8,12 @@ const opts = [
 ];
 
 describe("segmented", () => {
+  it("in a field (and without its own label) the field's label names the group", () => {
+    const f = field(host(), { label: "Appearance" });
+    const s = segmented(f.control, { options: opts, value: "a", onChange: () => {} });
+    expect(s.el.getAttribute("aria-labelledby")).toBe(f.el.querySelector("label")!.id);
+  });
+
   it("renders .hel-segmented > button.hel-segment per option, aria-pressed on the value, optional .hel-segmented-label text", () => {
     const s = segmented(host(), { label: "Mode", options: opts, value: "b", onChange: () => {} });
     expect(s.el.classList.contains("hel-segmented")).toBe(true);

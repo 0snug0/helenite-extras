@@ -54,6 +54,12 @@ describe("checkList", () => {
 });
 
 describe("choiceList", () => {
+  it("in a field the field's label names the list", () => {
+    const f = field(host(), { label: "Start from" });
+    const c = choiceList(f.control, { options: [{ value: "a", text: "A" }], onChange: () => {} });
+    expect(c.el.getAttribute("aria-labelledby")).toBe(f.el.querySelector("label")!.id);
+  });
+
   it("single: rows show text, detail, icon, tag and key; picking selects one and calls onChange", () => {
     const onChange = vi.fn();
     const c = choiceList(host(), {

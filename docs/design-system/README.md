@@ -162,7 +162,7 @@ ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) }
 | --- | --- | --- |
 | `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null) }` | `setError` shows the message and marks the control invalid; `null` clears it. |
 | `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter? })` | the `<input>` | `type` is `text` (default) or `number`; `secret` hides the text. |
-| `toggle(parent, { value, label, disabled?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. |
+| `toggle(parent, { value, label, disabled?, hideLabel?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. `hideLabel` keeps the label as the switch's accessible name without showing it, for a row that shows the name elsewhere. |
 | `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |
 | `slider(parent, { min, max, step?, value, label, onChange })` | the `<input type="range">` | `onChange` runs as it moves. |
 | `searchInput(parent, { placeholder?, value?, delayMs?, onSearch })` | the `<input>` | In Obsidian's `search-input-container`, with a clear button (a keyboard button too). Typing waits `delayMs` (120) before `onSearch`; Enter, the clear button and Escape (which empties the box) search at once. |
@@ -230,7 +230,7 @@ ui.choiceList(el, {
 
 `checkList` is a group of checkboxes, each with an optional `detail` line and `disabled`. In a field, the field's label names the group; otherwise pass `label`. `setValue` does not call `onChange`.
 
-`choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`.
+In a field, the field's label names a `choiceList` or a `segmented` too. `choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`.
 
 ### ui.listRow, ui.listGroup
 
@@ -294,7 +294,7 @@ await ui.form(app, { title: 'Repair access', action: 'Repair', message: 'Asks AW
 
 A `choose` option can have a `detail` line and an `icon`.
 
-Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
+Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). Each field's row carries its `id` as `data-field`, for tests. The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
 ### ui.dialog
 
@@ -306,7 +306,7 @@ const account = await ui.dialog<Account>(app, {
 });
 ```
 
-A modal with a body you draw. `icon` puts an icon before the title. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action's `id` becomes its button's `data-action` (Cancel's is `cancel`), for tests. `focus` names the button that has focus when it opens (`'cancel'` or an action's `id`), for a prompt where Enter alone must not run the main action. An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
+A modal with a body you draw. `icon` puts an icon before the title. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action's `id` becomes its button's `data-action` (Cancel's is `cancel`), for tests. `focus` names the button that has focus when it opens (`'cancel'` or an action's `id`), for a prompt where Enter alone must not run the main action. An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `ctx.button(id)` returns a button's handle (`'cancel'` for Cancel), for a dialog with steps whose buttons change: `setText`, `setDisabled` (it stays disabled after the dialog is busy), or `el.hidden` to hide it. `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
 
 ### ui.menu, ui.moreButton, ui.menuButton
 
