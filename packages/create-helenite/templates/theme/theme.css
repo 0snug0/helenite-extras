@@ -1,0 +1,62 @@
+/*
+ * {{nameCss}}: a theme for Helenite (and Obsidian).
+ *
+ * Helenite loads this file after its base theme and the plugins' styles, then the enabled snippets after it. A rule
+ * here therefore wins over the defaults at the same specificity. Change variables first; restyle classes only when a
+ * variable cannot do it.
+ *
+ * Light and dark: the body has `theme-light` or `theme-dark`, so scheme colours go under those classes. Variables
+ * that apply to both go on `body`. Never on :root: the colours they refer to are defined on body, so a :root
+ * declaration resolves them to nothing.
+ */
+
+/* Both schemes. Helenite's own variables (--hel-*) exist only where Obsidian has none; each defaults to an Obsidian
+ * variable. The full list is in docs/design-system/STYLING.md, "Variables". */
+body {
+  --hel-segment-active-bg: var(--interactive-accent);
+  --hel-segment-active-fg: var(--text-on-accent);
+  --hel-callout-solid-fg: var(--text-on-accent);
+  --hel-count-badge-attention-fg: var(--text-on-accent);
+}
+
+/* Light scheme: Obsidian variables. --accent-h/s/l is the accent colour that buttons, links and toggles derive from. */
+.theme-light {
+  --accent-h: 262;
+  --accent-s: 60%;
+  --accent-l: 55%;
+  --background-primary: #fdfcff;
+  --background-secondary: #f4f1fa;
+  --text-normal: #2a2433;
+}
+
+/* Dark scheme. */
+.theme-dark {
+  --accent-h: 262;
+  --accent-s: 70%;
+  --accent-l: 70%;
+  --background-primary: #1b1822;
+  --background-secondary: #15131b;
+  --text-normal: #e6e1ef;
+}
+
+/*
+ * Public classes. Every design-system part's root has a hel-<part> class, plus is-<variant> / is-<state> classes,
+ * and also Obsidian's own class where one exists (mod-cta, callout, dropdown, checkbox-container, setting-item, ...),
+ * so styles written for Obsidian keep working. The main ones:
+ *
+ *   hel-button (is-link, is-active, is-busy; mod-cta, mod-warning, clickable-icon)   hel-segmented, hel-segment
+ *   hel-table, hel-table-row (is-clickable)          hel-empty, hel-loading, hel-error (is-inline, is-pane)
+ *   hel-badge, hel-status-dot, hel-status-text, hel-count-badge, hel-chip (is-accent, is-danger, is-success, is-warning)
+ *   hel-field, hel-toggle, hel-tabs, hel-toolbar     hel-callout, hel-card
+ *   hel-check-list, hel-choice-list, hel-list-row, hel-list-group, hel-composer, hel-kv
+ *   hel-modal, hel-modal-actions, hel-notice (is-info, is-success, is-error), hel-pane-header
+ *   hel-section, hel-summary-row (is-clickable), hel-subpage, hel-settings-card, hel-scope-bar
+ *
+ * Every class, with what it is, is in docs/design-system/STYLING.md. Select by the hel- class and an is- variant;
+ * never by Obsidian's class alone (.mod-cta matches every Obsidian button, not just Helenite's).
+ *
+ * Restyling reaches vault apps too: an app that inherits the theme (the default) loads this file in its frame.
+ */
+.hel-badge {
+  border-radius: var(--radius-s);
+}

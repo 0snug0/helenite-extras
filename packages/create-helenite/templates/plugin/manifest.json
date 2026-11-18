@@ -1,0 +1,10 @@
+{
+  "id": "{{id}}",
+  "name": {{nameJson}},
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "A Helenite plugin: a command, a ribbon icon that opens a form, and a settings tab.",
+  "author": "",
+  "isDesktopOnly": false,
+  "helenite": "{{helenite}}"
+}

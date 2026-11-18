@@ -1,0 +1,11 @@
+/*
+ * Styles for this plugin. Helenite loads this file after its base theme and before the user's theme.
+ *
+ * Prefer the design-system parts (`ui.button`, `ui.table`, `ui.card`, ...) to your own markup: they already look
+ * right in every theme. If you must restyle one, select its public hel-* class and is-* variant (the full list is
+ * docs/design-system/STYLING.md in the Helenite repository), and use Obsidian's CSS variables, not fixed colours:
+ *
+ *   .my-plugin-greetings .hel-table-row { color: var(--text-muted); }
+ *
+ * Do not select by Obsidian's class alone (.mod-cta matches every button in the app, not just yours).
+ */

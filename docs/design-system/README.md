@@ -6,6 +6,8 @@ To see every part running, open **Settings, Design system**. Each part is shown 
 
 For restyling, see [STYLING.md](./STYLING.md). A working plugin is in `plugins/sample-design-system`.
 
+New to building for Helenite? Start with the developer guide, [docs/dev](../dev/README.md): it scaffolds a plugin, theme or vault app (`node packages/create-helenite/bin.mjs`) and explains where these parts fit.
+
 ## Types
 
 The types live in the workspace package `@helenite/types`. It is private and not published to npm yet, so there is no `npm install` for it. In this repository, build it:
@@ -296,7 +298,7 @@ await ui.confirm(app, { title: 'Remove account', message: 'Remove the AWS accoun
 await ui.form(app, { title: 'Repair access', action: 'Repair', message: 'Asks AWS for the missing permissions.', fields, onSubmit: (v) => api.repair(v) });
 ```
 
-A `choose` option can have a `detail` line and an `icon`.
+A `choose` option can have a `detail` line and an `icon`. In `confirm`, `prompt` and `form`, Cancel's button is `data-action="cancel"` and the action button `data-action="action"`, for tests.
 
 Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). Each field's row carries its `id` as `data-field`, for tests. The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
