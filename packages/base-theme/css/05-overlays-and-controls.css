@@ -41,6 +41,16 @@
 .vertical-tab-nav-item.is-active { background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .vertical-tab-content-container { flex: 1 1 auto; overflow-y: auto; }
 .vertical-tab-content { padding: var(--size-4-8) var(--size-4-12); max-width: 760px; }
+/* Host-drawn plugin settings chrome above a tab's content: the same gutter and width as the content, compact lists. */
+.helenite-override-host { padding: 0 var(--size-4-12); max-width: 760px; }
+.helenite-override-host:not(:empty) { padding-top: var(--size-4-8); }
+.helenite-override-host:not(:empty) + .vertical-tab-content { padding-top: var(--size-4-4); }
+.helenite-plugin-chrome + .helenite-plugin-chrome { margin-top: var(--size-4-4); }
+.helenite-plugin-chrome-title { font-size: var(--font-ui-medium); font-weight: var(--font-semibold); color: var(--text-normal); padding-bottom: var(--size-4-2); }
+.helenite-override-list .setting-item { padding: var(--size-2-3) 0; }
+.helenite-override-list .setting-item-heading { padding-top: 0; }
+.helenite-override-list .setting-item-name { font-size: var(--font-ui-small); }
+.helenite-override-list .setting-item-heading .setting-item-name { font-size: var(--font-ui-medium); }
 
 .setting-item {
   display: flex; align-items: center; gap: var(--size-4-4);
