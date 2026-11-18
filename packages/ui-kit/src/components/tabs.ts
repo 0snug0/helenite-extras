@@ -6,16 +6,16 @@ export interface TabsHandle extends Handle { select(id: string): void; value(): 
 /** WAI-ARIA tabs: roving tabindex, arrow/Home/End keys. The caller renders the panel in `onSelect`. */
 export function tabs(o: { tabs: TabSpec[]; value?: string; onSelect?: (id: string) => void }): TabsHandle {
   let cur = o.value ?? o.tabs[0]?.id ?? "";
-  const el = h("div", { cls: "hk-tabs", attr: { role: "tablist" } });
+  const el = h("div", { cls: "hel-tabs", attr: { role: "tablist" } });
   const draw = () => {
     clear(el);
     o.tabs.forEach((t) => {
       const sel = t.id === cur;
       el.append(h("button", {
-        cls: ["hk-tab", sel && "is-active"].filter(Boolean) as string[],
+        cls: ["hel-tab", sel && "is-active"].filter(Boolean) as string[],
         attr: { type: "button", role: "tab", "aria-selected": sel, tabindex: sel ? 0 : -1, "data-tab": t.id },
         on: { click: () => select(t.id) },
-      }, t.label, t.badge != null ? h("span", { cls: "hk-tab-badge", text: t.badge }) : null));
+      }, t.label, t.badge != null ? h("span", { cls: "hel-tab-badge", text: t.badge }) : null));
     });
   };
   const select = (id: string, focus = false) => {

@@ -17,7 +17,7 @@ export function calendarStrip(o: { start?: Date; days?: number; events?: Calenda
   let selected = o.selected;
   const n = o.days ?? 7;
   const todayIso = isoDay(o.today ?? new Date());
-  const el = h("div", { cls: "hk-cal", attr: { role: "group", "aria-label": "Calendar strip" } });
+  const el = h("div", { cls: "hel-cal", attr: { role: "group", "aria-label": "Calendar strip" } });
 
   const draw = () => {
     clear(el);
@@ -26,14 +26,14 @@ export function calendarStrip(o: { start?: Date; days?: number; events?: Calenda
       const iso = isoDay(d);
       const evs = events.filter((e) => e.date === iso);
       el.append(h("button", {
-        cls: ["hk-cal-day", iso === todayIso && "is-today", iso === selected && "is-selected", evs.length && "has-events"].filter(Boolean) as string[],
+        cls: ["hel-cal-day", iso === todayIso && "is-today", iso === selected && "is-selected", evs.length && "has-events"].filter(Boolean) as string[],
         attr: { type: "button", "data-day": iso, "aria-pressed": iso === selected, "aria-label": `${d.toDateString()}${evs.length ? `, ${evs.length} event${evs.length > 1 ? "s" : ""}` : ""}` },
         on: { click: () => select(iso, true) },
       },
-        h("span", { cls: "hk-cal-dow", text: d.toLocaleDateString(undefined, { weekday: "short" }) }),
-        h("span", { cls: "hk-cal-num", text: d.getDate() }),
-        h("span", { cls: "hk-cal-dots", attr: { "aria-hidden": true } }, evs.slice(0, 3).map((e) => h("i", { cls: ["hk-dot", e.kind && `hk-dot-${e.kind}`].filter(Boolean) as string[] }))),
-        evs.length > 3 ? h("span", { cls: "hk-cal-more", text: `+${evs.length - 3}` }) : null));
+        h("span", { cls: "hel-cal-dow", text: d.toLocaleDateString(undefined, { weekday: "short" }) }),
+        h("span", { cls: "hel-cal-num", text: d.getDate() }),
+        h("span", { cls: "hel-cal-dots", attr: { "aria-hidden": true } }, evs.slice(0, 3).map((e) => h("i", { cls: ["hel-dot", e.kind && `hel-dot-${e.kind}`].filter(Boolean) as string[] }))),
+        evs.length > 3 ? h("span", { cls: "hel-cal-more", text: `+${evs.length - 3}` }) : null));
     }
   };
   function select(day: string, notify = false) {

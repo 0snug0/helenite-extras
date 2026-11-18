@@ -12,11 +12,11 @@ export function picker(o: { options: PickerOption[]; value?: string; searchable?
   let value = o.value;
   let q = "";
   let active = 0;
-  const listId = nextId("hk-pick");
-  const el = h("div", { cls: "hk-picker" });
-  const list = h("div", { cls: "hk-picker-list", attr: { role: "listbox", id: listId, "aria-label": o.label, tabindex: o.searchable ? -1 : 0 } });
+  const listId = nextId("hel-pick");
+  const el = h("div", { cls: "hel-picker" });
+  const list = h("div", { cls: "hel-picker-list", attr: { role: "listbox", id: listId, "aria-label": o.label, tabindex: o.searchable ? -1 : 0 } });
   const search = o.searchable
-    ? h("input", { cls: "hk-input hk-picker-search", attr: { type: "search", placeholder: "Filter…", "aria-label": "Filter", "aria-controls": listId }, on: { input: (e) => { q = e.target.value; active = 0; draw(); } } })
+    ? h("input", { cls: "hel-input hel-picker-search", attr: { type: "search", placeholder: "Filter…", "aria-label": "Filter", "aria-controls": listId }, on: { input: (e) => { q = e.target.value; active = 0; draw(); } } })
     : null;
   if (search) el.append(search);
   el.append(list);
@@ -30,12 +30,12 @@ export function picker(o: { options: PickerOption[]; value?: string; searchable?
     active = Math.min(active, Math.max(0, vis.length - 1));
     vis.forEach((opt, i) => {
       list.append(h("div", {
-        cls: ["hk-option", opt.value === value && "is-selected", i === active && "is-active", opt.disabled && "is-disabled"].filter(Boolean) as string[],
+        cls: ["hel-option", opt.value === value && "is-selected", i === active && "is-active", opt.disabled && "is-disabled"].filter(Boolean) as string[],
         attr: { role: "option", "aria-selected": opt.value === value, "aria-disabled": opt.disabled, "data-value": opt.value },
         on: { click: () => choose(opt) },
-      }, h("span", { cls: "hk-option-label", text: opt.label }), opt.detail ? h("span", { cls: "hk-option-detail", text: opt.detail }) : null));
+      }, h("span", { cls: "hel-option-label", text: opt.label }), opt.detail ? h("span", { cls: "hel-option-detail", text: opt.detail }) : null));
     });
-    if (!vis.length) list.append(h("div", { cls: "hk-option-none", text: "No matches" }));
+    if (!vis.length) list.append(h("div", { cls: "hel-option-none", text: "No matches" }));
   }
   el.addEventListener("keydown", (e: KeyboardEvent) => {
     const vis = visible();

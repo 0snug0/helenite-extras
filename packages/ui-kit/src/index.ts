@@ -1,9 +1,10 @@
+export * from "./icons";
 export * from "./dom";
 export * from "./bridge";
-export * from "./components/states";
 export * from "./components/controls";
 export * from "./components/tabs";
-export * from "./components/table";
 export * from "./components/cards";
 export * from "./components/picker";
 export * from "./components/calendar";
+export { button, segmented, table, emptyState, errorState, loadingState, badge, statusDot, setIconRenderer, renderIcon } from "@helenite/ui";
+export type { ButtonOptions, ButtonHandle, ButtonVariant, SegmentedOptions, TableOptions, TableColumn, TableGroup, TableHandle, Tone, IconRenderer } from "@helenite/ui";

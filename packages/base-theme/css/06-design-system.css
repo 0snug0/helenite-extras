@@ -1,0 +1,84 @@
+/* Helenite design-system parts (@helenite/ui). Obsidian variables first; --hel-* only where Obsidian has none. */
+/* Defined on body, not :root: --interactive-accent lives on .theme-light/.theme-dark (body); a :root var() reference would resolve invalid and be inherited as such. */
+body {
+  --hel-segment-active-bg: var(--interactive-accent);
+  --hel-segment-active-fg: var(--text-on-accent);
+}
+
+.hel-segmented { display: inline-flex; gap: var(--size-2-1); align-items: center; }
+.hel-segmented-label { color: var(--text-muted); margin-right: var(--size-4-2); }
+.hel-segmented > .hel-segment[aria-pressed="true"] { background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); }
+
+.hel-button.is-link { background: none; box-shadow: none; border: none; padding: 0; color: var(--text-accent); cursor: pointer; text-decoration: underline; }
+.hel-button.is-link:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
+.hel-button.is-active { background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); }
+.hel-button.is-busy { cursor: progress; opacity: 0.7; }
+.hel-button-icon:empty { display: none; }
+.hel-button-icon { display: inline-flex; align-items: center; }
+.hel-button-icon + .hel-button-text { margin-left: var(--size-2-2); }
+/* Variant looks for app frames, which load this file but not base.css. Same specificity and values as base.css's
+   button.mod-cta / button.mod-warning / .clickable-icon / .svg-icon rules (:where() adds nothing), so the host renders
+   unchanged and a theme's rules on those classes still win in both places. */
+button:where(.hel-button).mod-cta { background-color: var(--interactive-accent); color: var(--text-on-accent); box-shadow: none; }
+button:where(.hel-button).mod-cta:hover { background-color: var(--interactive-accent-hover); }
+button:where(.hel-button).mod-warning { background-color: var(--background-modifier-error); color: var(--text-on-accent); box-shadow: none; }
+:where(.hel-button).clickable-icon { display: flex; align-items: center; justify-content: center; background: transparent; border: 0; box-shadow: none; padding: var(--size-2-2) var(--size-2-3); border-radius: var(--clickable-icon-radius); color: var(--icon-color); opacity: var(--icon-opacity); cursor: var(--cursor); }
+:where(.hel-button).clickable-icon:hover { background-color: var(--background-modifier-hover); opacity: var(--icon-opacity-hover); color: var(--icon-color-hover); }
+:where(.hel-button-icon) > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); flex-shrink: 0; }
+
+/* table (moved from core-settings .helenite-inventory* / .helenite-across-*) */
+.hel-table { width: 100%; border-collapse: collapse; }
+.hel-table th, .hel-table td { text-align: left; padding: var(--size-2-2) var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); overflow-wrap: anywhere; }
+.hel-table th { font-weight: var(--font-semibold); color: var(--text-muted); }
+.hel-table-group td { font-weight: var(--font-semibold); padding-top: var(--size-4-3); }
+.hel-table-group button { margin-left: var(--size-4-2); }
+.hel-table th.hel-table-actions, .hel-table td.hel-table-actions { white-space: nowrap; text-align: right; width: 1%; }
+.hel-table-buttons { display: inline-flex; gap: var(--size-2-2); align-items: center; }
+.hel-table-buttons > .clickable-icon { width: var(--size-4-8, 32px); height: var(--size-4-8, 32px); padding: 0; }
+.hel-table td.is-link { cursor: pointer; }
+.hel-table td.is-default { color: var(--text-faint); }
+
+/* states */
+.hel-empty, .hel-loading { color: var(--text-muted); padding: var(--size-4-4); text-align: center; }
+.hel-error { color: var(--text-error); padding: var(--size-4-4); display: flex; gap: var(--size-4-2); align-items: center; justify-content: center; }
+.hel-badge { display: inline-block; padding: 0 var(--size-4-2); border-radius: var(--radius-s); font-size: var(--font-ui-smaller); background-color: var(--background-modifier-hover); color: var(--text-muted); }
+.hel-badge.is-accent { background-color: var(--interactive-accent); color: var(--text-on-accent); }
+.hel-badge.is-danger { background-color: var(--background-modifier-error); color: var(--text-on-accent); }
+.hel-badge.is-success { background-color: var(--background-modifier-success); color: var(--text-on-accent); }
+.hel-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-faint); }
+.hel-status-dot.is-accent { background-color: var(--interactive-accent); }
+.hel-status-dot.is-danger { background-color: var(--text-error); }
+.hel-status-dot.is-success { background-color: var(--text-success); }
+.hel-table-row.is-clickable { cursor: pointer; }
+
+/* modals (confirm, prompt, choose, form) */
+.hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
+.hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
+.hel-modal .hel-modal-input { width: 100%; }
+.hel-modal .hel-modal-field { margin-bottom: var(--size-4-3); }
+.hel-modal .hel-modal-check { display: flex; gap: var(--size-4-2); align-items: center; }
+.hel-modal-error { color: var(--text-error); font-size: var(--font-ui-small); min-height: 1.2em; margin-top: var(--size-2-2); }
+.hel-modal-error:empty { min-height: 0; }
+.hel-modal-actions { display: flex; justify-content: flex-end; gap: var(--size-4-2); margin-top: var(--size-4-4); }
+.hel-modal-choices { display: flex; flex-direction: column; gap: var(--size-2-1); max-height: 50vh; overflow-y: auto; }
+.hel-modal-choice { padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); cursor: pointer; }
+.hel-modal-choice:hover, .hel-modal-choice:focus-visible { background-color: var(--background-modifier-hover); }
+.hel-modal-choice.is-selected { border-color: var(--interactive-accent); }
+.hel-modal-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.hel-modal-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+
+/* settings: sub-pages, summary rows, scope bar */
+.vertical-tab-content-container.has-subpage > :not(.hel-subpage) { display: none; }
+.hel-subpage-header { display: flex; align-items: center; gap: var(--size-4-2); padding-bottom: var(--size-4-3); margin-bottom: var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); }
+.hel-subpage-title { font-weight: var(--font-semibold); font-size: var(--font-ui-medium); }
+.hel-summary-row.is-clickable { cursor: pointer; }
+.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
+.hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding-bottom: var(--size-4-3); }
+
+/* notice variants and danger menu items */
+.hel-notice.is-info { border-left: 3px solid var(--interactive-accent); }
+.hel-notice.is-success { border-left: 3px solid var(--color-green); }
+.hel-notice.is-error { border-left: 3px solid var(--color-red); }
+.menu-item.is-danger { color: var(--text-error); }
+.menu-item.is-danger .menu-item-icon { color: var(--text-error); }
+

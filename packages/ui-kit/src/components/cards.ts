@@ -12,7 +12,7 @@ export interface CardItem {
 
 function poster(item: CardItem, cls: string): HTMLElement {
   const box = h("div", { cls });
-  const fallback = () => { box.classList.add("is-fallback"); clear(box); box.append(h("span", { cls: "hk-poster-initial", text: item.title.slice(0, 1).toUpperCase() })); };
+  const fallback = () => { box.classList.add("is-fallback"); clear(box); box.append(h("span", { cls: "hel-poster-initial", text: item.title.slice(0, 1).toUpperCase() })); };
   if (!item.image) { fallback(); return box; }
   const img = h("img", { attr: { src: item.image, alt: "", loading: "lazy", draggable: false }, on: { error: fallback } });
   box.append(img);
@@ -31,25 +31,25 @@ export interface CardGridOpts {
 export interface ListHandle extends Handle { setItems(items: CardItem[]): void }
 
 export function cardGrid(o: CardGridOpts): ListHandle {
-  const el = h("div", { cls: "hk-cards", attr: { role: "list" }, style: { "--hk-card-min": `${o.minWidth ?? 150}px` } });
+  const el = h("div", { cls: "hel-cards", attr: { role: "list" }, style: { "--hel-card-min": `${o.minWidth ?? 150}px` } });
   let items = o.items;
   const draw = () => {
     clear(el);
     if (!items.length && o.empty) { el.append(o.empty); return; }
     for (const it of items) {
-      const card = h("div", { cls: "hk-card", attr: { role: "listitem", "data-id": it.id } },
+      const card = h("div", { cls: "hel-card", attr: { role: "listitem", "data-id": it.id } },
         h("button", {
-          cls: "hk-card-main", attr: { type: "button", "aria-label": it.title },
+          cls: "hel-card-main", attr: { type: "button", "aria-label": it.title },
           on: { click: () => o.onSelect?.(it) },
         },
-          poster(it, "hk-card-poster"),
-          h("div", { cls: "hk-card-body" },
-            h("div", { cls: "hk-card-title", text: it.title }),
-            it.subtitle ? h("div", { cls: "hk-card-sub", text: it.subtitle }) : null,
-            it.meta ? h("div", { cls: "hk-card-meta", text: it.meta }) : null,
-            it.badges?.length ? h("div", { cls: "hk-card-badges" }, it.badges.map((b) => h("span", { cls: "hk-badge", text: b }))) : null,
+          poster(it, "hel-card-poster"),
+          h("div", { cls: "hel-card-body" },
+            h("div", { cls: "hel-card-title", text: it.title }),
+            it.subtitle ? h("div", { cls: "hel-card-sub", text: it.subtitle }) : null,
+            it.meta ? h("div", { cls: "hel-card-meta", text: it.meta }) : null,
+            it.badges?.length ? h("div", { cls: "hel-card-badges" }, it.badges.map((b) => h("span", { cls: "hel-badge", text: b }))) : null,
           )),
-        o.onRemove ? h("button", { cls: "hk-card-remove", text: "✕", attr: { type: "button", "aria-label": `Remove ${it.title}`, title: "Remove" }, on: { click: () => o.onRemove!(it) } }) : null,
+        o.onRemove ? h("button", { cls: "hel-card-remove", text: "✕", attr: { type: "button", "aria-label": `Remove ${it.title}`, title: "Remove" }, on: { click: () => o.onRemove!(it) } }) : null,
       );
       el.append(card);
     }
@@ -62,17 +62,17 @@ export interface PosterRowOpts { items: CardItem[]; title?: string; onSelect?: (
 
 /** A horizontally scrolling row of posters (recommendations, "up next"). */
 export function posterRow(o: PosterRowOpts): ListHandle {
-  const el = h("section", { cls: "hk-poster-row" });
+  const el = h("section", { cls: "hel-poster-row" });
   let items = o.items;
   const draw = () => {
     clear(el);
-    if (o.title) el.append(h("h3", { cls: "hk-row-title", text: o.title }));
-    const track = h("div", { cls: "hk-row-track", attr: { role: "list", tabindex: 0 } });
+    if (o.title) el.append(h("h3", { cls: "hel-row-title", text: o.title }));
+    const track = h("div", { cls: "hel-row-track", attr: { role: "list", tabindex: 0 } });
     for (const it of items) {
-      track.append(h("button", { cls: "hk-poster-item", attr: { type: "button", role: "listitem", "data-id": it.id, "aria-label": it.title }, on: { click: () => o.onSelect?.(it) } },
-        poster(it, "hk-poster"),
-        h("div", { cls: "hk-poster-title", text: it.title }),
-        it.subtitle ? h("div", { cls: "hk-poster-sub", text: it.subtitle }) : null));
+      track.append(h("button", { cls: "hel-poster-item", attr: { type: "button", role: "listitem", "data-id": it.id, "aria-label": it.title }, on: { click: () => o.onSelect?.(it) } },
+        poster(it, "hel-poster"),
+        h("div", { cls: "hel-poster-title", text: it.title }),
+        it.subtitle ? h("div", { cls: "hel-poster-sub", text: it.subtitle }) : null));
     }
     el.append(track);
   };
