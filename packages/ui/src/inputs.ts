@@ -42,7 +42,7 @@ export interface SearchInputOptions {
   onSearch: (q: string) => void;
 }
 
-/** A search box in Obsidian's `search-input-container`, with its clear button. Returns the input. */
+/** A search box in Obsidian's `search-input-container`, with its clear button. Escape clears it. Returns the input. */
 export function searchInput(parent: HTMLElement, o: SearchInputOptions): HTMLInputElement {
   const doc = parent.ownerDocument;
   const wrap = doc.createElement("div");
@@ -59,6 +59,8 @@ export function searchInput(parent: HTMLElement, o: SearchInputOptions): HTMLInp
   const clear = doc.createElement("div");
   clear.classList.add("search-input-clear-button");
   clear.setAttribute("aria-label", "Clear search");
+  clear.setAttribute("role", "button");
+  clear.tabIndex = 0;
   wrap.appendChild(clear);
   let timer: ReturnType<typeof setTimeout> | undefined;
   const search = (): void => {
@@ -74,14 +76,27 @@ export function searchInput(parent: HTMLElement, o: SearchInputOptions): HTMLInp
     clearTimeout(timer);
     timer = setTimeout(search, o.delayMs ?? 120);
   });
-  el.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.isComposing) search();
-  });
-  clear.addEventListener("click", () => {
+  const reset = (): void => {
     el.value = "";
     paint();
     search();
     el.focus();
+  };
+  el.addEventListener("keydown", (e) => {
+    if (e.isComposing) return;
+    if (e.key === "Enter") search();
+    else if (e.key === "Escape" && el.value) {
+      // A non-empty box takes Escape for itself; an empty one lets it reach the modal or view.
+      e.preventDefault();
+      e.stopPropagation();
+      reset();
+    }
+  });
+  clear.addEventListener("click", reset);
+  clear.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    reset();
   });
   return el;
 }

@@ -19,10 +19,16 @@ export function countBadge(parent: HTMLElement, n: number, o: CountBadgeOptions 
   const max = o.max ?? 9;
   const el = make(parent, "span", ["hel-count-badge"]);
   if (o.pulse) el.classList.add("is-pulse");
+  // A live region, so a change is announced; the visible "9+" is hidden from readers in favour of the exact count.
+  el.setAttribute("role", "status");
+  const shown = make(el, "span", []);
+  shown.setAttribute("aria-hidden", "true");
+  const spoken = make(el, "span", ["hel-count-badge-spoken"]);
   const set = (count: number): void => {
-    el.hidden = count <= 0;
-    el.textContent = count > max ? `${max}+` : String(Math.max(count, 0));
-    if (o.label) el.setAttribute("aria-label", `${count} ${o.label}`);
+    const n = Math.max(count, 0);
+    el.hidden = n === 0;
+    shown.textContent = n > max ? `${max}+` : String(n);
+    spoken.textContent = o.label ? `${n} ${o.label}` : String(n);
   };
   set(n);
   return { el, set };

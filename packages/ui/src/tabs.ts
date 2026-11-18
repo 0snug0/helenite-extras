@@ -30,11 +30,13 @@ export function tabs<T extends string>(parent: HTMLElement, o: TabsOptions<T>): 
   const badges = new Map<T, HTMLSpanElement>();
 
   const paint = (): void => {
+    // With no tab chosen (a `value` that is not a tab id), the first tab is the one Tab reaches.
+    const focusable = buttons.has(current) ? current : o.tabs[0]?.id;
     for (const [id, b] of buttons) {
       const on = id === current;
       b.classList.toggle("is-active", on);
       b.setAttribute("aria-selected", String(on));
-      b.tabIndex = on ? 0 : -1;
+      b.tabIndex = id === focusable ? 0 : -1;
     }
   };
   const setBadge = (id: T, n: number): void => {

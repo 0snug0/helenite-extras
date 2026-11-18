@@ -5,25 +5,30 @@ const host = () => document.body.appendChild(document.createElement("div"));
 
 describe("countBadge", () => {
   it("shows the count, hides at 0 and caps at max with a plus", () => {
+    const shown = (b: { el: HTMLElement }) => b.el.querySelector("[aria-hidden=true]")!.textContent;
     const b = countBadge(host(), 3);
     expect(b.el.classList.contains("hel-count-badge")).toBe(true);
-    expect(b.el.textContent).toBe("3");
+    expect(shown(b)).toBe("3");
     expect(b.el.hidden).toBe(false);
     b.set(0);
     expect(b.el.hidden).toBe(true);
     b.set(12);
     expect(b.el.hidden).toBe(false);
-    expect(b.el.textContent).toBe("9+");
-    expect(countBadge(host(), 120, { max: 99 }).el.textContent).toBe("99+");
+    expect(shown(b)).toBe("9+");
+    expect(shown(countBadge(host(), 120, { max: 99 }))).toBe("99+");
     expect(countBadge(host(), 0).el.hidden).toBe(true);
   });
 
-  it("pulse adds is-pulse; label gives a spoken count", () => {
+  it("pulse adds is-pulse; the count is spoken from a live region, exact and with the label", () => {
+    const spoken = (b: { el: HTMLElement }) => b.el.querySelector(".hel-count-badge-spoken")!.textContent;
     const b = countBadge(host(), 2, { pulse: true, label: "waiting" });
     expect(b.el.classList.contains("is-pulse")).toBe(true);
-    expect(b.el.getAttribute("aria-label")).toBe("2 waiting");
-    b.set(5);
-    expect(b.el.getAttribute("aria-label")).toBe("5 waiting");
+    expect(b.el.getAttribute("role")).toBe("status");
+    expect(spoken(b)).toBe("2 waiting");
+    b.set(12);
+    expect(spoken(b)).toBe("12 waiting"); // the reader hears the exact count, not "9+"
+    expect(b.el.querySelector(".hel-count-badge-spoken")!.getAttribute("aria-hidden")).toBeNull();
+    expect(spoken(countBadge(host(), 4))).toBe("4");
     expect(countBadge(host(), 1).el.classList.contains("is-pulse")).toBe(false);
   });
 });

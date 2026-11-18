@@ -116,6 +116,44 @@ describe("searchInput", () => {
   });
 });
 
+describe("searchInput keyboard", () => {
+  it("Escape empties a non-empty box and searches at once, without letting the key through; an empty box passes Escape on", () => {
+    vi.useFakeTimers();
+    const onSearch = vi.fn();
+    const parent = host();
+    const outer = vi.fn();
+    parent.addEventListener("keydown", outer);
+    const s = searchInput(parent, { onSearch });
+    type(s, "abc");
+    const esc = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+    s.dispatchEvent(esc);
+    expect(s.value).toBe("");
+    expect(onSearch).toHaveBeenLastCalledWith("");
+    expect(esc.defaultPrevented).toBe(true);
+    expect(outer).not.toHaveBeenCalled();
+    key(s, "Escape");
+    expect(outer).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(500);
+    expect(onSearch).toHaveBeenCalledTimes(1);
+  });
+
+  it("the clear button is a keyboard button: role, tabindex, Enter and Space", () => {
+    const onSearch = vi.fn();
+    const parent = host();
+    const s = searchInput(parent, { value: "x", onSearch });
+    const clear = parent.querySelector<HTMLElement>(".search-input-clear-button")!;
+    expect(clear.getAttribute("role")).toBe("button");
+    expect(clear.tabIndex).toBe(0);
+    key(clear, "Enter");
+    expect(s.value).toBe("");
+    expect(onSearch).toHaveBeenLastCalledWith("");
+    s.value = "y";
+    key(clear, " ");
+    expect(s.value).toBe("");
+    expect(onSearch).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("toggle", () => {
   it("emits Obsidian's checkbox-container with is-enabled, and a label", () => {
     const t = toggle(host(), { value: true, label: "Sync" });

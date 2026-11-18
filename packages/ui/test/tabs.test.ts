@@ -32,6 +32,12 @@ describe("tabs", () => {
     expect(onSelect).toHaveBeenCalledTimes(calls);
   });
 
+  it("with a value that is no tab id, nothing is selected and the first tab is focusable", () => {
+    const t = tabs(host(), { tabs: spec, value: "zzz" as never, onSelect: () => {} });
+    expect(t.el.querySelectorAll(".is-active")).toHaveLength(0);
+    expect([...t.el.querySelectorAll<HTMLButtonElement>(".hel-tab")].map((b) => b.tabIndex)).toEqual([0, -1, -1]);
+  });
+
   it("setValue moves the selection silently; setBadge updates, adds and hides badges", () => {
     const onSelect = vi.fn();
     const t = tabs(host(), { tabs: spec, value: "a", onSelect });
