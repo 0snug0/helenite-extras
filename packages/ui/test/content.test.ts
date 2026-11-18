@@ -82,6 +82,8 @@ describe("card", () => {
     expect(c.head.classList.contains("hel-card-head")).toBe(true);
     expect(c.head.querySelector(".hel-card-title")!.textContent).toBe("Claude Code");
     expect(c.head.querySelector<HTMLElement>(".hel-card-icon")!.dataset.icon).toBe("terminal");
+    expect(c.titleEl).toBe(c.head.querySelector(".hel-card-title"));
+    expect(card(host(), {}).titleEl).toBeNull();
     expect(c.body.classList.contains("hel-card-body")).toBe(true);
     expect(c.body.parentElement).toBe(c.el);
   });

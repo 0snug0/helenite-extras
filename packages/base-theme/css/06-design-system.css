@@ -172,8 +172,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-card.is-attention .hel-choice.is-selected { border-color: var(--interactive-accent); background-color: color-mix(in srgb, var(--interactive-accent) 14%, var(--background-primary)); }
 .hel-card.is-attention .hel-choice-text { font-weight: var(--font-medium, 500); }
 .hel-card.is-attention .hel-choice-detail { font-size: var(--font-ui-small); }
-.hel-card.is-attention .hel-choice-key { opacity: 0.5; transition: opacity 0.12s; }
-.hel-card.is-attention .hel-choice:is(:hover, :focus-visible, .is-selected) .hel-choice-key { opacity: 1; }
+.hel-card.is-attention .hel-choice-key { color: var(--text-muted); border-color: transparent; background-color: var(--background-modifier-hover); transition: color 0.12s, border-color 0.12s; }
+.hel-card.is-attention .hel-choice:is(:hover, :focus-visible, .is-selected) .hel-choice-key { color: var(--text-normal); border-color: var(--background-modifier-border); }
 @media (prefers-reduced-motion: reduce) { .hel-card.is-attention .hel-choice, .hel-card.is-attention .hel-choice-key { transition: none; } }
 .hel-card.is-attention:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent); }
 .hel-card.is-sticky { position: sticky; top: 0; z-index: 6; box-shadow: 0 4px 18px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }

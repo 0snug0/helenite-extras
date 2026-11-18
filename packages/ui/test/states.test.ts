@@ -68,6 +68,17 @@ describe("states: variants, warning tone, statusText, pulse", () => {
     expect(t.tagName).toBe("SPAN");
   });
 
+  it("statusText setTone swaps the tone class and keeps the text", () => {
+    const t = statusText(host(), "idle");
+    t.setTone("warning");
+    expect([...t.classList]).toEqual(["hel-status-text", "is-warning"]);
+    t.setTone("danger");
+    expect([...t.classList]).toEqual(["hel-status-text", "is-danger"]);
+    t.setTone("default");
+    expect([...t.classList]).toEqual(["hel-status-text", "is-default"]);
+    expect(t.textContent).toBe("idle");
+  });
+
   it("statusDot pulses only when asked", () => {
     expect(statusDot(host(), "warning", "Waiting", { pulse: true }).classList.contains("is-pulse")).toBe(true);
     expect(statusDot(host(), "success", "Idle").classList.contains("is-pulse")).toBe(false);

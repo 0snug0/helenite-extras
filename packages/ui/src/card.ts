@@ -25,6 +25,8 @@ export interface CardHandle {
   head: HTMLElement;
   /** Draw the card's content into this. */
   body: HTMLElement;
+  /** The title element (`hel-card-title`), or null when the card has no title. */
+  titleEl: HTMLElement | null;
   setTone(t: CardTone): void;
   /** Dims the card and ignores the pointer while something it started runs (`aria-busy`). */
   setBusy(b: boolean): void;
@@ -42,7 +44,7 @@ export function card(parent: HTMLElement, o: CardOptions = {}): CardHandle {
   if (o.sticky) el.classList.add("is-sticky");
   const head = make(el, "div", ["hel-card-head"]);
   if (o.icon) renderIcon(make(head, "span", ["hel-card-icon"]), o.icon);
-  if (o.title !== undefined) make(head, "div", ["hel-card-title"], o.title);
+  const titleEl = o.title !== undefined ? make(head, "div", ["hel-card-title"], o.title) : null;
   const body = make(el, "div", ["hel-card-body"]);
   let tone: CardTone = "default";
   const setTone = (t: CardTone): void => {
@@ -62,5 +64,5 @@ export function card(parent: HTMLElement, o: CardOptions = {}): CardHandle {
     el.classList.add("is-pulse");
     pulseTimer = setTimeout(() => el.classList.remove("is-pulse"), PULSE_MS);
   };
-  return { el, head, body, setTone, setBusy, pulse };
+  return { el, head, body, titleEl, setTone, setBusy, pulse };
 }

@@ -116,7 +116,7 @@ ui.statusDot(el, 'warning', 'Waiting for you', { pulse: true });
 ui.statusText(el, 'Not signed in', 'danger');
 ```
 
-Tones: `default`, `accent`, `danger`, `success`, `warning`. `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
+Tones: `default`, `accent`, `danger`, `success`, `warning`. The element `statusText` returns also has `setTone(tone)`, for a status that changes (set its text with `setText`). `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
 
 ### ui.countBadge
 
@@ -211,7 +211,7 @@ c.setTone('warning');
 
 A bordered block with a head (icon and title; hidden when there is neither) and a `body` you draw into. Add actions or a status to `head`. Tones: `default`, `accent`, `warning`, `muted` (a finished or inactive item). `compact` has less padding.
 
-`attention: true` is for a card that waits on the user, such as an agent's question: a thick border and a tint in its tone (`accent`, or `warning` for a permission), the icon in the tone's colour, the interface font at a readable size (set on the card, so a terminal or editor font around it never leaks in; code inside stays monospace), roomier choice-list rows with a tinted pick and key hints that stay quiet until a row is hovered, focused or picked, and a focus ring while focus is inside. `sticky: true` keeps it at the top of its scrolling pane, raised by a shadow. The handle's `pulse()` pulses the outline a few times to draw the eye (nothing moves under reduced motion), and `setBusy(true)` dims the card and ignores the pointer while something it started runs.
+`attention: true` is for a card that waits on the user, such as an agent's question: a thick border and a tint in its tone (`accent`, or `warning` for a permission), the icon in the tone's colour, the interface font at a readable size (set on the card, so a terminal or editor font around it never leaks in; code inside stays monospace), roomier choice-list rows with a tinted pick and key hints in muted text that brighten when a row is hovered, focused or picked, and a focus ring while focus is inside. `sticky: true` keeps it at the top of its scrolling pane, raised by a shadow. The handle's `titleEl` is the title element (null without a title); `pulse()` pulses the outline a few times to draw the eye (nothing moves under reduced motion), and `setBusy(true)` dims the card and ignores the pointer while something it started runs.
 
 ### ui.checkList, ui.choiceList
 
