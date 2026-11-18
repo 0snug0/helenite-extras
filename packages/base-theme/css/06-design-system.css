@@ -193,6 +193,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 
 /* modals (confirm, prompt, choose, form, dialog) */
 .hel-modal.is-wide { width: var(--modal-max-width-narrow); }
+.hel-modal-title-icon { display: inline-flex; margin-right: var(--size-4-2); vertical-align: -0.15em; color: var(--icon-color); }
 .hel-modal .hel-modal-message { margin: 0 0 var(--size-4-4); color: var(--text-normal); }
 .hel-modal .hel-modal-label { display: block; margin-bottom: var(--size-2-2); color: var(--text-muted); font-size: var(--font-ui-small); }
 .hel-modal .hel-modal-input { width: 100%; }
@@ -215,7 +216,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-card.hel-settings-card { background: none; overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
 .hel-settings-card .setting-item { border-top: none; }
 .hel-settings-card > .hel-card-body { padding: 0; gap: 0; font-size: inherit; }
-.hel-settings-card .setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
+.setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
 .hel-settings-card .setting-item-description > .hel-status-text { display: block; font-size: inherit; }
 /* vault scope: the vault list under its row */
 .hel-vault-scope-list { padding-bottom: var(--size-4-3); }

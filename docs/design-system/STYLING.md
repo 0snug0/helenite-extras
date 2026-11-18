@@ -98,7 +98,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-callout-action` | The callout's button (a `hel-button`). |
 | `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. |
 | `hel-card-head` | The card's head: icon and title. Hidden while empty. |
-| `hel-card-icon` | The head's icon. |
+| `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head, the vault rows of Accounts). |
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 
@@ -160,6 +160,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | --- | --- |
 | `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. |
 | `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
+| `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |
 | `hel-modal-message` | The message paragraph of a confirm modal, and a form's `message`. |
 | `hel-modal-label` | A field label. |
 | `hel-modal-input` | A text input. |
