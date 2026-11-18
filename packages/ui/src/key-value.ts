@@ -8,6 +8,8 @@ export interface KeyValueRow {
   empty?: string;
   /** Marks a list item as new (`is-new`, and a "new" badge), as in a permission review. */
   isNew?: (item: string) => boolean;
+  /** The new items' tone: `accent` (the default) or `warning`, for something to look at twice (a permission being added). */
+  newTone?: "accent" | "warning";
 }
 
 /** A definition list: a key and its value per row. */
@@ -28,9 +30,11 @@ export function keyValue(parent: HTMLElement, rows: KeyValueRow[]): HTMLElement 
       for (const item of v) {
         const li = make(list, "li", [], item);
         if (r.isNew?.(item)) {
+          const tone = r.newTone ?? "accent";
           li.classList.add("is-new");
+          if (tone === "warning") li.classList.add("is-warning");
           li.append(" ");
-          badge(li, "new", "accent");
+          badge(li, "new", tone);
         }
       }
     } else {

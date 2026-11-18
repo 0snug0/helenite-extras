@@ -315,3 +315,12 @@ body:not(.show-view-header) .view-header { display: none; }
 
 /* Outline (core plugin) reuses tree-item */
 .outline .tree-item-self { padding-left: var(--size-4-6); }
+
+/* Agent diff tab and connector review tab: the toolbar above the merge view, the review's head and file names */
+.helenite-diff-bar { margin-bottom: var(--size-4-2); }
+.helenite-diff-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--font-semibold); }
+.helenite-review-id, .helenite-review-desc { color: var(--text-muted); font-size: var(--font-ui-small); }
+.helenite-review-head { margin-bottom: var(--size-4-4); }
+.helenite-review-head h2 { margin: 0 0 var(--size-2-2); }
+.helenite-review-filename { margin: var(--size-4-4) 0 var(--size-2-2); font-family: var(--font-monospace); font-size: var(--font-ui-small); color: var(--text-muted); }
+.helenite-review-actions { margin-top: var(--size-4-4); }
