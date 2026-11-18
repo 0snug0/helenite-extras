@@ -13,6 +13,8 @@ export interface CountBadgeOptions {
   icon?: string;
   /** What is counted, for screen readers: `label: 'waiting'` reads "3 waiting". */
   label?: string;
+  /** Sits on the parent's top-right corner instead of in the flow, so it never moves what it counts (a ribbon icon). The parent becomes the positioning context. */
+  overlay?: boolean;
 }
 
 export interface CountBadgeHandle {
@@ -25,6 +27,10 @@ export function countBadge(parent: HTMLElement, n: number, o: CountBadgeOptions 
   const max = o.max ?? 9;
   const el = make(parent, "span", ["hel-count-badge", `is-${o.tone ?? "accent"}`]);
   if (o.pulse) el.classList.add("is-pulse");
+  if (o.overlay) {
+    el.classList.add("is-overlay");
+    parent.classList.add("hel-has-overlay-badge");
+  }
   if (o.icon) {
     const icon = make(el, "span", ["hel-count-badge-icon"]);
     icon.setAttribute("aria-hidden", "true");
