@@ -1,0 +1,11 @@
+{
+  "id": "sample-design-system",
+  "name": "Design system (sample)",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Sample plugin that uses Helenite's design-system parts: a settings tab with a section, a sub-page table, a scope bar and a delete action, and a ribbon icon that opens a form.",
+  "author": "Helenite",
+  "isDesktopOnly": false,
+  "main": "main.js",
+  "helenite": "^0.1.0"
+}
