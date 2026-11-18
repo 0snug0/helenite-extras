@@ -80,7 +80,7 @@ class SampleSettingTab extends PluginSettingTab {
     const t = ui.table<Item>(page, {
       columns: [
         { key: 'name', title: 'Name', cell: (r) => r.name },
-        { key: 'kind', title: 'Kind', cell: (r, td) => void ui.badge(td, r.kind) },
+        { key: 'kind', title: 'Kind', fit: true, cell: (r, td) => void ui.badge(td, r.kind) },
       ],
       rows: this.plugin.data.items,
       empty: 'No items yet.',

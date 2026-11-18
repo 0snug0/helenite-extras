@@ -79,13 +79,15 @@ One choice from a few. Use it for a view or a scope, not for a long list.
 
 ```ts
 ui.table<Plugin>(el, {
-  columns: [{ key: 'name', title: 'Name', cell: (p) => p.name }],
+  columns: [{ key: 'name', title: 'Name', cell: (p) => p.name }, { key: 'version', title: 'Version', fit: true, cell: (p) => p.version }],
   rows: plugins, empty: 'No plugins installed.',
   actions: (p, cell) => ui.action(cell, 'configure', { onClick: () => open(p) }),
 });
 ```
 
 A column's `cell` returns the text, or returns nothing and fills the `td` itself. Pass `groups` (`{ title, rows }`) instead of `rows` for grouped tables, and `onRowClick` to make rows clickable. `setRows` / `setGroups` on the handle redraw it. `empty` is shown when there are no rows.
+
+Headers are one line, and a cell breaks a word only when that word alone is wider than the table can give it, so no column is squeezed into "Ver/sio/n". Mark a column of short values (a version, a toggle, a dropdown, a button) `fit: true`: it is as wide as its content and never wraps, and the column with long text (a name and description) takes the rest of the width.
 
 ### ui.emptyState, ui.loadingState, ui.errorState
 

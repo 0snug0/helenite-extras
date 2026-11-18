@@ -31,8 +31,12 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 
 /* table (moved from core-settings .helenite-inventory* / .helenite-across-*) */
 .hel-table { width: 100%; border-collapse: collapse; }
-.hel-table th, .hel-table td { text-align: left; padding: var(--size-2-2) var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); overflow-wrap: anywhere; }
-.hel-table th { font-weight: var(--font-semibold); color: var(--text-muted); }
+.hel-table th, .hel-table td { text-align: left; padding: var(--size-2-2) var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); overflow-wrap: break-word; }
+/* A header is one line. break-word (not anywhere) breaks only a word too long for its cell alone, and leaves a column's
+   min-content at its longest word, so no column shrinks below a word: "Version" never draws as "Ver/sio/n". */
+.hel-table th { font-weight: var(--font-semibold); color: var(--text-muted); white-space: nowrap; }
+/* A column of short values (TableColumn.fit): as wide as its content, on one line; the other columns share the rest. */
+.hel-table th.is-fit, .hel-table td.is-fit { width: 1%; white-space: nowrap; }
 .hel-table-group td { font-weight: var(--font-semibold); padding-top: var(--size-4-3); }
 .hel-table-group button { margin-left: var(--size-4-2); }
 .hel-table th.hel-table-actions, .hel-table td.hel-table-actions { white-space: nowrap; text-align: right; width: 1%; }

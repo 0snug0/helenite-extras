@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>{{LABEL_PREFIX}}movie-releases</string>
+    <!-- Homebrew python, not /usr/bin/python3 (launchd can't read ~/Documents with Xcode's shim). -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{PYTHON}}</string>
+        <string>{{VAULT}}/99_Internal/Templates/Scripts/movie_releases.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>{{VAULT}}</string>
+    <!-- Mondays 09:15. The script skips if this ISO week's file exists, so a wake-time rerun is harmless. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key><integer>1</integer>
+        <key>Hour</key><integer>9</integer>
+        <key>Minute</key><integer>15</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>{{LOGS}}/movie-releases.log</string>
+    <key>StandardErrorPath</key>
+    <string>{{LOGS}}/movie-releases.log</string>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

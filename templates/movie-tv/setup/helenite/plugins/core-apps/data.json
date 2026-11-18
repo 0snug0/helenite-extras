@@ -1,0 +1,22 @@
+{
+  "entries": [
+    {
+      "id": "home",
+      "title": "Home",
+      "icon": "home",
+      "target": "app:home"
+    },
+    {
+      "id": "downloadrr",
+      "title": "Downloadrr",
+      "icon": "download",
+      "target": "app:downloadrr"
+    },
+    {
+      "id": "downloadrr-tv",
+      "title": "Downloadrr TV",
+      "icon": "tv",
+      "target": "app:downloadrr-tv"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{ "name": "@helenite/helenite-kanban", "version": "0.1.0", "private": true, "type": "module", "scripts": { "build": "node ../core-build/build.mjs helenite-kanban", "typecheck": "pnpm --filter @helenite/types build && tsc --noEmit -p .", "test": "node ../core-build/build.mjs helenite-kanban && vitest run" } }
