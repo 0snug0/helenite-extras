@@ -69,3 +69,4 @@
 .hel-notice.is-success { border-left: 3px solid var(--color-green); }
 .hel-notice.is-error { border-left: 3px solid var(--color-red); }
 .menu-item.is-danger { color: var(--text-error); }
+.menu-item.is-danger .menu-item-icon { color: var(--text-error); }
