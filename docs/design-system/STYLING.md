@@ -56,11 +56,37 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text).
 
 | Class | What it is |
 | --- | --- |
-| `hel-empty` | `ui.emptyState`. |
+| `hel-empty` | `ui.emptyState`. Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`). |
 | `hel-loading` | `ui.loadingState`. |
-| `hel-error` | `ui.errorState`, with its retry button. |
-| `hel-badge` | `ui.badge`. Tones: `is-accent`, `is-danger`, `is-success`. |
-| `hel-status-dot` | `ui.statusDot`. Tones: `is-accent`, `is-danger`, `is-success`. |
+| `hel-error` | `ui.errorState`, with its retry button. Variants: `is-inline`, `is-pane`. |
+| `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. |
+| `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
+| `hel-status-text` | `ui.statusText`. Tones as for badges. |
+| `hel-count-badge` | `ui.countBadge`. `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. |
+| `hel-chip` | `ui.chip`. Tones as for badges. |
+| `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. |
+
+### Form controls, tabs and toolbar
+
+Each control also carries Obsidian's class for the same control, so a theme's look for it applies: `dropdown`, `checkbox-container` (with `is-enabled` when on), `search-input-container`, `slider`. App frames have no Obsidian stylesheet, so `06-design-system.css` copies those looks under `:where()`, with no specificity: in the host, base.css and the theme always win.
+
+| Class | What it is |
+| --- | --- |
+| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-invalid` while an error is shown. |
+| `hel-field-label` | The field's `<label>`. |
+| `hel-field-control` | The slot the control is drawn into. |
+| `hel-field-hint` | The hint line. |
+| `hel-field-error` | The error line from `setError`. Hidden while there is no error. |
+| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input. |
+| `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. |
+| `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. `is-compact` is shorter. |
+| `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled. |
+| `hel-toggle-label` | The toggle's label text. |
+| `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. |
+| `hel-tabs` | The tab strip from `ui.tabs`. |
+| `hel-tab` | One tab. `is-active` marks the chosen one. |
+| `hel-tab-badge` | The count shown on a tab. |
+| `hel-toolbar` | A row of controls made by `ui.toolbar`. |
 
 ### Modals
 
@@ -99,20 +125,10 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text).
 
 ### Vault app parts (`@helenite/ui-kit`)
 
-Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these.
+Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these. The form controls, tabs and toolbar that ui-kit re-exports are styled by `06-design-system.css` (above).
 
 | Class | What it is |
 | --- | --- |
-| `hel-toolbar` | A row of controls made by `toolbar`. |
-| `hel-input` | A text or search input. |
-| `hel-select` | A `select` control. |
-| `hel-check` | A checkbox with its label. |
-| `hel-field` | A labelled control from `field`. |
-| `hel-field-label` | The field's label. |
-| `hel-field-hint` | The field's hint line. |
-| `hel-tabs` | The tab strip from `tabs`. |
-| `hel-tab` | One tab. `is-active` marks the chosen one. |
-| `hel-tab-badge` | The count shown on a tab. |
 | `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. |
 | `hel-card` | One card. |
 | `hel-card-main` | The card's clickable area. |
