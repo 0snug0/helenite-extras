@@ -3,9 +3,9 @@
  *
  * A sandboxed frame is only as big as its content and cannot draw over the host window, so modals,
  * menus and notices are drawn by the HOST in a top-layer frame. The app sends a declarative spec
- * and gets the user's answer back. This file is the contract with Session R's capability API;
- * `HostUi` mirrors `api.ui.*` and `api.secrets.prompt`. Until R lands, `setBridge` takes any object
- * of this shape, and `inlineBridge` is a DOM fallback (tests, and a dev preview outside the host).
+ * and gets the user's answer back. `HostUi` mirrors the frame's `api.ui.*` and `api.secrets.prompt`;
+ * the host validates each spec, labels the modal with the app, and refuses secret fields
+ * (packages/apps-runtime/src/host/overlays.ts). `setBridge` takes any object of this shape (tests pass a fake).
  */
 import { setMenuRenderer } from "@helenite/ui";
 import type { Field, FieldValues, MenuItemSpec } from "@helenite/ui";
