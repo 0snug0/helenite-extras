@@ -154,14 +154,27 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-card.is-accent { border-color: var(--interactive-accent); }
 .hel-card.is-warning { border-color: var(--text-warning); }
 .hel-card.is-muted { background: var(--background-primary); color: var(--text-muted); }
-/* attention: a card that waits on the user (an agent's question). Its text keeps the size of the page around it. */
-.hel-card.is-attention { overflow: visible; border-width: 2px; border-color: var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 9%, var(--background-primary)); color: var(--text-normal); outline: none; }
-.hel-card.is-attention.is-warning { border-color: var(--color-orange); background: color-mix(in srgb, var(--color-orange) 12%, var(--background-primary)); }
-.hel-card.is-attention > .hel-card-head { flex-wrap: wrap; padding: var(--size-4-3) var(--size-4-4) 0; }
-.hel-card.is-attention > .hel-card-body { padding: var(--size-4-2) var(--size-4-4) var(--size-4-3); font-size: inherit; }
-.hel-card.is-attention .hel-card-title { color: var(--text-accent); font-size: var(--font-ui-medium); }
+/* attention: a card that waits on the user (an agent's question). It sets the interface font itself, so a terminal or
+   editor font around it never leaks in; monospace is kept for code inside it. */
+.hel-card.is-attention { overflow: visible; border-width: 2px; border-color: var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 7%, var(--background-primary)); color: var(--text-normal); outline: none; font-family: var(--font-interface); }
+.hel-card.is-attention :is(input, textarea, select, button) { font-family: inherit; }
+.hel-card.is-attention :is(code, pre, kbd) { font-family: var(--font-monospace); }
+.hel-card.is-attention.is-warning { border-color: var(--color-orange); background: color-mix(in srgb, var(--color-orange) 9%, var(--background-primary)); }
+.hel-card.is-attention > .hel-card-head { flex-wrap: wrap; row-gap: var(--size-2-2); padding: var(--size-4-3) var(--size-4-4) 0; }
+.hel-card.is-attention > .hel-card-body { padding: var(--size-4-3) var(--size-4-4) var(--size-4-4); gap: var(--size-4-2); font-size: var(--font-ui-medium); line-height: var(--line-height-normal, 1.5); }
+.hel-card.is-attention .hel-card-title { font-size: var(--font-ui-medium); }
 .hel-card.is-attention .hel-card-icon { color: var(--text-accent); }
 .hel-card.is-attention.is-warning .hel-card-icon { color: var(--color-orange); }
+/* Choice lists in an attention card: roomier rounded rows, a tinted pick, and key hints that stay quiet until the row is hovered, focused or picked */
+.hel-card.is-attention .hel-choice-list { gap: var(--size-4-2); }
+.hel-card.is-attention .hel-choice { gap: var(--size-4-3); padding: var(--size-4-3) var(--size-4-4); border-radius: var(--radius-m); background-color: var(--background-primary); transition: border-color 0.12s, background-color 0.12s; }
+.hel-card.is-attention .hel-choice:hover { border-color: color-mix(in srgb, var(--interactive-accent) 55%, var(--background-modifier-border)); background-color: var(--background-primary-alt); }
+.hel-card.is-attention .hel-choice.is-selected { border-color: var(--interactive-accent); background-color: color-mix(in srgb, var(--interactive-accent) 14%, var(--background-primary)); }
+.hel-card.is-attention .hel-choice-text { font-weight: var(--font-medium, 500); }
+.hel-card.is-attention .hel-choice-detail { font-size: var(--font-ui-small); }
+.hel-card.is-attention .hel-choice-key { opacity: 0.5; transition: opacity 0.12s; }
+.hel-card.is-attention .hel-choice:is(:hover, :focus-visible, .is-selected) .hel-choice-key { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .hel-card.is-attention .hel-choice, .hel-card.is-attention .hel-choice-key { transition: none; } }
 .hel-card.is-attention:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent); }
 .hel-card.is-sticky { position: sticky; top: 0; z-index: 6; box-shadow: 0 4px 18px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
 .hel-card.is-sticky.is-attention:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent), 0 4px 18px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }

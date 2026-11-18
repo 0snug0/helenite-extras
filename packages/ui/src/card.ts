@@ -10,8 +10,9 @@ export interface CardOptions {
   /** Less padding, for a card in a list of cards. */
   compact?: boolean;
   /**
-   * A card that waits on the user (an agent's question): a thick border and a tint in its tone, a title in the tone's
-   * colour, text at the size of the page around it, and a focus ring while focus is inside.
+   * A card that waits on the user (an agent's question): a thick border and a tint in its tone, the icon in the tone's
+   * colour, its own interface font (monospace only for code), roomier choice-list rows, and a focus ring while focus is
+   * inside.
    */
   attention?: boolean;
   /** Stays at the top of its scrolling pane while the content under it scrolls, raised by a shadow. */
