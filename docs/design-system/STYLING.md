@@ -181,7 +181,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-subpage-title` | The title text. |
 | `hel-scope-bar` | The "Editing: Home / Vault Defaults" bar from `ui.settings.scopeBar`. |
 | `hel-settings-card` | `ui.settings.card`: a `hel-card` with no fill whose first child is a `setting-item` (the head; its icon is a `hel-card-icon` in the name, its status a `hel-status-text` under the description), then the `hel-card-body`. |
-| `hel-vault-scope` | `ui.settings.vaultScope`: its `setting-item` row (with a `dropdown`) and the list under it. |
+| `hel-vault-scope` | `ui.settings.vaultScope`: its `setting-item` row (with a `dropdown`) and the list under it. Not drawn with `inline: true`, where the `dropdown` and the list go straight into the given element. |
 | `hel-vault-scope-list` | The vault list: a `hel-check-list`. Has the `hidden` attribute while the scope is all or none. |
 | `hel-vault-scope-note` | A line in the list ("Home can always use it.", "No other vaults yet."). Also `setting-item-description`. |
 
