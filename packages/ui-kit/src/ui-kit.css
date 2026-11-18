@@ -1,23 +1,9 @@
-/* @helenite/ui-kit: the parts @helenite/ui does not provide. Buttons, tables, badges and states come from design-system.css.
+/* @helenite/ui-kit: the parts @helenite/ui does not provide (cards, posters, picker, calendar strip). Every @helenite/ui
+   part (buttons, tables, states, badges, form controls, tabs, toolbar) is styled by design-system.css.
    Styled only by theme variables (--background-*, --text-*, --interactive-*, --size-*, --radius-*).
    No literal colours: a theme switch reaches the frame because the host forwards every --* property. */
 
-/* controls */
-.hel-input, .hel-select { font: inherit; font-size: var(--font-ui-small); padding: var(--size-4-1) var(--size-4-2); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); background: var(--background-modifier-form-field); color: var(--text-normal); min-width: 0; }
-.hel-input:focus, .hel-select:focus { outline: none; border-color: var(--interactive-accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
-.hel-tab:focus-visible, .hel-card-main:focus-visible, .hel-poster-item:focus-visible, .hel-cal-day:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
-.hel-check { display: inline-flex; gap: var(--size-4-2); align-items: center; font-size: var(--font-ui-small); color: var(--text-normal); }
-.hel-field { display: flex; flex-direction: column; gap: var(--size-4-1); margin-bottom: var(--size-4-3); }
-.hel-field-label { font-size: var(--font-ui-small); color: var(--text-muted); }
-.hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-faint); }
-.hel-toolbar { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; margin-bottom: var(--size-4-3); }
-
-/* tabs */
-.hel-tabs { display: flex; gap: var(--size-4-1); border-bottom: 1px solid var(--background-modifier-border); margin-bottom: var(--size-4-3); }
-.hel-tab { font: inherit; font-size: var(--font-ui-small); padding: var(--size-4-2) var(--size-4-3); border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; }
-.hel-tab:hover { color: var(--text-normal); }
-.hel-tab.is-active { color: var(--text-normal); border-bottom-color: var(--interactive-accent); }
-.hel-tab-badge { margin-left: var(--size-4-1); font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-card-main:focus-visible, .hel-poster-item:focus-visible, .hel-cal-day:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
 
 /* cards and posters */
 .hel-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--hel-card-min, 150px), 1fr)); gap: var(--size-4-3); }
