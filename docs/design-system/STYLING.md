@@ -123,6 +123,10 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-choice-tag` | The option's tag (a `hel-badge`). |
 | `hel-choice-detail` | The option's second line. |
 | `hel-choice-key` | The key hint (a `<kbd>`). |
+| `hel-choice-indicator` | The mark before a row when the list has an `indicator`: `is-radio` (a radio dot) or `is-check` (a checkbox), filled when the row is selected. |
+| `hel-choice-badge` | The option's `badge` at the end of the row (a `hel-badge`). |
+| `hel-choice-item` | The wrapper of an option that has a `trailing` slot: it draws the row's border, around the option and the slot. |
+| `hel-choice-extra` | The `trailing` slot beside the option (outside the `role=option` element). |
 
 ### List rows and groups
 

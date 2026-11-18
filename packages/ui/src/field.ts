@@ -13,6 +13,8 @@ export interface FieldHandle {
   control: HTMLElement;
   /** Shows a message under the control (and marks it invalid); `null` clears it. */
   setError(msg: string | null): void;
+  /** Replaces the hint's text (a field made without `hint` gets one); an empty string leaves the line empty. */
+  setHint(text: string): void;
 }
 
 /** A label, a slot for one control, an optional hint and an error line. */
@@ -31,11 +33,16 @@ export function field(parent: HTMLElement, o: FieldOptions): FieldHandle {
   control.dataset.labelledby = label.id;
   el.append(label, control);
   const described: string[] = [];
+  let hint: HTMLElement | null = null;
+  const makeHint = (text: string): HTMLElement => {
+    const h = doc.createElement("div");
+    h.classList.add("hel-field-hint");
+    h.id = `${id}-hint`;
+    h.textContent = text;
+    return h;
+  };
   if (o.hint !== undefined) {
-    const hint = doc.createElement("div");
-    hint.classList.add("hel-field-hint");
-    hint.id = `${id}-hint`;
-    hint.textContent = o.hint;
+    hint = makeHint(o.hint);
     el.appendChild(hint);
     described.push(hint.id);
   }
@@ -51,6 +58,13 @@ export function field(parent: HTMLElement, o: FieldOptions): FieldHandle {
   return {
     el,
     control,
+    setHint(text) {
+      if (hint) return void (hint.textContent = text);
+      hint = makeHint(text);
+      el.insertBefore(hint, error);
+      control.dataset.describedby = `${hint.id} ${error.id}`;
+      for (const c of control.querySelectorAll("[aria-describedby]")) c.setAttribute("aria-describedby", control.dataset.describedby);
+    },
     setError(msg) {
       error.hidden = msg === null;
       error.textContent = msg ?? "";

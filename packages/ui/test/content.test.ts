@@ -11,6 +11,21 @@ afterEach(() => {
 });
 
 describe("callout", () => {
+  it("setAction adds, replaces and removes the action button", () => {
+    const c = callout(host(), { tone: "danger", text: "Git is missing." });
+    expect(c.el.querySelector(".hel-callout-action")).toBeNull();
+    const onClick = vi.fn();
+    c.setAction({ text: "Install Git", variant: "link", onClick });
+    c.setAction({ text: "Install Git ↗", variant: "link", onClick });
+    const actions = c.el.querySelectorAll<HTMLButtonElement>(".hel-callout-action");
+    expect(actions.length).toBe(1);
+    expect(actions[0].textContent).toBe("Install Git ↗");
+    actions[0].click();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    c.setAction(null);
+    expect(c.el.querySelector(".hel-callout-action")).toBeNull();
+  });
+
   it("solid adds is-solid (a filled banner); without it there is none", () => {
     const solid = callout(host(), { tone: "accent", text: "Waiting", solid: true, action: { text: "Answer now", variant: "primary", onClick: () => {} } });
     expect(solid.el.classList.contains("is-solid")).toBe(true);

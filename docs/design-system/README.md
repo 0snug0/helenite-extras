@@ -162,7 +162,7 @@ ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) }
 
 | Part | Returns | Notes |
 | --- | --- | --- |
-| `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null) }` | `setError` shows the message and marks the control invalid; `null` clears it. |
+| `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null), setHint(text) }` | `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
 | `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter? })` | the `<input>` | `type` is `text` (default) or `number`; `secret` hides the text. |
 | `toggle(parent, { value, label, disabled?, hideLabel?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. `hideLabel` keeps the label as the switch's accessible name without showing it, for a row that shows the name elsewhere. |
 | `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |
@@ -199,7 +199,7 @@ err.hide();
 err.setText('Could not create the vault.'); err.show();
 ```
 
-A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `solid: true` fills the banner with the tone's colour (on-accent text, a contrasting action button), for something that must not be missed, such as an agent waiting on the user. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
+A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `solid: true` fills the banner with the tone's colour (on-accent text, a contrasting action button), for something that must not be missed, such as an agent waiting on the user. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `setAction` (replaces the action button; `null` removes it), `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
 
 ### ui.card
 
@@ -232,7 +232,7 @@ ui.choiceList(el, {
 
 `checkList` is a group of checkboxes, each with an optional `detail` line and `disabled`. In a field, the field's label names the group; otherwise pass `label`. `setValue` does not call `onChange`.
 
-In a field, the field's label names a `choiceList` or a `segmented` too. `choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`.
+In a field, the field's label names a `choiceList` or a `segmented` too. `choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`. `indicator: 'radio'` (or `'check'` for a multi list) draws a radio dot or a checkbox before each row, for a list whose pick is a setting rather than an action (the default, `'none'`, suits a list where a pick acts at once, as in `ui.choose`). An option's `badge` (`{ text, tone }`) goes at the end of its row; its `trailing` draws something to act on (a link) in a slot beside the option, outside it, so Tab reaches it and it is not read as part of the option.
 
 ### ui.listRow, ui.listGroup
 

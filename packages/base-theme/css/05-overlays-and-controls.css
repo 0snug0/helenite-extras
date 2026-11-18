@@ -153,6 +153,7 @@ input[type=text]:focus, input[type=search]:focus, input[type=password]:focus, in
   transition: transform 0.15s ease-in-out;
 }
 .checkbox-container.is-enabled::after { transform: translateX(calc(var(--toggle-width) - var(--toggle-thumb-width) - var(--toggle-border-width) * 2)); }
+.checkbox-container.is-disabled { opacity: 0.6; }
 input[type=range].slider { -webkit-appearance: none; appearance: none; width: 140px; height: var(--slider-track-height); background: var(--slider-track-background); border-radius: var(--slider-track-height); outline: none; }
 input[type=range].slider::-webkit-slider-thumb {
   -webkit-appearance: none; width: var(--slider-thumb-width); height: var(--slider-thumb-height);

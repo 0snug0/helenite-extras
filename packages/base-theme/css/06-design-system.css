@@ -169,6 +169,18 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-choice-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); }
 .hel-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
 .hel-choice-key { flex: none; padding: 0 var(--size-2-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); color: var(--text-muted); }
+.hel-choice-badge { flex: none; }
+.hel-choice-indicator { flex: none; position: relative; width: 14px; height: 14px; border: 1px solid var(--text-faint); background-color: var(--background-primary); }
+.hel-choice-indicator.is-radio { border-radius: 50%; }
+.hel-choice-indicator.is-check { border-radius: var(--checkbox-radius, var(--radius-s)); }
+.hel-choice.is-selected .hel-choice-indicator { border-color: var(--interactive-accent); background-color: var(--interactive-accent); }
+.hel-choice.is-selected .hel-choice-indicator.is-radio { box-shadow: inset 0 0 0 3px var(--background-primary); }
+.hel-choice.is-selected .hel-choice-indicator.is-check::after { content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid var(--text-on-accent); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+/* An option with something beside it: the wrapper draws the row's border, so the extra sits inside it visually. */
+.hel-choice-item { display: flex; align-items: center; gap: var(--size-4-2); padding-right: var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); }
+.hel-choice-item > .hel-choice { flex: 1 1 auto; min-width: 0; border-color: transparent; }
+.hel-choice-item:has(> .hel-choice.is-selected) { border-color: var(--interactive-accent); }
+.hel-choice-extra { flex: none; display: flex; align-items: center; gap: var(--size-4-2); }
 
 /* list rows and groups (sidebar panes). With obsidianClass a row also carries Obsidian's tree classes; the :where()
    looks below then lose to base.css and to a theme. */
