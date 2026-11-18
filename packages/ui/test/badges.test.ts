@@ -19,6 +19,19 @@ describe("countBadge", () => {
     expect(countBadge(host(), 0).el.hidden).toBe(true);
   });
 
+  it("overlay adds is-overlay and marks the parent as the positioning context; without it neither is set", () => {
+    const parent = host();
+    const b = countBadge(parent, 1, { overlay: true, tone: "danger", label: "waiting" });
+    expect(b.el.classList.contains("is-overlay")).toBe(true);
+    expect(b.el.classList.contains("is-danger")).toBe(true);
+    expect(b.el.getAttribute("role")).toBe("status");
+    expect(b.el.querySelector(".hel-count-badge-spoken")!.textContent).toBe("1 waiting");
+    expect(parent.classList.contains("hel-has-overlay-badge")).toBe(true);
+    const plain = host();
+    expect(countBadge(plain, 1).el.classList.contains("is-overlay")).toBe(false);
+    expect(plain.classList.contains("hel-has-overlay-badge")).toBe(false);
+  });
+
   it("pulse adds is-pulse; the count is spoken from a live region, exact and with the label", () => {
     const spoken = (b: { el: HTMLElement }) => b.el.querySelector(".hel-count-badge-spoken")!.textContent;
     const b = countBadge(host(), 2, { pulse: true, label: "waiting" });

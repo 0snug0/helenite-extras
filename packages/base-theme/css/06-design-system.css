@@ -74,7 +74,11 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-count-badge-icon { display: inline-flex; vertical-align: -0.125em; margin-inline-end: var(--size-2-1); }
 .hel-count-badge-icon svg { width: 1em; height: 1em; }
 /* In an Obsidian tab header or beside a ribbon icon: a centred pill with a little room, never stretched to the row. */
-.workspace-tab-header-inner > .hel-count-badge, .side-dock-ribbon-action > .hel-count-badge { flex: none; align-self: center; height: auto; line-height: 1.5; margin-inline-start: var(--size-2-2); }
+.workspace-tab-header-inner > .hel-count-badge { flex: none; align-self: center; height: auto; line-height: 1.5; margin-inline-start: var(--size-2-2); }
+/* An overlay badge (ui.countBadge { overlay: true }), on a ribbon icon: out of the flow on the parent's top-right corner, so the icon never moves. */
+.hel-has-overlay-badge { position: relative; }
+.hel-count-badge.is-overlay { position: absolute; top: 0; right: 0; min-width: 14px; height: 14px; box-sizing: border-box; padding: 0 var(--size-2-1); display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; font-weight: var(--font-semibold); margin: 0; pointer-events: none; }
+.hel-count-badge.is-overlay[hidden] { display: none; }
 .hel-count-badge-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: hel-pulse 1.4s ease-in-out infinite; }
 @keyframes hel-pulse { 50% { opacity: 0.35; } }

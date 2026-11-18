@@ -130,7 +130,7 @@ unread.set(12); // "9+": above `max` (default 9) it shows max and a plus
 
 It is a `role="status"` live region: screen readers hear the exact count with the label ("12 unread"), not "9+".
 
-`pulse: true` blinks it like a pulsing dot. `tone` is `accent` (the default) for a plain count, or `danger` / `warning` for one that wants attention, such as questions waiting on the user. `icon` puts an icon before the number:
+`pulse: true` blinks it like a pulsing dot. `tone` is `accent` (the default) for a plain count, or `danger` / `warning` for one that wants attention, such as questions waiting on the user. `overlay: true` lays the badge over the parent's top-right corner instead of in the flow (the parent becomes `position: relative`), for a count on an icon such as a ribbon button: the icon stays where it was and the badge takes no clicks. `icon` puts an icon before the number:
 
 ```ts
 ui.countBadge(row, 2, { tone: 'danger', icon: 'circle-help', label: 'waiting' }); // "2 waiting" with a question mark
