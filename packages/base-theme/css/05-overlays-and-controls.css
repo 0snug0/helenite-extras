@@ -201,3 +201,8 @@ input[type=range].slider::-webkit-slider-thumb {
 .empty-state-action-label { flex: 1; }
 .empty-state-action-hotkey { color: var(--text-faint); font-size: var(--font-ui-small); }
 .empty-state-action.mod-close { color: var(--text-muted); }
+
+/* A settings sub-page (Settings > a row's chevron): it replaces the tab and its chrome until Back. */
+.vertical-tab-content-container.has-subpage > :not(.helenite-settings-subpage) { display: none; }
+.helenite-subpage-header { display: flex; align-items: center; gap: var(--size-4-2); padding-bottom: var(--size-4-3); margin-bottom: var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); }
+.helenite-subpage-title { font-weight: var(--font-semibold); font-size: var(--font-ui-medium); }
