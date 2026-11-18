@@ -1,7 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { button } from "../src";
 
 const host = () => document.body.appendChild(document.createElement("div"));
+afterEach(() => vi.restoreAllMocks());
 const flush = () => new Promise((r) => setTimeout(r, 0));
 
 describe("button", () => {
@@ -38,6 +39,7 @@ describe("button", () => {
     expect(b.el.disabled).toBe(false);
     expect(b.el.hasAttribute("aria-busy")).toBe(false);
 
+    vi.spyOn(console, "error").mockImplementation(() => {});
     const failing = button(host(), { text: "Fail", onClick: () => Promise.reject(new Error("no")) });
     failing.el.click();
     expect(failing.el.classList.contains("is-busy")).toBe(true);
@@ -53,5 +55,37 @@ describe("button", () => {
     b.setPressed(false);
     expect(b.el.getAttribute("aria-pressed")).toBe("false");
     expect(b.el.classList.contains("is-active")).toBe(false);
+  });
+
+  it("logs a rejected onClick promise via console.error and still clears busy", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const err = new Error("boom");
+    const b = button(host(), { text: "X", onClick: () => Promise.reject(err) });
+    b.el.click();
+    await flush();
+    expect(spy).toHaveBeenCalledWith(err);
+    expect(b.el.classList.contains("is-busy")).toBe(false);
+  });
+
+  it("setText sets and updates the text", () => {
+    const b = button(host(), { icon: "x" });
+    b.setText("One");
+    b.setText("Two");
+    expect(b.el.querySelectorAll(".hel-button-text").length).toBe(1);
+    expect(b.el.textContent).toBe("Two");
+  });
+
+  it("link variant adds is-link", () => {
+    expect(button(host(), { text: "L", variant: "link" }).el.classList.contains("is-link")).toBe(true);
+  });
+
+  it("setBusy(false) does not re-enable a button disabled via setDisabled(true)", () => {
+    const b = button(host(), { text: "D" });
+    b.setDisabled(true);
+    b.setBusy(true);
+    b.setBusy(false);
+    expect(b.el.disabled).toBe(true);
+    b.setDisabled(false);
+    expect(b.el.disabled).toBe(false);
   });
 });

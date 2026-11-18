@@ -1,3 +1,5 @@
+let labelCounter = 0;
+
 export interface SegmentedOptions<T extends string> {
   label?: string;
   options: { value: T; text: string }[];
@@ -16,6 +18,8 @@ export function segmented<T extends string>(
   if (o.label) {
     const label = doc.createElement("span");
     label.classList.add("hel-segmented-label");
+    label.id = `hel-segmented-label-${++labelCounter}`;
+    el.setAttribute("aria-labelledby", label.id);
     label.textContent = o.label;
     el.appendChild(label);
   }

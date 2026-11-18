@@ -78,7 +78,10 @@ export function button(parent: HTMLElement, o: ButtonOptions): ButtonHandle {
       setBusy(true);
       (result as PromiseLike<unknown>).then(
         () => setBusy(false),
-        () => setBusy(false),
+        (err) => {
+          setBusy(false);
+          console.error(err);
+        },
       );
     }
   });

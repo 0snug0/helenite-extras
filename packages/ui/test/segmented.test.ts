@@ -32,4 +32,14 @@ describe("segmented", () => {
     s.setValue("a");
     expect(a.getAttribute("aria-pressed")).toBe("true");
   });
+
+  it("names the group via aria-labelledby pointing at the label span", () => {
+    const s = segmented(host(), { label: "Mode", options: opts, value: "a", onChange: () => {} });
+    const label = s.el.querySelector(".hel-segmented-label")!;
+    expect(label.id).toBeTruthy();
+    expect(s.el.getAttribute("aria-labelledby")).toBe(label.id);
+    const t = segmented(host(), { label: "Other", options: opts, value: "a", onChange: () => {} });
+    expect(t.el.querySelector(".hel-segmented-label")!.id).not.toBe(label.id);
+    expect(segmented(host(), { options: opts, value: "a", onChange: () => {} }).el.hasAttribute("aria-labelledby")).toBe(false);
+  });
 });
