@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>{{LABEL_PREFIX}}letterboxd-poll</string>
+
+    <!-- Homebrew python, NOT /usr/bin/python3: that shim forwards to Xcode's
+         python3, which launchd cannot use to read ~/Documents (EPERM). -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{PYTHON}}</string>
+        <string>{{VAULT}}/99_Internal/Templates/Scripts/letterboxd_daily.py</string>
+        <string>--diary-only</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>{{VAULT}}</string>
+
+    <!-- Every 5 minutes: diary only (the 09:00 job still does the watchlist). -->
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <key>StandardOutPath</key>
+    <string>{{LOGS}}/letterboxd-poll.log</string>
+    <key>StandardErrorPath</key>
+    <string>{{LOGS}}/letterboxd-poll.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

@@ -1,0 +1,40 @@
+{
+  "main": {
+    "id": "eric-main",
+    "type": "split",
+    "children": [
+      {
+        "id": "eric-main-tabs",
+        "type": "tabs",
+        "children": []
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "eric-left",
+    "type": "split",
+    "direction": "horizontal",
+    "width": 260,
+    "children": [
+      {
+        "id": "eric-left-tabs",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "eric-apps",
+            "type": "leaf",
+            "state": {
+              "type": "apps",
+              "state": {},
+              "title": "Apps",
+              "icon": "layout-grid"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "active": "eric-apps",
+  "lastOpenFiles": []
+}

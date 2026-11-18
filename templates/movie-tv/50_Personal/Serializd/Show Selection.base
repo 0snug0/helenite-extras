@@ -1,0 +1,38 @@
+filters:
+  and:
+    - file.inFolder("50_Personal/Serializd/Shows")
+formulas:
+  stars: if(rating, (rating / 2).toFixed(1) + " ★", "")
+properties:
+  note.last_watched:
+    displayName: Last watched
+  formula.stars:
+    displayName: Rating
+views:
+  - type: cards
+    name: The Dinosaurs in 2026
+    filters:
+      and:
+        - '["50_Personal/Serializd/Shows/The Dinosaurs (2026).md"].contains(file.path)'
+    order:
+      - file.name
+      - last_watched
+      - formula.stars
+    sort:
+      - property: last_watched
+        direction: DESC
+    image: note.poster
+    imageAspectRatio: 1.5
+    cardSize: 160
+  - type: table
+    name: The Dinosaurs in 2026 (table)
+    filters:
+      and:
+        - '["50_Personal/Serializd/Shows/The Dinosaurs (2026).md"].contains(file.path)'
+    order:
+      - file.name
+      - last_watched
+      - formula.stars
+    sort:
+      - property: last_watched
+        direction: DESC

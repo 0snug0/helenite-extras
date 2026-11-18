@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>{{LABEL_PREFIX}}serializd-sync</string>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>{{PYTHON}}</string>
+		<string>{{VAULT}}/99_Internal/Templates/Scripts/serializd_sync.py</string>
+	</array>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>StartInterval</key>
+	<integer>3600</integer>
+	<key>StandardOutPath</key>
+	<string>{{LOGS}}/serializd-sync.log</string>
+	<key>StandardErrorPath</key>
+	<string>{{LOGS}}/serializd-sync.log</string>
+	<key>WorkingDirectory</key>
+	<string>{{VAULT}}</string>
+</dict>
+</plist>
