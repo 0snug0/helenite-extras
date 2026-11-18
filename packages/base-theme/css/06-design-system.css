@@ -1,5 +1,6 @@
 /* Helenite design-system parts (@helenite/ui). Obsidian variables first; --hel-* only where Obsidian has none. */
-:root {
+/* Defined on body, not :root: --interactive-accent lives on .theme-light/.theme-dark (body); a :root var() reference would resolve invalid and be inherited as such. */
+body {
   --hel-segment-active-bg: var(--interactive-accent);
   --hel-segment-active-fg: var(--text-on-accent);
 }
