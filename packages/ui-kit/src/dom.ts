@@ -37,7 +37,7 @@ export function clear(el: Node): void {
 }
 
 let uid = 0;
-export const nextId = (p = "hk") => `${p}-${++uid}`;
+export const nextId = (p = "hel") => `${p}-${++uid}`;
 
 /** A component handle: root element plus teardown. */
 export interface Handle { el: HTMLElement; destroy(): void }
