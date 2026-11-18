@@ -1,0 +1,11 @@
+{
+  "name": "@helenite/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Helenite design-system parts: zero-dependency, frame-safe plain-DOM components.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit -p .", "test": "vitest run" },
+  "devDependencies": { "happy-dom": "^20.0.0" }
+}
