@@ -1,6 +1,7 @@
 // Compiled against dist/helenite.d.ts and the DOM libs only (tsconfig.json): what a plugin author sees.
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
+import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -24,3 +25,18 @@ const items: MenuItemSpec[] = [{ title: 'Rename', onClick: () => undefined }, 's
 ui.menu(items, { x: 0, y: 0 });
 const id: ActionId = 'delete';
 ui.action(document.body, id, { onClick: () => undefined, app: {}, subject: 'note' });
+
+// The frame-safe controls and small parts, with their typed handles.
+const f: FieldHandle = ui.field(document.body, { label: 'Name', hint: 'Shown in the sidebar.' });
+ui.textInput(f.control, { placeholder: 'Untitled', onEnter: (s: string) => f.setError(s ? null : 'Enter a name.') });
+const t: ToggleHandle = ui.toggle(document.body, { value: true, label: 'Sync' });
+t.setDisabled(false);
+const d: DropdownHandle<'list' | 'grid'> = ui.dropdown(document.body, { options: [{ value: 'list', text: 'List' }, { value: 'grid', text: 'Grid' }], value: 'grid' });
+d.setValue('list');
+// @ts-expect-error: not one of the dropdown's values.
+d.setValue('board');
+const tone: Tone = 'warning';
+ui.statusText(document.body, 'Partly works', tone);
+ui.countBadge(document.body, 3, { pulse: true }).set(0);
+ui.tabs(document.body, { tabs: [{ id: 'a', text: 'A' }], value: 'a', onSelect: (id: 'a') => id }).setBadge('a', 2);
+ui.emptyState(document.body, 'No accounts yet.', { variant: 'inline' });
