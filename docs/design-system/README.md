@@ -172,25 +172,30 @@ ui.settings.scopeBar(containerEl, { editingDefaults: false, onChange: (d) => set
 Vault apps (the sandboxed micro-apps that live in the vault) get the same parts from the package `@helenite/ui-kit`, not from `helenite`:
 
 ```ts
-import { button, segmented, table, emptyState, badge, statusDot, cardGrid, picker, confirm, notice } from '@helenite/ui-kit';
+import { button, segmented, table, emptyState, badge, statusDot, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
 The parts that draw into the page (button, segmented, table, the states, badge, statusDot, cardGrid, picker, and the rest) take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, so they look the same as in plugins, and the active theme and snippets restyle them (see [STYLING.md](./STYLING.md)).
 
-Overlays take the same options as the plugin versions, minus `app`, and are drawn by the host through the capability bridge:
+Overlays take the same options as the plugin versions, minus `app`, and are drawn by the host through the capability bridge. Connect the bridge first, with the `api` your app's default export receives. Without it, every overlay and `notice` throws:
 
 ```ts
+export default (root, api) => {
+  setBridge(api);
+  // ...
+};
+
 const ok = await confirm({ title: 'Discard changes', message: 'Discard the changes to this note?', action: 'Discard', danger: true });
 const name = await prompt({ title: 'Rename note', label: 'Name', value: note.name, action: 'Rename' });
 const pick = await choose({ title: 'Pick a template', options: [{ value: 'blank', text: 'Blank' }] });
 const v = await form({ title: 'Add a vault', action: 'Add vault', fields: [{ id: 'path', kind: 'text', label: 'Path' }] });
 await menu([{ title: 'Rename', onClick: rename }], { x: e.clientX, y: e.clientY });
-notice('Imported 12 notes', { kind: 'success' });
+notice('Imported 12 notes');
 ```
 
 Differences from the plugin versions: `prompt` has no `validate`, because a callback cannot cross the bridge. `choose` shows a list with a "Select" action. `menu` takes a point inside the frame.
 
-**Host support is not complete yet.** `notice` works in an app today. `confirm`, `prompt`, `choose`, `form` and `menu` need the host to render app modals and menus, and that renderer is not built yet, so they do not open in an app today. Their signatures are fixed, so code written against them will start working when the host support lands.
+**Host support is not complete yet.** `notice` works in an app today once `setBridge(api)` has been called, but the frame's `api.ui.notice` drops its options, so `kind` and `timeoutMs` are not honoured yet. `confirm`, `prompt`, `choose`, `form` and `menu` need the host to render app modals and menus, and that renderer is not built yet, so they do not open in an app today. Their signatures are fixed, so code written against them will start working when the host support lands.
 
 ### theme: isolate
 
