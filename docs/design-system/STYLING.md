@@ -63,6 +63,7 @@ Cell states: `is-link` (clickable cell), `is-default` (faint text).
 | `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
 | `hel-status-text` | `ui.statusText`. Tones as for badges. |
 | `hel-count-badge` | `ui.countBadge`. `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. |
+| `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
 | `hel-chip` | `ui.chip`. Tones as for badges. |
 | `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. |
 

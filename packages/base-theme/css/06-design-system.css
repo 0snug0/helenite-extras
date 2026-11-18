@@ -48,7 +48,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-badge.is-accent { background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .hel-badge.is-danger { background-color: var(--background-modifier-error); color: var(--text-on-accent); }
 .hel-badge.is-success { background-color: var(--background-modifier-success); color: var(--text-on-accent); }
-.hel-badge.is-warning { background-color: var(--color-orange); color: var(--text-on-accent); }
+.hel-badge.is-warning { background-color: rgba(var(--color-orange-rgb), 0.2); color: var(--text-normal); } /* white on --color-orange is about 3.6:1 in light themes; normal text on a tint, as Obsidian's callouts do */
 .hel-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-faint); }
 .hel-status-dot.is-accent { background-color: var(--interactive-accent); }
 .hel-status-dot.is-danger { background-color: var(--text-error); }
@@ -61,6 +61,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-status-text.is-warning { color: var(--text-warning); }
 .hel-count-badge { display: inline-block; min-width: 1.5em; padding: 0 var(--size-2-2); border-radius: var(--radius-l); font-size: var(--font-ui-smaller); line-height: 1.5; text-align: center; background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .hel-count-badge[hidden] { display: none; }
+.hel-count-badge-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: hel-pulse 1.4s ease-in-out infinite; }
 @keyframes hel-pulse { 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: none; } }
