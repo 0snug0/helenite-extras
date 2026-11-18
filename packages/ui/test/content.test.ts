@@ -11,6 +11,14 @@ afterEach(() => {
 });
 
 describe("callout", () => {
+  it("solid adds is-solid (a filled banner); without it there is none", () => {
+    const solid = callout(host(), { tone: "accent", text: "Waiting", solid: true, action: { text: "Answer now", variant: "primary", onClick: () => {} } });
+    expect(solid.el.classList.contains("is-solid")).toBe(true);
+    expect(solid.el.classList.contains("is-accent")).toBe(true);
+    solid.setTone("danger");
+    expect(solid.el.classList.contains("is-solid")).toBe(true);
+    expect(callout(host(), { text: "Plain" }).el.classList.contains("is-solid")).toBe(false);
+  });
   it("draws a toned banner with its text, Obsidian's callout class, and an action button", () => {
     const onClick = vi.fn();
     const c = callout(host(), { tone: "accent", text: "2 questions are waiting.", action: { text: "Answer now", onClick } });

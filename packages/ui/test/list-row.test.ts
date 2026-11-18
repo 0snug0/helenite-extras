@@ -37,10 +37,30 @@ describe("listRow", () => {
     expect(tree.querySelector(".hel-list-row-title")!.classList.contains("tree-item-inner")).toBe(true);
     expect(tree.querySelector(".hel-list-row-title")!.classList.contains("nav-file-title-content")).toBe(true);
     expect(tree.querySelector(".hel-list-row-tag")!.classList.contains("nav-file-tag")).toBe(true);
-    const nav = listRow(host(), { title: "B", obsidianClass: "nav-file-title" });
+    expect(tree.parentElement!.classList.contains("nav-file")).toBe(false);
+    const navHost = host();
+    const nav = listRow(navHost, { title: "B", obsidianClass: "nav-file-title" });
     expect(nav.classList.contains("nav-file-title")).toBe(true);
+    // A nav-file-title row sits in Obsidian's nav-file wrapper; a plain row goes straight into its parent.
+    expect(nav.parentElement!.classList.contains("nav-file")).toBe(true);
+    expect(nav.parentElement!.parentElement).toBe(navHost);
+    const plainHost = host();
+    expect(listRow(plainHost, { title: "C" }).parentElement).toBe(plainHost);
     expect(nav.classList.contains("tree-item-self")).toBe(false);
     expect(nav.querySelector(".nav-file-title-content")).not.toBeNull();
+  });
+
+  it("a badge sits after the title and before the meta; an action's id is its data-action", () => {
+    const row = listRow(host(), {
+      title: "Chat", meta: "2m", badge: { count: 2, tone: "danger", label: "waiting" },
+      actions: [{ icon: "play", label: "Resume", id: "resume", onClick: () => {} }, { icon: "x", label: "Close", onClick: () => {} }],
+    });
+    const kids = [...row.children].map((c) => c.className.split(" ")[0]);
+    expect(kids).toEqual(["hel-list-row-title", "hel-count-badge", "hel-list-row-meta", "hel-list-row-actions"]);
+    expect(row.querySelector(".hel-count-badge")!.classList.contains("is-danger")).toBe(true);
+    expect(row.querySelector(".hel-count-badge")!.textContent).toBe("22 waiting");
+    expect([...row.querySelectorAll<HTMLElement>(".hel-list-row-action")].map((b) => b.dataset.action ?? null)).toEqual(["resume", null]);
+    expect(listRow(host(), { title: "None", badge: { count: 0 } }).querySelector<HTMLElement>(".hel-count-badge")!.hidden).toBe(true);
   });
 
   it("a click or Enter runs onClick; an action runs its own handler and not the row's", () => {

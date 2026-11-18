@@ -1,10 +1,16 @@
 import { renderIcon } from "./icons";
 import { make, type Tone } from "./states";
 
+/** `accent` (the default) for a plain count; `danger` or `warning` for one that wants attention (questions waiting). */
+export type CountBadgeTone = "accent" | "danger" | "warning";
+
 export interface CountBadgeOptions {
   /** Above this the badge reads "<max>+". Default 9. */
   max?: number;
   pulse?: boolean;
+  tone?: CountBadgeTone;
+  /** An icon before the number (`circle-help` for questions). Decorative: readers hear the count and label. */
+  icon?: string;
   /** What is counted, for screen readers: `label: 'waiting'` reads "3 waiting". */
   label?: string;
 }
@@ -17,8 +23,13 @@ export interface CountBadgeHandle {
 /** A small number on a tab, row or icon. Hidden at 0. */
 export function countBadge(parent: HTMLElement, n: number, o: CountBadgeOptions = {}): CountBadgeHandle {
   const max = o.max ?? 9;
-  const el = make(parent, "span", ["hel-count-badge"]);
+  const el = make(parent, "span", ["hel-count-badge", `is-${o.tone ?? "accent"}`]);
   if (o.pulse) el.classList.add("is-pulse");
+  if (o.icon) {
+    const icon = make(el, "span", ["hel-count-badge-icon"]);
+    icon.setAttribute("aria-hidden", "true");
+    renderIcon(icon, o.icon);
+  }
   // A live region, so a change is announced; the visible "9+" is hidden from readers in favour of the exact count.
   el.setAttribute("role", "status");
   const shown = make(el, "span", []);

@@ -31,6 +31,19 @@ describe("countBadge", () => {
     expect(spoken(countBadge(host(), 4))).toBe("4");
     expect(countBadge(host(), 1).el.classList.contains("is-pulse")).toBe(false);
   });
+
+  it("tone is accent by default, danger or warning for attention; an icon sits before the number, hidden from readers", () => {
+    expect([...countBadge(host(), 1).el.classList]).toEqual(["hel-count-badge", "is-accent"]);
+    expect(countBadge(host(), 1, { tone: "danger" }).el.classList.contains("is-danger")).toBe(true);
+    expect(countBadge(host(), 1, { tone: "warning" }).el.classList.contains("is-warning")).toBe(true);
+    const b = countBadge(host(), 3, { tone: "danger", icon: "circle-help", label: "waiting" });
+    const icon = b.el.firstElementChild as HTMLElement;
+    expect(icon.classList.contains("hel-count-badge-icon")).toBe(true);
+    expect(icon.dataset.icon).toBe("circle-help");
+    expect(icon.getAttribute("aria-hidden")).toBe("true");
+    expect(b.el.textContent).toBe("33 waiting"); // the shown number and the spoken count; the icon adds no text
+    expect(countBadge(host(), 1).el.querySelector(".hel-count-badge-icon")).toBeNull();
+  });
 });
 
 describe("chip", () => {

@@ -11,7 +11,7 @@ export {
 } from "@helenite/ui";
 export type {
   ButtonOptions, ButtonHandle, ButtonVariant, SegmentedOptions, TableOptions, TableColumn, TableGroup, TableHandle, Tone, StateVariant,
-  ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions,
+  ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions,
   SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, IconRenderer,
   CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle,
   ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle,

@@ -9,7 +9,7 @@ export type { TableOptions, TableColumn, TableGroup, TableHandle } from "./table
 export { emptyState, errorState, loadingState, badge, statusDot, statusText } from "./states";
 export type { Tone, StateVariant, ErrorStateOptions } from "./states";
 export { countBadge, chip } from "./badges";
-export type { CountBadgeOptions, CountBadgeHandle, ChipOptions } from "./badges";
+export type { CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions } from "./badges";
 export { field } from "./field";
 export type { FieldOptions, FieldHandle } from "./field";
 export { textInput, searchInput, slider } from "./inputs";

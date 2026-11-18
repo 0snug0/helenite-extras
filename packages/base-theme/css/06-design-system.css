@@ -1,6 +1,8 @@
 /* Helenite design-system parts (@helenite/ui). Obsidian variables first; --hel-* only where Obsidian has none. */
 /* Defined on body, not :root: --interactive-accent lives on .theme-light/.theme-dark (body); a :root var() reference would resolve invalid and be inherited as such. */
 body {
+  --hel-count-badge-attention-fg: var(--text-on-accent); /* on --color-red: about 6:1 (default dark) and 5:1 (default light) */
+  --hel-callout-solid-fg: var(--text-on-accent);
   --hel-segment-active-bg: var(--interactive-accent);
   --hel-segment-active-fg: var(--text-on-accent);
 }
@@ -62,6 +64,12 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-status-text.is-warning { color: var(--text-warning); }
 .hel-count-badge { display: inline-block; min-width: 1.5em; padding: 0 var(--size-2-2); border-radius: var(--radius-l); font-size: var(--font-ui-smaller); line-height: 1.5; text-align: center; background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .hel-count-badge[hidden] { display: none; }
+.hel-count-badge.is-danger { background-color: var(--color-red); color: var(--hel-count-badge-attention-fg); }
+.hel-count-badge.is-warning { background-color: rgba(var(--color-orange-rgb), 0.2); color: var(--text-normal); } /* no on-accent text reaches 4.5:1 on --color-orange in both themes: normal text on a tint, as hel-badge */
+.hel-count-badge-icon { display: inline-flex; vertical-align: -0.125em; margin-inline-end: var(--size-2-1); }
+.hel-count-badge-icon svg { width: 1em; height: 1em; }
+/* In an Obsidian tab header or beside a ribbon icon: a centred pill with a little room, never stretched to the row. */
+.workspace-tab-header-inner > .hel-count-badge, .side-dock-ribbon-action > .hel-count-badge { flex: none; align-self: center; height: auto; line-height: 1.5; margin-inline-start: var(--size-2-2); }
 .hel-count-badge-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: hel-pulse 1.4s ease-in-out infinite; }
 @keyframes hel-pulse { 50% { opacity: 0.35; } }
@@ -120,6 +128,11 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-callout.is-accent { background-color: color-mix(in srgb, var(--interactive-accent) 12%, transparent); border-color: color-mix(in srgb, var(--interactive-accent) 25%, transparent); }
 .hel-callout-text { flex: 1 1 12em; min-width: 0; }
 .hel-callout-action { flex: none; }
+/* solid: a filled banner for what must not be missed (an agent waiting on the user) */
+.hel-callout.is-solid { background-color: rgb(var(--callout-color)); border-color: transparent; color: var(--hel-callout-solid-fg); font-weight: var(--font-semibold); }
+.hel-callout.is-solid.is-accent { background-color: var(--interactive-accent); }
+.hel-callout.is-solid > button.hel-callout-action { background-color: var(--background-primary); color: var(--text-normal); box-shadow: none; }
+.hel-callout.is-solid > button.hel-callout-action:hover { background-color: var(--background-primary-alt); color: var(--text-normal); }
 
 /* card (ui.card, and ui-kit's card grid) */
 .hel-card { position: relative; border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m); background: var(--background-secondary); overflow: hidden; }

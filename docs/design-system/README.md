@@ -22,7 +22,7 @@ That writes `packages/types/dist/helenite.d.ts`, a `declare module 'helenite'` f
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -126,7 +126,11 @@ unread.set(12); // "9+": above `max` (default 9) it shows max and a plus
 
 It is a `role="status"` live region: screen readers hear the exact count with the label ("12 unread"), not "9+".
 
-`pulse: true` blinks it like a pulsing dot.
+`pulse: true` blinks it like a pulsing dot. `tone` is `accent` (the default) for a plain count, or `danger` / `warning` for one that wants attention, such as questions waiting on the user. `icon` puts an icon before the number:
+
+```ts
+ui.countBadge(row, 2, { tone: 'danger', icon: 'circle-help', label: 'waiting' }); // "2 waiting" with a question mark
+```
 
 ### ui.chip
 
@@ -193,7 +197,7 @@ err.hide();
 err.setText('Could not create the vault.'); err.show();
 ```
 
-A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
+A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `solid: true` fills the banner with the tone's colour (on-accent text, a contrasting action button), for something that must not be missed, such as an agent waiting on the user. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
 
 ### ui.card
 
@@ -242,7 +246,7 @@ ui.listRow(today.body, {
 ui.emptyState(paneEl, 'No open chats.', { variant: 'pane' });
 ```
 
-Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, faint `meta` text and icon `actions` (shown on hover, focus, or when the row is `active`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones. `listRow` returns the row.
+Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, a count `badge` (`{ count, ...countBadge options }`, before the meta), faint `meta` text and icon `actions` (shown on hover, focus, or when the row is `active`; an action's `id` becomes its `data-action`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones, in a `nav-file` wrapper as Obsidian draws a file row. `listRow` returns the row.
 
 `listGroup` is a collapsible group: a header with a chevron, the title and an optional `count`, and a `body` to put the rows in. Clicking the header (or Enter) toggles it and calls `onToggle` with the new state. Use `emptyState` with `variant: 'pane'` when a pane has no rows.
 
