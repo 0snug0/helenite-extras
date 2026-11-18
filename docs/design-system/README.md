@@ -22,7 +22,7 @@ That writes `packages/types/dist/helenite.d.ts`, a `declare module 'helenite'` f
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `MenuItemSpec`, `ActionId`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `ActionId`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -56,7 +56,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, action, the settings parts) take the element to draw into as their first argument and append to it. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -183,6 +183,93 @@ ui.button(bar, { text: 'Refresh', onClick: reload });
 
 Tabs follow the WAI-ARIA tabs pattern: the arrow keys, Home and End move between tabs. You draw the panel in `onSelect`.
 
+### ui.callout
+
+```ts
+ui.callout(el, { tone: 'accent', text: '2 questions are waiting.', action: { text: 'Answer now', onClick: openInbox } });
+const err = ui.callout(el, { tone: 'danger', text: '', live: true });
+err.hide();
+// later
+err.setText('Could not create the vault.'); err.show();
+```
+
+A banner or an inline message. Tones: `info` (default), `accent`, `warning`, `danger`, `success`. `text` is a string or a `DocumentFragment`. `action` takes `ui.button`'s options and draws a button after the text. `live: true` has screen readers read the text when it changes; use it for an error or status line that updates. The handle has `setText`, `setTone`, `hide` and `show`. It is also Obsidian's `callout`, so a theme's callout colours apply.
+
+### ui.card
+
+```ts
+const c = ui.card(el, { title: 'Claude Code', icon: 'terminal' });
+ui.statusText(c.body, 'Signed in', 'success');
+c.setTone('warning');
+```
+
+A bordered block with a head (icon and title; hidden when there is neither) and a `body` you draw into. Add actions or a status to `head`. Tones: `default`, `accent`, `warning`, `muted` (a finished or inactive item). `compact` has less padding.
+
+### ui.checkList, ui.choiceList
+
+```ts
+const scopes = ui.field(el, { label: 'Capabilities' });
+const caps = ui.checkList(scopes.control, {
+  options: [{ value: 'mail', text: 'Mail', detail: 'Read and send mail' }, { value: 'calendar', text: 'Calendar' }],
+  value: ['mail'],
+  onChange: (v) => save(v),   // ['mail', 'calendar'], in option order
+});
+caps.value(); caps.setValue([]);
+
+ui.choiceList(el, {
+  label: 'Harness',
+  options: [{ value: 'claude', text: 'Claude Code', detail: 'Runs in a terminal', icon: 'terminal', tag: 'Recommended', key: '1' }, { value: 'codex', text: 'Codex', key: '2' }],
+  value: 'claude',
+  onChange: (v) => pick(v),
+});
+```
+
+`checkList` is a group of checkboxes, each with an optional `detail` line and `disabled`. In a field, the field's label names the group; otherwise pass `label`. `setValue` does not call `onChange`.
+
+`choiceList` is a list of option rows to pick from inline: one (`onChange` gets the value) or, with `multi: true`, any number (`onChange` gets the values in option order). A row can have a `detail`, `icon`, `tag` and `key`; the arrow keys move between rows, Enter or Space picks, and an option's `key` picks it while the list has focus. `ui.choose` draws its rows with it. The handle has `setValue`, which does not call `onChange`.
+
+### ui.listRow, ui.listGroup
+
+```ts
+const today = ui.listGroup(paneEl, { title: 'Today', count: 3, collapsed: false, onToggle: (c) => remember(c) });
+ui.listRow(today.body, {
+  title: 'Fix the build', meta: '2m', active: true,
+  dot: { tone: 'warning', label: 'Waiting for you', pulse: true },
+  actions: [{ icon: 'play', label: 'Resume', onClick: resume }],
+  onClick: (e) => open(e),
+  menu: () => [{ title: 'Rename', onClick: rename }, 'separator', { title: 'Delete', danger: true, onClick: del }],
+});
+ui.emptyState(paneEl, 'No open chats.', { variant: 'pane' });
+```
+
+Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, faint `meta` text and icon `actions` (shown on hover, focus, or when the row is `active`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones. `listRow` returns the row.
+
+`listGroup` is a collapsible group: a header with a chevron, the title and an optional `count`, and a `body` to put the rows in. Clicking the header (or Enter) toggles it and calls `onToggle` with the new state. Use `emptyState` with `variant: 'pane'` when a pane has no rows.
+
+### ui.composer
+
+```ts
+const box = ui.composer(el, {
+  placeholder: 'Ask anything', hint: 'Enter sends, Shift+Enter starts a new line.',
+  onSubmit: async (text) => { await send(text); },
+});
+box.focus();
+```
+
+A text box with a send button. `submitOn: 'enter'` (default) sends on Enter; `'mod-enter'` sends on Cmd/Ctrl+Enter and leaves Enter for new lines. Blank text is not sent. When `onSubmit` returns a promise, the composer is busy until it settles. The box is cleared once `onSubmit` returns or its promise resolves; when it throws or rejects, the text stays. Other options: `rows` (3), `submitLabel` ("Send"), `submitIcon` (an icon button instead of a text one). The handle has `input`, `setBusy`, `focus` and `clear`.
+
+### ui.keyValue
+
+```ts
+ui.keyValue(el, [
+  { key: 'Name', value: 'Letterboxd' },
+  { key: 'Connect to', value: hosts, isNew: (h) => !before.includes(h) },
+  { key: 'Secrets', value: [], empty: 'None' },
+]);
+```
+
+A definition list. A value is text, a list of strings (drawn as a list; `isNew` marks items with a "new" badge), or a node drawn as given. An empty string or list shows `empty` ("None" by default).
+
 ### ui.confirm, ui.prompt, ui.choose, ui.form
 
 Each takes the app first and returns a promise. A cancel (Cancel button, Escape, click on the backdrop) resolves to `false` for `confirm` and `null` for the others.
@@ -194,7 +281,7 @@ const pick = await ui.choose(app, { title: 'Pick a template', options: [{ value:
 const v = await ui.form(app, { title: 'Add a vault', action: 'Add vault', fields: [{ id: 'path', kind: 'text', label: 'Path' }, { id: 'sync', kind: 'checkbox', label: 'Sync it' }] });
 ```
 
-Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox`, `select` and `choice`. The form resolves to an object keyed by field `id`, with strings and booleans as values.
+Form fields (`Field`) are `text` (with `placeholder`, `secret`), `checkbox` (with an optional `detail` line), `select`, `choice` (one of a list of rows) and `multi` (a check list: any number of `options`, each with an optional `detail` and `disabled`). The form resolves to an object keyed by field `id` (`FieldValues`): strings, booleans, and a string array for a `multi` field.
 
 ### ui.menu, ui.moreButton
 
@@ -251,10 +338,10 @@ ui.settings.scopeBar(containerEl, { editingDefaults: false, onChange: (d) => set
 Vault apps (the sandboxed micro-apps that live in the vault) get the same parts from the package `@helenite/ui-kit`, not from `helenite`:
 
 ```ts
-import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
+import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
@@ -274,7 +361,7 @@ await menu([{ title: 'Rename', onClick: rename }], { x: e.clientX, y: e.clientY 
 notice('Imported 12 notes');
 ```
 
-Differences from the plugin versions: `prompt` has no `validate`, because a callback cannot cross the bridge. `choose` shows a list with a "Select" action. `menu` takes a point inside the frame.
+Differences from the plugin versions: `prompt` has no `validate`, because a callback cannot cross the bridge. `choose` shows a list with a "Select" action. `menu` takes a point inside the frame. A `listRow`'s `menu` opens through the bridge as well, so it needs `setBridge` too.
 
 **Host support is not complete yet.** `notice` works in an app today once `setBridge(api)` has been called, but the frame's `api.ui.notice` drops its options, so `kind` and `timeoutMs` are not honoured yet. `confirm`, `prompt`, `choose`, `form` and `menu` need the host to render app modals and menus, and that renderer is not built yet, so they do not open in an app today. Their signatures are fixed, so code written against them will start working when the host support lands.
 
@@ -294,7 +381,7 @@ An isolated app still gets the theme's variables and the design-system styleshee
 | --- | --- |
 | Ask yes or no | `ui.confirm` (`danger: true` when it destroys something) |
 | Get one line of text | `ui.prompt` |
-| Pick one of several named options | `ui.choose` |
+| Pick one of several named options | `ui.choose` (inline, without a modal: `ui.choiceList`) |
 | Collect several values at once | `ui.form` |
 | Tell the user something happened | `ui.notice`, not a modal |
 

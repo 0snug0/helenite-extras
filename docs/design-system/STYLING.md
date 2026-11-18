@@ -5,7 +5,7 @@ Helenite's design-system parts are styled by `packages/base-theme/css/06-design-
 ## Rules
 
 - Parts use Obsidian's documented CSS variables (`--text-muted`, `--interactive-accent`, `--size-4-2`, and so on). A `--hel-*` variable exists only where Obsidian has none, and its default is an Obsidian variable.
-- Every part's root element has a `hel-<part>` class. Where Obsidian has a class for the same thing, the root also has it: `mod-cta`, `mod-warning`, `clickable-icon`, `setting-item`.
+- Every part's root element has a `hel-<part>` class. Where Obsidian has a class for the same thing, the root also has it: `mod-cta`, `mod-warning`, `clickable-icon`, `setting-item`, `callout`, `dropdown`, `checkbox-container`.
 - Variants are `is-<variant>` (`is-link`, `is-danger`). States are `is-<state>` (`is-busy`, `is-selected`).
 - The `--hel-*` variables are declared on `body`, not `:root`. They refer to theme variables such as `--interactive-accent`, and those are defined on `body` (`.theme-light` / `.theme-dark`). A `:root` declaration would resolve them to nothing. Override them on `body` or a descendant.
 
@@ -89,6 +89,71 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-tab-badge` | The count shown on a tab. |
 | `hel-toolbar` | A row of controls made by `ui.toolbar`. |
 
+### Callouts and cards
+
+| Class | What it is |
+| --- | --- |
+| `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. |
+| `hel-callout-text` | The callout's text. |
+| `hel-callout-action` | The callout's button (a `hel-button`). |
+| `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. |
+| `hel-card-head` | The card's head: icon and title. Hidden while empty. |
+| `hel-card-icon` | The head's icon. |
+| `hel-card-title` | The card's title. |
+| `hel-card-body` | The card's content. |
+
+### Check lists and choice lists
+
+| Class | What it is |
+| --- | --- |
+| `hel-check-list` | `ui.checkList`, a `role=group` of checkboxes (also a form's `multi` field). |
+| `hel-check` | One checkbox row (a `<label>`). `is-disabled` when disabled. |
+| `hel-check-body` | The row's text and detail. |
+| `hel-check-text` | The row's text. |
+| `hel-check-detail` | The row's second line; also a form checkbox field's `detail`. |
+| `hel-choice-list` | `ui.choiceList`, a listbox of option rows. `is-multi` when any number can be picked. |
+| `hel-choice` | One option row. States: `is-selected`, `is-disabled`. In `ui.choose` the rows also have `hel-modal-choice`. |
+| `hel-choice-icon` | The row's icon. |
+| `hel-choice-body` | The row's title line and detail. |
+| `hel-choice-title` | The title line: text and tag. |
+| `hel-choice-text` | The option's text. |
+| `hel-choice-tag` | The option's tag (a `hel-badge`). |
+| `hel-choice-detail` | The option's second line. |
+| `hel-choice-key` | The key hint (a `<kbd>`). |
+
+### List rows and groups
+
+With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self is-clickable nav-file-title`, its title `tree-item-inner nav-file-title-content` and its tag `nav-file-tag`; with `obsidianClass: 'nav-file-title'` only the `nav-file-*` classes. The row's own looks are under `:where()`, so base.css and a theme win for those rows. A group's chevron also has Obsidian's `collapse-icon`.
+
+| Class | What it is |
+| --- | --- |
+| `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. |
+| `hel-list-row-icon` | The row's icon. |
+| `hel-list-row-title` | The row's title. |
+| `hel-list-row-tag` | The row's tag ("not installed"). |
+| `hel-list-row-meta` | The row's faint meta text (a time, a folder). |
+| `hel-list-row-actions` | The row's icon buttons, shown on hover, focus or when active. |
+| `hel-list-row-action` | One of those buttons (a `hel-button`). |
+| `hel-list-group` | `ui.listGroup`. `is-collapsed` while collapsed. |
+| `hel-list-group-header` | The group's header (a `role=button`). |
+| `hel-list-group-chevron` | The header's chevron. `is-collapsed` turns it. |
+| `hel-list-group-title` | The group's title. |
+| `hel-list-group-count` | The group's count. |
+| `hel-list-group-body` | The container for the group's rows. Hidden while collapsed. |
+
+### Composer and key-value lists
+
+| Class | What it is |
+| --- | --- |
+| `hel-composer` | `ui.composer`: a text box and a send button. `is-busy` while a submit runs. |
+| `hel-composer-input` | The `<textarea>`. |
+| `hel-composer-send` | The send button (a `hel-button`). |
+| `hel-composer-hint` | The line under the box. |
+| `hel-kv` | `ui.keyValue`, a `<dl>`. |
+| `hel-kv-row` | One key and its value. |
+| `hel-kv-key` | The key (`<dt>`). |
+| `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list item is `is-new` when `isNew` marks it. |
+
 ### Modals
 
 | Class | What it is |
@@ -98,12 +163,11 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-modal-label` | A field label. |
 | `hel-modal-input` | A text input. |
 | `hel-modal-field` | One field row in a form. |
-| `hel-modal-check` | A checkbox row. |
+| `hel-modal-check` | A checkbox row. Its `detail` follows as a `hel-check-detail`. |
 | `hel-modal-error` | The inline validation message. Collapses when empty. |
 | `hel-modal-actions` | The button row at the bottom (Cancel, then the action). |
-| `hel-modal-choices` | The scrolling list of choices. |
-| `hel-modal-choice` | One choice. States: `is-selected`, `is-disabled`. |
-| `hel-modal-choice-detail` | A choice's second line. |
+| `hel-modal-choices` | The scrolling list of choices: a `hel-choice-list`. |
+| `hel-modal-choice` | One choice: a `hel-choice` (see Choice lists). |
 
 ### Settings
 
@@ -126,16 +190,13 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 ### Vault app parts (`@helenite/ui-kit`)
 
-Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these. The form controls, tabs and toolbar that ui-kit re-exports are styled by `06-design-system.css` (above).
+Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these. The parts ui-kit re-exports from `@helenite/ui` (form controls, tabs, toolbar, card, lists and the rest) are styled by `06-design-system.css` (above).
 
 | Class | What it is |
 | --- | --- |
-| `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. |
-| `hel-card` | One card. |
+| `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. Each card is a `hel-card` with a `hel-card-body` and `hel-card-title` (see Callouts and cards). |
 | `hel-card-main` | The card's clickable area. |
 | `hel-card-poster` | The poster slot of a card. |
-| `hel-card-body` | The text block of a card. |
-| `hel-card-title` | A card's title. |
 | `hel-card-sub` | A card's subtitle. |
 | `hel-card-meta` | A card's meta line. |
 | `hel-card-badges` | The badge row of a card. |
