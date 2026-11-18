@@ -1,0 +1,11 @@
+{
+  "id": "helenite-kanban",
+  "name": "Kanban",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Markdown-backed Kanban boards. A note with kanban-plugin: board in its frontmatter opens as lists of cards, saved in the same format as the Obsidian Kanban plugin.",
+  "author": "Helenite",
+  "isDesktopOnly": false,
+  "main": "main.js",
+  "helenite": "^0.1.0"
+}

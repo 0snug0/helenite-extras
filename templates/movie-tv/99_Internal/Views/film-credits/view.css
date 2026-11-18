@@ -1,0 +1,120 @@
+.film-credits {
+	margin: 0.4em 0 1em;
+	max-width: 500px;		/* the poster above is TMDB's w500, so the block ends where it does */
+}
+.film-crew {
+	padding: 0.35em 0;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+.film-crew-label {
+	font-weight: 600;
+	margin-right: 0.8em;
+}
+.film-crew-job {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+.film-cast {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px 0 10px;
+}
+.film-cast .film-cast-card {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	padding: 6px 8px;
+	border-radius: 10px;
+	color: var(--text-normal);
+	text-decoration: none;
+	background: none;
+}
+/* The theme paints a hovered internal link with a solid accent block, which hides the text on a card this size;
+   the card gets the dashboard's grey hover (movie-recs) instead. */
+.film-cast a.film-cast-card,
+.film-cast a.film-cast-card:hover,
+.film-cast a.film-cast-card:focus {
+	background: none !important;
+	box-shadow: none !important;
+	color: var(--text-normal) !important;
+	text-decoration: none !important;
+}
+.film-cast .film-cast-card:hover,
+.film-cast a.film-cast-card:hover {
+	background: var(--background-modifier-hover) !important;
+}
+.film-cast .film-cast-photo {
+	flex: 0 0 80px;
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: var(--background-secondary) center 20% / cover no-repeat;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-faint);
+	font-size: 1.4em;
+	font-weight: 600;
+}
+.film-cast .film-cast-name {
+	font-weight: 600;
+	line-height: 1.3;
+}
+.film-cast a.film-cast-card:hover .film-cast-name {
+	text-decoration: underline;
+}
+.film-cast .film-cast-role {
+	margin-top: 2px;
+	color: var(--text-muted);
+	line-height: 1.3;
+}
+.film-cast .film-cast-text {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.film-cast .film-cast-seen {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0 8px;
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+.film-cast .film-cast-seen-eye {
+	display: flex;
+	color: #00c030;
+}
+.film-scores {
+	display: flex;
+	gap: 8px;
+	padding-bottom: 0.6em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+.film-scores .film-score,
+.film-scores a.film-score:hover {
+	flex: 1 1 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 6px 4px;
+	border-radius: 10px;
+	color: var(--text-normal) !important;
+	text-decoration: none !important;
+	background: none !important;
+	font-variant-numeric: tabular-nums;
+}
+.film-scores a.film-score:hover {
+	background: var(--background-modifier-hover) !important;
+}
+.film-scores a.film-score::after { display: none; }		/* no external-link arrow */
+.film-scores .film-score-value {
+	font-size: 1.15em;
+	font-weight: 600;
+}
+.film-scores .film-score-label {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}

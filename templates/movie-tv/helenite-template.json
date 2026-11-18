@@ -1,0 +1,14 @@
+{
+  "name": "Movies & TV",
+  "description": "A film and TV diary synced from Letterboxd and Serializd: one note per film or show, people notes, a Home dashboard with stats and daily picks, and Downloadrr apps for Radarr, Sonarr, SABnzbd and Plex.",
+  "version": "0.1.0",
+  "minHelenite": "0.1.0",
+  "setup": "setup/SETUP.md",
+  "data": {},
+  "asks": [
+    "Your Letterboxd username",
+    "Your Serializd username (or none, for films only)",
+    "Do you run Radarr, Sonarr, SABnzbd or Plex? Which ones, and at which URLs?",
+    "Install the background sync jobs (launchd) now, or later?"
+  ]
+}

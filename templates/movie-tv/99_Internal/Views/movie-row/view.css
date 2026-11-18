@@ -1,0 +1,119 @@
+.movie-week-range {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	margin-bottom: 0.6em;
+}
+.movie-week-empty {
+	color: var(--text-faint);
+	font-style: italic;
+}
+.movie-week {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+	overflow-x: auto;
+	padding-bottom: 8px;
+}
+.movie-week .movie-day {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 6px 8px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 10px;
+	background: var(--background-secondary);
+}
+.movie-week .movie-day-films {
+	display: flex;
+	gap: 12px;
+}
+.movie-week .movie-card {
+	flex: 0 0 120px;
+	width: 120px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	color: var(--text-normal);
+	text-decoration: none;
+}
+.movie-week .movie-date {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+	margin-bottom: 6px;
+}
+.movie-week .movie-poster {
+	width: 120px;
+	aspect-ratio: 2 / 3;
+	object-fit: cover;
+	border-radius: 6px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+	transition: transform 120ms ease;
+}
+.movie-week .movie-card:hover .movie-poster {
+	transform: translateY(-3px);
+}
+.movie-week .movie-poster-missing {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px;
+	background: var(--background-modifier-border);
+	font-size: var(--font-ui-small);
+}
+.movie-week .movie-year {
+	margin-top: 6px;
+	font-size: var(--font-ui-smaller);
+	line-height: 1.25;
+	min-height: 1.25em;
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+/* Always exactly two lines tall: short names reserve the second line, long ones
+   are clamped, so the stars below line up across every day box. */
+.movie-week .movie-name {
+	width: 100%;
+	font-size: var(--font-ui-small);
+	line-height: 1.25;
+	height: calc(2 * 1.25em);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	overflow-wrap: anywhere;
+}
+.movie-week .movie-stars {
+	position: relative;
+	display: inline-block;
+	margin-top: 4px;
+	font-size: 14px;
+	line-height: 1;
+	height: 1em;
+	letter-spacing: 1px;
+	white-space: nowrap;
+}
+.movie-week .movie-stars-base {
+	color: var(--background-modifier-border);
+}
+.movie-week .movie-stars-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	overflow: hidden;
+	color: #00c030;   /* Letterboxd green */
+}
+.movie-week .movie-stars-none {
+	visibility: hidden;
+}
+
+.film-scores { width: 100%; display: flex; flex-direction: column; gap: 1px; margin: 1px 0 3px; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.film-scores .film-scores-line { display: flex; justify-content: space-between; align-items: center; gap: 4px; min-height: 1.5em; }
+.film-scores .film-score { display: inline-flex; align-items: center; gap: 4px; color: var(--text-normal); text-decoration: none; }
+.film-scores a.film-score:hover { text-decoration: underline; }
+.film-scores .film-score-icon { flex: none; display: block; }
+
+/* TV: several episodes of one show logged back to back, as one card with a stacked-poster look. */
+.movie-card-run .movie-poster { box-shadow: 3px -3px 0 -1px var(--background-secondary), 4px -4px 0 0 var(--background-modifier-border), 7px -7px 0 -1px var(--background-secondary), 8px -8px 0 0 var(--background-modifier-border); }
+.movie-run-count { font-size: var(--font-ui-smaller); color: var(--text-muted); line-height: 1.2; }
