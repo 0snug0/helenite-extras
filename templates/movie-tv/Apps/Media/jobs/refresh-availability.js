@@ -1,10 +1,15 @@
 // Refreshes where every watchlist/pending film streams in the US (TMDB watch providers) into the app store's
-// "availability" key, which the view reads. Was refresh-availability.js under launchd: it walked Films/ with fs and
+// "movies:availability" key, which the Movies page reads (it reads and writes it as `availability` through its namespaced
+// ctx.store; see core/migrate-keys.js). Was refresh-availability.js under launchd: it walked Films/ with fs and
 // regexes, read the TMDB token from the vault's .env, and wrote 99_Internal/Data/downloadrr-availability.json.
-// Runs in the jobs utility process (scheduler) or in `helenite job run downloadrr refresh-availability`.
-import lib from "../lib.js";
-import { FILMS, num } from "../films.js";
-import { AVAIL_VERSION } from "../availability-version.js";
+// Runs in the jobs utility process (scheduler) or in `helenite job run media refresh-availability`.
+import { availability } from "../core/tmdb.js";
+import { FILMS, num } from "../core/films.js";
+import { AVAIL_VERSION } from "../pages/movies/availability-version.js";
+import { MOVIES_PREFIX } from "../core/migrate-keys.js";
+
+// The job has the raw app store (no page context), so it spells the namespace out: same record shape as the page's cache.
+const KEY = `${MOVIES_PREFIX}availability`;
 
 export default async function run(api, { log }) {
 	const settings = api.settings;
@@ -19,7 +24,7 @@ export default async function run(api, { log }) {
 	}
 
 	const today = new Date().toLocaleDateString("en-CA");
-	const avail = (await api.store.get("availability")) ?? {};
+	const avail = (await api.store.get(KEY)) ?? {};
 	const queue = [...ids];
 	let ok = 0, bad = 0;
 	const worker = async () => {
@@ -27,11 +32,11 @@ export default async function run(api, { log }) {
 			try {
 				const r = await api.net.fetch({ url: `${tmdbUrl}/3/movie/${id}?append_to_response=watch/providers,release_dates`, headers: { Authorization: "Bearer {{secret:TMDB_TOKEN}}" } });
 				if (r.status === 401) { log("TMDB rejected the token"); queue.length = 0; bad++; return; }
-				if (r.status < 300) { avail[id] = { ...lib.availability(r.json, today), checked: today, v: AVAIL_VERSION }; ok++; } else bad++;
+				if (r.status < 300) { avail[id] = { ...availability(r.json, today), checked: today, v: AVAIL_VERSION }; ok++; } else bad++;
 			} catch (e) { bad++; log(`${id}: ${e.message}`); }
 		}
 	};
 	await Promise.all([worker(), worker(), worker(), worker()]);
-	if (ok) await api.store.set("availability", avail);
+	if (ok) await api.store.set(KEY, avail);
 	return { refreshed: ok, of: ids.size, failed: bad };
 }

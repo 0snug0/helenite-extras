@@ -42,9 +42,9 @@ It creates `50_Personal/Letterboxd/Films/<Title> (<Year>).md` for every film in 
 
 ## 4. Apps
 
-The vault ships three apps in `Apps/`: **Home** (dashboard), **Downloadrr** (films: Radarr, SABnzbd, Plex) and **Downloadrr TV** (shows: Sonarr, SABnzbd, Plex). Install the launcher entries and the Apps sidebar by copying the files under `setup/helenite/` into `.helenite/` at the same relative paths (`setup/helenite/plugins/core-apps/data.json` → `.helenite/plugins/core-apps/data.json`, `setup/helenite/workspace.json` → `.helenite/workspace.json`). If `.helenite/workspace.json` already exists, ask before replacing it.
+The vault ships one app in `Apps/`: **Media**, with pages **Home** (dashboard), **Movies** (Radarr, SABnzbd, Plex), **TV** (Sonarr, SABnzbd, Plex) and **Settings**. Install the launcher entries and the Apps sidebar by copying the files under `setup/helenite/` into `.helenite/` at the same relative paths (`setup/helenite/plugins/core-apps/data.json` → `.helenite/plugins/core-apps/data.json`, `setup/helenite/workspace.json` → `.helenite/workspace.json`). If `.helenite/workspace.json` already exists, ask before replacing it.
 
-Ask which services the user runs. For each app they want, tell them to open **Settings → Secrets** and enter the keys themselves (`RADARR_API_KEY`, `SONARR_API_KEY`, `SABNZBD_API_KEY`, `PLEX_TOKEN`, `TMDB_TOKEN`, optional `OMDB_API_KEY`), and to change the service URLs in the app's settings if they are not the defaults (Radarr `:7878`, Sonarr `:8989`, SABnzbd `:8080`, Plex `:32400`). Home's calendar card needs the Google account connected in Settings → Accounts; it is optional.
+Ask which services the user runs. For each service they run, tell them to open the Media app's **Settings** page (or Helenite's Settings → Secrets) and enter the keys themselves (`RADARR_API_KEY`, `SONARR_API_KEY`, `SABNZBD_API_KEY`, `PLEX_TOKEN`, `TMDB_TOKEN`, optional `OMDB_API_KEY`), and to change the service URLs on the Settings page if they are not the defaults (Radarr `:7878`, Sonarr `:8989`, SABnzbd `:8080`, Plex `:32400`). The Home page's calendar card needs the Google account connected in Settings → Accounts; it is optional.
 
 ## 5. Background jobs (macOS)
 
@@ -65,8 +65,10 @@ For each agent the user wants (`letterboxd-sync` daily, `letterboxd-poll` every 
 
 ## 7. Finish
 
-Open the Home app, tell the user what was set up and what was skipped, and delete this `setup/` folder only if they agree.
+Open the Media app, tell the user what was set up and what was skipped, and delete this `setup/` folder only if they agree.
 
 ## 8. Migrating from the three old apps (Home, Downloadrr, DownloadrrTV)
+
+A vault that already has the three old apps keeps them installed beside `media` until the user deletes them (the template no longer ships them). Do not remove them for the user. The old Downloadrr app also has a `refresh-availability` background job: turn it off (disable the old app's job) once `media` is installed, so availability is not refreshed twice; the Media app has its own `refresh-availability` job.
 
 `node setup/migrate-to-media.mjs <vault> [--dry-run]` copies the old apps' stores (`.helenite/apps/{home,downloadrr,downloadrr-tv}/store.json`) into the Media app's store under its prefixed key names. It never overwrites a key Media already has, never touches the old files and is safe to run twice. The user's real vault is `~/Helenite/media`: run it on a copy first with `--dry-run`, read the three lists, then run it for real. Close Helenite first: the app rewrites store.json while Media is open. API keys live in the keychain and cannot be migrated: the user re-enters them once on the Media Settings page.
