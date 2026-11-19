@@ -6,7 +6,7 @@
      --media-thumb-radius       posters and thumbnails (6px); --media-badge-radius: small chips, tooltips, buttons (4px)
      --media-poster-ratio, -poster-shadow   the poster frame
      --media-nav-height         the shell's nav bar
-     --media-title-size         a page title; --media-header-size: a section/panel header (all headers weigh 600)
+     --media-title-size         a page title; --media-header-size: Movies/TV section headers; --media-page-heading: Home section headings
      --media-letterboxd         Letterboxd green (ratings)
    .media-scope is on every page root and on the modal: shared rules are written once as ".media-scope .x". */
 .media-shell, .media-modal {
@@ -17,6 +17,8 @@
 	--media-nav-height: 40px;
 	--media-title-size: var(--h1-size, 1.8em); --media-header-size: var(--font-ui-medium);
 	--media-letterboxd: #00c030;
+	--media-card-min: 150px;
+	--media-page-heading: var(--h1-size, 1.6em);
 }
 
 .media-shell { display: flex; flex-direction: column; height: 100%; min-height: 0; }
@@ -46,7 +48,7 @@
 
 .media-scope .dl-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(var(--media-card-min, 150px), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(var(--media-card-min), 1fr));
 	gap: var(--media-gap);
 	align-items: stretch;
 }
@@ -110,7 +112,7 @@
 .media-scope .dl-avail-none, .media-scope .dl-avail-soon { color: var(--text-faint); }
 
 .media-scope .dl-active { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--background-modifier-border); }
-.media-scope .dl-active-title { margin: 0 0 var(--media-gap); font-size: var(--media-header-size); font-weight: 600; }
+.media-scope .dl-active-title { margin: 0 0 var(--media-gap); font-size: var(--media-header-size); }
 .media-scope .dl-warn { font-size: var(--font-ui-smaller); color: var(--text-error); margin: 2px 0 4px; }
 .media-scope .dl-active .dl-x:hover:not(:disabled) { color: var(--text-error); }
 
@@ -189,7 +191,7 @@
 
 /* Obsidian's own find-in-page bar opens on Cmd/Ctrl+F; these pages have their own title filter instead. */
 /* Hidden visually but still rendered: display:none changes how Obsidian moves focus when it opens the bar. */
-.workspace-leaf-content:has(.media-scope) .document-search-container {
+.workspace-leaf-content:has(.media-movies, .media-tv, .media-modal) .document-search-container {
 	position: absolute !important; top: 0; left: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;
 }
 
@@ -202,7 +204,8 @@
 .media-movies .dl-card.media-movies-focus { border-color: var(--interactive-accent); box-shadow: 0 0 0 2px var(--interactive-accent); }
 
 /* TV page: same look as the movie page (shared rules above are scoped to both roots); only the table's columns differ. */
-.media-tv .dl-active-table { min-width: 1010px; }
+/* Order and specificity matter: .media-tv.media-scope (0,3,0) must beat the shared .media-scope .dl-active-table (0,2,0) above. */
+.media-tv.media-scope .dl-active-table { min-width: 1010px; }
 .media-tv .dl-col-episodes { width: 150px; }
 
 /* The season list in the search modal. */
@@ -222,7 +225,8 @@
 /* The on-disk tree under a series row: seasons indented once, episodes twice. */
 .media-tv .dl-chev { display: inline-flex; width: 20px; margin-right: 4px; padding: 0; vertical-align: middle; }
 .media-tv .dl-tree-season .dl-cell-title { padding-left: 28px; }
-.media-tv .dl-tree-episode .dl-cell-title { padding-left: 56px; white-space: pre; color: var(--text-muted); }
+/* Only the indent: the old white-space/colour here always lost to the table cell rules, so they were dead and are dropped. */
+.media-tv .dl-tree-episode .dl-cell-title { padding-left: 56px; }
 .media-tv .dl-tree-note .dl-cell-title { padding-left: 28px; }
 .media-tv .dl-tree > td { background: var(--background-primary-alt, transparent); }
 
@@ -288,7 +292,7 @@
 .media-home .movie-recs .movie-rec-scores { width: 100%; display: flex; flex-direction: column; gap: 1px; margin-top: 3px; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; }
 .media-home .movie-recs .movie-rec-score { display: flex; justify-content: space-between; gap: 6px; color: var(--text-normal); }
 .media-home .movie-recs .movie-rec-score-label { color: var(--text-muted); }
-.media-home .movie-recs .movie-rec-score-lb span:last-child { color: #00c030; }
+.media-home .movie-recs .movie-rec-score-lb span:last-child { color: var(--media-letterboxd); }
 .media-home .movie-recs .movie-rec-score a { color: var(--text-normal); text-decoration: none; }
 .media-home .movie-recs .movie-rec-score a:hover { text-decoration: underline; }
 .media-home .movie-recs .movie-rec-avail { width: 100%; margin-top: 3px; font-size: var(--font-ui-smaller); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -365,11 +369,11 @@
 .media-home .home-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--media-gap-lg); margin-bottom: 8px; }
 .media-home .home-title { font-size: var(--media-title-size); font-weight: 700; }
 .media-home .home-actions { display: flex; gap: var(--media-gap); flex-wrap: wrap; }
-.media-home .home-h { margin: 1.2em 0 0.4em; font-size: var(--media-header-size); font-weight: 600; }
+.media-home .home-h { margin: 1.2em 0 0.4em; font-size: var(--media-page-heading); }
 .media-home .home-section { margin-bottom: 8px; }
 .media-home .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--media-gap-lg); margin-top: 16px; }
 .media-home .home-panel { border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); padding: var(--media-panel-pad); min-width: 0; }
-.media-home .home-panel-title { font-size: var(--media-header-size); font-weight: 600; margin-bottom: 6px; }
+.media-home .home-panel-title { font-weight: 600; margin-bottom: 6px; }
 .media-home .home-tasks, .media-home .home-recent, .media-home .home-events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--media-gap-sm); }
 .media-home .home-tasks li, .media-home .home-recent li, .media-home .home-events li { display: flex; gap: var(--media-gap); align-items: baseline; font-size: var(--font-ui-small); }
 .media-home .home-task-due, .media-home .home-recent-when, .media-home .home-event-when { color: var(--text-muted); font-variant-numeric: tabular-nums; flex: none; min-width: 4.5em; }
