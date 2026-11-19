@@ -158,6 +158,8 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-composer-input` | The `<textarea>`. |
 | `hel-composer-send` | The send button (a `hel-button`). |
 | `hel-composer-hint` | The line under the box. |
+| `hel-composer-menu` | The "/" menu above the box (`slashCommands`), a `role="listbox"`. |
+| `hel-composer-menu-item` | One command; `is-selected` on the highlighted one. `hel-composer-menu-name` and `hel-composer-menu-desc` inside. |
 | `hel-kv` | `ui.keyValue`, a `<dl>`. |
 | `hel-kv-row` | One key and its value. |
 | `hel-kv-key` | The key (`<dt>`). |

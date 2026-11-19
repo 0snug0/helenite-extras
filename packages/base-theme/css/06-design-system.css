@@ -248,6 +248,12 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 :where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
 .hel-composer-hint { grid-column: 1 / -1; font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-composer.is-busy { cursor: progress; }
+.hel-composer-menu { position: fixed; box-sizing: border-box; z-index: var(--layer-popover); max-height: 240px; overflow-y: auto; padding: var(--size-2-2); background-color: var(--background-primary); border: var(--border-width) solid var(--background-modifier-border); border-radius: var(--radius-m); box-shadow: var(--shadow-s); }
+.hel-composer-menu[hidden] { display: none; }
+.hel-composer-menu-item { display: flex; gap: var(--size-4-2); align-items: baseline; padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); cursor: pointer; font-size: var(--font-ui-small); }
+.hel-composer-menu-item:hover, .hel-composer-menu-item.is-selected { background-color: var(--background-modifier-hover); }
+.hel-composer-menu-name { flex: none; color: var(--text-normal); font-family: var(--font-monospace); }
+.hel-composer-menu-desc { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); }
 
 /* key-value list */
 .hel-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--size-4-1) var(--size-4-4); margin: 0 0 var(--size-4-3); font-size: var(--font-ui-small); }

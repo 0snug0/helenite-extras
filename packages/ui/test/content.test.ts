@@ -155,6 +155,71 @@ describe("keyValue", () => {
 });
 
 describe("composer", () => {
+  const typeIn = (input: HTMLTextAreaElement, v: string) => {
+    input.value = v;
+    input.setSelectionRange(v.length, v.length);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+  const items = (el: HTMLElement) => [...el.querySelectorAll<HTMLElement>(".hel-composer-menu-item")];
+
+  it("slashCommands: '/' lists commands, typing filters, Enter inserts without sending, Escape closes", async () => {
+    const onSubmit = vi.fn();
+    const load = vi.fn(async () => [
+      { name: "helenite-cc:helenite-plugin-creator", description: "Build a plugin" },
+      { name: "helenite-cc:helenite-notes", description: "Notes" },
+      { name: "review", description: "Review a plugin" },
+    ]);
+    const c = composer(host(), { onSubmit, slashCommands: load });
+    const menu = c.el.querySelector<HTMLElement>(".hel-composer-menu")!;
+    c.input.focus();
+    typeIn(c.input, "/");
+    await tick();
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(menu.hidden).toBe(false);
+    expect(c.input.getAttribute("aria-expanded")).toBe("true");
+    expect(items(c.el).map((i) => i.querySelector(".hel-composer-menu-name")!.textContent)).toEqual(["/helenite-cc:helenite-plugin-creator", "/helenite-cc:helenite-notes", "/review"]);
+
+    typeIn(c.input, "/helenite-p");
+    expect(items(c.el)).toHaveLength(1);
+    expect(c.input.getAttribute("aria-activedescendant")).toBe(items(c.el)[0].id);
+    key(c.input, "Enter");
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(c.input.value).toBe("/helenite-cc:helenite-plugin-creator ");
+    expect(menu.hidden).toBe(true);
+
+    // Past the first word the menu stays shut, and Enter sends.
+    typeIn(c.input, "/helenite-cc:helenite-plugin-creator make a query plugin");
+    expect(menu.hidden).toBe(true);
+    key(c.input, "Enter");
+    expect(onSubmit).toHaveBeenCalledWith("/helenite-cc:helenite-plugin-creator make a query plugin");
+
+    // Name matches rank above description matches.
+    typeIn(c.input, "/notes");
+    expect(items(c.el).map((i) => i.querySelector(".hel-composer-menu-name")!.textContent)).toEqual(["/helenite-cc:helenite-notes"]);
+    typeIn(c.input, "/plugin");
+    expect(items(c.el)[0].querySelector(".hel-composer-menu-name")!.textContent).toBe("/helenite-cc:helenite-plugin-creator");
+    typeIn(c.input, "/no");
+    expect(items(c.el).map((i) => i.textContent)).toEqual(["/helenite-cc:helenite-notesNotes"]);
+    typeIn(c.input, "/");
+    key(c.input, "ArrowDown");
+    key(c.input, "ArrowDown");
+    expect(items(c.el)[2].classList.contains("is-selected")).toBe(true);
+    key(c.input, "ArrowDown");
+    expect(items(c.el)[0].classList.contains("is-selected")).toBe(true);
+    const esc = vi.fn();
+    c.input.addEventListener("keydown", (e) => e.key === "Escape" && esc());
+    key(c.input, "Escape");
+    expect(menu.hidden).toBe(true);
+    expect(esc).not.toHaveBeenCalled();
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it("without slashCommands there is no menu", () => {
+    const c = composer(host(), { onSubmit: () => {} });
+    typeIn(c.input, "/");
+    expect(c.el.querySelector(".hel-composer-menu")).toBeNull();
+  });
+
   it("false from onSubmit keeps the text; allowEmpty sends an empty box; an IME's Enter does not send", async () => {
     const kept = composer(host(), { onSubmit: () => false });
     kept.input.value = "hello";

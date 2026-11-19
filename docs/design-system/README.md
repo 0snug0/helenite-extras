@@ -268,6 +268,8 @@ box.focus();
 
 A text box with a send button. `submitOn: 'enter'` (default) sends on Enter; `'mod-enter'` sends on Cmd/Ctrl+Enter and leaves Enter for new lines. Blank text is not sent. When `onSubmit` returns a promise, the composer is busy until it settles. The box is cleared once `onSubmit` returns or its promise resolves; when it throws or rejects, or returns (or resolves to) `false` because nothing was sent, the text stays. An IME's Enter never sends. `allowEmpty: true` sends an empty box too, for a send button that starts something whose text is optional. Other options: `rows` (3), `submitLabel` ("Send"), `submitIcon` (an icon button instead of a text one). The handle has `input`, `setBusy`, `focus` and `clear`.
 
+`slashCommands: () => [{ name, description? }]` (or a promise of them) turns on a "/" menu: typing "/" at the start of the box lists the commands in a popup (above the box, or below when there is more room there), filtered as you type. Arrow keys move, Enter or Tab inserts `/name ` (it never sends), Escape closes, and a click picks. The function is called once, the first time the menu opens.
+
 ### ui.keyValue
 
 ```ts
