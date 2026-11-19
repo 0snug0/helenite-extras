@@ -15,7 +15,7 @@ const ID = /^[a-z][a-z0-9-]{1,40}$/;
 // The name is a folder name for themes and apps, so no slash and no leading dot; and no control characters or line
 // separators (U+2028, U+2029). Quotes, backslashes and the like are fine: each place a name lands escapes it.
 const BAD_NAME = /[/\u0000-\u001f\u007f\u2028\u2029]|^\./;
-const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact]';
+const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact] [--app-dir <vault>/Apps/My\ Thing]';
 
 function fail(message) {
   console.error(`create-helenite: ${message}`);
@@ -23,24 +23,25 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const out = { dir: null, template: null, name: null, id: null, framework: 'preact' };
+  const out = { dir: null, template: null, name: null, id: null, framework: 'preact', appDir: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-h' || a === '--help') {
       console.log(USAGE);
       process.exit(0);
     }
-    const m = /^--(template|name|id|framework)(?:=(.*))?$/.exec(a);
+    const m = /^--(template|name|id|framework|app-dir)(?:=(.*))?$/.exec(a);
     if (m) {
       const value = m[2] ?? argv[++i];
       if (value === undefined || value === '') fail(`--${m[1]} needs a value.\n${USAGE}`);
-      out[m[1]] = value;
+      out[m[1] === 'app-dir' ? 'appDir' : m[1]] = value;
     } else if (a.startsWith('-')) fail(`unknown option ${a}.\n${USAGE}`);
     else if (out.dir) fail(`one directory only (got ${out.dir} and ${a}).\n${USAGE}`);
     else out.dir = a;
   }
   if (!out.dir) fail(`name the directory to create.\n${USAGE}`);
   if (!TEMPLATES.includes(out.template)) fail(`--template must be one of ${TEMPLATES.join(', ')}.\n${USAGE}`);
+  if (out.appDir && out.template !== 'app-vite') fail(`--app-dir is for --template app-vite.\n${USAGE}`);
   if (!FRAMEWORKS.includes(out.framework)) fail(`--framework must be one of ${FRAMEWORKS.join(', ')}.\n${USAGE}`);
   return out;
 }
@@ -101,6 +102,14 @@ if (args.template === 'app-vite') {
   const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'));
   Object.assign(pkg, JSON.parse(readFileSync(join(adapter, 'package.json'), 'utf8')));
   writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`);
+  // --app-dir: the project (node_modules, src) lives outside the vault, which indexes everything under it; `npm run build`
+  // writes view.js, view.css and app.md into the app folder in the vault. app.md is written now so the app is listed at once.
+  if (args.appDir) {
+    const appDir = resolve(args.appDir);
+    writeFileSync(join(dest, 'helenite.json'), `${JSON.stringify({ appDir }, null, 2)}\n`);
+    mkdirSync(appDir, { recursive: true });
+    cpSync(join(dest, 'app.md'), join(appDir, 'app.md'));
+  }
 }
 else cpSync(join(here, 'templates', args.template), dest, { recursive: true });
 for (const file of files(dest)) {
@@ -136,9 +145,11 @@ const next = {
     '  and open it with the command "Apps: Open app…".',
   ],
   'app-vite': [
-    `  cd ${shown} && npm install && npm run build     # Vite writes view.js and view.css beside app.md`,
-    `  Copy ${shown}/ (without node_modules) to <vault>/Apps/${name}/, approve its permissions,`,
-    '  and open it with "Apps: Open app…". Edit src/, rebuild, and Helenite reloads the app when view.js changes.',
+    `  cd ${shown} && npm install && npm run build`,
+    args.appDir
+      ? `  The build writes app.md, view.js and view.css into ${resolve(args.appDir)}; approve its permissions and open it with "Apps: Open app…".`
+      : `  Vite writes view.js and view.css beside app.md. Copy ${shown}/ (without node_modules) to <vault>/Apps/${name}/, approve its permissions,\n  and open it with "Apps: Open app…". (Keep node_modules out of the vault: it indexes every file; use --app-dir to build into it instead.)`,
+    '  Edit src/, rebuild, and Helenite reloads the app when view.js changes.',
   ],
   'app-pages': [
     `  Copy ${shown}/ to <vault>/Apps/${name}/, approve its permissions,`,
