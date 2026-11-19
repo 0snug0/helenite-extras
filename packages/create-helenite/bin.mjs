@@ -7,13 +7,15 @@ import { fileURLToPath } from 'node:url';
 import { heleniteTypes, heleniteVersion, pagesShell, uiKitBundle } from './assets.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const TEMPLATES = ['plugin', 'theme', 'app', 'app-pages'];
+const TEMPLATES = ['plugin', 'theme', 'app', 'app-pages', 'app-vite'];
+// app-vite: the framework adapters (templates/app-vite/adapters/<name>). Adding one is adding a folder.
+const FRAMEWORKS = existsSync(join(here, 'templates/app-vite/adapters')) ? readdirSync(join(here, 'templates/app-vite/adapters')) : [];
 // The vault app id rule (apps-runtime's APP_ID), used for every template: lowercase letters, digits and hyphens.
 const ID = /^[a-z][a-z0-9-]{1,40}$/;
 // The name is a folder name for themes and apps, so no slash and no leading dot; and no control characters or line
 // separators (U+2028, U+2029). Quotes, backslashes and the like are fine: each place a name lands escapes it.
 const BAD_NAME = /[/\u0000-\u001f\u007f\u2028\u2029]|^\./;
-const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages [--name "My thing"] [--id my-thing]';
+const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact]';
 
 function fail(message) {
   console.error(`create-helenite: ${message}`);
@@ -21,14 +23,14 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const out = { dir: null, template: null, name: null, id: null };
+  const out = { dir: null, template: null, name: null, id: null, framework: 'preact' };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-h' || a === '--help') {
       console.log(USAGE);
       process.exit(0);
     }
-    const m = /^--(template|name|id)(?:=(.*))?$/.exec(a);
+    const m = /^--(template|name|id|framework)(?:=(.*))?$/.exec(a);
     if (m) {
       const value = m[2] ?? argv[++i];
       if (value === undefined || value === '') fail(`--${m[1]} needs a value.\n${USAGE}`);
@@ -39,6 +41,7 @@ function parseArgs(argv) {
   }
   if (!out.dir) fail(`name the directory to create.\n${USAGE}`);
   if (!TEMPLATES.includes(out.template)) fail(`--template must be one of ${TEMPLATES.join(', ')}.\n${USAGE}`);
+  if (!FRAMEWORKS.includes(out.framework)) fail(`--framework must be one of ${FRAMEWORKS.join(', ')}.\n${USAGE}`);
   return out;
 }
 
@@ -89,7 +92,17 @@ if (args.template === 'app' || args.template === 'app-pages') extra['ui-kit.js']
 if (args.template === 'app-pages') Object.assign(extra, pagesShell());
 
 mkdirSync(dest, { recursive: true });
-cpSync(join(here, 'templates', args.template), dest, { recursive: true });
+if (args.template === 'app-vite') {
+  // The shared base, then the chosen adapter over it; their package.json files merge (the adapter adds its dependencies).
+  const adapter = join(here, 'templates/app-vite/adapters', args.framework);
+  cpSync(join(here, 'templates/app-vite/base'), dest, { recursive: true });
+  cpSync(adapter, dest, { recursive: true, filter: (src) => basename(src) !== 'package.json' });
+  const pkgFile = join(dest, 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'));
+  Object.assign(pkg, JSON.parse(readFileSync(join(adapter, 'package.json'), 'utf8')));
+  writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`);
+}
+else cpSync(join(here, 'templates', args.template), dest, { recursive: true });
 for (const file of files(dest)) {
   const text = readFileSync(file, 'utf8');
   const filled = text.replace(/\{\{(id|name|nameJs|nameJson|nameYaml|nameCss|helenite)\}\}/g, (_, k) => vars[k] ?? fail(`template ${relative(dest, file)} uses {{${k}}}, which ${args.template} does not set`));
@@ -121,6 +134,11 @@ const next = {
   app: [
     `  Copy ${shown}/ to <vault>/Apps/${name}/, approve its permissions,`,
     '  and open it with the command "Apps: Open app…".',
+  ],
+  'app-vite': [
+    `  cd ${shown} && npm install && npm run build     # Vite writes view.js and view.css beside app.md`,
+    `  Copy ${shown}/ (without node_modules) to <vault>/Apps/${name}/, approve its permissions,`,
+    '  and open it with "Apps: Open app…". Edit src/, rebuild, and Helenite reloads the app when view.js changes.',
   ],
   'app-pages': [
     `  Copy ${shown}/ to <vault>/Apps/${name}/, approve its permissions,`,

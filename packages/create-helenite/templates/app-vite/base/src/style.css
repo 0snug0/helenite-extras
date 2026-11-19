@@ -1,0 +1,5 @@
+/* The app's CSS, bundled into view.css. Use the theme's variables (var(--text-muted), var(--size-4-2)), not fixed colours. */
+.app { padding: var(--size-4-3); display: grid; gap: var(--size-4-2); }
+.app h1 { margin: 0; }
+.app ul { margin: 0; padding-left: var(--size-4-4); }
+.app .muted { color: var(--text-muted); }

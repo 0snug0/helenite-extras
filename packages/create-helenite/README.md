@@ -3,7 +3,7 @@
 Scaffolds a Helenite plugin, theme, vault app or multi-page vault app. Private: it is not on npm, so run it from a Helenite checkout.
 
 ```
-node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages [--name "My thing"] [--id my-thing]
+node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact]
 ```
 
 | Template | Writes |
@@ -12,6 +12,7 @@ node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-page
 | `theme` | `manifest.json` and `theme.css`: Obsidian and `--hel-*` variables for light and dark, and the public classes. |
 | `app` | `app.md` (`theme: inherit`), `view.js` using `@helenite/ui-kit`, `view.css`, and `ui-kit.js` (the kit, bundled from this checkout). |
 | `app-pages` | A vault app with pages: `app.md` (one optional secret declared, no `required`), `view.js` (the page list), `view.css` (spacing tokens), `pages/home` and `pages/about` (`ctx.go`, `ctx.params`, `ctx.onParams`, a setup state), `ui-kit.js`, and `router.js` plus `shell.js`, copied at scaffold time from `templates/movie-tv/Apps/Media` (the one source of the shell; do not edit the copies). |
+| `app-vite` | Spike. A vault app written with a framework and built by Vite into plain `view.js` and `view.css` beside `app.md` (the sandbox, manifest and permissions are unchanged). `--framework preact` (default) or `vanilla`; a framework is an adapter folder under `templates/app-vite/adapters/<name>` (`vite.adapter.mjs`, `src/main.*`, `src/helenite/` with `defineApp` and the data bindings) over the shared `base/` (manifest, `vite.config.mjs`, and `src/helenite/core.js`, the framework-free `createNotes(api)` query/cache/update layer). Preact's `useNotes({ from, where, filter, sort, limit })` and `useNote(path)` read the user's markdown notes through `api.notes`. Build with `npm install && npm run build`. |
 
 It refuses a folder that is not empty and an invalid id or name, and prints the next steps. `--id` defaults to the name in lowercase with hyphens, or to the folder's name.
 
