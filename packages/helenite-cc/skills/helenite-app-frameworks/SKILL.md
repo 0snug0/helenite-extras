@@ -52,7 +52,7 @@ Edit `src/` (and `app.md` in the project; the build copies it into the vault), b
 
 ## Rules
 
-- Style with the theme's CSS variables in `src/*.css` (bundled into `view.css`); reuse existing class names when matching an existing look.
+- Style with the theme's CSS variables in `src/*.css` (bundled into `view.css`); reuse existing class names when matching an existing look. Never hard-code colours or `prefers-color-scheme` rules: the variables already switch with the vault's light/dark and theme, and the frame's `color-scheme` follows the host. Use `--interactive-accent` for the app's brand colour.
 - `@helenite/ui-kit` is imperative DOM and does not drop into JSX. Write small components that emit its class names, or mount a kit part into a `ref` in an effect.
 - Page-style apps get `usePage()` (`go`, `params`, `onParams`, `onHide`, `setStatus`, `store`); it is null when mounted as an app. Deep links stay read-only (see helenite-apps).
 - Open links with `api.workspace.openNote` / `openUrl`, never `<a href>` navigation (use a click handler that prevents default).
