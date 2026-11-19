@@ -1,0 +1,17 @@
+/* Media shell: nav bar, status strip, page panes. Theme variables only. */
+.media-shell { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.media-nav { display: flex; gap: 4px; padding: 6px 8px; border-bottom: 1px solid var(--background-modifier-border); }
+.media-nav-btn { background: transparent; border: 0; border-radius: 6px; padding: 4px 12px; color: var(--text-muted); cursor: pointer; }
+.media-nav-btn:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
+.media-nav-btn.is-active { color: var(--text-normal); background: var(--background-modifier-hover); font-weight: 600; }
+.media-status { display: flex; gap: 8px; padding: 4px 12px; font-size: var(--font-ui-smaller); }
+.media-chip { color: var(--text-muted); }
+.media-chip::before { content: "\25CF"; margin-right: 4px; }
+.media-chip-ok::before { color: var(--color-green, #3a3); }
+.media-chip-down::before { color: var(--color-red, #d33); }
+.media-chip-unset::before { color: var(--text-faint); }
+.media-body { flex: 1; min-height: 0; overflow: auto; }
+.media-page[hidden] { display: none; }
+.media-error { padding: 24px; text-align: center; }
+.media-error-title { font-weight: 600; }
+.media-error-detail { color: var(--text-muted); font-size: var(--font-ui-small); }
