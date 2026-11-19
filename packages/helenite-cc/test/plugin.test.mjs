@@ -11,14 +11,14 @@ test('manifest, variants and skills are well formed', () => {
   const hooks = JSON.parse(readFileSync(join(root, 'variants/hooks.plugin.json'), 'utf8')).hooks;
   assert.ok(hooks.Stop && hooks.PreToolUse);
   assert.match(readFileSync(join(root, 'variants/mcp.plugin.json'), 'utf8'), /\$\{HELENITE_MCP_URL\}/);
-  for (const s of ['helenite-plugins', 'helenite-apps', 'helenite-layout', 'helenite-notes']) {
+  for (const s of ['helenite-plugins', 'helenite-plugin-creator', 'helenite-apps', 'helenite-layout', 'helenite-notes']) {
     const md = readFileSync(join(root, 'skills', s, 'SKILL.md'), 'utf8');
     assert.match(md, new RegExp(`^---\\nname: ${s}\\ndescription: .+\\n---`));
   }
   assert.ok(existsSync(join(root, 'prompts/addendum.md')));
   // Default load must not double-register hooks or the MCP server.
   assert.ok(!existsSync(join(root, 'hooks/hooks.json')) && !existsSync(join(root, '.mcp.json')));
-  assert.ok(readdirSync(join(root, 'skills')).length === 5);
+  assert.ok(readdirSync(join(root, 'skills')).length === 6);
 });
 
 test('content skill and addendum cover the ask and render-check tools', () => {
@@ -38,4 +38,13 @@ test('skill descriptions are valid YAML plain scalars', () => {
     const desc = fm.split('\n').find((l) => l.startsWith('description: ')).slice('description: '.length);
     if (!/^["']/.test(desc)) assert.ok(!desc.includes(': ') && !desc.includes(' #'), `${s}: unquoted description has ': ' or ' #'`);
   }
+});
+
+test('plugin creator skill drives the wizard and the design system', () => {
+  const dir = join(root, 'skills/helenite-plugin-creator');
+  const md = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+  assert.match(md, /mcp__helenite__wizard/);
+  assert.match(md, /Just me/);
+  assert.match(md, /Shareable/);
+  for (const ref of md.matchAll(/\]\(([\w-]+\.md)\)/g)) assert.ok(existsSync(join(dir, ref[1])), `missing ${ref[1]}`);
 });
