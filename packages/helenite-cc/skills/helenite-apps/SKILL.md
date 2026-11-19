@@ -19,7 +19,7 @@ Manifest keys: `helenite-app: 1`, `id` (`/^[a-z][a-z0-9-]{1,40}$/`), `name`, `ve
 
 Apps run sandboxed in an iframe: no Node, no direct network, no host DOM. They use the capability `api`: `api.vault.{read,write,list}`, `api.notes.{query,update}`, `api.store.{get,set}`, `api.net.fetch` (host-scoped; secrets are bound to hosts and never readable), `api.workspace.{openNote,openApp}`, `api.notify`, `api.agent.ask(text)`, `api.connectors.<id>.*`. Embed in a note with a fenced block `helenite-app <id>`.
 
-Tools: `app_list`, `app_open`, `app_scaffold`, `app_reload`, `app_test`, `apps_add_entry` (`mcp__helenite__*`). If one answers "not available", the app runtime is not installed yet; say so rather than hand-writing around it.
+Tools: `app_list`, `app_open`, `app_reload`, `app_test`, `apps_add_entry` (`mcp__helenite__*`). `app_scaffold` is NOT wired in the app yet and answers "not available": do not stop there. Scaffold with the `create-helenite` script instead (skill `helenite-app-frameworks` says where it is and how to run it), then `app_reload` and `app_open`.
 
 App UI: `@helenite/ui-kit` gives the design-system parts (`button`, `table`, `card`, ...) with the same signatures as plugins' `ui.*`. A frame cannot resolve package names, so an app imports a bundled copy (`./ui-kit.js`) and calls `setBridge(api)` before any overlay. Today only `notice` works through the bridge (without options); `confirm`, `prompt`, `choose`, `form` and `menu` need host support that is not built yet.
 
