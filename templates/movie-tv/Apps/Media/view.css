@@ -1,10 +1,30 @@
-/* Media shell: nav bar, status strip, page panes. Theme variables only. */
+/* Media: one stylesheet for the shell and all four pages (Home, Movies, TV, Settings). Theme variables only.
+   TOKENS (defined on .media-shell and on .media-modal, which is mounted on <body>, outside the shell):
+     --media-gap / -sm / -lg    spacing between siblings (8 / 4 / 12px)
+     --media-pad, -panel-pad    padding inside a card, and inside a panel or section box
+     --media-card-radius        every bordered box: cards, panels, day cells, season boxes (10px)
+     --media-thumb-radius       posters and thumbnails (6px); --media-badge-radius: small chips, tooltips, buttons (4px)
+     --media-poster-ratio, -poster-shadow   the poster frame
+     --media-nav-height         the shell's nav bar
+     --media-title-size         a page title; --media-header-size: a section/panel header (all headers weigh 600)
+     --media-letterboxd         Letterboxd green (ratings)
+   .media-scope is on every page root and on the modal: shared rules are written once as ".media-scope .x". */
+.media-shell, .media-modal {
+	--media-gap: 8px; --media-gap-sm: 4px; --media-gap-lg: 12px;
+	--media-pad: 8px; --media-panel-pad: 10px 12px;
+	--media-card-radius: 10px; --media-thumb-radius: 6px; --media-badge-radius: 4px;
+	--media-poster-ratio: 2 / 3; --media-poster-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+	--media-nav-height: 40px;
+	--media-title-size: var(--h1-size, 1.8em); --media-header-size: var(--font-ui-medium);
+	--media-letterboxd: #00c030;
+}
+
 .media-shell { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.media-nav { display: flex; gap: 4px; padding: 6px 8px; border-bottom: 1px solid var(--background-modifier-border); }
-.media-nav-btn { background: transparent; border: 0; border-radius: 6px; padding: 4px 12px; color: var(--text-muted); cursor: pointer; }
+.media-nav { display: flex; align-items: center; box-sizing: border-box; min-height: var(--media-nav-height); gap: var(--media-gap-sm); padding: 6px var(--media-gap); border-bottom: 1px solid var(--background-modifier-border); }
+.media-nav-btn { background: transparent; border: 0; border-radius: var(--media-thumb-radius); padding: 4px 12px; color: var(--text-muted); cursor: pointer; }
 .media-nav-btn:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
 .media-nav-btn.is-active { color: var(--text-normal); background: var(--background-modifier-hover); font-weight: 600; }
-.media-status { display: flex; gap: 8px; padding: 4px 12px; font-size: var(--font-ui-smaller); }
+.media-status { display: flex; gap: var(--media-gap); padding: 4px 12px; font-size: var(--font-ui-smaller); }
 .media-chip { color: var(--text-muted); }
 .media-chip::before { content: "\25CF"; margin-right: 4px; }
 .media-chip-ok::before { color: var(--color-green, #3a3); }
@@ -16,167 +36,167 @@
 .media-error-title { font-weight: 600; }
 .media-error-detail { color: var(--text-muted); font-size: var(--font-ui-small); }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) { color: var(--text-normal); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table td, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table th { color: inherit; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-sent { color: var(--color-green); font-size: var(--font-ui-small); }
+.media-scope { color: var(--text-normal); }
+.media-scope .dl-table, .media-scope .dl-table td, .media-scope .dl-table th { color: inherit; }
+.media-scope .dl-sent { color: var(--color-green); font-size: var(--font-ui-small); }
 /* Buttons, the filter control, tables, badges, dots and empty/loading/error states are ui-kit parts styled by the
    design-system stylesheet; what is left here is layout and the page's own colours. */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-filters .hel-segmented { flex-wrap: wrap; }
+.media-scope .dl-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; }
+.media-scope .dl-filters .hel-segmented { flex-wrap: wrap; }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-grid {
+.media-scope .dl-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	gap: 8px;
+	grid-template-columns: repeat(auto-fill, minmax(var(--media-card-min, 150px), 1fr));
+	gap: var(--media-gap);
 	align-items: stretch;
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card {
+.media-scope .dl-card {
 	display: flex; flex-direction: column; align-items: center;
-	padding: 8px;
+	padding: var(--media-pad);
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 10px;
+	border-radius: var(--media-card-radius);
 	background: var(--background-secondary);
 	text-align: center;
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card-open { border-color: var(--interactive-accent); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-poster-link { display: block; width: 100%; text-decoration: none; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-poster {
-	width: 100%; aspect-ratio: 2 / 3;
+.media-scope .dl-card-open { border-color: var(--interactive-accent); }
+.media-scope .dl-poster-link { display: block; width: 100%; text-decoration: none; }
+.media-scope .dl-poster {
+	width: 100%; aspect-ratio: var(--media-poster-ratio);
 	background: var(--background-modifier-border) center / cover no-repeat;
-	border-radius: 6px;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+	border-radius: var(--media-thumb-radius);
+	box-shadow: var(--media-poster-shadow);
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-poster-missing {
+.media-scope .dl-poster-missing {
 	display: flex; align-items: center; justify-content: center;
-	padding: 8px; font-size: var(--font-ui-small); color: var(--text-normal);
+	padding: var(--media-pad); font-size: var(--font-ui-small); color: var(--text-normal);
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-name {
+.media-scope .dl-name {
 	width: 100%; margin-top: 6px;
 	font-size: var(--font-ui-small); line-height: 1.25; height: calc(2 * 1.25em);
 	display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-year { font-size: var(--font-ui-smaller); color: var(--text-muted); font-variant-numeric: tabular-nums; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-source { font-size: var(--font-ui-smaller); margin: 2px 0 4px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-chip { margin-bottom: 6px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card .dl-btn-row { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card .dl-btn-row .dl-find { flex: 1; }
+.media-scope .dl-year { font-size: var(--font-ui-smaller); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.media-scope .dl-source { font-size: var(--font-ui-smaller); margin: 2px 0 4px; }
+.media-scope .dl-chip { margin-bottom: 6px; }
+.media-scope .dl-card .dl-btn-row { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--media-gap-sm); }
+.media-scope .dl-card .dl-btn-row .dl-find { flex: 1; }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-panel {
+.media-scope .dl-panel {
 	grid-column: 1 / -1;
-	padding: 10px 12px;
+	padding: var(--media-panel-pad);
 	border: 1px solid var(--interactive-accent);
-	border-radius: 10px;
+	border-radius: var(--media-card-radius);
 	background: var(--background-primary);
 	overflow-x: auto;
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-panel-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-panel-title { flex: 1; font-weight: var(--font-semibold); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-notice { margin-bottom: 8px; color: var(--color-green); font-size: var(--font-ui-small); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table { font-size: var(--font-ui-small); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-th { cursor: pointer; user-select: none; white-space: nowrap; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-cell-title { max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-row-rejected { opacity: 0.45; }
+.media-scope .dl-panel-head { display: flex; align-items: center; gap: var(--media-gap); margin-bottom: 8px; }
+.media-scope .dl-panel-title { flex: 1; font-weight: var(--font-semibold); }
+.media-scope .dl-notice { margin-bottom: 8px; color: var(--color-green); font-size: var(--font-ui-small); }
+.media-scope .dl-table { font-size: var(--font-ui-small); }
+.media-scope .dl-th { cursor: pointer; user-select: none; white-space: nowrap; }
+.media-scope .dl-cell-title { max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-scope .dl-row-rejected { opacity: 0.45; }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-sort { margin-left: auto; font-size: var(--font-ui-small); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-date { font-size: var(--font-ui-smaller); color: var(--text-faint); font-variant-numeric: tabular-nums; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail {
+.media-scope .dl-sort { margin-left: auto; font-size: var(--font-ui-small); }
+.media-scope .dl-date { font-size: var(--font-ui-smaller); color: var(--text-faint); font-variant-numeric: tabular-nums; }
+.media-scope .dl-avail {
 	width: 100%; margin: 1px 0 2px;
 	font-size: var(--font-ui-smaller); color: var(--text-muted);
 	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail-stream { color: var(--color-green); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail-rent { color: var(--color-blue); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail-theaters { color: var(--color-orange); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail-none, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-avail-soon { color: var(--text-faint); }
+.media-scope .dl-avail-stream { color: var(--color-green); }
+.media-scope .dl-avail-rent { color: var(--color-blue); }
+.media-scope .dl-avail-theaters { color: var(--color-orange); }
+.media-scope .dl-avail-none, .media-scope .dl-avail-soon { color: var(--text-faint); }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--background-modifier-border); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-title { margin: 0 0 8px; font-size: var(--font-ui-medium); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-warn { font-size: var(--font-ui-smaller); color: var(--text-error); margin: 2px 0 4px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active .dl-x:hover:not(:disabled) { color: var(--text-error); }
+.media-scope .dl-active { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--background-modifier-border); }
+.media-scope .dl-active-title { margin: 0 0 var(--media-gap); font-size: var(--media-header-size); font-weight: 600; }
+.media-scope .dl-warn { font-size: var(--font-ui-smaller); color: var(--text-error); margin: 2px 0 4px; }
+.media-scope .dl-active .dl-x:hover:not(:disabled) { color: var(--text-error); }
 
 /* On disk & downloading: nothing here may move when a row changes state. Fixed column widths, one square size for
    every button, a reserved slot for each action and for each header's sort arrow. */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active { overflow-x: auto; }
+.media-scope .dl-active { overflow-x: auto; }
 /* min-width: the fixed columns below (946px) plus room for a title; narrower panes scroll sideways. */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-table { table-layout: fixed; min-width: 1170px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-table th, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-act { width: 102px; }   /* three 26px buttons, two 4px gaps, 2 x 8px cell padding */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-pos { width: 36px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-year { width: 84px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-date { width: 104px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-status { width: 124px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-size { width: 100px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-progress { width: 168px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-lb, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-rt, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-col-aud { width: 76px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-table .dl-cell-title { max-width: none; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-num { text-align: right; font-variant-numeric: tabular-nums; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-arrow { display: inline-block; width: 1.2em; text-align: center; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-th-label svg { vertical-align: middle; }
+.media-scope .dl-active-table { table-layout: fixed; min-width: 1170px; }
+.media-scope .dl-active-table th, .media-scope .dl-active-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+.media-scope .dl-col-act { width: 102px; }   /* three 26px buttons, two 4px gaps, 2 x 8px cell padding */
+.media-scope .dl-col-pos { width: 36px; }
+.media-scope .dl-col-year { width: 84px; }
+.media-scope .dl-col-date { width: 104px; }
+.media-scope .dl-col-status { width: 124px; }
+.media-scope .dl-col-size { width: 100px; }
+.media-scope .dl-col-progress { width: 168px; }
+.media-scope .dl-col-lb, .media-scope .dl-col-rt, .media-scope .dl-col-aud { width: 76px; }
+.media-scope .dl-active-table .dl-cell-title { max-width: none; }
+.media-scope .dl-table .dl-num { text-align: right; font-variant-numeric: tabular-nums; }
+.media-scope .dl-arrow { display: inline-block; width: 1.2em; text-align: center; }
+.media-scope .dl-th-label svg { vertical-align: middle; }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-act { display: grid; grid-template-columns: repeat(3, 26px); gap: 4px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active .dl-ib {
+.media-scope .dl-act { display: grid; grid-template-columns: repeat(3, 26px); gap: var(--media-gap-sm); }
+.media-scope .dl-active .dl-ib {
 	display: flex; align-items: center; justify-content: center;
 	box-sizing: border-box; width: 26px; min-width: 0; height: 26px; margin: 0; padding: 0;
 }
 
 /* .dl-table in the selector: these have to beat the table's own "td { color: inherit }". */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-downloading { color: var(--color-orange); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-started, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-watching { color: var(--color-blue); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-watched, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-importing { color: var(--color-green); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-blocked, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-failed { color: var(--text-error); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-paused, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-queued, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-unwatched, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .dl-st-downloaded { color: var(--text-muted); }
+.media-scope .dl-table .dl-st-downloading { color: var(--color-orange); }
+.media-scope .dl-table .dl-st-started, .media-scope .dl-table .dl-st-watching { color: var(--color-blue); }
+.media-scope .dl-table .dl-st-watched, .media-scope .dl-table .dl-st-importing { color: var(--color-green); }
+.media-scope .dl-table .dl-st-blocked, .media-scope .dl-table .dl-st-failed { color: var(--text-error); }
+.media-scope .dl-table .dl-st-paused, .media-scope .dl-table .dl-st-queued, .media-scope .dl-table .dl-st-unwatched, .media-scope .dl-table .dl-st-downloaded { color: var(--text-muted); }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-prog { display: grid; grid-template-columns: 1fr 4ch; gap: 8px; align-items: center; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar { height: 6px; border-radius: 3px; background: var(--background-modifier-border); overflow: hidden; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-fill { height: 100%; background: var(--text-faint); border-radius: 3px; transition: width 1s linear; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-downloading .dl-bar-fill { background: var(--color-orange); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-started .dl-bar-fill, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-watching .dl-bar-fill { background: var(--color-blue); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-importing .dl-bar-fill { background: var(--color-green); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-blocked .dl-bar-fill, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-failed .dl-bar-fill { background: var(--text-error); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-label { text-align: right; font-variant-numeric: tabular-nums; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-bar-none { color: var(--text-faint); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card .dl-x:hover:not(:disabled) { color: var(--text-error); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-x-armed, :is(.media-movies, .media-tv, .modal.downloadrr) .dl-x-armed:hover:not(:disabled) { background: var(--background-modifier-error); color: var(--text-on-accent); }
+.media-scope .dl-prog { display: grid; grid-template-columns: 1fr 4ch; gap: var(--media-gap); align-items: center; }
+.media-scope .dl-bar { height: 6px; border-radius: 3px; background: var(--background-modifier-border); overflow: hidden; }
+.media-scope .dl-bar-fill { height: 100%; background: var(--text-faint); border-radius: 3px; transition: width 1s linear; }
+.media-scope .dl-bar-downloading .dl-bar-fill { background: var(--color-orange); }
+.media-scope .dl-bar-started .dl-bar-fill, .media-scope .dl-bar-watching .dl-bar-fill { background: var(--color-blue); }
+.media-scope .dl-bar-importing .dl-bar-fill { background: var(--color-green); }
+.media-scope .dl-bar-blocked .dl-bar-fill, .media-scope .dl-bar-failed .dl-bar-fill { background: var(--text-error); }
+.media-scope .dl-bar-label { text-align: right; font-variant-numeric: tabular-nums; }
+.media-scope .dl-bar-none { color: var(--text-faint); }
+.media-scope .dl-card .dl-x:hover:not(:disabled) { color: var(--text-error); }
+.media-scope .dl-x-armed, .media-scope .dl-x-armed:hover:not(:disabled) { background: var(--background-modifier-error); color: var(--text-on-accent); }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-table .hel-table-buttons .hel-button { min-width: 76px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-findbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-find-input { flex: 1; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-find-count { color: var(--text-muted); font-size: var(--font-ui-smaller); white-space: nowrap; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active .dl-table tbody tr:hover > td { background: var(--background-modifier-hover); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-card:hover { background: var(--background-modifier-hover); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-active-head .dl-active-title { margin: 0; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-free { color: var(--text-muted); font-size: var(--font-ui-small); white-space: nowrap; }
+.media-scope .dl-table .hel-table-buttons .hel-button { min-width: 76px; }
+.media-scope .dl-findbar { display: flex; align-items: center; gap: var(--media-gap); margin-bottom: 8px; }
+.media-scope .dl-find-input { flex: 1; }
+.media-scope .dl-find-count { color: var(--text-muted); font-size: var(--font-ui-smaller); white-space: nowrap; }
+.media-scope .dl-active .dl-table tbody tr:hover > td { background: var(--background-modifier-hover); }
+.media-scope .dl-card:hover { background: var(--background-modifier-hover); }
+.media-scope .dl-active-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--media-gap-lg); margin-bottom: 8px; }
+.media-scope .dl-active-head .dl-active-title { margin: 0; }
+.media-scope .dl-free { color: var(--text-muted); font-size: var(--font-ui-small); white-space: nowrap; }
 
 /* "Find a show/movie to monitor" box. */
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add { margin-bottom: 14px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-row { display: flex; align-items: center; gap: 10px; padding: 6px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-secondary); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-poster { flex: none; width: 44px; aspect-ratio: 2 / 3; border-radius: 4px; background: var(--background-modifier-border) center / cover no-repeat; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-info { flex: 1; min-width: 0; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-title { font-size: var(--font-ui-small); font-weight: var(--font-semibold); }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-overview { font-size: var(--font-ui-smaller); color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-add-btn { flex: none; min-width: 92px; }
+.media-scope .dl-add { margin-bottom: 14px; }
+.media-scope .dl-add-bar { display: flex; align-items: center; gap: var(--media-gap); margin-bottom: 8px; }
+.media-scope .dl-add-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--media-gap); }
+.media-scope .dl-add-row { display: flex; align-items: center; gap: 10px; padding: 6px; border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); }
+.media-scope .dl-add-poster { flex: none; width: 44px; aspect-ratio: var(--media-poster-ratio); border-radius: var(--media-badge-radius); background: var(--background-modifier-border) center / cover no-repeat; }
+.media-scope .dl-add-info { flex: 1; min-width: 0; }
+.media-scope .dl-add-title { font-size: var(--font-ui-small); font-weight: var(--font-semibold); }
+.media-scope .dl-add-overview { font-size: var(--font-ui-smaller); color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.media-scope .dl-add-btn { flex: none; min-width: 92px; }
 
-.media-movies .film-scores { width: 100%; display: flex; flex-direction: column; gap: 1px; margin: 1px 0 3px; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.media-movies .film-scores .film-scores-line { display: flex; justify-content: space-between; align-items: center; gap: 4px; min-height: 1.5em; }
-.media-movies .film-scores .film-score { display: inline-flex; align-items: center; gap: 4px; color: var(--text-normal); text-decoration: none; }
-.media-movies .film-scores a.film-score:hover { text-decoration: underline; }
-.media-movies .film-scores .film-score-icon { flex: none; display: block; }
+.media-scope .film-scores { width: 100%; display: flex; flex-direction: column; gap: 1px; margin: 1px 0 3px; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.media-scope .film-scores .film-scores-line { display: flex; justify-content: space-between; align-items: center; gap: var(--media-gap-sm); min-height: 1.5em; }
+.media-scope .film-scores .film-score { display: inline-flex; align-items: center; gap: var(--media-gap-sm); color: var(--text-normal); text-decoration: none; }
+.media-scope .film-scores a.film-score:hover { text-decoration: underline; }
+.media-scope .film-scores .film-score-icon { flex: none; display: block; }
 
-:is(.media-movies, .media-tv, .modal.downloadrr) .dl-textfilter { flex: 0 1 220px; min-width: 120px; font-size: var(--font-ui-small); }
+.media-scope .dl-textfilter { flex: 0 1 220px; min-width: 120px; font-size: var(--font-ui-small); }
 
 /* Obsidian's own find-in-page bar opens on Cmd/Ctrl+F; these pages have their own title filter instead. */
 /* Hidden visually but still rendered: display:none changes how Obsidian moves focus when it opens the bar. */
-.workspace-leaf-content:has(:is(.media-movies, .media-tv, .modal.downloadrr)) .document-search-container {
+.workspace-leaf-content:has(.media-scope) .document-search-container {
 	position: absolute !important; top: 0; left: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;
 }
 
 /* Score badges (were styled by films-lib's scoreRow in the vault). */
-:is(.media-movies, .media-tv, .modal.downloadrr) .fl-scores { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 2px 0; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; }
-:is(.media-movies, .media-tv, .modal.downloadrr) .fl-score { color: var(--text-muted); white-space: nowrap; }
-:is(.media-movies, .media-tv, .modal.downloadrr) a.fl-score:hover { color: var(--text-normal); }
+.media-scope .fl-scores { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--media-gap-sm); margin: 2px 0; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; }
+.media-scope .fl-score { color: var(--text-muted); white-space: nowrap; }
+.media-scope a.fl-score:hover { color: var(--text-normal); }
 
 /* A card reached by a deep link (Home poster -> Movies): scrolled to and outlined. */
 .media-movies .dl-card.media-movies-focus { border-color: var(--interactive-accent); box-shadow: 0 0 0 2px var(--interactive-accent); }
@@ -186,18 +206,18 @@
 .media-tv .dl-col-episodes { width: 150px; }
 
 /* The season list in the search modal. */
-:is(.media-tv, .modal.downloadrr) .dl-season { margin-bottom: 8px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-secondary); overflow: hidden; }
-:is(.media-tv, .modal.downloadrr) .dl-season-head { display: flex; align-items: center; gap: 12px; padding: 8px 10px; }
-:is(.media-tv, .modal.downloadrr) .dl-season-name { width: 110px; font-weight: var(--font-semibold); }
-:is(.media-tv, .modal.downloadrr) .dl-season-prog { flex: 1; display: grid; grid-template-columns: 1fr 7ch; gap: 8px; align-items: center; }
-:is(.media-tv, .modal.downloadrr) .dl-season-acts { display: flex; gap: 4px; margin-left: auto; }
-:is(.media-tv, .modal.downloadrr) .dl-panel .dl-ib { display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 26px; min-width: 0; height: 26px; margin: 0; padding: 0; }
-:is(.media-tv, .modal.downloadrr) .dl-ep { display: flex; align-items: center; gap: 10px; padding: 5px 10px 5px 14px; border-top: 1px solid var(--background-modifier-border); font-size: var(--font-ui-small); }
-:is(.media-tv, .modal.downloadrr) .dl-ep-unaired { opacity: 0.5; }
-:is(.media-tv, .modal.downloadrr) .dl-ep-num { width: 3.2em; font-variant-numeric: tabular-nums; }
-:is(.media-tv, .modal.downloadrr) .dl-ep-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:is(.media-tv, .modal.downloadrr) .dl-ep-date { color: var(--text-muted); font-variant-numeric: tabular-nums; }
-:is(.media-tv, .modal.downloadrr) .dl-ep .hel-status-dot { flex: none; }
+.media-scope .dl-season { margin-bottom: 8px; border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); overflow: hidden; }
+.media-scope .dl-season-head { display: flex; align-items: center; gap: var(--media-gap-lg); padding: var(--media-panel-pad); }
+.media-scope .dl-season-name { width: 110px; font-weight: var(--font-semibold); }
+.media-scope .dl-season-prog { flex: 1; display: grid; grid-template-columns: 1fr 7ch; gap: var(--media-gap); align-items: center; }
+.media-scope .dl-season-acts { display: flex; gap: var(--media-gap-sm); margin-left: auto; }
+.media-scope .dl-panel .dl-ib { display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 26px; min-width: 0; height: 26px; margin: 0; padding: 0; }
+.media-scope .dl-ep { display: flex; align-items: center; gap: 10px; padding: 5px 10px 5px 14px; border-top: 1px solid var(--background-modifier-border); font-size: var(--font-ui-small); }
+.media-scope .dl-ep-unaired { opacity: 0.5; }
+.media-scope .dl-ep-num { width: 3.2em; font-variant-numeric: tabular-nums; }
+.media-scope .dl-ep-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-scope .dl-ep-date { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.media-scope .dl-ep .hel-status-dot { flex: none; }
 
 /* The on-disk tree under a series row: seasons indented once, episodes twice. */
 .media-tv .dl-chev { display: inline-flex; width: 20px; margin-right: 4px; padding: 0; vertical-align: middle; }
@@ -207,16 +227,16 @@
 .media-tv .dl-tree > td { background: var(--background-primary-alt, transparent); }
 
 /* Monitoring in the search modal. */
-:is(.media-tv, .modal.downloadrr) .dl-mon { margin-bottom: 12px; padding: 8px 10px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-secondary); }
-:is(.media-tv, .modal.downloadrr) .dl-mon-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
-:is(.media-tv, .modal.downloadrr) .dl-mon-fact { font-size: var(--font-ui-small); color: var(--text-muted); }
-:is(.media-tv, .modal.downloadrr) .dl-mon-next { margin-top: 6px; font-size: var(--font-ui-small); }
-:is(.media-tv, .modal.downloadrr) .dl-panel .dl-mon-on { color: var(--interactive-accent); }
+.media-scope .dl-mon { margin-bottom: 12px; padding: var(--media-panel-pad); border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); }
+.media-scope .dl-mon-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+.media-scope .dl-mon-fact { font-size: var(--font-ui-small); color: var(--text-muted); }
+.media-scope .dl-mon-next { margin-top: 6px; font-size: var(--font-ui-small); }
+.media-scope .dl-panel .dl-mon-on { color: var(--interactive-accent); }
 
 /* Plex watch state: season and episode marks, and the card chip. */
-:is(.media-tv, .modal.downloadrr) .dl-watch { font-size: var(--font-ui-smaller); white-space: nowrap; font-variant-numeric: tabular-nums; }
-:is(.media-tv, .modal.downloadrr) .dl-watch-done { color: var(--color-green); }
-:is(.media-tv, .modal.downloadrr) .dl-watch-part { color: var(--color-orange); }
+.media-scope .dl-watch { font-size: var(--font-ui-smaller); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.media-scope .dl-watch-done { color: var(--color-green); }
+.media-scope .dl-watch-part { color: var(--color-orange); }
 
 /* A card reached by a deep link (Home poster -> TV): scrolled to and outlined. */
 .media-tv .dl-card.media-tv-focus { border-color: var(--interactive-accent); box-shadow: 0 0 0 2px var(--interactive-accent); }
@@ -226,47 +246,42 @@
 
 /* --- movie-row --- */
 .media-home .movie-week-range { color: var(--text-muted); font-size: var(--font-ui-small); margin-bottom: 0.6em; }
-.media-home .movie-week { display: flex; align-items: stretch; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
-.media-home .movie-week .movie-day { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; padding: 6px 8px 8px; border: 1px solid var(--background-modifier-border); border-radius: 10px; background: var(--background-secondary); }
-.media-home .movie-week .movie-day-films { display: flex; gap: 12px; }
+.media-home .movie-week { display: flex; align-items: stretch; gap: var(--media-gap); overflow-x: auto; padding-bottom: 8px; }
+.media-home .movie-week .movie-day { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; padding: 6px 8px 8px; border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); }
+.media-home .movie-week .movie-day-films { display: flex; gap: var(--media-gap-lg); }
 .media-home .movie-week .movie-card { flex: 0 0 120px; width: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--text-normal); text-decoration: none; }
 .media-home .movie-week .movie-date { font-size: var(--font-ui-small); color: var(--text-muted); font-variant-numeric: tabular-nums; text-align: center; margin-bottom: 6px; }
-.media-home .movie-week .movie-poster { width: 120px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); transition: transform 120ms ease; }
+.media-home .movie-week .movie-poster { width: 120px; aspect-ratio: var(--media-poster-ratio); object-fit: cover; border-radius: var(--media-thumb-radius); box-shadow: var(--media-poster-shadow); transition: transform 120ms ease; }
 .media-home .movie-week .movie-card:hover .movie-poster { transform: translateY(-3px); }
-.media-home .movie-week .movie-poster-missing { display: flex; align-items: center; justify-content: center; padding: 8px; background: var(--background-modifier-border); font-size: var(--font-ui-small); }
+.media-home .movie-week .movie-poster-missing { display: flex; align-items: center; justify-content: center; padding: var(--media-pad); background: var(--background-modifier-border); font-size: var(--font-ui-small); }
 .media-home .movie-week .movie-year { margin-top: 6px; font-size: var(--font-ui-smaller); line-height: 1.25; min-height: 1.25em; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 /* Always exactly two lines tall: short names reserve the second line, long ones  are clamped, so the stars below line up across every day box. */ .media-home .movie-week .movie-name { width: 100%; font-size: var(--font-ui-small); line-height: 1.25; height: calc(2 * 1.25em); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .media-home .movie-week .movie-stars { position: relative; display: inline-block; margin-top: 4px; font-size: 14px; line-height: 1; height: 1em; letter-spacing: 1px; white-space: nowrap; }
 .media-home .movie-week .movie-stars-base { color: var(--background-modifier-border); }
-.media-home .movie-week .movie-stars-fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; color: #00c030;   /* Letterboxd green */ }
+.media-home .movie-week .movie-stars-fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; color: var(--media-letterboxd); }
 .media-home .movie-week .movie-stars-none { visibility: hidden; }
-.media-home .film-scores { width: 100%; display: flex; flex-direction: column; gap: 1px; margin: 1px 0 3px; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.media-home .film-scores .film-scores-line { display: flex; justify-content: space-between; align-items: center; gap: 4px; min-height: 1.5em; }
-.media-home .film-scores .film-score { display: inline-flex; align-items: center; gap: 4px; color: var(--text-normal); text-decoration: none; }
-.media-home .film-scores a.film-score:hover { text-decoration: underline; }
-.media-home .film-scores .film-score-icon { flex: none; display: block; }
 
 /* --- movie-recs --- */
 .media-home .movie-recs-stale { color: var(--text-faint); font-style: italic; font-size: var(--font-ui-small); margin-bottom: 0.6em; }
-.media-home .movie-recs { display: flex; align-items: stretch; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
-.media-home .movie-recs .movie-rec { flex: 0 0 150px; width: 150px; display: flex; flex-direction: column; align-items: center; padding: 8px; border: 1px solid var(--background-modifier-border); border-radius: 10px; background: var(--background-secondary); text-align: center; }
+.media-home .movie-recs { display: flex; align-items: stretch; gap: var(--media-gap); overflow-x: auto; padding-bottom: 8px; }
+.media-home .movie-recs .movie-rec { flex: 0 0 150px; width: 150px; display: flex; flex-direction: column; align-items: center; padding: var(--media-pad); border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); text-align: center; }
 .media-home .movie-recs .movie-rec-poster-link { display: block; text-decoration: none; }
-.media-home .movie-recs .movie-rec-poster { width: 132px; aspect-ratio: 2 / 3; background: var(--background-modifier-border) center / cover no-repeat; border-radius: 6px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); transition: transform 120ms ease; }
+.media-home .movie-recs .movie-rec-poster { width: 132px; aspect-ratio: var(--media-poster-ratio); background: var(--background-modifier-border) center / cover no-repeat; border-radius: var(--media-thumb-radius); box-shadow: var(--media-poster-shadow); transition: transform 120ms ease; }
 .media-home .movie-recs .movie-rec-poster-link:hover .movie-rec-poster { transform: translateY(-3px); }
-.media-home .movie-recs .movie-rec-poster-missing { display: flex; align-items: center; justify-content: center; padding: 8px; background: var(--background-modifier-border); font-size: var(--font-ui-small); color: var(--text-normal); }
+.media-home .movie-recs .movie-rec-poster-missing { display: flex; align-items: center; justify-content: center; padding: var(--media-pad); background: var(--background-modifier-border); font-size: var(--font-ui-small); color: var(--text-normal); }
 .media-home .movie-recs .movie-rec-year { margin-top: 6px; font-size: var(--font-ui-smaller); line-height: 1.25; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 /* Fixed two-line title and three-line reason so buttons align across cards. */ .media-home .movie-recs .movie-rec-name { width: 100%; text-decoration: none; font-size: var(--font-ui-small); line-height: 1.25; height: calc(2 * 1.25em); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; color: var(--text-normal); }
 .media-home .movie-recs .movie-rec-name:hover { color: var(--text-accent); text-decoration: underline; }
 .media-home .movie-recs .movie-rec-why { width: 100%; margin-top: 4px; font-size: var(--font-ui-smaller); line-height: 1.3; height: calc(4 * 1.3em); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-muted); }
-.media-home .movie-recs .movie-rec-source { min-height: 1.3em; margin-top: 2px; font-size: var(--font-ui-smaller); color: #00c030;   /* Letterboxd green */ }
+.media-home .movie-recs .movie-rec-source { min-height: 1.3em; margin-top: 2px; font-size: var(--font-ui-smaller); color: var(--media-letterboxd); }
 .media-home .movie-recs .movie-rec-source-link { color: inherit; text-decoration: none; }
 .media-home .movie-recs .movie-rec-source-link:hover { text-decoration: underline; }
-.media-home .movie-recs .movie-rec-buttons { width: 100%; margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+.media-home .movie-recs .movie-rec-buttons { width: 100%; margin-top: auto; display: flex; flex-direction: column; gap: var(--media-gap-sm); }
 /* Buttons are ui-kit's (design-system look); this only sizes them to the card. */ .media-home .movie-recs .movie-rec-buttons > .hel-button { padding: 3px 6px; height: auto; font-size: var(--font-ui-smaller); }
 .media-home .movie-recs-how { margin-top: 6px; font-size: var(--font-ui-small); color: var(--text-muted); }
 .media-home .movie-recs-how summary { cursor: pointer; }
 .media-home .movie-recs-how .movie-recs-angle { margin: 6px 0; color: var(--text-normal); font-style: italic; }
-.media-home .movie-recs-how .movie-recs-prompt { white-space: pre-wrap; margin: 6px 0 0; padding: 8px 10px; font-family: var(--font-interface); font-size: var(--font-ui-smaller); line-height: 1.45; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 8px; }
+.media-home .movie-recs-how .movie-recs-prompt { white-space: pre-wrap; margin: 6px 0 0; padding: var(--media-panel-pad); font-family: var(--font-interface); font-size: var(--font-ui-smaller); line-height: 1.45; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); }
 .media-home .movie-recs .movie-rec-buttons { flex-direction: row; }
 .media-home .movie-recs .movie-rec-buttons > .hel-button:first-child { flex: 1 1 auto; justify-content: center; }
 .media-home .movie-recs .movie-rec-buttons > .clickable-icon:hover { color: var(--text-error); }
@@ -283,7 +298,7 @@
 
 /* --- movie-stats --- */
 .media-home .movie-stats { position: relative; --ms-green: #00e054; --ms-blue: #40bcf4; --ms-muted-bar: var(--background-modifier-border); margin-bottom: 1em; }
-.media-home .movie-stats .ms-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.media-home .movie-stats .ms-nav { display: flex; align-items: center; gap: var(--media-gap); margin-bottom: 12px; }
 .media-home .movie-stats .ms-year { font-size: 1.4em; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3.2em; text-align: center; }
 .media-home .movie-stats .ms-asof { color: var(--text-muted); font-size: var(--font-ui-small); }
 /* Headline numbers */ .media-home .movie-stats .ms-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border-top: 1px solid var(--background-modifier-border); border-bottom: 1px solid var(--background-modifier-border); }
@@ -291,7 +306,7 @@
 .media-home .movie-stats .ms-tile:last-child { border-right: 0; }
 .media-home .movie-stats .ms-tile-value { font-family: Georgia, "Times New Roman", serif; font-size: 2.1em; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .media-home .movie-stats .ms-tile-label { margin-top: 4px; font-size: var(--font-ui-smaller); letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
-/* Section headers: TITLE ——————— extra */ .media-home .movie-stats .ms-section { display: flex; align-items: center; gap: 12px; margin: 26px 0 12px; }
+/* Section headers: TITLE ——————— extra */ .media-home .movie-stats .ms-section { display: flex; align-items: center; gap: var(--media-gap-lg); margin: 26px 0 12px; }
 .media-home .movie-stats .ms-section-title { font-size: var(--font-ui-small); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; white-space: nowrap; }
 .media-home .movie-stats .ms-rule { flex: 1; height: 1px; background: var(--background-modifier-border); }
 .media-home .movie-stats .ms-section-extra { font-size: var(--font-ui-smaller); color: var(--ms-blue); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
@@ -308,61 +323,73 @@
 /* By week + by day share a row */ .media-home .movie-stats .ms-row { display: flex; gap: 32px; flex-wrap: wrap; }
 .media-home .movie-stats .ms-activity .ms-panel-week { flex: 3 1 420px; }
 .media-home .movie-stats .ms-activity .ms-panel-dow { flex: 1 1 180px; max-width: 280px; }
-.media-home .movie-stats .ms-bars-dow { height: 65px; gap: 4px; }
+.media-home .movie-stats .ms-bars-dow { height: 65px; gap: var(--media-gap-sm); }
 .media-home .movie-stats .ms-bars-dow .ms-bar { background: var(--text-faint); opacity: 0.55; }
 /* Ratings + decades */ .media-home .movie-stats .ms-row-split { align-items: flex-start; }
 .media-home .movie-stats .ms-panel { flex: 1 1 300px; min-width: 0; }
-.media-home .movie-stats .ms-ratings { display: flex; align-items: flex-end; gap: 8px; }
+.media-home .movie-stats .ms-ratings { display: flex; align-items: flex-end; gap: var(--media-gap); }
 .media-home .movie-stats .ms-bars-rating { flex: 1; height: 80px; }
 .media-home .movie-stats .ms-bars-rating .ms-bar { background: var(--text-faint); opacity: 0.55; }
 .media-home .movie-stats .ms-star-end { color: var(--ms-green); font-size: var(--font-ui-small); white-space: nowrap; line-height: 1; }
 .media-home .movie-stats .ms-bars-decade { height: 100px; }
-/* Hover tooltip + click affordance */ .media-home .movie-stats .ms-tip { position: absolute; z-index: 30; transform: translateX(-50%); padding: 3px 8px; border-radius: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: var(--shadow-s); font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 80ms ease; }
+/* Hover tooltip + click affordance */ .media-home .movie-stats .ms-tip { position: absolute; z-index: 30; transform: translateX(-50%); padding: 3px 8px; border-radius: var(--media-badge-radius); background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: var(--shadow-s); font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 80ms ease; }
 .media-home .movie-stats .ms-tip.is-visible { opacity: 1; }
 .media-home .movie-stats .is-clickable { cursor: pointer; }
 .media-home .movie-stats .ms-tile.is-clickable:hover { background: var(--background-secondary); }
 
 /* --- movie-calendar --- */
 .media-home .movie-cal { /* One slot = two lines of name plus padding; cells reserve three. */ --cal-line: 1.25em; --cal-slot: calc(2 * var(--cal-line) + 6px); --cal-gap: 3px; font-size: var(--font-ui-smaller); }
-.media-home .movie-cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.media-home .movie-cal-title { font-size: var(--font-ui-medium); font-weight: 600; min-width: 9.5em; text-align: center; }
+.media-home .movie-cal-nav { display: flex; align-items: center; gap: var(--media-gap); margin-bottom: 8px; }
+.media-home .movie-cal-title { font-size: var(--media-header-size); font-weight: 600; min-width: 9.5em; text-align: center; }
 .media-home .movie-cal-count { color: var(--text-muted); margin-left: 4px; }
-.media-home .movie-cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.media-home .movie-cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--media-gap-sm); }
 .media-home .movie-cal-weekday { text-align: center; color: var(--text-muted); font-weight: 600; padding-bottom: 2px; }
-.media-home .movie-cal-day { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 4px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-secondary); min-width: 0; }
+.media-home .movie-cal-day { position: relative; display: flex; flex-direction: column; gap: var(--media-gap-sm); padding: 4px; border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); min-width: 0; }
 .media-home .movie-cal-day.is-outside { background: transparent; opacity: 0.45; }
 .media-home .movie-cal-day.is-today { border-color: var(--interactive-accent); box-shadow: inset 0 0 0 1px var(--interactive-accent); }
 .media-home .movie-cal-num { text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.3; }
 .media-home .movie-cal-films { display: flex; flex-direction: column; gap: var(--cal-gap); height: calc(3 * var(--cal-slot) + 2 * var(--cal-gap)); }
-.media-home .movie-cal-film { display: flex; align-items: center; gap: 4px; height: var(--cal-slot); flex: 0 0 auto; color: var(--text-normal); text-decoration: none; min-width: 0; }
-.media-home .movie-cal-rating { flex: 0 0 2.2em; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: #00c030;   /* Letterboxd green */ }
-.media-home .movie-cal-name { flex: 1 1 auto; min-width: 0; height: var(--cal-slot); padding: 3px 5px; box-sizing: border-box; line-height: var(--cal-line); border: 1px solid var(--background-modifier-border); border-radius: 4px; background: var(--background-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.media-home .movie-cal-film { display: flex; align-items: center; gap: var(--media-gap-sm); height: var(--cal-slot); flex: 0 0 auto; color: var(--text-normal); text-decoration: none; min-width: 0; }
+.media-home .movie-cal-rating { flex: 0 0 2.2em; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--media-letterboxd); }
+.media-home .movie-cal-name { flex: 1 1 auto; min-width: 0; height: var(--cal-slot); padding: 3px 5px; box-sizing: border-box; line-height: var(--cal-line); border: 1px solid var(--background-modifier-border); border-radius: var(--media-badge-radius); background: var(--background-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .media-home .movie-cal-film:hover .movie-cal-name { border-color: var(--interactive-accent); }
-.media-home .movie-cal .movie-cal-more { height: var(--cal-slot); flex: 0 0 auto; width: 100%; font-size: inherit; color: var(--text-muted); background: transparent; box-shadow: none; border: 1px dashed var(--background-modifier-border); border-radius: 4px; cursor: pointer; }
+.media-home .movie-cal .movie-cal-more { height: var(--cal-slot); flex: 0 0 auto; width: 100%; font-size: inherit; color: var(--text-muted); background: transparent; box-shadow: none; border: 1px dashed var(--background-modifier-border); border-radius: var(--media-badge-radius); cursor: pointer; }
 .media-home .movie-cal .movie-cal-more:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
-.media-home .movie-cal-popover { position: absolute; top: -1px; left: -1px; z-index: 20; min-width: calc(100% + 2px); width: max-content; max-width: 280px; padding: 6px; border: 1px solid var(--interactive-accent); border-radius: 8px; background: var(--background-primary); box-shadow: var(--shadow-l); }
+.media-home .movie-cal-popover { position: absolute; top: -1px; left: -1px; z-index: 20; min-width: calc(100% + 2px); width: max-content; max-width: 280px; padding: 6px; border: 1px solid var(--interactive-accent); border-radius: var(--media-card-radius); background: var(--background-primary); box-shadow: var(--shadow-l); }
 .media-home .movie-cal-popover-title { font-weight: 600; text-align: center; margin-bottom: 4px; }
 .media-home .movie-cal-popover-films { display: flex; flex-direction: column; gap: var(--cal-gap); }
 /* Last two columns open leftward so the popover stays on the page. */ .media-home .movie-cal-grid > .movie-cal-day:nth-child(7n+6) > .movie-cal-popover, .media-home .movie-cal-grid > .movie-cal-day:nth-child(7n) > .movie-cal-popover { left: auto; right: -1px; }
 
 /* --- Home layout --- */
 .media-home .home { max-width: 1400px; margin: 0 auto; }
-.media-home .home-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.media-home .home-title { font-size: var(--h1-size, 1.8em); font-weight: 700; }
-.media-home .home-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.media-home .home-h { margin: 1.2em 0 0.4em; font-size: var(--h1-size, 1.6em); }
+.media-home .home-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--media-gap-lg); margin-bottom: 8px; }
+.media-home .home-title { font-size: var(--media-title-size); font-weight: 700; }
+.media-home .home-actions { display: flex; gap: var(--media-gap); flex-wrap: wrap; }
+.media-home .home-h { margin: 1.2em 0 0.4em; font-size: var(--media-header-size); font-weight: 600; }
 .media-home .home-section { margin-bottom: 8px; }
-.media-home .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 16px; }
-.media-home .home-panel { border: 1px solid var(--background-modifier-border); border-radius: 10px; background: var(--background-secondary); padding: 10px 14px; min-width: 0; }
-.media-home .home-panel-title { font-weight: 600; margin-bottom: 6px; }
-.media-home .home-tasks, .media-home .home-recent, .media-home .home-events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.media-home .home-tasks li, .media-home .home-recent li, .media-home .home-events li { display: flex; gap: 8px; align-items: baseline; font-size: var(--font-ui-small); }
+.media-home .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--media-gap-lg); margin-top: 16px; }
+.media-home .home-panel { border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); padding: var(--media-panel-pad); min-width: 0; }
+.media-home .home-panel-title { font-size: var(--media-header-size); font-weight: 600; margin-bottom: 6px; }
+.media-home .home-tasks, .media-home .home-recent, .media-home .home-events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--media-gap-sm); }
+.media-home .home-tasks li, .media-home .home-recent li, .media-home .home-events li { display: flex; gap: var(--media-gap); align-items: baseline; font-size: var(--font-ui-small); }
 .media-home .home-task-due, .media-home .home-recent-when, .media-home .home-event-when { color: var(--text-muted); font-variant-numeric: tabular-nums; flex: none; min-width: 4.5em; }
 .media-home .home-recent li { justify-content: space-between; }
 .media-home .home-recent-when { text-align: right; }
 .media-home .home-tasks li.is-overdue .home-task-due { color: var(--text-error); }
-.media-home .home-connect { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.media-home .home-selection:not(:empty) { margin-top: 16px; border: 1px solid var(--background-modifier-border); border-radius: 10px; padding: 10px 14px; background: var(--background-secondary); }
+.media-home .home-connect { display: flex; flex-direction: column; align-items: flex-start; gap: var(--media-gap); }
+.media-home .home-selection:not(:empty) { margin-top: 16px; border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); padding: var(--media-panel-pad); background: var(--background-secondary); }
 .media-home .home-selection-head { display: flex; justify-content: space-between; align-items: center; }
 .media-home .home-selection-list { columns: 3 220px; margin: 6px 0 0; padding-left: 1.1em; font-size: var(--font-ui-small); }
 
+
+/* --- Settings page --- */
+.media-settings { max-width: 720px; margin: 0 auto; padding: var(--media-pad); }
+.media-settings-title { font-size: var(--media-title-size); font-weight: 700; margin: 0 0 var(--media-gap); }
+.media-settings-why, .media-settings-hint, .media-settings-note { color: var(--text-muted); font-size: var(--font-ui-small); }
+.media-settings-secrets, .media-settings-urls { margin-top: var(--media-gap-lg); padding: var(--media-panel-pad); border: 1px solid var(--background-modifier-border); border-radius: var(--media-card-radius); background: var(--background-secondary); }
+.media-settings-list, .media-settings-urls { display: flex; flex-direction: column; gap: var(--media-gap); }
+.media-settings-secret, .media-settings-url { display: flex; align-items: center; gap: var(--media-gap-lg); }
+.media-settings-label { font-weight: 600; }
+.media-settings-state { margin-left: auto; color: var(--text-muted); }
+.media-settings-secret.is-set .media-settings-state { color: var(--color-green); }
+.media-settings-error { color: var(--text-error); font-size: var(--font-ui-small); }

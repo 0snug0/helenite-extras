@@ -32,7 +32,7 @@ export default async function mount(host, ctx) {
 		return e;
 	};
 	let alive = true;
-	const root = h(host, "div", "media-settings");
+	const root = h(host, "div", "media-settings media-scope");
 	h(root, "h2", "media-settings-title", "Settings");
 	h(root, "p", "media-settings-why", "Movies needs the Radarr key and TV the Sonarr key. Until it is set, that page shows a setup state instead of its list. Set a key here, then open the page again.");
 

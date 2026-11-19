@@ -30,7 +30,7 @@ export default async function mount(host, ctx) {
 	setBridge(api);
 	// ui-kit draws its standard icons; this page's own (file, Radarr, pause, play) are inline SVG strings.
 	setIconRenderer((el, name) => { if (!ICONS[name]) return kitIconRenderer(el, name); el.dataset.icon = name; el.innerHTML = ICONS[name]; });
-	const root = host.createDiv({ cls: "media-movies" });
+	const root = host.createDiv({ cls: "media-movies media-scope" });
 	let dispose = null, booting = false;
 	// Back from Settings with the Radarr key now saved: start the page for real.
 	const offParams = ctx.onParams(() => { if (!dispose && !booting) boot().catch(() => { /* the setup state or the failed first boot already shows */ }); });

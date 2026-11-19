@@ -23,7 +23,7 @@ export default async function mount(host, pageCtx) {
 	setBridge(api);
 	let alive = true;
 	const root = host.ownerDocument.createElement("div");
-	root.className = "media-home";
+	root.className = "media-home media-scope";
 	host.appendChild(root);
 	const page = root.ownerDocument.createElement("div");
 	page.className = "home";

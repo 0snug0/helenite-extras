@@ -62,7 +62,7 @@ export function createReleaseModal({ state, api, draw, releasePanel, register })
 		if (!item) return;
 		modalEl = document.body.createDiv({ cls: "modal-container mod-dim" });
 		modalEl.createDiv({ cls: "modal-bg" }).addEventListener("click", closeModal);
-		const modal = modalEl.createDiv({ cls: "modal downloadrr", attr: { style: "width: min(1000px, 92vw); height: 85vh; display: flex; flex-direction: column;" } });
+		const modal = modalEl.createDiv({ cls: "modal media-modal media-scope", attr: { style: "width: min(1000px, 92vw); height: 85vh; display: flex; flex-direction: column;" } });
 		const body = modal.createDiv({ cls: "modal-content", attr: { style: "flex: 1; min-height: 0; overflow: auto;" } });
 		const panel = releasePanel(item);
 		if (panel) body.appendChild(panel);
