@@ -225,8 +225,8 @@
 /* The on-disk tree under a series row: seasons indented once, episodes twice. */
 .media-tv .dl-chev { display: inline-flex; width: 20px; margin-right: 4px; padding: 0; vertical-align: middle; }
 .media-tv .dl-tree-season .dl-cell-title { padding-left: 28px; }
-/* Only the indent: the old white-space/colour here always lost to the table cell rules, so they were dead and are dropped. */
-.media-tv .dl-tree-episode .dl-cell-title { padding-left: 56px; }
+/* (0,3,0): beats .media-scope .dl-active-table td and .media-scope .dl-table td (both 0,2,1) whatever the source order. */
+.media-tv .dl-tree-episode .dl-cell-title { padding-left: 56px; white-space: pre; color: var(--text-muted); }
 .media-tv .dl-tree-note .dl-cell-title { padding-left: 28px; }
 .media-tv .dl-tree > td { background: var(--background-primary-alt, transparent); }
 
