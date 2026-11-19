@@ -1,5 +1,6 @@
 // Pure helpers of the Movies page (films, Radarr status, active table, filters, sorts): no DOM, no network.
-// The release, SABnzbd, Plex and availability helpers live in ../../core/.
+// The release, SABnzbd, Plex and availability helpers live in ../../core/ (so do rowStatus and the streaming-service filter, rows.js).
+import { rowStatus, SERVICES, matchesServices } from "../../core/rows.js";
 
 function movieStatus(movie, queueItem) {
 	if (queueItem) {
@@ -77,28 +78,6 @@ function removalPlan(movie, mode, download, queue) {
 	return [{ op: movie.movieFile?.id != null ? "deleteFile" : "unmonitor" }];
 }
 
-// What the Status column says about a row. A download: its slotStates entry when SABnzbd has it (that knows a job
-// is paused or waiting its turn), else Radarr's; a finished download Radarr will not import stays listed as blocked.
-// A file: its Plex watch state. percent is the download's, or how far into the film Plex is.
-function rowStatus(item, { slot, watch } = {}) {
-	const q = item.queue;
-	if (!q) {
-		if (!watch) return { kind: "downloaded", label: "Downloaded", percent: null };
-		const kind = watch.kind === "watching" && watch.paused ? "started" : watch.kind;   // paused in Plex: begun, not being watched
-		const label = { unwatched: "Not started", started: "Started", watching: "Watching", watched: "Watched" }[kind];
-		return { kind, label, percent: kind === "started" || kind === "watching" ? watch.percent : null };
-	}
-	const percent = item.status.percent, tracked = q.trackedDownloadState;
-	if (q.status === "failed" || tracked === "failed" || tracked === "failedPending") return { kind: "failed", label: "Failed", percent };
-	if (q.status === "completed" || ["importBlocked", "importPending", "importing", "imported"].includes(tracked)) {
-		return tracked === "importBlocked" || q.trackedDownloadStatus === "warning" ? { kind: "blocked", label: "Import blocked", percent } : { kind: "importing", label: "Importing", percent };
-	}
-	const s = String(slot ?? q.status ?? "").toLowerCase();
-	if (s === "paused") return { kind: "paused", label: "Paused", percent };
-	if (s === "queued") return { kind: "queued", label: "Queued", percent };
-	return { kind: "downloading", label: "Downloading", percent };
-}
-
 // Status column order: the downloads, then how far along the film is in Plex. "downloaded" (Plex has not seen it) goes last.
 const STATUS_RANK = { downloading: 0, queued: 1, paused: 2, importing: 3, blocked: 4, failed: 5, unwatched: 6, started: 7, watching: 7, watched: 8 };
 
@@ -136,14 +115,6 @@ function matchesFilter(film, filter) {
 		case "downloaded": return film.status.kind === "downloaded";
 		default: return true;
 	}
-}
-
-// Streaming services the user subscribes to; ids are the short names availability() puts in `on`.
-const SERVICES = [["Netflix", "Netflix"], ["HBO", "HBO"], ["Apple", "Apple TV"], ["Prime", "Amazon"]];
-// True when the film streams on at least one of the selected services (none selected = no filter).
-function matchesServices(avail, selected) {
-	if (!selected?.length) return true;
-	return avail?.kind === "stream" && (avail.on ?? []).some(s => selected.includes(s));
 }
 
 const SORTS = [["title", "Title"], ["added", "Newest added"], ["release", "Newest release"]];
