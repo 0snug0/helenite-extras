@@ -1,0 +1,6 @@
+{
+  "name": "modern",
+  "description": "Modern components (Button, Card, Badge, Input, Tabs, Stat, List, EmptyState) on tokens derived from the vault theme. Works with or without a CSS framework.",
+  "frameworks": ["preact", "vanilla"],
+  "cssImports": ["ds/modern.css"]
+}

@@ -1,0 +1,87 @@
+/* "modern" design system: tokens, then components. Everything resolves to the vault theme's variables, so the theme
+   and its light/dark carry through with no overrides. In `@layer components`, so Tailwind utilities (when the app uses
+   them) and the app's own CSS win over it. Restyle by changing the --ds-* tokens below, in `body`. */
+@layer theme, base, components, utilities;
+
+body {
+	--ds-radius: var(--radius-m, 8px);
+	--ds-radius-sm: var(--radius-s, 6px);
+	--ds-surface: var(--background-primary);
+	--ds-surface-2: var(--background-secondary);
+	--ds-border: var(--background-modifier-border);
+	--ds-hover: var(--background-modifier-hover);
+	--ds-text: var(--text-normal);
+	--ds-muted: var(--text-muted);
+	--ds-accent: var(--interactive-accent);
+	--ds-accent-hover: var(--interactive-accent-hover);
+	--ds-on-accent: var(--text-on-accent);
+	--ds-danger: var(--text-error, var(--color-red));
+	--ds-success: var(--text-success, var(--color-green));
+	--ds-ring: color-mix(in srgb, var(--ds-accent) 45%, transparent);
+	--ds-shadow: 0 1px 2px color-mix(in srgb, black 12%, transparent), 0 4px 12px color-mix(in srgb, black 8%, transparent);
+	--ds-gap: var(--size-4-3, 12px);
+}
+
+@layer components {
+	.ds-stack { display: flex; flex-direction: column; gap: var(--ds-gap); }
+	.ds-row { display: flex; align-items: center; gap: var(--ds-gap); flex-wrap: wrap; }
+	.ds-row.is-between { justify-content: space-between; }
+	/* Responsive: columns that fit the container (--ds-min is the narrowest a column gets) and re-wrap as it resizes. */
+	.ds-grid { display: grid; gap: var(--ds-gap); grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--ds-min, 14rem)), 1fr)); }
+	.ds-muted { color: var(--ds-muted); }
+	.ds-title { margin: 0; font-size: 1.25em; font-weight: 600; letter-spacing: -0.01em; color: var(--ds-text); }
+
+	.ds-card { background: var(--ds-surface-2); border: 1px solid var(--ds-border); border-radius: var(--ds-radius); box-shadow: var(--ds-shadow); color: var(--ds-text); }
+	.ds-card-header { padding: var(--ds-gap) calc(var(--ds-gap) * 1.25) 0; font-weight: 600; }
+	.ds-card-body { padding: calc(var(--ds-gap) * 1.25); display: flex; flex-direction: column; gap: var(--ds-gap); }
+
+	.ds-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 2.25em; padding: 0 1em; font: inherit; font-weight: 500; line-height: 1; color: var(--ds-text); background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: var(--ds-radius-sm); box-shadow: none; cursor: pointer; transition: background-color .12s, border-color .12s, box-shadow .12s; }
+	.ds-button:hover:not(:disabled) { background: var(--ds-hover); }
+	.ds-button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ds-ring); }
+	.ds-button:disabled { opacity: .5; cursor: not-allowed; }
+	.ds-button.is-primary { background: var(--ds-accent); color: var(--ds-on-accent); border-color: transparent; }
+	.ds-button.is-primary:hover:not(:disabled) { background: var(--ds-accent-hover); }
+	.ds-button.is-ghost { background: transparent; border-color: transparent; }
+	.ds-button.is-ghost:hover:not(:disabled) { background: var(--ds-hover); }
+	.ds-button.is-danger { color: var(--ds-danger); }
+	.ds-button.is-sm { height: 1.8em; padding: 0 .7em; font-size: .9em; }
+
+	.ds-input { box-sizing: border-box; width: 100%; height: 2.25em; padding: 0 .75em; font: inherit; color: var(--ds-text); background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: var(--ds-radius-sm); box-shadow: none; }
+	.ds-input:focus { outline: none; border-color: var(--ds-accent); box-shadow: 0 0 0 3px var(--ds-ring); }
+	.ds-input::placeholder { color: var(--ds-muted); }
+
+	.ds-badge { display: inline-flex; align-items: center; padding: .1em .6em; font-size: .8em; font-weight: 500; border-radius: 999px; color: var(--ds-muted); background: var(--ds-hover); }
+	.ds-badge.is-accent { color: var(--ds-accent); background: color-mix(in srgb, var(--ds-accent) 15%, transparent); }
+	.ds-badge.is-success { color: var(--ds-success); background: color-mix(in srgb, var(--ds-success) 15%, transparent); }
+	.ds-badge.is-danger { color: var(--ds-danger); background: color-mix(in srgb, var(--ds-danger) 15%, transparent); }
+
+	.ds-stat { display: flex; flex-direction: column; gap: 2px; }
+	.ds-stat-value { font-size: 1.8em; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; color: var(--ds-text); }
+	.ds-stat-label { font-size: .85em; color: var(--ds-muted); }
+
+	.ds-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--ds-border); border-radius: var(--ds-radius); overflow: hidden; background: var(--ds-surface); }
+	.ds-list-item { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-gap); padding: .6em var(--ds-gap); color: var(--ds-text); }
+	.ds-list-item + .ds-list-item { border-top: 1px solid var(--ds-border); }
+	.ds-list-item.is-clickable { cursor: pointer; }
+	.ds-list-item.is-clickable:hover { background: var(--ds-hover); }
+
+	.ds-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--ds-border); }
+	.ds-tab { padding: .5em .9em; font: inherit; color: var(--ds-muted); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; border-radius: 0; box-shadow: none; cursor: pointer; }
+	.ds-tab:hover { color: var(--ds-text); }
+	.ds-tab[aria-selected="true"] { color: var(--ds-text); border-bottom-color: var(--ds-accent); }
+	.ds-tab:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ds-ring); }
+
+	.ds-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: calc(var(--ds-gap) * 2); text-align: center; color: var(--ds-muted); border: 1px dashed var(--ds-border); border-radius: var(--ds-radius); }
+	.ds-empty-title { font-weight: 600; color: var(--ds-text); }
+}
+
+/* Narrow containers (a sidebar, a small tab): tighter spacing, scrolling tabs, wrapping rows. The nearest size container
+   is `.app` (see style.css), so this follows the pane, not the window. */
+@container app (max-width: 30rem) {
+	body { --ds-gap: var(--size-4-2, 8px); }
+	.ds-tabs { overflow-x: auto; scrollbar-width: none; }
+	.ds-tab { white-space: nowrap; }
+	.ds-list-item { flex-wrap: wrap; }
+	.ds-card-body { padding: var(--ds-gap); }
+	.ds-row > .ds-input { flex: 1 1 100%; }
+}

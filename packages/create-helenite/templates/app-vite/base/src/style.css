@@ -1,9 +1,15 @@
+/* Every app is responsive by default: .app is a size container, so layouts answer the width of the tab, sidebar or embed
+   the app sits in (not the window), and rearrange live as it is resized. Use .app-grid for cards that reflow, and
+   @container rules (or Tailwind's @sm:/@md: variants) for anything else. */
 /* The app's CSS, bundled into view.css. Use the theme's variables (var(--text-muted), var(--size-4-2)), not fixed colours:
    they carry the vault theme and its light/dark mode into the app, so nothing here needs a dark-mode override. */
-.app { padding: var(--size-4-3); display: grid; gap: var(--size-4-2); color: var(--text-normal); }
+.app { container-type: inline-size; container-name: app; padding: var(--size-4-3); display: grid; gap: var(--size-4-2); color: var(--text-normal); }
 .app h1 { margin: 0; }
 .app ul { margin: 0; padding-left: var(--size-4-4); }
 .app .muted { color: var(--text-muted); }
 .app .card { background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m, 8px); padding: var(--size-4-3); }
 .app button.primary { background: var(--interactive-accent); color: var(--text-on-accent); border-color: transparent; }
 .app button.primary:hover:not(:disabled) { background: var(--interactive-accent-hover); }
+/* Cards that flow into as many columns as fit (each at least 16rem, one column when narrower) and re-wrap on resize. */
+.app-grid { display: grid; gap: var(--size-4-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+@container app (max-width: 30rem) { .app { padding: var(--size-4-2); } }

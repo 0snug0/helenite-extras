@@ -8,6 +8,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import adapter from "./vite.adapter.mjs";
+import style from "./vite.style.mjs"; // the CSS framework (--style); empty without one
 
 const here = dirname(fileURLToPath(import.meta.url));
 const config = existsSync(join(here, "helenite.json")) ? JSON.parse(readFileSync(join(here, "helenite.json"), "utf8")) : {};
@@ -15,9 +16,11 @@ const outDir = config.appDir ? resolve(config.appDir) : here;
 
 export default defineConfig({
 	...adapter,
+	...(style.css ? { css: style.css } : {}),
 	define: { "process.env.NODE_ENV": '"production"' },
 	plugins: [
 		...(adapter.plugins ?? []),
+		...(style.plugins ?? []),
 		{ name: "helenite-app-md", closeBundle() { if (outDir !== here) copyFileSync(join(here, "app.md"), join(outDir, "app.md")); } },
 	],
 	build: {
