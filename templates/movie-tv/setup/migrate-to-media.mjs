@@ -55,8 +55,10 @@ export function migrate({ vaultDir, dryRun = false }) {
 if (process.argv[1] && import.meta.url === pathToFileURL(fs.realpathSync(process.argv[1])).href) {
 	const args = process.argv.slice(2);
 	const dryRun = args.includes("--dry-run");
-	const vaultDir = args.find(a => !a.startsWith("--"));
-	if (!vaultDir) { console.error("usage: node setup/migrate-to-media.mjs <vault> [--dry-run]"); process.exit(2); }
+	const usage = "usage: node setup/migrate-to-media.mjs <vault> [--dry-run]";
+	const vaultDir = args.find(a => !a.startsWith("-"));
+	if (!vaultDir || args.some(a => a.startsWith("-") && a !== "--dry-run")) { console.error(usage); process.exit(2); }
+	if (!fs.existsSync(path.join(vaultDir, ".helenite"))) { console.error(`${vaultDir} is not a Helenite vault (no .helenite folder)`); process.exit(2); }
 	const r = migrate({ vaultDir: path.resolve(vaultDir), dryRun });
 	for (const k of ["copied", "skipped", "errors"]) { console.log(`${k} (${r[k].length}):`); for (const l of r[k]) console.log(`  ${l}`); }
 	if (dryRun) console.log("(dry run: nothing written)");

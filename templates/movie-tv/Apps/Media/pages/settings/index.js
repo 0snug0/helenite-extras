@@ -53,6 +53,7 @@ export default async function mount(host, ctx) {
 	h(urlBox, "p", "media-settings-hint", "Read-only here: an app cannot change its own settings. To change one, edit .helenite/apps/media/settings.json in the vault (the file Helenite reads app settings from) and reopen the app.");
 
 	let health = {};
+	const errors = new Map();   // secret name -> message of its last failed prompt, cleared on the next attempt
 	async function paint() {
 		let have = {};
 		try { have = (await api.secrets.status()) ?? {}; } catch { have = {}; }
@@ -69,9 +70,13 @@ export default async function mount(host, ctx) {
 			h(row, "span", "media-settings-state", state);
 			const b = h(row, "button", "media-settings-set", set ? "Replace" : "Set");
 			b.type = "button";
+			if (errors.has(name)) h(row, "span", "media-settings-error", `Could not set: ${errors.get(name)}`);
 			b.addEventListener("click", async () => {
-				try { await api.secrets.prompt(name); } catch (e) { api.log?.(e); }
-				if (alive) { await paint(); checkHealth(); }
+				errors.delete(name);
+				try { await api.secrets.prompt(name); } catch (e) { errors.set(name, (e && e.message) || String(e)); }   // a cancel resolves false: silent
+				if (!alive) return;
+				await paint();
+				if (!errors.has(name)) checkHealth();
 			});
 		}
 	}
