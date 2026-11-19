@@ -236,9 +236,13 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-list-row-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 :where(.hel-list-row-tag) { flex: none; padding: 0 var(--size-2-2); border-radius: var(--radius-s); background-color: var(--background-secondary-alt); color: var(--text-faint); font-size: var(--font-ui-smaller); }
 .hel-list-row > .hel-status-dot { flex: none; } /* a long title must not squash the dot into a pill and push titles out of line */
-.hel-list-row.has-sub { flex-wrap: wrap; row-gap: 1px; }
-.hel-list-row-sub { order: 99; flex: 0 0 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); }
-.hel-list-row.has-dot > .hel-list-row-sub { padding-inline-start: calc(8px + var(--size-4-2)); } /* line up under the title, past the 8px dot and its gap */
+/* Two-line row: the dot sits beside the title (first line); the details and the hover actions share the second line. */
+.hel-list-row.has-sub { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 0; row-gap: 1px; align-items: center; }
+.hel-list-row.has-sub > .hel-status-dot, .hel-list-row.has-sub > .hel-list-row-icon { grid-column: 1; grid-row: 1; margin-inline-end: var(--size-4-2); }
+.hel-list-row.has-sub > .hel-list-row-title { grid-column: 2; grid-row: 1; }
+.hel-list-row.has-sub > .hel-list-row-tag, .hel-list-row.has-sub > .hel-count-badge { grid-column: 3; grid-row: 1; margin-inline-start: var(--size-4-2); }
+.hel-list-row-sub { grid-column: 2; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-list-row.has-sub > .hel-list-row-actions { grid-column: 3; grid-row: 2; align-self: center; margin-block: -4px; margin-inline-start: var(--size-4-2); }
 .hel-list-row-meta { flex: none; font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-list-row-actions { display: flex; flex: none; gap: var(--size-2-1); opacity: 0; }
 .hel-list-row:hover > .hel-list-row-actions, .hel-list-row:focus-within > .hel-list-row-actions, .hel-list-row.is-active > .hel-list-row-actions { opacity: 1; }
