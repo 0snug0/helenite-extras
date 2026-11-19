@@ -34,7 +34,7 @@ export default async function mount(host, ctx) {
 	let alive = true;
 	const root = h(host, "div", "media-settings media-scope");
 	h(root, "h2", "media-settings-title", "Settings");
-	h(root, "p", "media-settings-why", "Movies needs the Radarr key and TV the Sonarr key. Until it is set, that page shows a setup state instead of its list. Set a key here, then open the page again.");
+	h(root, "p", "media-settings-why", "Movies needs the Radarr key and TV the Sonarr key. Until it is set, that page shows a setup state instead of its list. The Radarr and Sonarr keys take effect as soon as they are set: open the page and it starts. The SABnzbd, Plex, TMDB and OMDb keys are read when a page starts, so they take effect the next time Media is opened (close its tab and open it again).");
 
 	const secretsBox = h(root, "section", "media-settings-secrets");
 	h(secretsBox, "h3", null, "Secrets");

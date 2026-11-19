@@ -80,7 +80,7 @@ and **Settings** (service URLs, API keys, score scraping). It replaces the old H
 - **View** `main` (`view.js`): open it as a tab or the sidebar, or embed it in a note with a `helenite-app media` code block.
 - **Deep links**: `helenite-app media page=tv id=<tmdbId>` opens the TV page on one show; `page=movies` and `page=home` work the same.
 - **State** lives in the app store (`.helenite/apps/media/store.json`), keys prefixed `movies:` and `tv:`. Run
-  `node setup/migrate-to-media.mjs <vault>` to copy the old apps' stores across.
+  `node setup/migrate-to-media.mjs <vault>` to copy the old apps' stores and settings across.
 - **Settings** (service URLs, `SCRAPE_SCORES`) are in `.helenite/apps/media/settings.json`; the six API keys and tokens are entered on the
   Settings page and kept in the keychain. The view only ever sees `{{secret:NAME}}` placeholders. Every key is optional: a service
   with no key shows as not configured.

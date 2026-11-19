@@ -43,7 +43,7 @@ Start with `node packages/create-helenite/bin.mjs <dir> --template app-pages`. I
 
 **Tokens.** Put spacing and sizes in one block of CSS custom properties on the shell (`--app-gap`, `--app-pad`, `--app-radius`, as in the template; Media uses `--media-*`), use only those and theme variables in page rules, and share rules through one scope class on every page root.
 
-**Migrating older apps.** An app cannot read another app's store or secrets. Merge stores with a one-time script run on the vault (see `templates/movie-tv/setup/migrate-to-media.mjs`): copy each key as `<page>:<key>` into the new app's `.helenite/apps/<id>/store.json`, never overwrite an existing key, never touch the sources. Secrets live in the keychain and cannot be copied: tell the user to set them again on the Settings page.
+**Migrating older apps.** An app cannot read another app's store or secrets. Merge stores with a one-time script run on the vault (see `templates/movie-tv/setup/migrate-to-media.mjs`): copy each key as `<page>:<key>` into the new app's `.helenite/apps/<id>/store.json`, never overwrite an existing key, never touch the sources. Merge each old `settings.json` the same way (same key names). Secrets live in the keychain and cannot be copied: tell the user to set them again on the Settings page.
 
 **Before telling the user it is done:** open the app (`app_open`), click every nav button and look at each page, trigger one setup state and one deep link (`page=<id>` on the fence), confirm the nav still works after a page fails, take a screenshot of each page, and run `app_test`. Fix what you saw, then report.
 
