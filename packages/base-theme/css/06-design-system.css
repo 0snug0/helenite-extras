@@ -235,6 +235,10 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-list-row-icon { display: inline-flex; flex: none; color: var(--icon-color); }
 .hel-list-row-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 :where(.hel-list-row-tag) { flex: none; padding: 0 var(--size-2-2); border-radius: var(--radius-s); background-color: var(--background-secondary-alt); color: var(--text-faint); font-size: var(--font-ui-smaller); }
+.hel-list-row > .hel-status-dot { flex: none; } /* a long title must not squash the dot into a pill and push titles out of line */
+.hel-list-row.has-sub { flex-wrap: wrap; row-gap: 1px; }
+.hel-list-row-sub { order: 99; flex: 0 0 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-list-row.has-dot > .hel-list-row-sub { padding-inline-start: calc(8px + var(--size-4-2)); } /* line up under the title, past the 8px dot and its gap */
 .hel-list-row-meta { flex: none; font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-list-row-actions { display: flex; flex: none; gap: var(--size-2-1); opacity: 0; }
 .hel-list-row:hover > .hel-list-row-actions, .hel-list-row:focus-within > .hel-list-row-actions, .hel-list-row.is-active > .hel-list-row-actions { opacity: 1; }

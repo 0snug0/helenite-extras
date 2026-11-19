@@ -252,7 +252,7 @@ ui.listRow(today.body, {
 ui.emptyState(paneEl, 'No open chats.', { variant: 'pane' });
 ```
 
-Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, a count `badge` (`{ count, ...countBadge options }`, before the meta), faint `meta` text and icon `actions` (shown on hover, focus, or when the row is `active`; an action's `id` becomes its `data-action`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones, in a `nav-file` wrapper as Obsidian draws a file row. `listRow` returns the row.
+Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, a count `badge` (`{ count, ...countBadge options }`, before the meta), faint `meta` text, a faint second line `sub` (the row's two-line form; see `ui.densityAction`) and icon `actions` (shown on hover, focus, or when the row is `active`; an action's `id` becomes its `data-action`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones, in a `nav-file` wrapper as Obsidian draws a file row. `listRow` returns the row.
 
 `listGroup` is a collapsible group: a header with a chevron, the title and an optional `count`, and a `body` to put the rows in. Clicking the header (or Enter) toggles it and calls `onToggle` with the new state. Use `emptyState` with `variant: 'pane'` when a pane has no rows.
 
@@ -348,6 +348,16 @@ ui.paneHeader(this.contentEl, [
 ```
 
 The row of icon buttons at the top of a sidebar pane. It is Obsidian's `nav-header` with `nav-action-button`s, so a theme's look applies. It puts itself first in the element and returns the header. `label` is each button's accessible name; `id` becomes its `data-action`.
+
+### ui.densityAction
+
+```ts
+ui.paneHeader(this.contentEl, [
+  ui.densityAction(settings.density, (d) => { settings.density = d; save(); this.rebuildHeader(); this.render(); }),
+]);
+```
+
+The pane-header button for lists that can show one line per row (`'compact'`) or two (`'detailed'`). It returns a `paneHeader` action (`data-action="density"`) whose icon and label name the mode a click switches to, and calls `onChange` with that mode. Keep the choice in the plugin's data, rebuild the header so the icon follows, and in `detailed` mode pass `ui.listRow` a `sub` line (details such as folder, model or worktree) instead of squeezing them into `meta`. Panes that list items should offer both.
 
 ### ui.action and ui.STANDARD_ACTIONS
 
