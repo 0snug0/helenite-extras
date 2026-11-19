@@ -15,17 +15,23 @@ A framework is only an authoring layer. Vite compiles `src/` into `view.js` and 
 
 ## Start
 
+The scaffolder is `create-helenite`. In the Helenite app it is at `../../tools/create-helenite/bin.mjs` relative to this skill's base directory (shown when the skill loads); in a Helenite checkout it is `packages/create-helenite/bin.mjs`. Needs `node` and `npm` on PATH and network for `npm install`.
+
+**Keep the project OUTSIDE the vault.** Helenite indexes and watches every file in the vault, and `node_modules` has thousands. Put the source in `~/.helenite-app-src/<id>` (any folder outside the vault) and let the build write the app into the vault with `--app-dir`:
+
 ```
-node packages/create-helenite/bin.mjs <dir> --template app-vite [--framework preact] --name "My App"
-cd <dir> && npm install && npm run build     # npm run watch keeps rebuilding
+node <create-helenite>/bin.mjs ~/.helenite-app-src/<id> --template app-vite --name "My App" --app-dir "<vault>/Apps/My App"
+cd ~/.helenite-app-src/<id> && npm install && npm run build     # npm run watch keeps rebuilding
 ```
 
-Frameworks available are the folders under `packages/create-helenite/templates/app-vite/adapters/` (`preact` default, `vanilla`). The CLI lists them when `--framework` is wrong. Choose Preact unless the user names another; it has the React API you know.
+The vault's `Apps/My App/` then holds only `app.md`, `view.js` and `view.css`. Then `app_reload` and `app_open`, and tell the user to approve the permission prompt. Without `--app-dir` the project is built in place (only for a project already outside the vault).
+
+Frameworks available are the folders under `templates/app-vite/adapters/` (`preact` default, `vanilla`). The CLI lists them when `--framework` is wrong. Choose Preact unless the user names another; it has the React API you know.
 
 ## The layout
 
 ```
-app.md, package.json, vite.config.mjs, vite.adapter.mjs
+app.md, package.json, vite.config.mjs, vite.adapter.mjs, helenite.json (appDir)
 src/main.jsx            export default defineApp(App)
 src/App.jsx             your components
 src/helenite/core.js    framework-free createNotes(api): query, cache, refresh, update (shared, do not fork)
@@ -33,7 +39,7 @@ src/helenite/index.jsx  the adapter: defineApp, useApi, usePage, useNotes, useNo
 view.js, view.css       BUILD OUTPUT. Never edit; run the build.
 ```
 
-Edit `src/`, build, then `app_reload` (the host also reloads open views when `view.js` changes). Narrow `vault.read` in `app.md` to the folders the app needs, and add `vault.write` only if it edits notes.
+Edit `src/` (and `app.md` in the project; the build copies it into the vault), build, then `app_reload` (the host also reloads open views when `view.js` changes). Narrow `vault.read` in `app.md` to the folders the app needs, and add `vault.write` only if it edits notes.
 
 ## Reading notes
 
