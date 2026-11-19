@@ -133,6 +133,10 @@ Navigating hides a page's pane; it does not unmount it. A page that opens anythi
 
 The multi-page shell (a nav bar, one pane per page kept alive, an error pane with Retry, a router) is `--template app-pages`: `node packages/create-helenite/bin.mjs my-app --template app-pages`. It copies `router.js` and `shell.js` from `templates/movie-tv/Apps/Media`, the worked example with four pages. The agent skill `helenite-apps` has the rules for building one.
 
+## Authoring with a framework (spike)
+
+`--template app-vite` writes a Vite + Preact source tree (`--framework vanilla` writes the same without one) that builds into the plain `view.js` and `view.css` the frame loads, so nothing above changes. Components read notes with `useNotes({ from, where })` instead of calling `api.notes.query` by hand. The framework is an adapter folder, so another one is added without touching the data layer. Comparison and numbers: `docs/superpowers/specs/2026-11-19-vite-apps-spike.md`.
+
 ## The UI kit
 
 `@helenite/ui-kit` gives apps the design-system parts. A frame cannot resolve package names, so an app imports a bundled copy by relative path; the template's `ui-kit.js` is one, made by create-helenite from `packages/ui-kit`.
