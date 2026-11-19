@@ -1,6 +1,6 @@
 ---
 name: helenite-app-frameworks
-description: Author a Helenite vault app with a framework (Preact today, others as adapters) built by Vite into plain view.js and view.css, with useNotes over the user's markdown notes. Use when an app has several sections, state, or lists driven by notes, instead of hand-writing DOM code.
+description: Create or build a Helenite app (a dashboard, tracker, or any app made from the vault's notes; Vite, Preact, React) - the way to scaffold apps in the packaged Helenite. Author a Helenite vault app with a framework (Preact today, others as adapters) built by Vite into plain view.js and view.css, with useNotes over the user's markdown notes. Use when an app has several sections, state, or lists driven by notes, instead of hand-writing DOM code.
 ---
 
 # Apps with a framework and Vite
