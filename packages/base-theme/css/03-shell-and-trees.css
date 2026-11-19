@@ -232,6 +232,12 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .workspace-tab-header-status-container { display: flex; }
 .workspace-tab-header-inner-close-button { display: flex; padding: 2px; border-radius: var(--radius-s); --icon-size: var(--icon-xs); color: var(--icon-color); }
 .workspace-tab-header-inner-close-button:hover { background-color: var(--background-modifier-hover); }
+/* Pinned tabs collapse to just the icon, like Chrome; unpin from the tab context menu */
+.mod-root .workspace-tab-header.mod-pinned, .mod-bottom-split .workspace-tab-header.mod-pinned { width: auto; flex: 0 0 auto; }
+.workspace-tab-header.mod-pinned .workspace-tab-header-inner { padding: 0 var(--size-4-2) var(--size-2-2); }
+.workspace-tab-header.mod-pinned .workspace-tab-header-inner-title,
+.workspace-tab-header.mod-pinned .workspace-tab-header-inner-close-button,
+.workspace-tab-header.mod-pinned .workspace-tab-header-status-container { display: none; }
 /* Sidedock tabs are icon-only */
 .mod-sidedock .workspace-tab-header { width: auto; flex: 0 0 auto; border-radius: var(--clickable-icon-radius); padding: 0; margin: var(--size-2-2) 1px; }
 .mod-sidedock .workspace-tab-header-container-inner { padding: var(--size-2-2) 0; align-items: center; }
