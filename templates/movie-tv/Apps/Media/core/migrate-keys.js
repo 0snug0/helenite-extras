@@ -29,3 +29,10 @@ export const TV_KEYS = [
 ];
 // old key -> new (prefixed) key
 export const tvKeyMap = () => Object.fromEntries(TV_KEYS.map(k => [k, TV_PREFIX + k]));
+
+// The Home page (the old Home app) kept nothing in the app store: its only state is in memory. The exports mirror Movies/TV so a
+// key added later has one place to be declared; its stored key would be `home:<old name>` through ctx.store.
+export const HOME_PREFIX = "home:";
+export const HOME_KEYS = [];
+// old key -> new (prefixed) key
+export const homeKeyMap = () => Object.fromEntries(HOME_KEYS.map(k => [k, HOME_PREFIX + k]));
