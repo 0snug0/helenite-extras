@@ -14,7 +14,8 @@ import { createClient } from "./radarr.js";
 import { createServices } from "../../core/services.js";
 import { createAddSearch } from "../../core/add-search.js";
 import { createReleaseModal } from "../../core/modal.js";
-import { button, emptyState, kitIconRenderer, setBridge, setIconRenderer } from "../../core/ui-kit.js";
+import { button, emptyState, setBridge } from "../../core/ui-kit.js";
+import { registerIcons } from "../../core/icons.js";
 import { DATES, AVAIL, SCORES, SERVICES_KEY, SORT_KEY, ACTIVE_SORT_KEY, ICONS } from "./consts.js";
 import { install as installServices } from "./services.js";
 import { install as installReleases } from "./releases.js";
@@ -28,8 +29,8 @@ const savedObject = v => (v && typeof v === "object" && !Array.isArray(v) ? v : 
 export default async function mount(host, ctx) {
 	const { api } = ctx;
 	setBridge(api);
-	// ui-kit draws its standard icons; this page's own (file, Radarr, pause, play) are inline SVG strings.
-	setIconRenderer((el, name) => { if (!ICONS[name]) return kitIconRenderer(el, name); el.dataset.icon = name; el.innerHTML = ICONS[name]; });
+	// ui-kit draws its standard icons; this page's own (file, Radarr, pause, play) are inline SVG strings, registered into the app-wide renderer (core/icons.js).
+	registerIcons(ICONS);
 	const root = host.createDiv({ cls: "media-movies media-scope" });
 	let dispose = null, booting = false;
 	// Back from Settings with the Radarr key now saved: start the page for real.

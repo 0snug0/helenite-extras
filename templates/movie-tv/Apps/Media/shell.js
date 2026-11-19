@@ -2,7 +2,8 @@
 // Pages are imported on first visit, mounted once, then hidden and kept alive (their state survives navigation). A page whose
 // import or mount fails gets an error state with a Retry button; the nav keeps working.
 // create-helenite copies this file and router.js from here into `--template app-pages`, so there is one copy to maintain.
-// Class names are `<prefix>-shell`, `-nav`, `-nav-btn`, `-status`, `-chip`, `-body`, `-page`, `-error`, `-retry`.
+// A page keeps its scroll position while another is shown. A "Back" control appears in the nav while there is history.
+// Class names are `<prefix>-shell`, `-nav`, `-nav-btn`, `-nav-back`, `-status`, `-chip`, `-body`, `-page`, `-error`, `-retry`.
 import { createRouter } from "./router.js";
 
 function h(parent, tag, cls, text) {
@@ -33,6 +34,9 @@ function scopedStore(store, page) {
 export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" }) {
 	const shell = h(root, "div", `${prefix}-shell`);
 	const nav = h(shell, "nav", `${prefix}-nav`);
+	const backBtn = h(nav, "button", `${prefix}-nav-back`, "Back");
+	backBtn.type = "button";
+	backBtn.hidden = true;
 	const status = h(shell, "div", `${prefix}-status`);
 	const body = h(shell, "div", `${prefix}-body`);
 	const buttons = {};
@@ -98,15 +102,26 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		}
 	}
 
+	// What scrolls depends on the layout: the shell's own body when it is height-bound, else the frame document. Remember both.
+	const scrollers = () => { const d = body.ownerDocument; return [body, d.scrollingElement || d.documentElement]; };
+	const scrollAfterLayout = fn => { const w = body.ownerDocument.defaultView; if (w && w.requestAnimationFrame) w.requestAnimationFrame(fn); };
+
 	let shown = null;
 	function render({ page, params }) {
 		const leaving = shown && shown !== page ? panes[shown] : null;
+		if (leaving) leaving.scroll = scrollers().map(el => el.scrollTop);   // before hiding: hiding shrinks the page and clamps it
 		shown = page;
 		for (const id of Object.keys(panes)) {
 			panes[id].el.hidden = id !== page;
 			buttons[id].classList.toggle("is-active", id === page);
 			buttons[id].setAttribute("aria-current", id === page ? "page" : "false");
 		}
+		if (leaving) {
+			const restore = () => scrollers().forEach((el, i) => { el.scrollTop = (panes[page].scroll || [0, 0])[i]; });
+			restore();
+			scrollAfterLayout(restore);
+		}
+		backBtn.hidden = !router || !router.canBack();
 		if (leaving) for (const cb of [...leaving.hideListeners]) { try { cb(); } catch { /* a page's listener must not break navigation */ } }
 		const pane = panes[page];
 		pane.params = params;
@@ -116,6 +131,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 	}
 
 	router = createRouter({ pages, initial: { page: startPage, params: startParams }, onChange: render });
+	backBtn.addEventListener("click", () => router.back());
 
 	for (const [id, label] of NAV) {
 		if (!(id in pages)) continue;

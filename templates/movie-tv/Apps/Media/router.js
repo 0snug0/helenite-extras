@@ -1,4 +1,4 @@
-// Media shell router: which page is current, where "back" goes. Pure state; view.js owns the DOM.
+// Shell router: which page is current, where "back" goes. Pure state; shell.js owns the DOM and view.js only lists the pages.
 // Page loaders are `() => Promise<{ default: PageMount }>`; an unknown page id falls back to "home".
 
 export function createRouter({ pages, initial, onChange }) {
@@ -20,6 +20,7 @@ export function createRouter({ pages, initial, onChange }) {
 			state = prev;
 			emit();
 		},
+		canBack: () => history.length > 0,
 		current: () => ({ page: state.page, params: state.params }),
 	};
 }
