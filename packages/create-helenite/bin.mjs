@@ -149,6 +149,10 @@ if (args.template === 'app-vite') {
     const css = join(dest, 'src/style.css');
     writeFileSync(css, `${imports.map((i) => `@import "./${i}";`).join('\n')}\n${readFileSync(css, 'utf8')}`);
   }
+  // Record the stack in app.md so the Apps panel can show what the app is built with.
+  const stackLine = `stack: { framework: ${args.framework}, style: ${args.style}, designSystem: ${args.designSystem} }`;
+  const manifestFile = join(dest, 'app.md');
+  writeFileSync(manifestFile, readFileSync(manifestFile, 'utf8').replace(/^(description:.*)$/m, `$1\n${stackLine}`));
   // --app-dir: the project (node_modules, src) lives outside the vault, which indexes everything under it; `npm run build`
   // writes view.js, view.css and app.md into the app folder in the vault. app.md is written now so the app is listed at once.
   if (args.appDir) {
