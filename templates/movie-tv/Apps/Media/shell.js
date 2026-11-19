@@ -36,7 +36,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 	const status = h(shell, "div", `${prefix}-status`);
 	const body = h(shell, "div", `${prefix}-body`);
 	const buttons = {};
-	const panes = {}; // page -> { el, cleanup, params, listeners, token }
+	const panes = {}; // page -> { el, cleanup, params, listeners, hideListeners, token }
 	const states = new Map(); // service -> "ok" | "down" | "unset"
 	let alive = true;
 	let router;
@@ -80,6 +80,9 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 			back: () => router.back(),
 			get params() { return pane.params; },
 			onParams: cb => { pane.listeners.add(cb); return () => pane.listeners.delete(cb); },
+			// cb() runs each time the shell hides this page (another page was shown). Anything the page put outside its own pane
+			// (a modal on document.body, an overlay) must close here: a hidden page keeps running but must not keep the screen.
+			onHide: cb => { pane.hideListeners.add(cb); return () => pane.hideListeners.delete(cb); },
 			setStatus: (service, state) => { states.set(service, state === "ok" || state === "down" ? state : "unset"); if (alive) paint(); },
 			store: scopedStore(api.store, page),
 		};
@@ -95,12 +98,16 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		}
 	}
 
+	let shown = null;
 	function render({ page, params }) {
+		const leaving = shown && shown !== page ? panes[shown] : null;
+		shown = page;
 		for (const id of Object.keys(panes)) {
 			panes[id].el.hidden = id !== page;
 			buttons[id].classList.toggle("is-active", id === page);
 			buttons[id].setAttribute("aria-current", id === page ? "page" : "false");
 		}
+		if (leaving) for (const cb of [...leaving.hideListeners]) { try { cb(); } catch { /* a page's listener must not break navigation */ } }
 		const pane = panes[page];
 		pane.params = params;
 		for (const cb of [...pane.listeners]) { try { cb(params); } catch { /* a page's listener must not break navigation */ } }
@@ -119,7 +126,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		const el = h(body, "div", `${prefix}-page`);
 		el.hidden = true;
 		el.dataset.page = id;
-		panes[id] = { el, cleanup: null, token: null, failed: false, params: {}, listeners: new Set() };
+		panes[id] = { el, cleanup: null, token: null, failed: false, params: {}, listeners: new Set(), hideListeners: new Set() };
 	}
 
 	const off = api.view && api.view.onNavigate ? api.view.onNavigate(p => {

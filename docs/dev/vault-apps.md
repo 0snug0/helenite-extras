@@ -127,6 +127,8 @@ One app can have many pages. The host gives a view string params, and the app de
 
 A deep link is a request from whoever wrote the note or called `openApp`, so an app must treat params as read-only input: open a page, focus or highlight an item, never change a service or the vault because of them.
 
+Navigating hides a page's pane; it does not unmount it. A page that opens anything outside its pane (a modal on `document.body`, the overlay) closes it in `ctx.onHide(cb)`, which the shell calls when another page is shown (it returns an unsubscribe, like `ctx.onParams`). Media's release picker does this in `core/modal.js`.
+
 The multi-page shell (a nav bar, one pane per page kept alive, an error pane with Retry, a router) is `--template app-pages`: `node packages/create-helenite/bin.mjs my-app --template app-pages`. It copies `router.js` and `shell.js` from `templates/movie-tv/Apps/Media`, the worked example with four pages. The agent skill `helenite-apps` has the rules for building one.
 
 ## The UI kit

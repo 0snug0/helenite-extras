@@ -4,17 +4,19 @@
 // TODO(ui-kit): an inline overlay on purpose. ui-kit's `form`/`choose` overlays are host-rendered, and the host does not
 // render app modals yet (docs/design-system/README.md, "Vault apps"); switch once it does.
 //
-// createReleaseModal({ state, api, draw, releasePanel, register }) -> { el(), closeModal, drawModal, redrawModal }
+// createReleaseModal({ state, api, draw, releasePanel, register, onHide }) -> { el(), closeModal, drawModal, redrawModal }
 //   state         the page's state; the modal is open while state.panel is set (state.panel.key is the item's key,
 //                 findOpen/find/findFocus drive the Ctrl+F bar) and cannot be closed while state.grabbing
 //   api           the host API (api.ui.overlay lifts the frame over the whole window while the modal is open)
 //   draw()        redraws the page (which calls drawModal(items) again)
 //   releasePanel(item) -> the panel element to show for a film/show
 //   register(fn)  registers a disposer, run when the page is unmounted
+//   onHide(cb)    the page ctx's onHide: the shell hides a page without unmounting it, so the modal (on document.body) closes
+//                 itself then, even while state.grabbing, and does not come back when the page is shown again
 // drawModal(items): items is the page's list of films/shows; the modal shows the one whose key is state.panel.key.
 // Needs createDiv (host element helpers) and a document.
 
-export function createReleaseModal({ state, api, draw, releasePanel, register }) {
+export function createReleaseModal({ state, api, draw, releasePanel, register, onHide }) {
 	let modalEl = null;
 	// draw() rebuilds everything, so the modal is rebuilt too; its scroll position is carried over.
 	function closeModal() {
@@ -22,6 +24,12 @@ export function createReleaseModal({ state, api, draw, releasePanel, register })
 		state.panel = null;
 		draw();
 	}
+	function hideModal() {
+		if (!state.panel) return;
+		state.panel = null;
+		draw();
+	}
+	const offHide = onHide ? onHide(hideModal) : null;
 	const onModalKey = e => {
 		if (!modalEl || !state.panel) return;
 		if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "f") {
@@ -34,7 +42,7 @@ export function createReleaseModal({ state, api, draw, releasePanel, register })
 		}
 	};
 	document.addEventListener("keydown", onModalKey, true);
-	register(() => { document.removeEventListener("keydown", onModalKey, true); modalEl?.remove(); modalEl = null; setModalScope(false); });
+	register(() => { offHide?.(); document.removeEventListener("keydown", onModalKey, true); modalEl?.remove(); modalEl = null; setModalScope(false); });
 	// Was an Obsidian keymap Scope (so Ctrl/Cmd+F reached the modal before the page search). The app has its own document, so the
 	// listener above already sees the key first; what is left is asking the host to lift the frame over the window.
 	let overlaid = false;

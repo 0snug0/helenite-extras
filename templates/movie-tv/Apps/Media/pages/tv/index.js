@@ -121,7 +121,7 @@ async function start(root, ctx, have) {
 	// The release picker modal is core's; this page supplies the panel and the redraw.
 	const modal = createReleaseModal({
 		state, api: { ui: { overlay: on => api.ui?.overlay?.(on) } },
-		draw: () => c.draw(), releasePanel: show => c.releasePanel(show), register: fn => disposers.push(fn),
+		draw: () => c.draw(), releasePanel: show => c.releasePanel(show), register: fn => disposers.push(fn), onHide: ctx.onHide,
 	});
 	Object.assign(c, { drawModal: modal.drawModal, redrawModal: modal.redrawModal });
 
