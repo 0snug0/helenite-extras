@@ -3,6 +3,7 @@ helenite-app: 1
 id: media
 name: Media
 version: 0.1.0
+theme: inherit
 description: Home, Movies, TV and Settings in one app.
 views:
   - id: main

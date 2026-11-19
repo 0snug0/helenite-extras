@@ -22,6 +22,14 @@ function scopedStore(store, page) {
 	const k = key => `${page}:${key}`;
 	const out = { get: key => store.get(k(key)), set: (key, value) => store.set(k(key), value) };
 	if (typeof store.delete === "function") out.delete = key => store.delete(k(key));
+	if (typeof store.all === "function") {
+		out.all = async () => {
+			const prefix = k("");
+			const res = {};
+			for (const [key, value] of Object.entries((await store.all()) || {})) if (key.startsWith(prefix)) res[key.slice(prefix.length)] = value;
+			return res;
+		};
+	}
 	return out;
 }
 
@@ -75,7 +83,7 @@ export async function mountShell(root, api, pages = PAGES) {
 			back: () => router.back(),
 			get params() { return pane.params; },
 			onParams: cb => { pane.listeners.add(cb); return () => pane.listeners.delete(cb); },
-			setStatus: (service, state) => { states.set(service, state); if (alive) paint(); },
+			setStatus: (service, state) => { states.set(service, state === "ok" || state === "down" ? state : "unset"); if (alive) paint(); },
 			store: scopedStore(api.store, page),
 		};
 		try {
