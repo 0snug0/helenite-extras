@@ -1,19 +1,19 @@
 #!/usr/bin/env node
-// create-helenite: scaffolds a Helenite plugin, theme or vault app from templates/<template>.
+// create-helenite: scaffolds a Helenite plugin, theme, vault app or multi-page vault app from templates/<template>.
 // Guide: docs/dev/getting-started.md in the Helenite repository.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { heleniteTypes, heleniteVersion, uiKitBundle } from './assets.mjs';
+import { heleniteTypes, heleniteVersion, pagesShell, uiKitBundle } from './assets.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const TEMPLATES = ['plugin', 'theme', 'app'];
+const TEMPLATES = ['plugin', 'theme', 'app', 'app-pages'];
 // The vault app id rule (apps-runtime's APP_ID), used for every template: lowercase letters, digits and hyphens.
 const ID = /^[a-z][a-z0-9-]{1,40}$/;
 // The name is a folder name for themes and apps, so no slash and no leading dot; and no control characters or line
 // separators (U+2028, U+2029). Quotes, backslashes and the like are fine: each place a name lands escapes it.
 const BAD_NAME = /[/\u0000-\u001f\u007f\u2028\u2029]|^\./;
-const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app [--name "My thing"] [--id my-thing]';
+const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages [--name "My thing"] [--id my-thing]';
 
 function fail(message) {
   console.error(`create-helenite: ${message}`);
@@ -85,7 +85,8 @@ if (args.template === 'plugin') {
   vars.helenite = `^${heleniteVersion(types)}`;
   extra['types/helenite.d.ts'] = types;
 }
-if (args.template === 'app') extra['ui-kit.js'] = await uiKitBundle();
+if (args.template === 'app' || args.template === 'app-pages') extra['ui-kit.js'] = await uiKitBundle();
+if (args.template === 'app-pages') Object.assign(extra, pagesShell());
 
 mkdirSync(dest, { recursive: true });
 cpSync(join(here, 'templates', args.template), dest, { recursive: true });
@@ -120,6 +121,10 @@ const next = {
   app: [
     `  Copy ${shown}/ to <vault>/Apps/${name}/, approve its permissions,`,
     '  and open it with the command "Apps: Open app…".',
+  ],
+  'app-pages': [
+    `  Copy ${shown}/ to <vault>/Apps/${name}/, approve its permissions,`,
+    '  and open it with the command "Apps: Open app…". Add pages under pages/ and list them in view.js.',
   ],
 }[args.template];
 console.log(`Created ${args.template} "${name}" (${id}) in ${shown}\n\nNext:\n${next.join('\n')}\n\nGuide: docs/dev/getting-started.md`);
