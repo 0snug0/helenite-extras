@@ -1,6 +1,15 @@
 import { renderIcon } from "./icons";
 import { badge, make, type Tone } from "./states";
 
+/** A detail longer than this is clamped to one line with a chevron to expand it. */
+const LONG_DETAIL = 60;
+
+function setOpen(row: HTMLElement, open: boolean): void {
+  row.classList.toggle("is-open", open);
+  row.querySelector(".hel-choice-detail")?.classList.toggle("is-clamped", !open);
+  row.setAttribute("aria-expanded", String(open));
+}
+
 export interface ChoiceOption<T> {
   value: T;
   text: string;
@@ -100,7 +109,21 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     const title = make(body, "div", ["hel-choice-title"]);
     make(title, "span", ["hel-choice-text"], opt.text);
     if (opt.tag) badge(title, opt.tag, "accent").classList.add("hel-choice-tag");
-    if (opt.detail) make(body, "div", ["hel-choice-detail"], opt.detail);
+    if (opt.detail) {
+      const detail = make(body, "div", ["hel-choice-detail"], opt.detail);
+      // A long detail shows one line, with a chevron to open the rest; the chevron never picks the option.
+      if (opt.detail.length > LONG_DETAIL || opt.detail.includes("\n")) {
+        detail.classList.add("is-clamped");
+        row.classList.add("is-expandable");
+        const more = make(row, "span", ["hel-choice-more"]);
+        more.setAttribute("aria-hidden", "true");
+        renderIcon(more, "chevron-down");
+        more.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setOpen(row, !row.classList.contains("is-open"));
+        });
+      }
+    }
     if (opt.preview) opt.preview(make(body, "div", ["hel-choice-preview"]));
     if (opt.badge) badge(row, opt.badge.text, opt.badge.tone).classList.add("hel-choice-badge");
     if (opt.key) make(row, "kbd", ["hel-choice-key"], opt.key);
@@ -125,6 +148,11 @@ export function choiceList<T>(parent: HTMLElement, o: ChoiceListOptions<T>): Cho
     if ((e.key === "Enter" || e.key === " ") && current) {
       e.preventDefault();
       pick(current[0]);
+      return;
+    }
+    if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && current?.[1].classList.contains("is-expandable")) {
+      e.preventDefault();
+      setOpen(current[1], e.key === "ArrowRight");
       return;
     }
     const keyed = rows.find(([x]) => x.key !== undefined && x.key.toLowerCase() === e.key.toLowerCase());

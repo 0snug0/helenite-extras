@@ -203,6 +203,12 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-choice-body { flex: 1 1 auto; min-width: 0; }
 .hel-choice-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); }
 .hel-choice-detail { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-choice-detail.is-clamped { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.hel-choice-more { flex: none; display: inline-flex; color: var(--text-muted); padding: var(--size-2-2); border-radius: var(--radius-s); }
+.hel-choice-more:hover { background-color: var(--background-modifier-hover); color: var(--text-normal); }
+.hel-choice-more svg { transition: transform 0.12s; }
+.hel-choice.is-open .hel-choice-more svg { transform: rotate(180deg); }
+.hel-choice.is-expandable { align-items: flex-start; }
 .hel-choice-preview { margin-top: var(--size-4-2); padding: var(--size-4-2); max-height: 240px; overflow: auto; background: var(--background-secondary); border-radius: var(--radius-s); font-size: var(--font-ui-small); }
 .hel-choice-key { flex: none; padding: 0 var(--size-2-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-choice-badge { flex: none; }
