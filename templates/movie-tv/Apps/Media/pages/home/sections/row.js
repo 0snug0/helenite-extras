@@ -34,7 +34,7 @@ export function renderRow(root, ctx, { last = 10 } = {}) {
 		const films = div(day, "movie-day-films");
 		for (const { p, rating } of group) {
 			const name = nameOf(p);
-			const card = link(films, { cls: "movie-card", title: name, onClick: e => (e.metaKey || e.ctrlKey ? ctx.openNote(p.file.path, e) : ctx.openTitle(p)) });
+			const card = link(films, { cls: "movie-card", title: name, onClick: e => ctx.openTitle(p, e, p) });
 			if (p.poster) el(card, "img", { cls: "movie-poster", attr: { src: p.poster, alt: name, loading: "lazy" } });
 			else div(card, "movie-poster movie-poster-missing", name);
 			div(card, "movie-year", String(yearOf(p)));

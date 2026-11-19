@@ -43,8 +43,13 @@ export default async function mount(host, pageCtx) {
 			rows: watchRows(pages), find: filmIndex(pages), pathExists: p => paths.has(p),
 			openNote: (path, e) => api.workspace.openNote(path, { newTab: !!(e && (e.metaKey || e.ctrlKey)) }),
 			openUrl: url => api.workspace.openUrl(url),
-			// A film (or a show, when its tmdb_type is "tv") opens on its page, by tmdb id; an item with no id just opens the page.
-			openTitle: item => {
+			// Open a title. Movies / TV list only what is on the watchlist or pending (or in Radarr / Sonarr): a film with a note that is
+			// not, has nothing to focus there, so it opens its note as before. Everything else goes to its page by tmdb id (a show, when
+			// tmdb_type is "tv"); no id just opens the page. Ctrl/Cmd-click opens the note when there is one.
+			// `item` carries tmdb_id/tmdb_type; `note` is its film-note page, if it has one.
+			openTitle: (item, e, note) => {
+				const newTab = !!(e && (e.metaKey || e.ctrlKey));
+				if (note && (newTab || !(note.on_watchlist || note.pending))) return ctx.openNote(note.file.path, e);
 				const target = item?.tmdb_type === "tv" ? "tv" : "movies";
 				const id = item?.tmdb_id;
 				if (id == null || id === "") pageCtx.go(target);

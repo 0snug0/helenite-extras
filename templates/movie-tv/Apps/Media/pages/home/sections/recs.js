@@ -111,7 +111,7 @@ export function renderRecs(root, ctx, opts = {}) {
 		arrow.dataset.icon = "download";
 		arrow.innerHTML = DOWNLOAD_ICON;
 		dl.el.insertBefore(arrow, dl.el.firstChild);
-		dl.el.addEventListener("click", () => ctx.openTitle(p));
+		dl.el.addEventListener("click", e => ctx.openTitle(p, e, note));
 		dl.el.title = p.tmdb_type === "tv" ? "Open in TV" : "Open in Movies";
 
 		const nope = button(btns, { icon: "x", label: `Never recommend ${p.title}`, variant: "icon", onClick: async () => {
