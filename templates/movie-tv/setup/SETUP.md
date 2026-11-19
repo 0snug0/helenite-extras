@@ -66,3 +66,7 @@ For each agent the user wants (`letterboxd-sync` daily, `letterboxd-poll` every 
 ## 7. Finish
 
 Open the Home app, tell the user what was set up and what was skipped, and delete this `setup/` folder only if they agree.
+
+## 8. Migrating from the three old apps (Home, Downloadrr, DownloadrrTV)
+
+`node setup/migrate-to-media.mjs <vault> [--dry-run]` copies the old apps' stores (`.helenite/apps/{home,downloadrr,downloadrr-tv}/store.json`) into the Media app's store under its prefixed key names. It never overwrites a key Media already has, never touches the old files and is safe to run twice. The user's real vault is `~/Helenite/media`: run it on a copy first with `--dry-run`, read the three lists, then run it for real. API keys live in the keychain and cannot be migrated: the user re-enters them once on the Media Settings page.

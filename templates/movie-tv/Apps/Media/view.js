@@ -5,7 +5,7 @@ import { createRouter } from "./router.js";
 
 const NAV = [["home", "Home"], ["movies", "Movies"], ["tv", "TV"], ["settings", "Settings"]];
 // Pages load on first visit. The path is built at runtime so nothing resolves a page before it is asked for.
-const page = name => () => import(/* @vite-ignore */ `./pages/${name}.js`);
+const page = name => () => import(/* @vite-ignore */ `./pages/${name}/index.js`);
 const PAGES = { home: page("home"), movies: page("movies"), tv: page("tv"), settings: page("settings") };
 const LAST = "shell:last";
 
