@@ -31,6 +31,15 @@ describe("listRow", () => {
     expect(row.className).not.toMatch(/nav-file|tree-item/);
   });
 
+  it("sub adds a second line, last in the row, and marks the row", () => {
+    const row = listRow(host(), { title: "Chat", sub: "3h · feat-x", dot: { tone: "default", label: "Idle" } });
+    expect(row.classList.contains("has-sub")).toBe(true);
+    expect(row.classList.contains("has-dot")).toBe(true);
+    expect(row.lastElementChild!.className).toBe("hel-list-row-sub");
+    expect(row.lastElementChild!.textContent).toBe("3h · feat-x");
+    expect(listRow(host(), { title: "Plain" }).classList.contains("has-sub")).toBe(false);
+  });
+
   it("obsidianClass emits the file tree's classes", () => {
     const tree = listRow(host(), { title: "A", tag: "x", obsidianClass: "tree-item" });
     expect([...tree.classList]).toEqual(expect.arrayContaining(["tree-item-self", "is-clickable", "nav-file-title"]));

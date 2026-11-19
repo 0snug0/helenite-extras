@@ -17,6 +17,8 @@ export interface ListRowOptions {
   icon?: string;
   /** A short faint line after the title (a time, a folder). */
   meta?: string;
+  /** A second, faint line under the title (details). Gives the row two lines. */
+  sub?: string;
   /** A small label after the title ("not installed"). */
   tag?: string;
   /** A count badge after the title, before the meta (open questions). Hidden at 0, as `countBadge`. */
@@ -61,6 +63,11 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
     countBadge(row, count, badge);
   }
   if (o.meta !== undefined) make(row, "div", ["hel-list-row-meta"], o.meta);
+  if (o.sub) {
+    row.classList.add("has-sub");
+    if (o.dot) row.classList.add("has-dot");
+    make(row, "div", ["hel-list-row-sub"], o.sub);
+  }
   if (o.actions?.length) {
     const box = make(row, "div", ["hel-list-row-actions"]);
     for (const a of o.actions) {
