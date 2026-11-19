@@ -10,12 +10,28 @@ const here = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES = ['plugin', 'theme', 'app', 'app-pages', 'app-vite'];
 // app-vite: the framework adapters (templates/app-vite/adapters/<name>). Adding one is adding a folder.
 const FRAMEWORKS = existsSync(join(here, 'templates/app-vite/adapters')) ? readdirSync(join(here, 'templates/app-vite/adapters')) : [];
+// app-vite layers, the same shape as adapters: a folder under styles/ (a CSS framework) or design-systems/ (components and
+// tokens) holding layer.json ({ name, description, frameworks?, cssImports? }), files/ (copied over the project) and
+// frameworks/<adapter>/ (copied over it for that adapter only). `--style` / `--design-system` take a folder name or a path.
+const LAYER_KINDS = { style: 'styles', designSystem: 'design-systems' };
+const layersOf = (kind) => {
+  const dir = join(here, 'templates/app-vite', LAYER_KINDS[kind]);
+  return existsSync(dir) ? readdirSync(dir).filter((n) => existsSync(join(dir, n, 'layer.json'))) : [];
+};
+function findLayer(kind, value, framework) {
+  const flag = kind === 'style' ? '--style' : '--design-system';
+  const dir = layersOf(kind).includes(value) ? join(here, 'templates/app-vite', LAYER_KINDS[kind], value) : resolve(value);
+  if (!existsSync(join(dir, 'layer.json'))) fail(`${flag} must be one of ${['none', ...layersOf(kind)].join(', ')} or a folder holding layer.json (got "${value}").`);
+  const meta = JSON.parse(readFileSync(join(dir, 'layer.json'), 'utf8'));
+  if (meta.frameworks && !meta.frameworks.includes(framework)) fail(`${flag} ${meta.name ?? value} supports ${meta.frameworks.join(', ')}, not ${framework}.`);
+  return { dir, meta };
+}
 // The vault app id rule (apps-runtime's APP_ID), used for every template: lowercase letters, digits and hyphens.
 const ID = /^[a-z][a-z0-9-]{1,40}$/;
 // The name is a folder name for themes and apps, so no slash and no leading dot; and no control characters or line
 // separators (U+2028, U+2029). Quotes, backslashes and the like are fine: each place a name lands escapes it.
 const BAD_NAME = /[/\u0000-\u001f\u007f\u2028\u2029]|^\./;
-const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact] [--app-dir <vault>/Apps/My\ Thing]';
+const USAGE = 'Usage: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact] [--style none|tailwind] [--design-system none|modern] [--app-dir <vault>/Apps/My\ Thing]';
 
 function fail(message) {
   console.error(`create-helenite: ${message}`);
@@ -23,26 +39,37 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const out = { dir: null, template: null, name: null, id: null, framework: 'preact', appDir: null };
+  const out = { dir: null, template: null, name: null, id: null, framework: 'preact', appDir: null, style: 'none', designSystem: 'none', list: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-h' || a === '--help') {
       console.log(USAGE);
       process.exit(0);
     }
-    const m = /^--(template|name|id|framework|app-dir)(?:=(.*))?$/.exec(a);
+    if (a === '--list') {
+      out.list = true;
+      continue;
+    }
+    const m = /^--(template|name|id|framework|app-dir|style|design-system)(?:=(.*))?$/.exec(a);
     if (m) {
       const value = m[2] ?? argv[++i];
       if (value === undefined || value === '') fail(`--${m[1]} needs a value.\n${USAGE}`);
-      out[m[1] === 'app-dir' ? 'appDir' : m[1]] = value;
+      out[{ 'app-dir': 'appDir', 'design-system': 'designSystem' }[m[1]] ?? m[1]] = value;
     } else if (a.startsWith('-')) fail(`unknown option ${a}.\n${USAGE}`);
     else if (out.dir) fail(`one directory only (got ${out.dir} and ${a}).\n${USAGE}`);
     else out.dir = a;
   }
+  if (out.list) {
+    const row = (kind) => layersOf(kind).map((n) => `${n}: ${JSON.parse(readFileSync(join(here, 'templates/app-vite', LAYER_KINDS[kind], n, 'layer.json'), 'utf8')).description ?? ''}`);
+    console.log(['frameworks:', ...FRAMEWORKS.map((f) => `  ${f}`), 'styles (CSS frameworks):', '  none: plain CSS over the theme variables', ...row('style').map((r) => `  ${r}`), 'design systems:', '  none: no component set', ...row('designSystem').map((r) => `  ${r}`)].join('\n'));
+    process.exit(0);
+  }
   if (!out.dir) fail(`name the directory to create.\n${USAGE}`);
   if (!TEMPLATES.includes(out.template)) fail(`--template must be one of ${TEMPLATES.join(', ')}.\n${USAGE}`);
   if (out.appDir && out.template !== 'app-vite') fail(`--app-dir is for --template app-vite.\n${USAGE}`);
+  if (out.template !== 'app-vite' && (out.style !== 'none' || out.designSystem !== 'none')) fail(`--style and --design-system are for --template app-vite.\n${USAGE}`);
   if (!FRAMEWORKS.includes(out.framework)) fail(`--framework must be one of ${FRAMEWORKS.join(', ')}.\n${USAGE}`);
+  if (out.template === 'app-vite') for (const [kind, v] of [['style', out.style], ['designSystem', out.designSystem]]) if (v !== 'none') findLayer(kind, v, out.framework); // fail before anything is written
   return out;
 }
 
@@ -101,7 +128,27 @@ if (args.template === 'app-vite') {
   const pkgFile = join(dest, 'package.json');
   const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'));
   Object.assign(pkg, JSON.parse(readFileSync(join(adapter, 'package.json'), 'utf8')));
+  // Layers over the adapter: the CSS framework, then the design system (which may replace App/main with a starter that uses it).
+  // Each layer's package.json dependencies merge in; its cssImports become @import lines at the top of src/style.css.
+  const imports = [];
+  for (const [kind, value] of [['style', args.style], ['designSystem', args.designSystem]]) {
+    if (value === 'none') continue;
+    const { dir, meta } = findLayer(kind, value, args.framework);
+    for (const sub of [join(dir, 'files'), join(dir, 'frameworks', args.framework)]) {
+      if (!existsSync(sub)) continue;
+      cpSync(sub, dest, { recursive: true, filter: (src) => basename(src) !== 'package.json' });
+      if (existsSync(join(sub, 'package.json'))) {
+        const add = JSON.parse(readFileSync(join(sub, 'package.json'), 'utf8'));
+        for (const k of Object.keys(add)) pkg[k] = typeof add[k] === 'object' ? { ...pkg[k], ...add[k] } : add[k];
+      }
+    }
+    imports.push(...(meta.cssImports ?? []));
+  }
   writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`);
+  if (imports.length) {
+    const css = join(dest, 'src/style.css');
+    writeFileSync(css, `${imports.map((i) => `@import "./${i}";`).join('\n')}\n${readFileSync(css, 'utf8')}`);
+  }
   // --app-dir: the project (node_modules, src) lives outside the vault, which indexes everything under it; `npm run build`
   // writes view.js, view.css and app.md into the app folder in the vault. app.md is written now so the app is listed at once.
   if (args.appDir) {

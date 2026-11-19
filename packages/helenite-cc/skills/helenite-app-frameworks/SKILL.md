@@ -28,6 +28,14 @@ The vault's `Apps/My App/` then holds only `app.md`, `view.js` and `view.css`. T
 
 Frameworks available are the folders under `templates/app-vite/adapters/` (`preact` default, `vanilla`). The CLI lists them when `--framework` is wrong. Choose Preact unless the user names another; it has the React API you know.
 
+## CSS framework and design system
+
+Both are optional layers over the framework adapter: `--style tailwind` (Tailwind v4 utilities such as `bg-surface text-muted rounded-theme`, mapped to the vault theme's variables; no preflight reset) and `--design-system modern` (`Button`, `Card`, `Badge`, `Input`, `Tabs`, `Stat`, `List`, `EmptyState`, `Stack`, `Row` imported from `./ds`, restyled by the `--ds-*` tokens). Default for a polished app: `--design-system modern`, plus `--style tailwind` when the user wants utility classes. `create-helenite --list` shows what is installed; a layer folder can also be passed by path. Both resolve to the theme's variables, so light/dark and the vault theme still apply.
+
+## Responsive by default
+
+Every app root `.app` is a size container (`container-type: inline-size`), so layout answers the width of the tab, sidebar or embed the app sits in and rearranges live as it is resized. Use `.app-grid` (or the design system's `Grid`) for cards that reflow, and `@container app (max-width: 30rem) { ... }` (or Tailwind's `@md:` variants) for anything else. Never size layout from the window (`@media`, `100vw`); keep the `.app` root class.
+
 ## The layout
 
 ```
@@ -61,6 +69,8 @@ Edit `src/` (and `app.md` in the project; the build copies it into the vault), b
 ## Adding a framework
 
 A framework is an adapter folder `templates/app-vite/adapters/<name>/` with: `package.json` (its dependencies, merged into the app's), `vite.adapter.mjs` (default export with `entry` and the framework's transform options; the shared `vite.config.mjs` spreads it), `src/main.*` (`export default defineApp(Root)`), `src/helenite/index.*` exporting `defineApp(root)` and the data bindings in that framework's idiom, built on `core.js` (`createNotes(api).query(spec)` gives `{ get, subscribe, refresh }`). `defineApp` must return `mount(root, second)` where `second` is the api for an app and `{ api, go, params, ... }` for a page, and the mount must return a cleanup that removes everything it drew. Add a row to `FRAMEWORKS` in `plugins/core-build/test/app-vite.test.ts`; the same tests run against every adapter.
+
+Adding a CSS framework or design system is the same idea: a layer folder (`templates/app-vite/styles/<name>/` or `design-systems/<name>/`) with `layer.json`, `files/` and optional `frameworks/<adapter>/`; see packages/create-helenite/README.md.
 
 ## Before telling the user it is done
 

@@ -1,0 +1,25 @@
+/* Tailwind v4, theme and utilities only (no preflight: it would reset the frame's base styles, and the theme already
+   sets them). Colours point at the vault theme's variables with `@theme inline`, so `bg-surface` or `text-muted`
+   follows the user's theme and light/dark live. Spacing, radius, type and the rest keep Tailwind's defaults. */
+/* Every app is a size container (`.app`, see style.css), so Tailwind's container variants work with no setup:
+   `grid @md:grid-cols-2 @xl:grid-cols-3` rearranges with the pane's width, not the window's. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme inline {
+	--color-surface: var(--background-primary);
+	--color-surface-alt: var(--background-secondary);
+	--color-line: var(--background-modifier-border);
+	--color-hover: var(--background-modifier-hover);
+	--color-fg: var(--text-normal);
+	--color-muted: var(--text-muted);
+	--color-faint: var(--text-faint);
+	--color-accent: var(--interactive-accent);
+	--color-accent-hover: var(--interactive-accent-hover);
+	--color-on-accent: var(--text-on-accent);
+	--color-danger: var(--text-error);
+	--color-success: var(--text-success);
+	--color-warning: var(--text-warning);
+	--radius-theme: var(--radius-m, 8px);
+}

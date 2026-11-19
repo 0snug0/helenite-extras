@@ -1,0 +1,5 @@
+{
+  "name": "tailwind",
+  "description": "Tailwind CSS v4 utilities, mapped to the vault theme's variables. No preflight reset: the frame keeps the theme's base look.",
+  "cssImports": ["styles/tailwind.css"]
+}
