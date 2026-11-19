@@ -46,8 +46,12 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 	let router;
 
 	const paramsOf = () => (api.view && api.view.params) || {};
+	// The page a tab was left on is remembered per placement ("shell:last:tab"). An embed is driven by its fence params and never
+	// reads or writes it: otherwise every note that embeds the app would change the page its tab reopens on.
+	const placement = (api.view && api.view.placement) || "tab";
+	const lastKey = placement === "embed" ? null : `shell:last:${placement}`;
 	let stored = null;
-	try { stored = await api.store.get("shell:last"); } catch { stored = null; }
+	if (lastKey) { try { stored = await api.store.get(lastKey); } catch { stored = null; } }
 	const p0 = paramsOf();
 	let startPage = stored;
 	let startParams = {};
@@ -126,7 +130,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		const pane = panes[page];
 		pane.params = params;
 		for (const cb of [...pane.listeners]) { try { cb(params); } catch { /* a page's listener must not break navigation */ } }
-		Promise.resolve(api.store.set("shell:last", page)).catch(() => {});
+		if (lastKey) Promise.resolve(api.store.set(lastKey, page)).catch(() => {});
 		load(page);
 	}
 
