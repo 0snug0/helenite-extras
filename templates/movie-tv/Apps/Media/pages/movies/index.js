@@ -32,11 +32,8 @@ export default async function mount(host, ctx) {
 	setIconRenderer((el, name) => { if (!ICONS[name]) return kitIconRenderer(el, name); el.dataset.icon = name; el.innerHTML = ICONS[name]; });
 	const root = host.createDiv({ cls: "media-movies" });
 	let dispose = null, booting = false;
-	const offParams = ctx.onParams(async () => {
-		// Back from Settings with the Radarr key now saved: start the page for real.
-		if (dispose || booting) return;
-		await boot();
-	});
+	// Back from Settings with the Radarr key now saved: start the page for real.
+	const offParams = ctx.onParams(() => { if (!dispose && !booting) boot().catch(() => { /* the setup state or the failed first boot already shows */ }); });
 	async function boot() {
 		booting = true;
 		try {
@@ -46,7 +43,13 @@ export default async function mount(host, ctx) {
 			dispose = await start(root, ctx, have);
 		} finally { booting = false; }
 	}
-	await boot();
+	try { await boot(); }
+	catch (e) {
+		// Nothing may stay behind: no listener, no element. The shell shows its error pane with Retry.
+		offParams();
+		root.remove();
+		throw e;
+	}
 	return () => { offParams(); dispose?.(); dispose = null; root.remove(); };
 }
 
@@ -75,7 +78,7 @@ async function start(root, ctx, have) {
 		save: (k, v) => { store[k] = v; return Promise.resolve(ctx.store.set(k, v)).catch(e => console.error(e)); },
 		later: (fn, ms) => { const t = setTimeout(() => { timeouts.delete(t); if (alive) fn(); }, ms); timeouts.add(t); return t; },
 	};
-	const state = c.state = { filter: "all", movies: [], queue: [], error: null, panel: null, cache: new Map(), pollUntil: 0, grabbing: null, removing: null, armed: null, activeSort: { key: "title", dir: "asc" }, sent: new Set(), loading: false, sort: "title", query: "", dates: {}, datesBusy: false, avail: {}, scores: {}, plex: {}, pausing: null, free: null, streaming: false };
+	const state = c.state = { filter: "all", movies: [], queue: [], error: null, panel: null, cache: new Map(), pollUntil: 0, grabbing: null, removing: null, armed: null, activeSort: { key: "title", dir: "asc" }, sent: new Set(), loading: false, sort: "title", query: "", dates: {}, datesBusy: false, avail: {}, scores: {}, plex: {}, pausing: null, free: null, streaming: false, focus: null };
 	state.streaming = store[SERVICES_KEY] === true;
 	state.avail = savedObject(store[AVAIL]) ?? {};
 	state.scores = savedObject(store[SCORES]) ?? {};
@@ -138,19 +141,26 @@ async function start(root, ctx, have) {
 		add: async r => { await c.client.addMonitored(r.raw, state.movies); await c.refreshRadarr(); },
 	});
 
-	// ctx.params.id (a film's tmdb id, or its card key) opens that film's release picker; an id that matches no film is ignored.
+	// ctx.params.id (a film's tmdb id, or its card key) scrolls to that film's card and highlights it. The release picker
+	// opens by itself only when Radarr already has the film: opening it for any other film would add it to Radarr and
+	// search the indexers, which a link must not do. An id that matches no film is ignored.
 	let openedFor = null;
 	function openFromParams() {
 		const id = ctx.params?.id;
+		state.focus = null;
 		if (id == null || id === "" || String(id) === openedFor) return;
 		const films = lib.buildFilms(c.notes, state.movies, state.queue, !state.loading && !(state.error && state.movies.length === 0));
 		const film = films.find(f => f.key === String(id) || (f.tmdbId && String(f.tmdbId) === String(id)));
-		if (!film || !film.tmdbId || state.panel?.key === film.key) return;
+		if (!film) return;
 		openedFor = String(id);
-		c.loadReleases(film, false);
+		state.focus = film.key;
+		if (film.movie && film.tmdbId && state.panel?.key !== film.key) c.loadReleases(film, false);
+		else c.draw();
+		const card = [...root.querySelectorAll(".dl-card")].find(el => el.dataset.filmKey === film.key);
+		card?.scrollIntoView?.({ block: "center" });
 	}
-	const offParams = ctx.onParams(() => { openedFor = null; if (c.ready && !state.loading) openFromParams(); });
-	disposers.push(offParams);
+	const offFocus = ctx.onParams(() => { openedFor = null; if (c.ready && !state.loading) openFromParams(); });
+	disposers.push(offFocus);
 
 	// Render the notes first so a hung Radarr cannot blank the page; chips say "Checking Radarr" until the first fetch settles.
 	state.loading = true;

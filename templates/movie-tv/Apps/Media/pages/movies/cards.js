@@ -76,7 +76,7 @@ function drawBody() {
 	const grid = c.root.createDiv({ cls: "dl-grid" });
 	for (const film of shown) {
 		const open = c.state.panel?.key === film.key;
-		const card = grid.createDiv({ cls: `dl-card${open ? " dl-card-open" : ""}` });
+		const card = grid.createDiv({ cls: `dl-card${open ? " dl-card-open" : ""}${c.state.focus === film.key ? " media-movies-focus" : ""}`, attr: { "data-film-key": film.key } });
 
 		// A div with a background image, not an <img>: Minimal zooms any img:active on click.
 		const { link } = renderPoster(card, { title: film.title, url: film.url, poster: film.poster, site: "Letterboxd" });

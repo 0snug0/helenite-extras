@@ -159,3 +159,6 @@
 :is(.media-movies, .modal.downloadrr) .fl-scores { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 2px 0; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; }
 :is(.media-movies, .modal.downloadrr) .fl-score { color: var(--text-muted); white-space: nowrap; }
 :is(.media-movies, .modal.downloadrr) a.fl-score:hover { color: var(--text-normal); }
+
+/* A card reached by a deep link (Home poster -> Movies): scrolled to and outlined. */
+.media-movies .dl-card.media-movies-focus { border-color: var(--interactive-accent); box-shadow: 0 0 0 2px var(--interactive-accent); }
