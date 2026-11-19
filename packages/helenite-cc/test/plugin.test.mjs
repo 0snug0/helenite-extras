@@ -48,3 +48,13 @@ test('plugin creator skill drives the wizard and the design system', () => {
   assert.match(md, /Shareable/);
   for (const ref of md.matchAll(/\]\(([\w-]+\.md)\)/g)) assert.ok(existsSync(join(dir, ref[1])), `missing ${ref[1]}`);
 });
+
+test('apps skill covers multi-page apps, read-only deep links and the app-pages template', () => {
+  const md = readFileSync(join(root, 'skills/helenite-apps/SKILL.md'), 'utf8');
+  assert.match(md, /## Multi-page apps/);
+  assert.match(md, /--template app-pages/);
+  assert.match(md, /Deep links are read-only/);
+  assert.match(md, /never mark a secret `required: true`/i);
+  assert.match(md, /migrate-to-media\.mjs/);
+});
+

@@ -2,7 +2,7 @@
   "name": "create-helenite",
   "version": "0.1.0",
   "private": true,
-  "description": "Scaffolds a Helenite plugin, theme or vault app: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app.",
+  "description": "Scaffolds a Helenite plugin, theme, vault app or multi-page vault app: node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages.",
   "type": "module",
   "bin": { "create-helenite": "bin.mjs" },
   "files": ["bin.mjs", "assets.mjs", "vendor.mjs", "templates", "vendor", "README.md"],

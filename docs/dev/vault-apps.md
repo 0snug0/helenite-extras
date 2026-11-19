@@ -99,15 +99,35 @@ Helenite imports `entry` as an ES module and calls its default export with `root
 | `api.net.fetch({ url, method, headers, body })` | the origin in `net`. Runs in the main process, so CORS does not apply. `{{secret:NAME}}` in the url, a header or a string body is filled in for the secret's hosts. |
 | `api.secrets.status()`, `api.secrets.prompt(name)` | a declared secret. There is no way to read a secret's value. |
 | `api.workspace.openNote(path)` | `vault.read` |
-| `api.workspace.openUrl(url)`, `api.workspace.openApp(id)` | nothing (`http` and `https` links only) |
+| `api.workspace.openUrl(url)`, `api.workspace.openApp(id, { params })` | nothing (`http` and `https` links only); `params` open the app's view on a page (see Pages and deep links) |
 | `api.connectors.<id>.<method>(...)` | the id in `connectors` |
 | `api.data.list(contract)`, `api.data.act(contract, action, record)` | the contract in `data` |
 | `api.ui.modal(spec)`, `api.ui.menu(spec)`, `api.ui.notice(text, { kind?, timeoutMs? })` | nothing: drawn by the host (see the UI kit below, which builds these specs) |
 | `api.ui.overlay(on)` | nothing: lifts the frame over the whole window, below a host strip (see below) |
 | `api.agent.ask(text)` | `agent: true` |
-| `api.settings`, `api.app`, `api.view` | nothing: read-only values |
+| `api.settings`, `api.app`, `api.view` | nothing: read-only values. `api.view` is `{ id, placement, params, onNavigate }`: `params` is a frozen `{}` or string map, `onNavigate(cb)` returns an unsubscribe (see Pages and deep links). Typed in `packages/apps-runtime/src/sandbox/api.d.ts`. |
 
 Every call is a message to the host, checked against the manifest in the main process. A refused call rejects with an error. The frame-side api is `packages/apps-runtime/src/sandbox/api.js`, and the checks are in `packages/apps-runtime/src/main/broker.ts`.
+
+## Pages and deep links
+
+One app can have many pages. The host gives a view string params, and the app decides what they mean (the usual one is `page`).
+
+- `api.view.params`: the params this view was opened with, a frozen object, `{}` when there are none. Read it once at mount.
+- `api.view.onNavigate(cb)`: `cb(params)` runs when the host hands this already-open view new params (a second `openApp(id, { params })`, a click on a link to the same app). It returns an unsubscribe; call it in the cleanup.
+- `api.workspace.openApp(id, { params })`: open an app, or move an open one, to `params`, e.g. `openApp("media", { params: { page: "tv", id: "abc" } })`.
+- In a note, the fence carries them after the id or as lines in the body (the body wins):
+
+  ````md
+  ```helenite-app media page=tv id=abc
+  ```
+  ````
+
+  Keys are a letter then up to 40 letters, digits, `_` and `-`; values are 1 to 200 characters of `[\w.:/-]`; at most 10 params. `view` and `height` are the embed's own options and never params. Anything that does not fit is dropped, not an error (`packages/apps-runtime/src/host/embed.ts`).
+
+A deep link is a request from whoever wrote the note or called `openApp`, so an app must treat params as read-only input: open a page, focus or highlight an item, never change a service or the vault because of them.
+
+The multi-page shell (a nav bar, one pane per page kept alive, an error pane with Retry, a router) is `--template app-pages`: `node packages/create-helenite/bin.mjs my-app --template app-pages`. It copies `router.js` and `shell.js` from `templates/movie-tv/Apps/Media`, the worked example with four pages. The agent skill `helenite-apps` has the rules for building one.
 
 ## The UI kit
 

@@ -79,4 +79,4 @@ Helenite reloads an enabled plugin when its `main.js`, `manifest.json` or `style
 - [plugins.md](./plugins.md): the plugin lifecycle, manifest, settings tabs, commands, data and permissions.
 - [design-system.md](./design-system.md): which `ui` part to use for what.
 - [testing.md](./testing.md): testing beyond the template's unit test.
-- The other templates: `--template theme` ([themes.md](./themes.md)) and `--template app` ([vault-apps.md](./vault-apps.md)).
+- The other templates: `--template theme` ([themes.md](./themes.md)), `--template app` and `--template app-pages` (an app with a nav bar and pages); see [vault-apps.md](./vault-apps.md).

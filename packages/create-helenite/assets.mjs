@@ -1,5 +1,5 @@
 // What a template needs from Helenite besides its own files: the `helenite` module's types (plugin) and a bundle of
-// @helenite/ui-kit (app). In a Helenite checkout both are built fresh from the sources. A packed copy (`pnpm pack`
+// @helenite/ui-kit (app), plus the multi-page shell (app-pages). In a Helenite checkout both are built fresh from the sources. A packed copy (`pnpm pack`
 // runs vendor.mjs first) has no sources beside it, so it reads the copies vendor.mjs saved in vendor/.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -50,4 +50,11 @@ export async function uiKitBundle() {
     logLevel: 'warning',
   });
   return `// @helenite/ui-kit ${version}, bundled by create-helenite. Do not edit; to update it, scaffold a new app and copy its ui-kit.js.\n${out.outputFiles[0].text}`;
+}
+
+/** The multi-page shell of `--template app-pages`: router.js and shell.js, copied from templates/movie-tv/Apps/Media so the Media app stays the one source. */
+export function pagesShell() {
+  if (!inRepo) return { 'router.js': vendored('pages-router.js'), 'shell.js': vendored('pages-shell.js') };
+  const media = join(repoRoot, 'templates/movie-tv/Apps/Media');
+  return { 'router.js': readFileSync(join(media, 'router.js'), 'utf8'), 'shell.js': readFileSync(join(media, 'shell.js'), 'utf8') };
 }
