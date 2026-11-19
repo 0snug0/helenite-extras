@@ -27,6 +27,8 @@ In a Helenite checkout, `node packages/create-helenite/bin.mjs <dir> --template 
 
 Plugin UI (settings tabs, modals, buttons, tables): use the `helenite` module's parts and follow `docs/design-system/README.md`; Settings, Design system shows each one live. Plugins: see the helenite-plugins skill and `docs/dev/plugins.md`.
 
+For an app with several sections or state, or lists driven by notes, use the `helenite-app-frameworks` skill (`--template app-vite`, Vite + Preact) instead of hand-writing DOM code.
+
 ## Multi-page apps
 
 Build ONE app with pages, not several apps, when the screens share services, secrets or data (Home, Movies, TV and Settings are one `media` app). The user approves one permission set, a Settings page can set the keys every page uses, and a page can deep-link to another. Keep separate apps only when they are unrelated or need different permissions.
