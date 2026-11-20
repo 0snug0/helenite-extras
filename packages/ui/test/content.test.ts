@@ -155,7 +155,7 @@ describe("keyValue", () => {
 });
 
 describe("composer", () => {
-  const typeIn = (input: HTMLTextAreaElement, v: string) => {
+  const typeIn = (input: { value: string; selectionStart: number | null; setSelectionRange(a: number, b: number): void; dispatchEvent(e: Event): boolean }, v: string) => {
     input.value = v;
     input.setSelectionRange(v.length, v.length);
     input.dispatchEvent(new Event("input", { bubbles: true }));

@@ -10,7 +10,17 @@ export interface SlashCommand {
   description?: string;
 }
 
+/** What the composer needs from its text box: a textarea, or an element that behaves like one (an editor's content area). */
+export type ComposerField = HTMLElement & {
+  value: string;
+  readOnly: boolean;
+  selectionStart: number | null;
+  setSelectionRange(start: number, end: number): void;
+};
+
 export interface ComposerOptions {
+  /** Builds the text box in place of the plain textarea (appended to the composer by the callback). */
+  createInput?: (parent: HTMLElement) => ComposerField;
   placeholder?: string;
   /** The text box's height in lines. Default 3. */
   rows?: number;
@@ -38,7 +48,7 @@ export interface ComposerOptions {
 
 export interface ComposerHandle {
   el: HTMLElement;
-  input: HTMLTextAreaElement;
+  input: ComposerField;
   setBusy(b: boolean): void;
   focus(): void;
   clear(): void;
@@ -47,9 +57,14 @@ export interface ComposerHandle {
 /** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty`. */
 export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle {
   const el = make(parent, "div", ["hel-composer"]);
-  const input = make(el, "textarea", ["hel-composer-input"]) as HTMLTextAreaElement;
-  input.rows = o.rows ?? 3;
-  if (o.placeholder !== undefined) input.placeholder = o.placeholder;
+  let input: ComposerField;
+  if (o.createInput) input = o.createInput(el);
+  else {
+    const ta = make(el, "textarea", ["hel-composer-input"]) as HTMLTextAreaElement;
+    ta.rows = o.rows ?? 3;
+    if (o.placeholder !== undefined) ta.placeholder = o.placeholder;
+    input = ta;
+  }
   const field = parent.classList.contains("hel-field-control");
   if (!field) input.setAttribute("aria-label", o.placeholder ?? "Message");
   joinField(parent, input);
@@ -118,7 +133,7 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
 }
 
 /** The "/" menu: a listbox above the box, driven from the textarea (focus stays there). */
-function slashMenu(el: HTMLElement, input: HTMLTextAreaElement, load: () => SlashCommand[] | Promise<SlashCommand[]>): void {
+function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashCommand[] | Promise<SlashCommand[]>): void {
   const id = `hel-composer-${++composerCounter}-menu`;
   const menu = make(el, "div", ["hel-composer-menu"]);
   menu.id = id;
