@@ -58,7 +58,6 @@ test('apps skill covers multi-page apps, read-only deep links and the app-pages 
   assert.match(md, /migrate-to-media\.mjs/);
 });
 
-
 test('addendum and helenite-notes steer design review through ask review', () => {
   const addendum = readFileSync(join(root, 'prompts/addendum.md'), 'utf8');
   assert.match(addendum, /mcp__helenite__ask/);
