@@ -4,6 +4,8 @@
 it doesn't cost agent tokens. Every question names a rule-based `fallback`, which answers whenever the model is
 off, missing, slow, unsure, or not allowed to run by the power rule. Nothing may depend on the model being there.
 
+To see it working, install the demo vault: `node demos/local-llm/install.mjs` (see `demos/local-llm/README.md`).
+
 ## Asking
 
 From a plugin (any vault):
