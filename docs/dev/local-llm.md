@@ -77,7 +77,8 @@ echo '{"question":"Is this plugin only cosmetic?","options":[{"id":"yes","descri
 
 ## Settings
 
-Home stores them in `local-llm.json` (Settings → Setup, and the last step of the setup wizard):
+Home stores them in `local-llm.json`. They are edited in Home under Settings → Harnesses → Local model and on the
+last step of the setup wizard; a vault's Harnesses page shows what Home chose (`plugins/core-terminal/src/local-model.ts`):
 
 - `enabled`: off until the user turns it on. The wizard offers it switched on when a model is found.
 - `power` / `minBattery`: `always`, `plugged-in`, or `plugged-in-or-battery` (default, 50%). On battery with an
