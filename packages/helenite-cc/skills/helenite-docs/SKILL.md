@@ -59,9 +59,9 @@ screen New message
 - Top: optional `device mobile`, `device tablet` or `device desktop` (default), then `screen <name>` for each screen. With no `screen` line the whole block is one screen.
 - Containers: `row` (side by side), `col`, `card <title>`, `sidebar`, `main`, `header`, `footer`, `modal <title>`, `tabs` with `tab <name>` children, `list` (each child line is an item), `table` (each child line is a row, cells split with ` | `, first row is the head).
 - Elements: `title`, `text`, `button`, `link`, `input`, `textarea`, `select`, `checkbox`, `radio`, `toggle`, `image`, `avatar`, `badge`, `divider`, `nav A | B | C`, and `note` for a comment to the reader that is not part of the UI.
-- `[Label]` is a button anywhere in a line. In `header`, `footer` and `row`, ` | ` separates the left and right sides.
+- `[Label]` is a button inside a plain line, a list item, a table cell, a `title`, a `note`, or a `header`, `footer` or `row` (`Total: $40 [Pay]`). In `header`, `footer` and `row`, ` | ` separates the left and right sides.
 - `*` before a label means primary, active or checked: `[*Save]`, `tab *All`, `checkbox *Remember me`, `nav Home | *Mail`.
-- `-> Screen name` at the end of a button, link, tab, nav item, list item or element makes it click through to that screen. Use it to show a flow across two to four screens. A name that matches no screen is listed as a warning under the wireframe.
+- `-> Screen name` at the end of a button, link, tab, nav item, list item, element or `card` makes it click through to that screen. Use it to show a flow across two to four screens. A name that matches no screen is listed as a warning under the wireframe.
 
 Sketch structure, not polish: real labels, real example content, no lorem ipsum. Show only the screens the decision is about. Put one sentence under the block saying what to look at.
 
@@ -85,6 +85,7 @@ height: 220
 
 - Optional `title:` and `height:` (pixels, 80 to 1200) lines first, then the markup. Without `height` the box fits its content.
 - It must be self-contained. There is no network, so no CDN scripts, web fonts, remote images or `fetch`; inline everything, and use `data:` URLs or inline SVG for images. It cannot read the vault or call Helenite, and it cannot navigate.
+- Put all code in `<script>` blocks in the markup. Inline handlers (`onclick="…"`), `eval`, `new Function` and scripts created at run time do not run; wire events with `el.onclick = () => …` or `addEventListener` inside a `<script>`. Building markup with `innerHTML` is fine. At most 30 scripts.
 - The theme's CSS variables are available (`--background-primary`, `--background-secondary`, `--background-modifier-border`, `--text-normal`, `--text-muted`, `--interactive-accent`, `--text-on-accent`), and `button`, `input` and body text are already styled. Use them so the demo matches light and dark themes.
 - Keep it under about 60 lines and about one idea. Fake the data. It is an illustration, not the feature; say so if it differs from what will be built.
 - Use it sparingly. If a `wireframe` with two screens shows the same thing, use the wireframe.
