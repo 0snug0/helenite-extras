@@ -18,7 +18,7 @@ test('manifest, variants and skills are well formed', () => {
   assert.ok(existsSync(join(root, 'prompts/addendum.md')));
   // Default load must not double-register hooks or the MCP server.
   assert.ok(!existsSync(join(root, 'hooks/hooks.json')) && !existsSync(join(root, '.mcp.json')));
-  assert.ok(readdirSync(join(root, 'skills')).length === 8);
+  assert.ok(readdirSync(join(root, 'skills')).length === 9);
 });
 
 test('content skill and addendum cover the ask and render-check tools', () => {
@@ -77,4 +77,13 @@ test('docs skill teaches the wireframe and concept blocks, and the addendum poin
   assert.match(md, /mcp__helenite__ask/);
   assert.match(readFileSync(join(root, 'prompts/addendum.md'), 'utf8'), /load the skill helenite-docs/);
   assert.match(readFileSync(join(root, 'skills/helenite-content/SKILL.md'), 'utf8'), /helenite-docs/);
+});
+
+test('agents skill designs from agents_capabilities and proposes with agents_propose', () => {
+  const md = readFileSync(join(root, 'skills/helenite-agents/SKILL.md'), 'utf8');
+  assert.match(md, /^---\nname: helenite-agents\ndescription: Use when the user wants help designing an agent.*\n---/);
+  for (const t of ['agents_capabilities', 'agents_propose', 'agent_run']) assert.ok(md.includes(t), t);
+  assert.match(md, /Proposals/);
+  assert.match(md, /cannot have triggers/i);
+  assert.match(md, /autonomy/);
 });
