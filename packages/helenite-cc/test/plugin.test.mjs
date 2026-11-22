@@ -11,14 +11,14 @@ test('manifest, variants and skills are well formed', () => {
   const hooks = JSON.parse(readFileSync(join(root, 'variants/hooks.plugin.json'), 'utf8')).hooks;
   assert.ok(hooks.Stop && hooks.PreToolUse);
   assert.match(readFileSync(join(root, 'variants/mcp.plugin.json'), 'utf8'), /\$\{HELENITE_MCP_URL\}/);
-  for (const s of ['helenite-plugins', 'helenite-plugin-creator', 'helenite-apps', 'helenite-app-frameworks', 'helenite-layout', 'helenite-notes']) {
+  for (const s of ['helenite-plugins', 'helenite-plugin-creator', 'helenite-apps', 'helenite-app-frameworks', 'helenite-layout', 'helenite-notes', 'helenite-docs']) {
     const md = readFileSync(join(root, 'skills', s, 'SKILL.md'), 'utf8');
     assert.match(md, new RegExp(`^---\\nname: ${s}\\ndescription: .+\\n---`));
   }
   assert.ok(existsSync(join(root, 'prompts/addendum.md')));
   // Default load must not double-register hooks or the MCP server.
   assert.ok(!existsSync(join(root, 'hooks/hooks.json')) && !existsSync(join(root, '.mcp.json')));
-  assert.ok(readdirSync(join(root, 'skills')).length === 7);
+  assert.ok(readdirSync(join(root, 'skills')).length === 8);
 });
 
 test('content skill and addendum cover the ask and render-check tools', () => {
@@ -64,4 +64,17 @@ test('addendum and helenite-notes steer design review through ask review', () =>
   assert.match(addendum, /`review`/);
   const notes = readFileSync(join(root, 'skills/helenite-notes/SKILL.md'), 'utf8');
   for (const w of ['review', 'sections', 'concept', 'recommended']) assert.ok(notes.includes(w), w);
+});
+
+test('docs skill teaches the wireframe and concept blocks, and the addendum points at it', () => {
+  const md = readFileSync(join(root, 'skills/helenite-docs/SKILL.md'), 'utf8');
+  assert.match(md, /```wireframe\n/);
+  assert.match(md, /```concept\n/);
+  assert.match(md, /-> Screen name/);
+  assert.match(md, /Mermaid/);
+  assert.match(md, /no network/i);
+  assert.match(md, /vault_capabilities/);
+  assert.match(md, /mcp__helenite__ask/);
+  assert.match(readFileSync(join(root, 'prompts/addendum.md'), 'utf8'), /load the skill helenite-docs/);
+  assert.match(readFileSync(join(root, 'skills/helenite-content/SKILL.md'), 'utf8'), /helenite-docs/);
 });

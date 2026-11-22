@@ -49,6 +49,10 @@ Canvas: a `.canvas` file containing JSON. Text and file nodes need `id`, `type`,
 }
 ```
 
+## Wireframes and concepts
+
+` ```wireframe ` draws a grey-box sketch of a screen from an indented outline, and ` ```concept ` runs a small self-contained HTML demo in a locked-down frame. Both come from the core plugin `core-docs`. The skill helenite-docs has the syntax and says when each is worth using.
+
 ## Dataview
 
 Query blocks are ` ```dataview `. First word is the type.
