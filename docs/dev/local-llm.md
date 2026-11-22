@@ -33,13 +33,18 @@ Looked for in this order; the first with a usable model wins.
 | Runtime | Kind | Endpoint |
 | --- | --- | --- |
 | Ollaya (Jev-style decision models) | `decision`: `POST /v1/systemone`, returns a choice with a confidence | `127.0.0.1:11435` |
+| Ollama decision model (Ollama 0.40+, models whose capabilities include `decision`) | `decision`, the same format | `127.0.0.1:11434` |
 | Apple Intelligence (the model built into macOS) | `apple`: a bundled helper program asks the Foundation Models framework, held to the option ids by guided generation | none: no server, nothing to install |
 | Ollama | `chat`: OpenAI-compatible, held to the option ids by a JSON schema | `127.0.0.1:11434` |
 | LM Studio | `chat` | `127.0.0.1:1234` |
 
 The smallest suitable model is used unless `model` is set. Embedding and fill-in models are skipped. A decision
-model's answer below `minConfidence` (0.6) goes to the fallback. The Ollaya request shape follows its published
-TypeSafe-compatible format and has unit tests, but has not been run against a live Ollaya.
+model's answer below `minConfidence` (0.6) goes to the fallback. The confidence is the chosen
+option's probability, and stands in for the reason a decision model doesn't write ("76% sure"). The decision format
+is verified against a live Ollama (`kev:4b-q8_0`); Ollaya serves the same format but has not been run here.
+
+To get a decision model: `ollama pull kev:4b-q8_0` (4.5 GB). Nothing else to install or configure; Helenite finds
+it on the next check and prefers it over Apple Intelligence and the chat models.
 
 ## Apple's on-device model
 
