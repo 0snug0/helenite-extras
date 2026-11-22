@@ -89,3 +89,10 @@ Home stores them in `local-llm.json` (Settings → Setup, and the last step of t
 The New vault wizard's Obsidian scan asks about each plugin that needs a Helenite version and marks the ones the
 model reads as "likely looks only" or "likely built in" (`apps/desktop/src/main/home/obsidian-hints.ts`). The scan
 shows at once; the hints fill in when they arrive.
+
+## Design reviews
+
+A design-review card (`ask` with `review`) asks about each section: does it need the reader's eye, or is it safe to
+leave on the agent's pick? Sections get a "Worth a look" or "Likely fine" chip, the first one worth a look opens,
+and a button folds the likely-fine ones away (`plugins/core-ask-widgets/src/review-hints.ts`). The card shows at
+once and the hints fill in; they never change an answer, and with no model the card is the plain one.
