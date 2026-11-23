@@ -291,6 +291,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-modal-error { color: var(--text-error); font-size: var(--font-ui-small); min-height: 1.2em; margin-top: var(--size-2-2); }
 .hel-modal-error:empty { min-height: 0; }
 .hel-modal-actions { display: flex; justify-content: flex-end; gap: var(--size-4-2); margin-top: var(--size-4-4); }
+/* The actions live inside the scrolling .modal-content, so pin them to its bottom: a tall dialog never hides its buttons. */
+.hel-modal-actions { position: sticky; bottom: 0; z-index: 1; padding-top: var(--size-4-3); background: var(--modal-background); }
 .hel-modal-choices { max-height: 50vh; overflow-y: auto; }
 .hel-modal-field > .hel-check-detail { margin-top: var(--size-2-1); padding-left: calc(var(--checkbox-size) + var(--size-4-2)); }
 
