@@ -5,7 +5,7 @@ description: Use when the user wants help designing an agent, or asks to make, c
 
 # Designing a Helenite agent
 
-An agent is a markdown note in Home's `Agents/` folder: what it runs on, what it is told, what it may do, what starts it and what it is held to. You never write that folder. You propose a draft; the user reviews it in the Agent manager and saves it there. Until they do, the agent does not exist: never say it was created, and never tell the user it will run.
+An agent is a markdown note in Home's `Agents/` folder: what it runs on, what it is told, what it may do, what starts it and what it is held to. You never write that folder. You propose a draft; the user reviews it in the Agents list and saves it there. Until they do, the agent does not exist: never say it was created, and never tell the user it will run.
 
 ## 1. Read what is there: `agents_capabilities`
 
@@ -77,7 +77,7 @@ autonomy: ask
 Read the changed note and the notes it links to. Fix broken links only; ask before rewriting prose.
 ```
 
-The draft is checked like a saved note. If the tool returns a problem, fix that field and propose again. On success, tell the user: the agent is waiting under **Proposals** in the Agent manager; they open it in the editor, can change anything, and it becomes an agent when they press Save (or they dismiss it). If the tool says autonomy was stored as `ask`, say so.
+The draft is checked like a saved note. If the tool returns a problem, fix that field and propose again. On success, tell the user: the agent is waiting under **Proposals** in the Agent manager; they open it in the creator wizard (it opens at Review, every step filled in), can change anything, and it becomes an agent when they press Save (or they dismiss it). If the tool says autonomy was stored as `ask`, say so.
 
 ## Starting another agent: `agent_run`
 
