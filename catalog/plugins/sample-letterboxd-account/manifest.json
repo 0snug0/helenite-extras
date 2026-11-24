@@ -22,18 +22,12 @@
             {
               "id": "diary.read",
               "label": "Read diary",
-              "risk": "low",
-              "paths": [
-                "/*/rss/"
-              ]
+              "risk": "low"
             },
             {
               "id": "watchlist.read",
               "label": "Read watchlist",
-              "risk": "low",
-              "paths": [
-                "/*/watchlist/"
-              ]
+              "risk": "low"
             }
           ],
           "methods": {

@@ -26,10 +26,12 @@ describe('decode', () => {
 });
 
 describe('manifest', () => {
-  it('gives each capability its own path so they are distinguishable', async () => {
+  it('declares its host and capability labels; requests are bounded by the host alone', async () => {
     const m = JSON.parse((await import('node:fs')).readFileSync(new URL('../manifest.json', import.meta.url), 'utf8'));
-    const caps = m.helenite.accounts.accountTypes[0].capabilities;
-    expect(Object.fromEntries(caps.map((c: any) => [c.id, c.paths]))).toEqual({ 'diary.read': ['/*/rss/'], 'watchlist.read': ['/*/watchlist/'] });
+    const t = m.helenite.accounts.accountTypes[0];
+    expect(t.hosts).toEqual(['https://letterboxd.com']);
+    expect(t.capabilities.map((c: any) => c.id)).toEqual(['diary.read', 'watchlist.read']);
+    expect(t.capabilities.every((c: any) => c.paths === undefined && c.http === undefined)).toBe(true);
   });
 });
 

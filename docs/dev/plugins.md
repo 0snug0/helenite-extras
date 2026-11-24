@@ -81,7 +81,13 @@ A plugin without `helenite.settings` still works: a vault either uses Home's set
 
 ### `helenite.accounts`: account types
 
-A plugin can also add an account type (a service that vaults can be granted, with capabilities checked by Helenite). That uses a second entry, `accounts.js`, declared under `helenite.accounts`. See `plugins/sample-letterboxd-account/README.md`.
+A plugin can also add an account type (a service whose accounts vaults can be allowed to use). That uses a second entry, `accounts.js`, declared under `helenite.accounts`. See `plugins/sample-letterboxd-account/README.md`.
+
+Access is all or nothing per account and vault: a vault that Home lets use an account may call every method the type declares. Helenite enforces that with the type's `hosts`, not with capabilities:
+
+- `hosts` is the guard. Main limits every request a method makes (including each redirect hop) to the type's `hosts`, and fills `{{secret:NAME}}` placeholders from the account's secrets.
+- `capabilities` in `accountTypes` are labels only (an `id`, a `label`, a `risk` shown in Settings). They grant and refuse nothing, and methods may map to them for display.
+- `http` and `paths` on a capability are ignored if present (old manifests keep loading). Requests are bounded by host, not by method or path.
 
 ## Settings tabs
 
