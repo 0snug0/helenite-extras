@@ -39,7 +39,7 @@ if (errors.length) throw new Error(`catalog.json is invalid:\n${errors.join('\n'
 writeFileSync(catalogFile, JSON.stringify(catalog, null, 2) + '\n');
 
 git('add', 'catalog.json');
-git('add', '-f', 'catalog');
+for (const e of catalog.entries) if (e.path?.endsWith('/dist')) git('add', '-f', e.path);
 git('commit', '-m', `release ${tag}`);
 git('tag', tag);
 console.log(`released ${tag}: ${catalog.entries.filter((e) => e.path?.endsWith('/dist')).length} plugins built`);
