@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "helenite-homepage",
+      "name": "Homepage",
+      "kind": "plugin",
+      "description": "Opens a chosen note when Helenite starts and, if you like, in every new empty tab.",
+      "author": "Helenite",
+      "path": "catalog/plugins/helenite-homepage/dist",
+      "files": [
+        "main.js",
+        "manifest.json"
+      ]
+    },
+    {
+      "id": "helenite-kanban",
+      "name": "Kanban",
+      "kind": "plugin",
+      "description": "Markdown-backed Kanban boards. A note with kanban-plugin: board in its frontmatter opens as lists of cards, saved in the same format as the Obsidian Kanban plugin.",
+      "author": "Helenite",
+      "path": "catalog/plugins/helenite-kanban/dist",
+      "files": [
+        "main.js",
+        "manifest.json",
+        "styles.css"
+      ]
+    },
+    {
+      "id": "sample-design-system",
+      "name": "Design system (sample)",
+      "kind": "plugin",
+      "description": "Sample plugin that uses Helenite's design-system parts: a settings tab with a section, a sub-page table, a scope bar and a delete action, and a ribbon icon that opens a form.",
+      "author": "Helenite",
+      "path": "catalog/plugins/sample-design-system/dist",
+      "files": [
+        "main.js",
+        "manifest.json"
+      ]
+    },
+    {
+      "id": "letterboxd-account",
+      "name": "Letterboxd account (sample)",
+      "kind": "plugin",
+      "description": "Sample plugin with an account type (a Letterboxd account that vaults can be granted) and a vault feature that uses it.",
+      "author": "Helenite",
+      "path": "catalog/plugins/sample-letterboxd-account/dist",
+      "files": [
+        "accounts.js",
+        "main.js",
+        "manifest.json"
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Media",
+      "kind": "app",
+      "description": "Home, Movies, TV and Settings in one app: a dashboard, watchlist downloads through Radarr, Sonarr, SABnzbd and Plex, and a settings page for the services and keys.",
+      "author": "Helenite",
+      "path": "templates/movie-tv/Apps/Media",
+      "files": [
+        "app.md",
+        "core/add-search.js",
+        "core/films.js",
+        "core/icons.js",
+        "core/migrate-keys.js",
+        "core/modal.js",
+        "core/plex.js",
+        "core/posters.js",
+        "core/releases.js",
+        "core/rows.js",
+        "core/sabnzbd.js",
+        "core/scores.js",
+        "core/services.js",
+        "core/tmdb.js",
+        "core/ui-kit.js",
+        "jobs/refresh-availability.js",
+        "pages/home/dates.js",
+        "pages/home/films.js",
+        "pages/home/index.js",
+        "pages/home/sections/calendar.js",
+        "pages/home/sections/gcal.js",
+        "pages/home/sections/recs.js",
+        "pages/home/sections/row.js",
+        "pages/home/sections/stats.js",
+        "pages/home/sections/tasks.js",
+        "pages/home/stats-data.js",
+        "pages/home/tasks-data.js",
+        "pages/home/ui.js",
+        "pages/movies/actions.js",
+        "pages/movies/active.js",
+        "pages/movies/availability-version.js",
+        "pages/movies/cards.js",
+        "pages/movies/consts.js",
+        "pages/movies/fill.js",
+        "pages/movies/index.js",
+        "pages/movies/lib.js",
+        "pages/movies/radarr.js",
+        "pages/movies/releases.js",
+        "pages/movies/services.js",
+        "pages/settings/index.js",
+        "pages/tv/actions.js",
+        "pages/tv/active.js",
+        "pages/tv/consts.js",
+        "pages/tv/draw.js",
+        "pages/tv/fill.js",
+        "pages/tv/index.js",
+        "pages/tv/lib.js",
+        "pages/tv/panels.js",
+        "pages/tv/polling.js",
+        "pages/tv/search.js",
+        "pages/tv/sonarr.js",
+        "router.js",
+        "shell.js",
+        "view.css",
+        "view.js"
+      ]
+    }
+  ]
+}
