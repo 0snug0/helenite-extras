@@ -13,7 +13,7 @@ export const vendorDir = join(here, 'vendor');
 
 function vendored(name) {
   const file = join(vendorDir, name);
-  if (!existsSync(file)) throw new Error(`${file} is missing. Run create-helenite from a helenite-extras checkout (or `extras/` in the app), or pack it with pnpm pack (which writes vendor/).`);
+  if (!existsSync(file)) throw new Error(`${file} is missing. Run create-helenite from a helenite-extras checkout (or extras/ in the app), or pack it with pnpm pack (which writes vendor/).`);
   return readFileSync(file, 'utf8');
 }
 
