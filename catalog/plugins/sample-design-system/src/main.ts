@@ -1,5 +1,5 @@
 // Sample plugin for Helenite's design system (`import { ui } from 'helenite'`). Read docs/design-system/README.md first.
-// It is not a core plugin and is not enabled by default. Build it with `node plugins/core-build/build.mjs sample-design-system`.
+// It is not a core plugin and is not enabled by default. Build it with `node scripts/build-plugin.mjs sample-design-system`.
 import { Plugin, PluginSettingTab, type App } from 'obsidian';
 // Imported statically because this plugin is Helenite-only. A plugin that also runs in Obsidian must guard the require
 // (see "Plugins that run in Obsidian too" in docs/design-system/README.md).

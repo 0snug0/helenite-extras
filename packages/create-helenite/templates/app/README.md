@@ -2,7 +2,7 @@
 
 A Helenite vault app, made by create-helenite. Its view draws a card with a table and a button, saves each click in the app's store, and shows a notice.
 
-The full guide is `docs/dev/vault-apps.md` in the Helenite repository.
+The full guide is `docs/dev/vault-apps.md` in the helenite-extras repository.
 
 ## Files
 

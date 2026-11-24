@@ -2,7 +2,7 @@
 
 A Helenite plugin, made by create-helenite. It has a command ("Say hello"), a ribbon icon that opens a form, and a settings tab with a section, a toggle and a sub-page that holds a table.
 
-The full guide is `docs/dev/plugins.md` in the Helenite repository.
+The full guide is `docs/dev/plugins.md` in the helenite-extras repository.
 
 ## Files
 
@@ -36,11 +36,11 @@ Then turn it on in Settings, Community plugins. Helenite reloads an enabled plug
 
 ## The `helenite` types
 
-`@helenite/types` is private to the Helenite repository and not on npm, so create-helenite copied its file into `types/helenite.d.ts`. To update it, build it in your Helenite checkout and copy it over:
+`@helenite/types` is private to the helenite-extras repository and not on npm, so create-helenite copied its file into `types/helenite.d.ts`. To update it, build it in your helenite-extras checkout and copy it over:
 
 ```sh
 pnpm --filter @helenite/types build
-cp <helenite>/packages/types/dist/helenite.d.ts types/helenite.d.ts
+cp <helenite>/packages/types/helenite.d.ts types/helenite.d.ts
 ```
 
 ## Run in Obsidian too

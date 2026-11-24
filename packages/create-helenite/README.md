@@ -1,6 +1,6 @@
 # create-helenite
 
-Scaffolds a Helenite plugin, theme, vault app or multi-page vault app. Private: it is not on npm, so run it from a Helenite checkout.
+Scaffolds a Helenite plugin, theme, vault app or multi-page vault app. Private: it is not on npm, so run it from a helenite-extras checkout (or `extras/` in the app).
 
 ```
 node packages/create-helenite/bin.mjs <dir> --template plugin|theme|app|app-pages|app-vite [--name "My thing"] [--id my-thing] [--framework preact] [--style tailwind] [--design-system modern]

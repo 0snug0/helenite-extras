@@ -15,7 +15,7 @@ A framework is only an authoring layer. Vite compiles `src/` into `view.js` and 
 
 ## Start
 
-The scaffolder is `create-helenite`. In the Helenite app it is at `../../tools/create-helenite/bin.mjs` relative to this skill's base directory (shown when the skill loads); in a Helenite checkout it is `packages/create-helenite/bin.mjs`. Needs `node` and `npm` on PATH and network for `npm install`.
+The scaffolder is `create-helenite`. In the Helenite app it is at `../../tools/create-helenite/bin.mjs` relative to this skill's base directory (shown when the skill loads); in a helenite-extras checkout (or `extras/` in the app) it is `packages/create-helenite/bin.mjs`. Needs `node` and `npm` on PATH and network for `npm install`.
 
 **Keep the project OUTSIDE the vault.** Helenite indexes and watches every file in the vault, and `node_modules` has thousands. Put the source in `~/.helenite-app-src/<id>` (any folder outside the vault) and let the build write the app into the vault with `--app-dir`:
 

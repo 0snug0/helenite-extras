@@ -6,7 +6,7 @@ Three levels, from cheapest to fullest: unit tests of your own modules, the plug
 
 Keep logic that does not need the app in modules that import neither `obsidian` nor `helenite`, and test them with vitest. The plugin template does this: `src/settings.ts` holds the defaults and their merge, and `test/settings.test.ts` tests it with `npm test`.
 
-When a module does import them, mock them. `plugins/sample-letterboxd-account/test/vault-feature.test.ts` stands in for `PluginSettingTab` and `ui.notice`:
+When a module does import them, mock them. `catalog/plugins/sample-letterboxd-account/test/vault-feature.test.ts` stands in for `PluginSettingTab` and `ui.notice`:
 
 ```ts
 vi.mock('obsidian', async (orig) => ({ ...(await orig<object>()), PluginSettingTab: class { constructor(public app: unknown, public plugin: unknown) {} } }));
@@ -17,10 +17,10 @@ That sample resolves `obsidian` and `helenite` to Helenite's own sources in its 
 
 ## Typechecking against @helenite/types
 
-`@helenite/types` is generated from the runtime `helenite` module (`node packages/types/build.mjs`, or `pnpm --filter @helenite/types build`), so it cannot drift from what Helenite provides. It writes `packages/types/dist/helenite.d.ts`.
+`@helenite/types` is generated from the runtime `helenite` module (`node packages/types/build.mjs`, or `pnpm --filter @helenite/types build`), so it cannot drift from what Helenite provides. It writes `packages/types/helenite.d.ts`.
 
 - **A scaffolded plugin** has a copy in `types/helenite.d.ts`, included by its `tsconfig.json`. `npm run typecheck` runs `tsc --noEmit -p .`. To pick up a newer Helenite, build the types in your checkout and copy the file over.
-- **A plugin in this repository** maps the module in its `tsconfig.json`, as `plugins/sample-design-system` does: `"paths": { "helenite": ["../../packages/types/dist/helenite.d.ts"] }`, with a `typecheck` script that builds the types first.
+- **A plugin in this repository** maps the module in its `tsconfig.json`, as `catalog/plugins/sample-design-system` does: `"paths": { "helenite": ["../../packages/types/helenite.d.ts"] }`, with a `typecheck` script that builds the types first.
 
 `pnpm -s typecheck` at the root runs every package's `typecheck` script.
 

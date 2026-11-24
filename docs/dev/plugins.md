@@ -81,7 +81,7 @@ A plugin without `helenite.settings` still works: a vault either uses Home's set
 
 ### `helenite.accounts`: account types
 
-A plugin can also add an account type (a service whose accounts vaults can be allowed to use). That uses a second entry, `accounts.js`, declared under `helenite.accounts`. See `plugins/sample-letterboxd-account/README.md`.
+A plugin can also add an account type (a service whose accounts vaults can be allowed to use). That uses a second entry, `accounts.js`, declared under `helenite.accounts`. See `catalog/plugins/sample-letterboxd-account/README.md`.
 
 Access is all or nothing per account and vault: a vault that Home lets use an account may call every method the type declares. Helenite enforces that with the type's `hosts`, not with capabilities:
 

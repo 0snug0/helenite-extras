@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // create-helenite: scaffolds a Helenite plugin, theme, vault app or multi-page vault app from templates/<template>.
-// Guide: docs/dev/getting-started.md in the Helenite repository.
+// Guide: docs/dev/getting-started.md in the helenite-extras repository.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

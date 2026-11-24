@@ -17,7 +17,7 @@ A plugin that offers an account type has two independent entries. The author cho
 
 ## Install
 
-1. Build it: `node plugins/core-build/build.mjs sample-letterboxd-account` (output in `dist/`: `manifest.json`, `main.js`, `accounts.js`).
+1. Build it: `node scripts/build-plugin.mjs sample-letterboxd-account` (output in `dist/`: `manifest.json`, `main.js`, `accounts.js`).
 2. Copy those three files into a folder named after the plugin id inside **Home's** plugins folder, for example `<Home>/.obsidian/plugins/letterboxd-account/`.
 3. In Home, open Settings, Community plugins, and enable "Letterboxd account (sample)". The account type is then on in every vault window while it is enabled there. The vault feature can still be turned on or off per vault.
 4. In Settings, Accounts, choose **Add account**, then **Letterboxd**, and enter your username.

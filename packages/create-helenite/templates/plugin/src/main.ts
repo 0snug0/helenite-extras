@@ -1,4 +1,4 @@
-// {{name}}: a Helenite plugin. Start with README.md; the guide is docs/dev/plugins.md in the Helenite repository.
+// {{name}}: a Helenite plugin. Start with README.md; the guide is docs/dev/plugins.md in the helenite-extras repository.
 import { Plugin, PluginSettingTab, Setting, type App } from 'obsidian';
 // `helenite` is provided by Helenite at run time (build.mjs keeps it out of the bundle); types/helenite.d.ts types it.
 // This static import makes the plugin Helenite-only. To run in Obsidian too, see "Run in Obsidian too" in README.md.

@@ -16,7 +16,7 @@ From the prompt, the `[Helenite]` context line and `helenite_context`, fill in e
 | Audience | **Just me** or **Shareable** (see below) |
 | Kind | Plugin; or something lighter: an Apps launcher entry (`apps_add_entry`) for "quick access to X", a vault app for sandboxed UI in one vault (`helenite-apps`) |
 | Scope | **This vault** (`<vault>/.helenite/plugins/<id>/`), **Home** (all vaults), or **Home with per-vault settings** |
-| Account | None, uses an existing account (`app.accounts.call`), or adds an account type (`accounts.js`, see `plugins/sample-letterboxd-account/README.md`) |
+| Account | None, uses an existing account (`app.accounts.call`), or adds an account type (`accounts.js`, see `catalog/plugins/sample-letterboxd-account/README.md`) |
 | Surfaces | Code block (`registerMarkdownCodeBlockProcessor`), post processor (inline syntax), sidebar view, command, ribbon icon, status bar item, settings tab, modal |
 | Settings | Grouped list of settings with type and default (step 3) |
 | Permissions | `fs:vault`, `net:<host>`, `shell`, `agent:tools`, or none |
@@ -38,7 +38,7 @@ If **every** row is known, skip to step 3 and say what you assumed in one line. 
 
 | | Just me | Shareable |
 | --- | --- | --- |
-| Form | single `main.js` via `plugin_scaffold` | TypeScript project: `node packages/create-helenite/bin.mjs <dir> --template plugin` (needs a Helenite checkout), then `npm install && npm run build` and copy `dist/` into the plugins folder |
+| Form | single `main.js` via `plugin_scaffold` | TypeScript project: `node packages/create-helenite/bin.mjs <dir> --template plugin` (needs a helenite-extras checkout, or `extras/` in the app), then `npm install && npm run build` and copy `dist/` into the plugins folder |
 | Edge cases | happy path; fail with a `ui.notice`, not a crash | empty vault, missing files, bad input, huge vaults, unload mid-render, mobile/narrow panes |
 | Manifest | id, name, version, minAppVersion | plus `description`, `author`, a `helenite` range, `permissions` declared honestly |
 | Settings | defaults hard-wired where nobody would change them | every option the user could reasonably want, each with a description; a reset row |

@@ -2,13 +2,13 @@
 
 This page takes you from nothing to a working Helenite plugin: scaffold it, build it, put it in a scratch Helenite and turn it on. It assumes you know how Obsidian plugins work.
 
-The `sh` blocks on this page are run, in order, by `plugins/core-build/test/create-helenite.test.ts`, so they stay correct. (The test starts no app: it loads the plugin into the test harness instead, and links `npm install`'s packages from the repository instead of downloading them.)
+The `sh` blocks on this page are run, in order, by the app's `plugins/core-build/test/create-helenite.test.ts`, so they stay correct. (The test starts no app: it loads the plugin into the test harness instead, and links `npm install`'s packages from the repository instead of downloading them.)
 
 ## Before you start
 
-You need Node 22 or later, npm, and a Helenite checkout where `pnpm install` has run. To run the dev build, Electron needs its binary (`node node_modules/electron/install.js` in `apps/desktop` if `electron` says it is missing); in a fresh checkout, also build the terminal helpers once: `node packages/pty-host/scripts/build.mjs` and `node packages/agent-bridge/scripts/build.mjs`.
+You need Node 22 or later, npm, and a Helenite app checkout (cloned with `--recursive`, so `extras/` holds this repository) where `pnpm install` has run. To run the dev build, Electron needs its binary (`node node_modules/electron/install.js` in `apps/desktop` if `electron` says it is missing); in a fresh checkout, also build the terminal helpers once: `node packages/pty-host/scripts/build.mjs` and `node packages/agent-bridge/scripts/build.mjs`.
 
-Run everything below in one terminal, starting at the root of the checkout.
+Run everything below in one terminal, starting at the root of the app checkout. The commands name the scaffolder as `packages/create-helenite/bin.mjs`, its path inside this repository; from the app root that is `extras/packages/create-helenite/bin.mjs`, so add the `extras/` prefix there.
 
 ## 1. Scaffold the plugin
 

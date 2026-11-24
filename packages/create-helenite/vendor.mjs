@@ -1,5 +1,5 @@
 // Saves the types, the ui-kit bundle and the multi-page shell into vendor/, so a packed create-helenite (pnpm pack runs this as prepack)
-// works away from a Helenite checkout.
+// works away from a helenite-extras checkout (or `extras/` in the app).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { heleniteTypes, pagesShell, uiKitBundle, vendorDir } from './assets.mjs';

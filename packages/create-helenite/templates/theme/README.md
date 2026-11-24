@@ -2,7 +2,7 @@
 
 A Helenite theme, made by create-helenite. `theme.css` overrides Obsidian's variables for light and dark, sets Helenite's `--hel-*` variables, and lists the public classes you can restyle.
 
-The full guide is `docs/dev/themes.md` in the Helenite repository; every class and variable is in `docs/design-system/STYLING.md`.
+The full guide is `docs/dev/themes.md` in the helenite-extras repository; every class and variable is in `docs/design-system/STYLING.md`.
 
 ## Install it
 

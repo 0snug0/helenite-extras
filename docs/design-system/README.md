@@ -4,7 +4,7 @@ Helenite gives plugins a set of ready-made UI parts (buttons, tables, modals, se
 
 To see every part running, open **Settings, Design system**. Each part is shown live next to the code that makes it.
 
-For restyling, see [STYLING.md](./STYLING.md). A working plugin is in `plugins/sample-design-system`.
+For restyling, see [STYLING.md](./STYLING.md). A working plugin is in `catalog/plugins/sample-design-system`.
 
 New to building for Helenite? Start with the developer guide, [docs/dev](../dev/README.md): it scaffolds a plugin, theme or vault app (`node packages/create-helenite/bin.mjs`) and explains where these parts fit.
 
@@ -16,7 +16,7 @@ The types live in the workspace package `@helenite/types`. It is private and not
 pnpm --filter @helenite/types build
 ```
 
-That writes `packages/types/dist/helenite.d.ts`, a `declare module 'helenite'` file. Include it in your plugin's `tsconfig.json` (`"include": ["src", "<path>/helenite.d.ts"]`).
+That writes `packages/types/helenite.d.ts`, a `declare module 'helenite'` file. Include it in your plugin's `tsconfig.json` (`"include": ["src", "<path>/helenite.d.ts"]`).
 
 ## Import
 

@@ -23,7 +23,7 @@ Tools: `app_list`, `app_open`, `app_reload`, `app_test`, `apps_add_entry` (`mcp_
 
 App UI: `@helenite/ui-kit` gives the design-system parts (`button`, `table`, `card`, ...) with the same signatures as plugins' `ui.*`. A frame cannot resolve package names, so an app imports a bundled copy (`./ui-kit.js`) and calls `setBridge(api)` before any overlay. Today only `notice` works through the bridge (without options); `confirm`, `prompt`, `choose`, `form` and `menu` need host support that is not built yet.
 
-In a Helenite checkout, `node packages/create-helenite/bin.mjs <dir> --template app` writes a starter app (`app.md`, `view.js` with ui-kit, `ui-kit.js`), and `docs/dev/vault-apps.md` is the full guide (manifest keys, the `api`, the sandbox).
+In a helenite-extras checkout (or `extras/` in the app), `node packages/create-helenite/bin.mjs <dir> --template app` writes a starter app (`app.md`, `view.js` with ui-kit, `ui-kit.js`), and `docs/dev/vault-apps.md` is the full guide (manifest keys, the `api`, the sandbox).
 
 Plugin UI (settings tabs, modals, buttons, tables): use the `helenite` module's parts and follow `docs/design-system/README.md`; Settings, Design system shows each one live. Plugins: see the helenite-plugins skill and `docs/dev/plugins.md`.
 

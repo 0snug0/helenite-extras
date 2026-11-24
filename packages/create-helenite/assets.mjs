@@ -1,5 +1,5 @@
 // What a template needs from Helenite besides its own files: the `helenite` module's types (plugin) and a bundle of
-// @helenite/ui-kit (app), plus the multi-page shell (app-pages). In a Helenite checkout both are built fresh from the sources. A packed copy (`pnpm pack`
+// @helenite/ui-kit (app), plus the multi-page shell (app-pages). In a helenite-extras checkout both are built fresh from the sources. A packed copy (`pnpm pack`
 // runs vendor.mjs first) has no sources beside it, so it reads the copies vendor.mjs saved in vendor/.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -13,7 +13,7 @@ export const vendorDir = join(here, 'vendor');
 
 function vendored(name) {
   const file = join(vendorDir, name);
-  if (!existsSync(file)) throw new Error(`${file} is missing. Run create-helenite from a Helenite checkout, or pack it with pnpm pack (which writes vendor/).`);
+  if (!existsSync(file)) throw new Error(`${file} is missing. Run create-helenite from a helenite-extras checkout (or `extras/` in the app), or pack it with pnpm pack (which writes vendor/).`);
   return readFileSync(file, 'utf8');
 }
 
