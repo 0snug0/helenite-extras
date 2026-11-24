@@ -111,6 +111,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 	const scrollAfterLayout = fn => { const w = body.ownerDocument.defaultView; if (w && w.requestAnimationFrame) w.requestAnimationFrame(fn); };
 
 	let shown = null;
+	let reported = false;
 	function render({ page, params }) {
 		const leaving = shown && shown !== page ? panes[shown] : null;
 		if (leaving) leaving.scroll = scrollers().map(el => el.scrollTop);   // before hiding: hiding shrinks the page and clamps it
@@ -131,6 +132,8 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		pane.params = params;
 		for (const cb of [...pane.listeners]) { try { cb(params); } catch { /* a page's listener must not break navigation */ } }
 		if (lastKey) Promise.resolve(api.store.set(lastKey, page)).catch(() => {});
+		// Tell the host the page changed, so the tab's Back/Forward buttons walk the pages like a browser (the first page replaces).
+		if (placement !== "embed" && api.view && api.view.page) { try { api.view.page({ page, ...params }, { replace: !reported }); } catch { /* an older host */ } reported = true; }
 		load(page);
 	}
 
