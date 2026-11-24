@@ -1,0 +1,41 @@
+{
+  "id": "letterboxd-account",
+  "name": "Letterboxd account (sample)",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Sample plugin with an account type (a Letterboxd account that vaults can be granted) and a vault feature that uses it.",
+  "author": "Helenite",
+  "isDesktopOnly": true,
+  "main": "main.js",
+  "helenite": {
+    "accounts": {
+      "main": "accounts.js",
+      "accountTypes": [
+        {
+          "type": "letterboxd",
+          "name": "Letterboxd",
+          "hosts": [
+            "https://letterboxd.com"
+          ],
+          "secrets": [],
+          "capabilities": [
+            {
+              "id": "diary.read",
+              "label": "Read diary",
+              "risk": "low"
+            },
+            {
+              "id": "watchlist.read",
+              "label": "Read watchlist",
+              "risk": "low"
+            }
+          ],
+          "methods": {
+            "diary": "diary.read",
+            "watchlist": "watchlist.read"
+          }
+        }
+      ]
+    }
+  }
+}
