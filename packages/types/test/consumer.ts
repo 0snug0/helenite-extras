@@ -1,4 +1,4 @@
-// Compiled against dist/helenite.d.ts and the DOM libs only (tsconfig.json): what a plugin author sees.
+// Compiled against helenite.d.ts and the DOM libs only (tsconfig.json): what a plugin author sees.
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';

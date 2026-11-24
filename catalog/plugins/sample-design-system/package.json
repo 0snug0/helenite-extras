@@ -1,1 +1,13 @@
-{ "name": "@helenite/sample-design-system", "version": "0.1.0", "private": true, "type": "module", "scripts": { "build": "node ../core-build/build.mjs sample-design-system", "typecheck": "pnpm --filter @helenite/types build && tsc --noEmit -p ." } }
+{
+  "name": "@helenite/sample-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ../../../scripts/build-plugin.mjs sample-design-system",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "obsidian": "1.14.4"
+  }
+}

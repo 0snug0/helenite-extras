@@ -2,7 +2,7 @@
   "name": "@helenite/connectors",
   "version": "0.1.0",
   "private": true,
-  "description": "Connector SDK and first-party connectors (radarr, sonarr, sabnzbd, plex, tmdb, letterboxd, google-calendar), keychain secret store, Settings \u2192 Secrets tab.",
+  "description": "Connector SDK and first-party connectors (radarr, sonarr, sabnzbd, plex, tmdb, letterboxd, google-calendar), keychain secret store, Settings → Secrets tab.",
   "type": "module",
   "main": "src/index.ts",
   "exports": {
@@ -15,5 +15,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run"
+  },
+  "devDependencies": {
+    "obsidian": "1.14.4"
   }
 }

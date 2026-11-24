@@ -2,7 +2,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { loadBuiltPlugin, makeApp, tick } from '../../core-build/test/harness';
+import { loadBuiltPlugin, makeApp, tick } from '../../../../../plugins/core-build/test/harness';
 
 async function setup(settings: Record<string, unknown> = {}, files: Record<string, string> = { 'Home.md': '# Home', 'Other.md': 'other' }) {
   const { app, vaultPath } = await makeApp(files);

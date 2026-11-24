@@ -2,9 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "obsidian": ["../../plugins/core-build/node_modules/obsidian"],
-      "helenite": ["../obsidian-api/src/helenite-module.ts"]
+      "helenite": ["../types/helenite.d.ts"]
     }
   },
-  "include": ["src", "test", "../../plugins/core-build/helenite-api.d.ts"]
+  "include": ["src", "test", "../types/helenite-api.d.ts"]
 }

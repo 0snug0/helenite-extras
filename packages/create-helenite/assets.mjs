@@ -25,7 +25,7 @@ export function heleniteTypes() {
   } catch (e) {
     throw new Error(`could not build @helenite/types:\n${e.stdout ?? ''}${e.stderr ?? ''}`);
   }
-  return readFileSync(join(repoRoot, 'packages/types/dist/helenite.d.ts'), 'utf8');
+  return readFileSync(join(repoRoot, 'packages/types/helenite.d.ts'), 'utf8');
 }
 
 /** The Helenite version the types describe, e.g. "0.1.0" (a plugin's manifest asks for `^` that). */

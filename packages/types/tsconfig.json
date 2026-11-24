@@ -9,5 +9,5 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": []
   },
-  "files": ["dist/helenite.d.ts", "test/consumer.ts"]
+  "files": ["helenite.d.ts", "test/consumer.ts"]
 }

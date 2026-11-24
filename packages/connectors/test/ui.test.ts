@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import './ui-setup';
 import { describe, expect, it } from 'vitest';
-import { makeApp, tick } from '../../../plugins/core-build/test/harness';
+import { makeApp, tick } from '../../../../plugins/core-build/test/harness';
 import { createSecretsSettingTab } from '../src/ui';
 import { appScope, createConnectorHost, createFakeSafeStorage, createSecretStore, type SecretEntry } from '../src/main';
 import { mkdtempSync } from 'node:fs';

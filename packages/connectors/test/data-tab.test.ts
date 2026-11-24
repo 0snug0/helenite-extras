@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import './ui-setup';
 import { describe, expect, it, vi } from 'vitest';
-import { makeApp, tick } from '../../../plugins/core-build/test/harness';
+import { makeApp, tick } from '../../../../plugins/core-build/test/harness';
 import { createDataSettingTab, type DataClient, type DataStatusView } from '../src/ui';
 import type { DataFile } from '../src/data';
 

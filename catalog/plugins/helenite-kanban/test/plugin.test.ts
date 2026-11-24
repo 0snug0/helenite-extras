@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { loadBuiltPlugin, makeApp, tick } from '../../core-build/test/harness';
+import { loadBuiltPlugin, makeApp, tick } from '../../../../../plugins/core-build/test/harness';
 
 const BOARD = '---\n\nkanban-plugin: board\n\n---\n\n## To do\n\n- [ ] a\n- [ ] b\n\n\n## Done\n\n**Complete**\n- [x] c\n\n\n\n\n%% kanban:settings\n```\n{"kanban-plugin":"board"}\n```\n%%';
 

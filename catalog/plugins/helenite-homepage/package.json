@@ -1,1 +1,14 @@
-{ "name": "@helenite/helenite-homepage", "version": "0.1.0", "private": true, "type": "module", "scripts": { "build": "node ../core-build/build.mjs helenite-homepage", "typecheck": "pnpm --filter @helenite/types build && tsc --noEmit -p .", "test": "node ../core-build/build.mjs helenite-homepage && vitest run" } }
+{
+  "name": "@helenite/helenite-homepage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ../../../scripts/build-plugin.mjs helenite-homepage",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "node ../../../scripts/build-plugin.mjs helenite-homepage && vitest run"
+  },
+  "devDependencies": {
+    "obsidian": "1.14.4"
+  }
+}

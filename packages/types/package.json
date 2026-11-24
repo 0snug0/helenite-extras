@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Types for the `helenite` module plugins import: `import { ui, version } from 'helenite'`.",
-  "types": "dist/helenite.d.ts",
-  "files": ["dist/helenite.d.ts"],
+  "types": "helenite.d.ts",
+  "files": [
+    "helenite.d.ts"
+  ],
   "scripts": {
     "build": "node build.mjs",
-    "typecheck": "node build.mjs && tsc --noEmit -p ."
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "obsidian": "1.14.4"
   }
 }
