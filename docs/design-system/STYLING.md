@@ -52,6 +52,7 @@ The base theme's look comes from Finesse UI (Community, CC BY 4.0). Most of it i
 | `--hel-card-radius` | `var(--radius-l)` (10px) | Cards |
 | `--hel-dialog-radius` | `var(--modal-radius)` (12px) | Dialogs and modals |
 | `--hel-badge-radius` | `var(--radius-s)` (4px) | Badges |
+| `--hel-chip-radius` | `var(--hel-control-radius)` (6px) | Chips |
 | `--hel-corner-shape` | `superellipse(1.5)` | `corner-shape` for smooth-rectangle corners where the engine has it |
 
 ## Classes
@@ -98,13 +99,13 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-error` | `ui.errorState`, with its retry button. Variants: `is-inline`, `is-pane`. |
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. Finesse Badges: a 10% tint of the tone (`--hel-badge-tone`, set per tone) inside a hairline ring of it, `--hel-badge-radius` corners, medium weight; the text is the tone's text colour (`--text-accent`, `--text-error`, `--text-success`; normal text for warning). |
 | `hel-status-dot` | `ui.statusDot`, an 8px dot. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
-| `hel-status-text` | `ui.statusText`. Tones as for badges. |
+| `hel-status-text` | `ui.statusText`. Tones as for badges. Finesse status text: medium weight, in the tone's text colour (`--text-muted`, `--text-accent`, `--text-error`, `--text-success`, `--text-warning`). |
 | `hel-count-badge` | `ui.countBadge`, a solid pill with tabular numbers. `is-accent` (default), `is-danger` (red, `--hel-count-badge-attention-fg` text) or `is-warning` (normal text on an orange tint) is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header it is a centred pill with a small gap. |
 | `is-overlay` / `hel-has-overlay-badge` | `ui.countBadge(..., { overlay: true })`: a small (14px, 10px text) badge out of the flow on the parent's top-right corner, so what it counts (a ribbon icon) never moves; it takes no clicks. The parent gets `hel-has-overlay-badge` (`position: relative`). |
 | `hel-count-badge-icon` | The optional icon before a count badge's number. |
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
-| `hel-chip` | `ui.chip`. Tones as for badges. |
-| `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. |
+| `hel-chip` | `ui.chip`. Tones as for badges. Finesse Chips: the badge treatment (a 10% tint of the tone, `--hel-chip-tone`, inside a hairline ring of it, medium weight, the tone's text colour; normal text for warning) with `--hel-chip-radius` corners (default `--hel-control-radius`, 6px) and no border. |
+| `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. Fades up and gets a hover fill; `--hel-ring-focus` on keyboard focus. |
 
 ### Form controls, tabs and toolbar
 

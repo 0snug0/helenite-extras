@@ -80,4 +80,15 @@ describe("chip", () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
     expect(parent.contains(c)).toBe(false);
   });
+
+  it("every tone gets its class and, with onRemove, its own labelled remove button", () => {
+    for (const tone of ["default", "accent", "danger", "success", "warning"] as const) {
+      const c = chip(host(), tone, { tone, onRemove: () => {} });
+      expect([...c.classList]).toEqual(["hel-chip", `is-${tone}`]);
+      const b = c.querySelector<HTMLButtonElement>("button.hel-chip-remove")!;
+      expect(b.type).toBe("button");
+      expect(b.classList.contains("clickable-icon")).toBe(true);
+      expect(b.getAttribute("aria-label")).toBe(`Remove ${tone}`);
+    }
+  });
 });

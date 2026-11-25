@@ -122,7 +122,8 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-status-dot.is-danger { background-color: var(--text-error); }
 .hel-status-dot.is-success { background-color: var(--text-success); }
 .hel-status-dot.is-warning { background-color: var(--text-warning); }
-.hel-status-text { font-size: var(--font-ui-small); color: var(--text-muted); }
+/* Finesse status text: medium weight so a status reads as a status, in the tone's text colour. */
+.hel-status-text { font-size: var(--font-ui-small); font-weight: var(--font-medium, 500); color: var(--text-muted); }
 .hel-status-text.is-accent { color: var(--text-accent); }
 .hel-status-text.is-danger { color: var(--text-error); }
 .hel-status-text.is-success { color: var(--text-success); }
@@ -143,13 +144,15 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: hel-pulse 1.4s ease-in-out infinite; }
 @keyframes hel-pulse { 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .hel-status-dot.is-pulse, .hel-count-badge.is-pulse { animation: none; } }
-.hel-chip { display: inline-flex; align-items: center; gap: var(--size-2-1); padding: 0 var(--size-4-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-l); font-size: var(--font-ui-smaller); line-height: 1.6; background-color: var(--background-secondary); color: var(--text-normal); }
-.hel-chip.is-accent { border-color: var(--interactive-accent); color: var(--text-accent); }
-.hel-chip.is-danger { border-color: var(--text-error); color: var(--text-error); }
-.hel-chip.is-success { border-color: var(--text-success); color: var(--text-success); }
-.hel-chip.is-warning { border-color: var(--text-warning); color: var(--text-warning); }
-.hel-chip > .hel-chip-remove { display: inline-flex; align-items: center; height: auto; margin-right: calc(-1 * var(--size-2-2)); padding: 0 var(--size-2-1); border: 0; background: transparent; box-shadow: none; color: inherit; opacity: 0.7; cursor: var(--cursor); }
+/* Finesse Chips: the badge's tint and hairline ring of the tone, taller, with 6px corners (--hel-chip-radius); the text is the tone's text colour. */
+.hel-chip { --hel-chip-tone: var(--text-muted); display: inline-flex; align-items: center; gap: var(--size-2-1); padding: 0 var(--size-4-2); border: 0; border-radius: var(--hel-chip-radius, var(--hel-control-radius, 6px)); font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); line-height: 1.7; background-color: color-mix(in srgb, var(--hel-chip-tone) 10%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hel-chip-tone) 22%, transparent); color: var(--text-normal); }
+.hel-chip.is-accent { --hel-chip-tone: var(--interactive-accent); color: var(--text-accent); }
+.hel-chip.is-danger { --hel-chip-tone: var(--color-red); color: var(--text-error); }
+.hel-chip.is-success { --hel-chip-tone: var(--color-green); color: var(--text-success); }
+.hel-chip.is-warning { --hel-chip-tone: var(--color-orange); color: var(--text-normal); } /* as hel-badge: orange text on its tint is under 4.5:1 */
+.hel-chip > .hel-chip-remove { display: inline-flex; align-items: center; height: auto; margin-right: calc(-1 * var(--size-2-2)); padding: 0 var(--size-2-1); border: 0; background: transparent; box-shadow: none; color: inherit; border-radius: calc(var(--hel-chip-radius, var(--hel-control-radius, 6px)) - 2px); opacity: 0.7; cursor: var(--cursor); transition: opacity 0.12s ease-in-out, background-color 0.12s ease-in-out; }
 .hel-chip > .hel-chip-remove:hover { opacity: 1; background-color: var(--background-modifier-hover); }
+.hel-chip > .hel-chip-remove:focus-visible { opacity: 1; outline: none; box-shadow: var(--hel-ring-focus); }
 .hel-chip > .hel-chip-remove .svg-icon { width: var(--icon-xs); height: var(--icon-xs); }
 .hel-table-row.is-clickable { cursor: pointer; }
 .hel-table-row.is-clickable:active { background-color: var(--hel-table-active, var(--background-modifier-active-hover, var(--background-modifier-hover))); }

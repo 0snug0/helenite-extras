@@ -83,6 +83,7 @@ body {
   --radius-l: 10px;
   --radius-xl: 16px;
   --hel-badge-radius: var(--radius-s);
+  --hel-chip-radius: var(--hel-control-radius);
   --hel-control-radius: var(--input-radius);
   --hel-card-radius: var(--radius-l);
   --hel-dialog-radius: var(--modal-radius);

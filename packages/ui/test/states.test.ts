@@ -117,3 +117,18 @@ describe("loadingState: spinner and determinate progress", () => {
     expect(l.querySelector<HTMLElement>(".hel-progress-fill")!.style.width).toBe("");
   });
 });
+
+describe("statusText: all tones", () => {
+  it("renders every tone with its class and text, and setTone round-trips through all of them", () => {
+    const tones = ["default", "accent", "danger", "success", "warning"] as const;
+    for (const tone of tones) {
+      const t = statusText(host(), "Connected", tone);
+      expect([...t.classList]).toEqual(["hel-status-text", `is-${tone}`]);
+      expect(t.textContent).toBe("Connected");
+      for (const next of tones) {
+        t.setTone(next);
+        expect([...t.classList]).toEqual(["hel-status-text", `is-${next}`]);
+      }
+    }
+  });
+});
