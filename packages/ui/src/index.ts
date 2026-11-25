@@ -34,7 +34,7 @@ export type { ChoiceOption, ChoiceListOptions, ChoiceListSingleOptions, ChoiceLi
 export { listRow, listGroup } from "./list-row";
 export type { ListRowOptions, ListRowAction, ListGroupOptions } from "./list-row";
 export { composer } from "./composer";
-export type { ComposerOptions, ComposerHandle, ComposerField, SlashCommand } from "./composer";
+export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "./composer";
 export { keyValue } from "./key-value";
 export type { KeyValueRow } from "./key-value";
 export { setMenuRenderer, openMenu } from "./menu";

@@ -389,6 +389,23 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-composer-input { width: 100%; height: auto; padding: var(--size-4-1) var(--size-4-2); box-sizing: border-box; resize: vertical; font-family: inherit; font-size: var(--font-ui-small); }
 :where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); }
 .hel-composer-hint { grid-column: 1 / -1; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+/* Finesse composer: the box takes the input's ring (hover, accent focus ring), attachments are ring chips above it, the attach button sits beside it */
+.hel-composer-input { transition: box-shadow 0.12s ease-in-out; }
+:where(textarea.hel-composer-input):hover:not(:disabled):not(:focus) { box-shadow: var(--input-shadow-hover); }
+:where(textarea.hel-composer-input):focus { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-composer-input::placeholder { color: var(--text-faint); }
+.hel-composer.has-attach { grid-template-columns: auto minmax(0, 1fr) auto; }
+.hel-composer-attachments { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--size-2-3); }
+.hel-composer-attachments[hidden] { display: none; }
+.hel-composer-attachment { display: inline-flex; align-items: center; gap: var(--size-2-2); max-width: 100%; padding: 2px var(--size-2-2) 2px var(--size-4-2); border-radius: var(--hel-badge-radius, 4px); background-color: var(--background-primary); box-shadow: var(--hel-ring); font-size: var(--font-ui-smaller); color: var(--text-normal); }
+.hel-composer-attachment-icon { display: inline-flex; flex: none; color: var(--text-muted); }
+.hel-composer-attachment-icon svg { width: 14px; height: 14px; }
+.hel-composer-attachment-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hel-composer-attachment-remove { flex: none; color: var(--text-faint); }
+.hel-composer-attachment-remove:hover { color: var(--text-normal); }
+.hel-composer-attach { color: var(--text-muted); }
+.hel-composer-attach:hover { color: var(--text-normal); }
+.hel-composer.is-busy .hel-composer-attach { opacity: 0.5; cursor: progress; }
 .hel-composer.is-busy { cursor: progress; }
 .hel-composer-menu { position: fixed; box-sizing: border-box; z-index: var(--layer-popover); max-height: 240px; overflow-y: auto; padding: var(--size-2-2); background-color: var(--background-primary); border: 0; border-radius: var(--radius-l); box-shadow: var(--shadow-l); }
 .hel-composer-menu[hidden] { display: none; }

@@ -1,4 +1,5 @@
 import { button } from "./button";
+import { renderIcon } from "./icons";
 import { joinField } from "./field";
 import { make } from "./states";
 
@@ -17,6 +18,15 @@ export type ComposerField = HTMLElement & {
   selectionStart: number | null;
   setSelectionRange(start: number, end: number): void;
 };
+
+/** A file (or anything else) attached to the message: shown as a removable chip above the box. */
+export interface ComposerAttachment {
+  name: string;
+  /** An icon name for the chip. Default "paperclip". */
+  icon?: string;
+  /** Whatever the caller needs back on submit, such as a path or a File. */
+  data?: unknown;
+}
 
 export interface ComposerOptions {
   /** Builds the text box in place of the plain textarea (appended to the composer by the callback). */
@@ -38,7 +48,14 @@ export interface ComposerOptions {
    * Gets the text. The box is cleared when it returns, or when its promise resolves (busy until then). Returning (or
    * resolving to) `false` means nothing was sent and keeps the text, as a throw does.
    */
-  onSubmit: (text: string) => unknown;
+  onSubmit: (text: string, attachments?: ComposerAttachment[]) => unknown;
+  /**
+   * Turns on attachments: an attach button beside the box that calls this and adds what it returns as chips. The chips
+   * go to `onSubmit` and are cleared with the text. Without it there is no button; `addAttachment` still works.
+   */
+  onAttach?: () => ComposerAttachment[] | void | Promise<ComposerAttachment[] | void>;
+  /** The attach button's accessible name. Default "Attach". */
+  attachLabel?: string;
   /**
    * Turns on a "/" menu: typing "/" at the start of the box lists these, filtered as you type. Arrow keys move, Enter or
    * Tab inserts `/name ` and Escape closes. Called once, the first time the menu opens.
@@ -51,10 +68,14 @@ export interface ComposerHandle {
   input: ComposerField;
   setBusy(b: boolean): void;
   focus(): void;
+  /** Clears the text and the attachments. */
   clear(): void;
+  /** Adds an attachment chip; returns a function that removes it. */
+  addAttachment(a: ComposerAttachment): () => void;
+  attachments(): ComposerAttachment[];
 }
 
-/** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty`. */
+/** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty` or it has an attachment. */
 export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle {
   const el = make(parent, "div", ["hel-composer"]);
   let input: ComposerField;
@@ -65,9 +86,51 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
     if (o.placeholder !== undefined) ta.placeholder = o.placeholder;
     input = ta;
   }
+  const chips = make(el, "div", ["hel-composer-attachments"]);
+  chips.hidden = true;
+  el.insertBefore(chips, el.firstChild);
   const field = parent.classList.contains("hel-field-control");
   if (!field) input.setAttribute("aria-label", o.placeholder ?? "Message");
   joinField(parent, input);
+  let busy = false;
+  const attached: ComposerAttachment[] = [];
+  const addAttachment = (a: ComposerAttachment): (() => void) => {
+    const chip = make(chips, "span", ["hel-composer-attachment"]);
+    const icon = make(chip, "span", ["hel-composer-attachment-icon"]);
+    renderIcon(icon, a.icon ?? "paperclip");
+    icon.setAttribute("aria-hidden", "true");
+    make(chip, "span", ["hel-composer-attachment-name"], a.name).title = a.name;
+    const x = button(chip, { variant: "icon", icon: "x", label: `Remove ${a.name}` });
+    x.el.classList.add("hel-composer-attachment-remove");
+    attached.push(a);
+    chips.hidden = false;
+    const remove = (): void => {
+      const i = attached.indexOf(a);
+      if (i < 0) return;
+      attached.splice(i, 1);
+      chip.remove();
+      chips.hidden = attached.length === 0;
+    };
+    x.el.addEventListener("click", () => {
+      remove();
+      input.focus();
+    });
+    return remove;
+  };
+  if (o.onAttach) {
+    el.classList.add("has-attach");
+    const attach = button(el, { variant: "icon", icon: "paperclip", label: o.attachLabel ?? "Attach" });
+    attach.el.classList.add("hel-composer-attach");
+    attach.el.addEventListener("click", () => {
+      if (busy) return;
+      void Promise.resolve()
+        .then(o.onAttach)
+        .then((list) => {
+          for (const a of list ?? []) addAttachment(a);
+        })
+        .catch((err) => console.error(err));
+    });
+  }
   const label = o.submitLabel ?? "Send";
   const send = button(el, o.submitIcon ? { variant: "icon", icon: o.submitIcon, label } : { text: label, variant: "primary" });
   send.el.classList.add("hel-composer-send");
@@ -78,7 +141,6 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
     input.setAttribute("aria-describedby", describedby);
   }
 
-  let busy = false;
   const setBusy = (b: boolean): void => {
     busy = b;
     el.classList.toggle("is-busy", b);
@@ -88,13 +150,17 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
   };
   const clear = (): void => {
     input.value = "";
+    for (const chip of chips.querySelectorAll(".hel-composer-attachment")) chip.remove();
+    attached.length = 0;
+    chips.hidden = true;
   };
   const submit = (): void => {
     const text = input.value;
-    if (busy || (!text.trim() && !o.allowEmpty)) return;
+    if (busy || (!text.trim() && !o.allowEmpty && !attached.length)) return;
     let result: unknown;
     try {
-      result = o.onSubmit(text);
+      // The attachments are passed only when there are some, so a caller that ignores them sees its old one-argument call.
+      result = attached.length ? o.onSubmit(text, [...attached]) : (o.onSubmit as (text: string) => unknown)(text);
     } catch (err) {
       console.error(err);
       return;
@@ -129,7 +195,7 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
     submit();
   });
   send.el.addEventListener("click", submit);
-  return { el, input, setBusy, focus: () => input.focus(), clear };
+  return { el, input, setBusy, focus: () => input.focus(), clear, addAttachment, attachments: () => [...attached] };
 }
 
 /** The "/" menu: a listbox above the box, driven from the textarea (focus stays there). */

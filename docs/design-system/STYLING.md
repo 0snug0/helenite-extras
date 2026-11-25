@@ -201,9 +201,12 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | Class | What it is |
 | --- | --- |
 | `hel-composer` | `ui.composer`: a text box and a send button. `is-busy` while a submit runs. |
-| `hel-composer-input` | The `<textarea>`. |
+| `hel-composer-input` | The `<textarea>`: the Finesse input ring, hover ring and accent focus ring (`--hel-ring-focus`). |
 | `hel-composer-send` | The send button (a `hel-button`). |
 | `hel-composer-hint` | The line under the box. |
+| `hel-composer-attach` | The attach button (`onAttach`), a `clickable-icon` before the box; the composer then has `has-attach`. Muted, normal text on hover. |
+| `hel-composer-attachments` | The row of attachment chips above the box; hidden while empty. |
+| `hel-composer-attachment` | One chip: a ring (`--hel-ring`) badge-radius pill with `hel-composer-attachment-icon`, `hel-composer-attachment-name` (ellipsised) and `hel-composer-attachment-remove`. |
 | `hel-composer-menu` | The "/" menu above the box (`slashCommands`), a `role="listbox"`. |
 | `hel-composer-menu-item` | One command; `is-selected` on the highlighted one. `hel-composer-menu-name` and `hel-composer-menu-desc` inside. |
 | `hel-kv` | `ui.keyValue`, a `<dl>`. A Finesse-style key-value list (Finesse has none, so it is drawn from the tokens): two columns, the keys muted and medium weight, the values in normal text. |
