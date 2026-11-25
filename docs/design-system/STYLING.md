@@ -31,6 +31,12 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
+| `--hel-subpage-header-bg` | `var(--background-primary)` | The sticky `hel-subpage-header` (it covers the page as it scrolls under) |
+| `--hel-subpage-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-subpage-header` |
+| `--hel-summary-row-radius` | `var(--hel-control-radius)` | The corners of a clickable `hel-summary-row`'s hover wash and focus ring |
+| `--hel-scope-bar-bg` | `var(--background-secondary)` | The `hel-scope-bar` banner while it edits Home |
+| `--hel-scope-bar-defaults-bg` | A 8% `--interactive-accent` wash | The banner while it edits the Vault Defaults (`is-defaults`); its ring turns accent too |
+| `--hel-vault-scope-rail` | `var(--background-modifier-border)` | The rail beside a `hel-vault-scope-list` |
 | `--hel-toolbar-gap` | `var(--size-4-2)` | The space between a `hel-toolbar`'s controls |
 | `--hel-button-active-bg` | `var(--interactive-accent)` | `hel-button.is-active` (a toggled toolbar button) |
 | `--hel-button-active-fg` | `var(--text-on-accent)` | The text colour on it |
@@ -236,14 +242,16 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | Class | What it is |
 | --- | --- |
 | `hel-section` | The container `ui.settings.section` returns, under a heading row. |
-| `hel-summary-row` | A `setting-item` with a one-line summary. `is-clickable` when the whole row opens something. |
+| `hel-summary-row` | A `setting-item` with a one-line summary. `is-clickable` when the whole row opens something: Finesse washes it on hover (`--hel-summary-row-radius`; the wash spreads past the row so the text stays put), outlines it in the accent while its chevron has keyboard focus, and fades the chevron (`extra-setting-button`) to faint, nudging it right on hover. `is-subpage` when it opens a sub-page (`ui.settings.subpageRow`). |
 | `hel-subpage` | The drill-in page opened by `ui.settings.openSubpage`. While one is open, the tab's content container has `has-subpage` and its other children are hidden. |
-| `hel-subpage-header` | The page header: Back button and title. |
-| `hel-subpage-title` | The title text. |
-| `hel-scope-bar` | The "Editing: Home / Vault Defaults" bar from `ui.settings.scopeBar`. |
+| `hel-subpage-header` | The page header: Back button and title. Finesse: sticky at the top of the page on `--hel-subpage-header-bg`, over a hairline (`--hel-subpage-header-border`). |
+| `hel-subpage-back` | The Back button: the standard `back` action (`ui.action`, an icon button named "Back"). Takes a ring on hover; focused when the page opens. |
+| `hel-subpage-title` | The title text: semibold, one line, ellipsis when long. |
+| `hel-scope-bar` | The "Editing: Home / Vault Defaults" bar from `ui.settings.scopeBar`: a `hel-segmented` and a hint. Finesse: a ringed banner on `--hel-scope-bar-bg`; `is-defaults` while it edits the Vault Defaults, with the `--hel-scope-bar-defaults-bg` wash and an accent ring. |
+| `hel-scope-bar-hint` | The hint at the bar's end: where a change goes ("Changes apply to Home only.", "Changes apply to every vault that has not set its own."). |
 | `hel-settings-card` | `ui.settings.card`: a `hel-card` with no fill whose first child is a `setting-item` (the head; its icon is a `hel-card-icon` in the name, its status a `hel-status-text` under the description), then the `hel-card-body`. |
 | `hel-vault-scope` | `ui.settings.vaultScope`: its `setting-item` row (with a `dropdown`) and the list under it. Not drawn with `inline: true`, where the `dropdown` and the list go straight into the given element. |
-| `hel-vault-scope-list` | The vault list: a `hel-check-list`. Has the `hidden` attribute while the scope is all or none. |
+| `hel-vault-scope-list` | The vault list: a `hel-check-list`, on a rail (`--hel-vault-scope-rail`) under its row. Has the `hidden` attribute while the scope is all or none. |
 | `hel-vault-scope-note` | A line in the list ("Home can always use it.", "No other vaults yet."). Also `setting-item-description`. |
 
 ### Notices and menus

@@ -454,20 +454,33 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-modal-field > .hel-check-detail { margin-top: var(--size-2-1); padding-left: calc(var(--checkbox-size) + var(--size-4-2)); }
 
 /* settings: sub-pages, summary rows, scope bar */
+/* Finesse settings (no Finesse counterpart; built from its tokens): a sticky sub-page header on a hairline, summary rows
+   that wash on hover with a faint chevron that nudges right, and a scope bar drawn as a ringed banner that takes an accent
+   wash while it edits the Vault Defaults. The setting-item classes stay, so themes that style them still apply. */
 .vertical-tab-content-container.has-subpage > :not(.hel-subpage) { display: none; }
-.hel-subpage-header { display: flex; align-items: center; gap: var(--size-4-2); padding-bottom: var(--size-4-3); margin-bottom: var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); }
-.hel-subpage-title { font-weight: var(--font-semibold); font-size: var(--font-ui-medium); }
-.hel-summary-row.is-clickable { cursor: pointer; }
-.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
-.hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding-bottom: var(--size-4-3); }
+.hel-subpage-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) 0 var(--size-4-3); margin-bottom: var(--size-4-2); background-color: var(--hel-subpage-header-bg, var(--background-primary)); border-bottom: 1px solid var(--hel-subpage-header-border, var(--background-modifier-border)); }
+.hel-subpage-header > .hel-subpage-back { flex: none; margin-inline-start: calc(-1 * var(--size-2-3)); border-radius: var(--hel-control-radius, 6px); }
+.hel-subpage-header > .hel-subpage-back:hover { box-shadow: var(--hel-ring); }
+.hel-subpage-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--font-semibold); font-size: var(--font-ui-medium); letter-spacing: -0.01em; color: var(--text-normal); }
+.hel-summary-row.is-clickable { cursor: pointer; border-radius: var(--hel-summary-row-radius, var(--hel-control-radius, 6px)); transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); box-shadow: 0 0 0 var(--size-4-2) var(--background-modifier-hover); border-top-color: transparent; }
+.hel-summary-row.is-clickable:hover + .setting-item { border-top-color: transparent; }
+.hel-summary-row.is-clickable:has(:focus-visible) { outline: 1px solid var(--interactive-accent); outline-offset: var(--size-4-2); }
+.hel-summary-row.is-clickable:has(:focus-visible) .extra-setting-button:focus-visible { box-shadow: none; }
+.hel-summary-row .extra-setting-button { color: var(--text-faint); transition: transform 0.12s ease-in-out, color 0.12s ease-in-out; }
+.hel-summary-row.is-clickable:hover .extra-setting-button { color: var(--text-muted); transform: translateX(2px); background: transparent; }
+.hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); border-radius: var(--hel-card-radius, 10px); background-color: var(--hel-scope-bar-bg, var(--background-secondary)); box-shadow: var(--hel-ring); transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-scope-bar.is-defaults { background-color: var(--hel-scope-bar-defaults-bg, hsla(var(--interactive-accent-hsl), 0.08)); box-shadow: 0 0 0 1px hsla(var(--interactive-accent-hsl), 0.35); }
+.hel-scope-bar-hint { margin-inline-start: auto; color: var(--text-muted); font-size: var(--font-ui-smaller); }
 /* settings card: a ui.card around a setting-item head; no fill, as the Accounts and Harnesses cards */
 .hel-card.hel-settings-card { background: none; box-shadow: var(--hel-ring); overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
 .hel-settings-card .setting-item { border-top: none; }
 .hel-settings-card > .hel-card-body { padding: 0; gap: 0; font-size: inherit; }
 .setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }
 .hel-settings-card .setting-item-description > .hel-status-text { display: block; font-size: inherit; }
-/* vault scope: the vault list under its row */
-.hel-vault-scope-list { padding-bottom: var(--size-4-3); }
+/* vault scope: the vault list under its row, on a hairline rail so it reads as the row's detail */
+.hel-vault-scope-list { padding: 0 0 var(--size-4-3) var(--size-4-3); margin-inline-start: var(--size-2-2); border-inline-start: 2px solid var(--hel-vault-scope-rail, var(--background-modifier-border)); }
+.hel-vault-scope-list[hidden] { display: none; }
 .hel-vault-scope-note { padding-top: 0; margin: 0 0 var(--size-4-2); }
 
 /* notice variants and danger menu items */
