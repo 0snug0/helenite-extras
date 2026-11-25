@@ -25,6 +25,8 @@ export interface CardHandle {
   head: HTMLElement;
   /** Draw the card's content into this. */
   body: HTMLElement;
+  /** A strip under the body for actions or a status (`hel-card-footer`). Not shown while empty. */
+  footer: HTMLElement;
   /** The title element (`hel-card-title`), or null when the card has no title. */
   titleEl: HTMLElement | null;
   setTone(t: CardTone): void;
@@ -36,7 +38,7 @@ export interface CardHandle {
 
 const PULSE_MS = 2400;
 
-/** A bordered block with an optional head (icon, title) and a body. */
+/** A ringed block with an optional head (icon, title), a body and a footer. */
 export function card(parent: HTMLElement, o: CardOptions = {}): CardHandle {
   const el = make(parent, "div", ["hel-card"]);
   if (o.compact) el.classList.add("is-compact");
@@ -46,6 +48,7 @@ export function card(parent: HTMLElement, o: CardOptions = {}): CardHandle {
   if (o.icon) renderIcon(make(head, "span", ["hel-card-icon"]), o.icon);
   const titleEl = o.title !== undefined ? make(head, "div", ["hel-card-title"], o.title) : null;
   const body = make(el, "div", ["hel-card-body"]);
+  const footer = make(el, "div", ["hel-card-footer"]);
   let tone: CardTone = "default";
   const setTone = (t: CardTone): void => {
     el.classList.remove(`is-${tone}`);
@@ -64,5 +67,5 @@ export function card(parent: HTMLElement, o: CardOptions = {}): CardHandle {
     el.classList.add("is-pulse");
     pulseTimer = setTimeout(() => el.classList.remove("is-pulse"), PULSE_MS);
   };
-  return { el, head, body, titleEl, setTone, setBusy, pulse };
+  return { el, head, body, footer, titleEl, setTone, setBusy, pulse };
 }

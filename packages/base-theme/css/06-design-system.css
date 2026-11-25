@@ -228,17 +228,21 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-callout.is-solid > button.hel-callout-action:hover { background-color: var(--background-primary-alt); color: var(--text-normal); }
 
 /* card (ui.card, and ui-kit's card grid) */
-.hel-card { position: relative; border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m); background: var(--background-secondary); overflow: hidden; }
-.hel-card-head { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-3) 0; }
+.hel-card { position: relative; border: 1px solid transparent; border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background: var(--background-secondary); box-shadow: var(--hel-ring-card); overflow: hidden; }
+.hel-card-head { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-3) var(--size-4-4) 0; }
 .hel-card-head:empty { display: none; }
 .hel-card-icon { display: inline-flex; color: var(--icon-color); }
 .hel-card-title { font-size: var(--font-ui-small); font-weight: var(--font-semibold); }
-.hel-card-body { padding: var(--size-4-2) var(--size-4-3); display: flex; flex-direction: column; gap: var(--size-4-1); font-size: var(--font-ui-small); }
-.hel-card.is-compact > .hel-card-head { padding: var(--size-4-1) var(--size-4-2) 0; }
-.hel-card.is-compact > .hel-card-body { padding: var(--size-4-1) var(--size-4-2); }
-.hel-card.is-accent { border-color: var(--interactive-accent); }
-.hel-card.is-warning { border-color: var(--text-warning); }
-.hel-card.is-muted { background: var(--background-primary); color: var(--text-muted); }
+.hel-card-body { padding: var(--size-4-2) var(--size-4-4) var(--size-4-3); display: flex; flex-direction: column; gap: var(--size-4-1); font-size: var(--font-ui-small); }
+.hel-card-footer { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-4); border-top: 1px solid var(--background-modifier-border); background: var(--background-primary-alt); font-size: var(--font-ui-small); }
+.hel-card-footer:empty { display: none; }
+.hel-card.is-compact > .hel-card-head { padding: var(--size-4-2) var(--size-4-3) 0; }
+.hel-card.is-compact > .hel-card-body { padding: var(--size-4-1) var(--size-4-3) var(--size-4-2); }
+.hel-card.is-compact > .hel-card-footer { padding: var(--size-4-1) var(--size-4-3); }
+/* a tone swaps the ring's colour; the border stays transparent */
+.hel-card.is-accent { box-shadow: 0 0 0 1px var(--interactive-accent), var(--hel-ring-card); }
+.hel-card.is-warning { box-shadow: 0 0 0 1px var(--text-warning), var(--hel-ring-card); }
+.hel-card.is-muted { background: var(--background-primary); color: var(--text-muted); box-shadow: var(--hel-ring); }
 /* attention: a card that waits on the user (an agent's question). It sets the interface font itself, so a terminal or
    editor font around it never leaks in; monospace is kept for code inside it. */
 .hel-card.is-attention { overflow: visible; border-width: 2px; border-color: var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 7%, var(--background-primary)); color: var(--text-normal); outline: none; font-family: var(--font-interface); }
@@ -267,6 +271,11 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-card.is-pulse { animation: hel-card-pulse 0.8s ease-in-out 3; }
 @keyframes hel-card-pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--interactive-accent) 35%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .hel-card.is-pulse { animation: none; } }
+/* a card grid's cards (ui-kit cardGrid): the ring rises on hover and shows the focus ring when its button has focus */
+.hel-cards > .hel-card { transition: box-shadow 0.12s ease-in-out; }
+.hel-cards > .hel-card:hover { box-shadow: var(--hel-ring-hover), 0 4px 12px color-mix(in srgb, var(--text-normal) 10%, transparent); }
+.hel-cards > .hel-card:has(.hel-card-main:focus-visible) { box-shadow: var(--hel-ring-focus); }
+@media (prefers-reduced-motion: reduce) { .hel-cards > .hel-card { transition: none; } }
 
 /* check list and choice list */
 .hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
@@ -396,7 +405,7 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
 .hel-scope-bar { display: flex; gap: var(--size-4-2); align-items: center; padding-bottom: var(--size-4-3); }
 /* settings card: a ui.card around a setting-item head; no fill, as the Accounts and Harnesses cards */
-.hel-card.hel-settings-card { background: none; overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
+.hel-card.hel-settings-card { background: none; box-shadow: var(--hel-ring); overflow: visible; padding: var(--size-4-2) var(--size-4-3); margin-bottom: var(--size-4-3); }
 .hel-settings-card .setting-item { border-top: none; }
 .hel-settings-card > .hel-card-body { padding: 0; gap: 0; font-size: inherit; }
 .setting-item-name > .hel-card-icon { margin-right: var(--size-4-2); vertical-align: -0.2em; }

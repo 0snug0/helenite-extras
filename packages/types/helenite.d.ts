@@ -607,6 +607,8 @@ declare module 'helenite/internal/ui/src/card' {
       head: HTMLElement;
       /** Draw the card's content into this. */
       body: HTMLElement;
+      /** A strip under the body for actions or a status (`hel-card-footer`). Not shown while empty. */
+      footer: HTMLElement;
       /** The title element (`hel-card-title`), or null when the card has no title. */
       titleEl: HTMLElement | null;
       setTone(t: CardTone): void;
