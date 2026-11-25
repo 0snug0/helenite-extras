@@ -23,6 +23,8 @@ export interface ListRowOptions {
   tag?: string;
   /** A count badge after the title, before the meta (open questions). Hidden at 0, as `countBadge`. */
   badge?: { count: number } & CountBadgeOptions;
+  /** A trailing chevron: the row opens something (a detail, a sub-page), as in a settings list. */
+  chevron?: boolean;
   active?: boolean;
   dot?: { tone: Tone; label: string; pulse?: boolean };
   /** Icon buttons shown when the row is hovered, focused or active. */
@@ -63,6 +65,11 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
     countBadge(row, count, badge);
   }
   if (o.meta !== undefined) make(row, "div", ["hel-list-row-meta"], o.meta);
+  if (o.chevron) {
+    const chevron = make(row, "span", ["hel-list-row-chevron"]);
+    chevron.setAttribute("aria-hidden", "true");
+    renderIcon(chevron, "chevron-right");
+  }
   if (o.sub) {
     row.classList.add("has-sub");
     if (o.dot) row.classList.add("has-dot");

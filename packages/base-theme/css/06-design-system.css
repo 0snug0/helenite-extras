@@ -328,12 +328,20 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 /* list rows and groups (sidebar panes). With obsidianClass a row also carries Obsidian's tree classes; the :where()
    looks below then lose to base.css and to a theme. */
 .hel-list-row { position: relative; display: flex; align-items: center; gap: var(--size-4-2); }
-:where(.hel-list-row) { padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); color: var(--nav-item-color); font-size: var(--nav-item-size); line-height: var(--line-height-tight); }
+:where(.hel-list-row) { padding: var(--size-4-1) var(--size-4-2); border-radius: var(--hel-list-row-radius, var(--hel-control-radius, 6px)); color: var(--nav-item-color); font-size: var(--nav-item-size); line-height: var(--line-height-tight); transition: background-color 0.12s ease-in-out, color 0.12s ease-in-out; }
 :where(.hel-list-row[tabindex]) { cursor: var(--cursor); }
 :where(.hel-list-row):hover { background-color: var(--nav-item-background-hover); color: var(--nav-item-color-hover); }
 :where(.hel-list-row.is-active) { background-color: var(--nav-item-background-active); color: var(--nav-item-color-active); }
-.hel-list-row:focus-visible, .hel-list-group-header:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: -2px; }
-.hel-list-row-icon { display: inline-flex; flex: none; color: var(--icon-color); }
+/* Finesse list rows (the settings list): a smooth-rectangle row, the icon muted until the row is hovered or chosen, a trailing chevron that nudges on hover, the focus ring of the other controls. */
+.hel-list-row:focus-visible, .hel-list-group-header:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-list-row-icon { display: inline-flex; flex: none; color: var(--icon-color); transition: color 0.12s ease-in-out; }
+.hel-list-row:hover > .hel-list-row-icon, .hel-list-row.is-active > .hel-list-row-icon { color: var(--text-normal); }
+.hel-list-row.is-active > .hel-list-row-icon { color: var(--text-accent); }
+.hel-list-row > .hel-list-row-chevron { display: inline-flex; flex: none; margin-inline-start: auto; color: var(--text-faint); transition: transform 0.12s ease-in-out, color 0.12s ease-in-out; }
+.hel-list-row > .hel-list-row-chevron svg { width: var(--icon-xs); height: var(--icon-xs); }
+.hel-list-row:hover > .hel-list-row-chevron { color: var(--text-muted); transform: translateX(2px); }
+.hel-list-row > .hel-list-row-title + .hel-list-row-chevron, .hel-list-row > .hel-list-row-meta + .hel-list-row-chevron { margin-inline-start: 0; }
+.hel-list-row > .hel-list-row-title { margin-inline-end: auto; }
 .hel-list-row-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 :where(.hel-list-row-tag) { flex: none; padding: 0 var(--size-2-2); border-radius: var(--radius-s); background-color: var(--background-secondary-alt); color: var(--text-faint); font-size: var(--font-ui-smaller); }
 .hel-list-row > .hel-status-dot { flex: none; } /* a long title must not squash the dot into a pill and push titles out of line */
@@ -341,7 +349,8 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-list-row.has-sub { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 0; row-gap: 1px; align-items: center; }
 .hel-list-row.has-sub > .hel-status-dot, .hel-list-row.has-sub > .hel-list-row-icon { grid-column: 1; grid-row: 1; margin-inline-end: var(--size-4-2); }
 .hel-list-row.has-sub > .hel-list-row-title { grid-column: 2 / -1; grid-row: 1; } /* the full width, so no blank strip beside it */
-.hel-list-row.has-sub:has(> .hel-list-row-tag, > .hel-count-badge) > .hel-list-row-title { grid-column: 2; }
+.hel-list-row.has-sub:has(> .hel-list-row-tag, > .hel-count-badge, > .hel-list-row-chevron) > .hel-list-row-title { grid-column: 2; }
+.hel-list-row.has-sub > .hel-list-row-chevron { grid-column: 3; grid-row: 1 / span 2; margin-inline-start: var(--size-4-2); }
 .hel-list-row.has-sub > .hel-list-row-tag, .hel-list-row.has-sub > .hel-count-badge { grid-column: 3; grid-row: 1; margin-inline-start: var(--size-4-2); }
 .hel-list-row-sub { grid-column: 2 / -1; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-list-row.has-sub > .hel-list-row-actions { grid-column: 3; grid-row: 2; align-self: center; justify-self: end; margin-block: -4px; background: inherit; } /* sits over the end of the details line when shown */
@@ -349,13 +358,18 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-list-row-actions { display: flex; flex: none; gap: var(--size-2-1); opacity: 0; }
 .hel-list-row:hover > .hel-list-row-actions, .hel-list-row:focus-within > .hel-list-row-actions, .hel-list-row.is-active > .hel-list-row-actions { opacity: 1; }
 .hel-list-row-actions > .hel-list-row-action { padding: var(--size-2-1); }
-.hel-list-group-header { display: flex; align-items: center; gap: var(--size-2-3); padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); font-size: var(--font-ui-smaller); font-weight: var(--font-semibold); color: var(--text-muted); cursor: var(--cursor); }
-.hel-list-group-header:hover { background-color: var(--background-modifier-hover); }
+/* A group's header is the section label of Finesse's settings list: small, medium weight, muted, a little spaced. */
+.hel-list-group-header { display: flex; align-items: center; gap: var(--size-2-3); padding: var(--size-4-1) var(--size-4-2); border-radius: var(--hel-list-row-radius, var(--hel-control-radius, 6px)); font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); letter-spacing: 0.02em; color: var(--text-muted); cursor: var(--cursor); transition: background-color 0.12s ease-in-out, color 0.12s ease-in-out; }
+.hel-list-group-header:hover { background-color: var(--background-modifier-hover); color: var(--text-normal); }
+.hel-list-group + .hel-list-group { margin-top: var(--size-4-2); }
 .hel-list-group-chevron { display: inline-flex; color: var(--nav-collapse-icon-color); }
 .hel-list-group-chevron svg { width: var(--icon-xs); height: var(--icon-xs); }
 :where(.hel-list-group-chevron.is-collapsed) svg { transform: rotate(-90deg); }
-.hel-list-group-count { margin-left: auto; font-weight: var(--font-normal); color: var(--text-faint); }
+.hel-list-group-count { margin-left: auto; font-weight: var(--font-normal); font-variant-numeric: tabular-nums; color: var(--text-faint); }
 .hel-list-group-body[hidden] { display: none; }
+/* The pane header: its icon buttons on a hairline, so the list below reads as its own surface. Obsidian's nav-header spacing stays. */
+.hel-pane-header { padding-bottom: var(--size-4-2); margin-bottom: var(--size-4-1); border-bottom: 1px solid var(--hel-pane-header-border, var(--background-modifier-border)); }
+.hel-pane-header .nav-buttons-container { gap: var(--size-2-2); }
 
 /* composer */
 .hel-composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--size-4-2); align-items: end; }
