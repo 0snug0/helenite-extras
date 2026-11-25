@@ -46,13 +46,13 @@ Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton`
 
 | Class | What it is |
 | --- | --- |
-| `hel-table` | The `<table>` made by `ui.table`. |
-| `hel-table-row` | A body row. `is-clickable` when the table has `onRowClick`. |
-| `hel-table-group` | A group heading row. |
+| `hel-table` | The `<table>` made by `ui.table`. Finesse-style: a soft ring and 6px corners instead of borders, a muted small header on a faint wash, hairline row dividers. Knobs: `--hel-table-ring`, `--hel-table-divider`, `--hel-table-head`, `--hel-table-hover`, `--hel-table-active`, `--hel-table-radius`. |
+| `hel-table-row` | A body row, with a hover wash. `is-clickable` when the table has `onRowClick` (pointer cursor, pressed wash). |
+| `hel-table-group` | A group heading row: the header's wash and muted small text. |
 | `hel-table-actions` | The right-aligned actions column (header and cells). |
 | `hel-table-buttons` | The wrapper around a row's action buttons. |
 
-Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its content, on one line), `is-link` (clickable cell), `is-default` (faint text), `is-different` (accent text: a value that differs from the one beside it).
+Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its content, on one line), `is-link` (clickable cell), `is-default` (faint text), `is-different` (accent, medium weight: a value that differs from the one beside it). A column's `state: (row) => 'default' | 'different'` sets the last two.
 
 ### States, badges and dots
 
