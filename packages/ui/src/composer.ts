@@ -213,9 +213,9 @@ function hostInput(el: HTMLElement, input: ComposerField, rows: number): void {
   while (box.parentElement && box.parentElement !== el) box = box.parentElement;
   box.classList.add("hel-composer-host");
   box.style.setProperty("--hel-composer-rows", String(rows));
-  // A textarea focuses from anywhere in its box; do the same for the padding around the input (not its scrollbar).
+  // A textarea focuses from anywhere in its box; do the same for the padding around the input (not its scrollbars).
   box.addEventListener("mousedown", (e) => {
-    if (e.target !== box || box === input || e.offsetX >= box.clientWidth) return;
+    if (e.target !== box || box === input || e.offsetX >= box.clientWidth || e.offsetY >= box.clientHeight) return;
     e.preventDefault();
     input.focus();
   });

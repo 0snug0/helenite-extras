@@ -404,6 +404,8 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-composer > .hel-composer-host:hover:not(:focus-within) { box-shadow: var(--input-shadow-hover); }
 .hel-composer > .hel-composer-host:focus-within { box-shadow: var(--hel-ring-focus); }
 .hel-composer > .hel-composer-host > [contenteditable], .hel-composer > .hel-composer-host .cm-editor .cm-content { min-height: calc(var(--hel-composer-rows, 3) * 1.5em); outline: none; }
+.hel-composer > .hel-composer-host > :is(textarea, input), .hel-composer > .hel-composer-host > :is(textarea, input):is(:hover, :focus) { width: 100%; height: auto; margin: 0; padding: 0; border: 0; outline: none; background: transparent; box-shadow: none; font: inherit; color: inherit; resize: none; }
+.hel-composer > .hel-composer-host > textarea { min-height: calc(var(--hel-composer-rows, 3) * 1.5em); }
 .hel-composer > .hel-composer-host .cm-editor { height: auto; font-size: inherit; background: transparent; outline: none; }
 .hel-composer > .hel-composer-host .cm-editor .cm-scroller { height: auto; padding: 0; font-family: inherit; font-size: inherit; line-height: inherit; }
 .hel-composer > .hel-composer-host .cm-editor .cm-sizer, .hel-composer > .hel-composer-host .cm-editor .cm-contentContainer { max-width: none; margin: 0; padding: 0; }

@@ -118,15 +118,16 @@ describe("composer around a custom input", () => {
   it("a press on the box's padding focuses the input, as it does on a textarea; a press inside or on the scrollbar is left alone", () => {
     const c = composer(host(), { createInput: editorInput, onSubmit: () => {} });
     const box = c.el.querySelector<HTMLElement>(".hel-composer-host")!;
-    Object.defineProperty(box, "clientWidth", { value: 300 });
-    const press = (target: HTMLElement, offsetX = 4) => {
+    Object.defineProperties(box, { clientWidth: { value: 300 }, clientHeight: { value: 80 } });
+    const press = (target: HTMLElement, offsetX = 4, offsetY = 4) => {
       const e = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
-      Object.defineProperty(e, "offsetX", { value: offsetX });
+      Object.defineProperties(e, { offsetX: { value: offsetX }, offsetY: { value: offsetY } });
       target.dispatchEvent(e);
       return e.defaultPrevented;
     };
     expect(press(c.input)).toBe(false);
     expect(press(box, 305)).toBe(false);
+    expect(press(box, 4, 85)).toBe(false);
     expect(press(box)).toBe(true);
     expect(document.activeElement).toBe(c.input);
   });
@@ -156,6 +157,11 @@ describe("composer around a custom input", () => {
     const rules = css.split("\n").filter((l) => l.startsWith(H)).join("\n");
     for (const cls of [".cm-editor", ".cm-scroller", ".cm-sizer", ".cm-contentContainer", ".cm-content", ".cm-line", ".cm-activeLine", ".cm-placeholder", ".cm-cursor", ".cm-dropCursor", ".cm-selectionBackground", ".image-embed img"]) expect(rules).toContain(cls);
     expect(rules).toContain("max-height: var(--hel-composer-thumb-size, 52px)");
+  });
+
+  it("a textarea or input inside a wrapper gives up its own box too", () => {
+    const own = css.split("\n").find((l) => l.startsWith(`${H} > :is(textarea, input), `)) ?? "";
+    for (const part of ["border: 0", "background: transparent", "box-shadow: none", "padding: 0", "width: 100%"]) expect(own).toContain(part);
   });
 
   it("STYLING.md has a row for the host", () => {
