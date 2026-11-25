@@ -215,6 +215,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | --- | --- |
 | `hel-composer` | `ui.composer`: a text box and a send button. `is-busy` while a submit runs. |
 | `hel-composer-input` | The `<textarea>`: the Finesse input ring, hover ring and accent focus ring (`--hel-ring-focus`). |
+| `hel-composer-host` | The element `createInput` added, drawn as the box in place of the `<textarea>`: the same fill, text and input, hover and focus rings, at least `--hel-composer-rows` (from `rows`) lines tall, scrolling past `--hel-composer-max-height` (320px). A CodeMirror editor inside gives up its own padding, height and line width; its cursor, selection and placeholder follow the theme, and image embeds are thumbnails `--hel-composer-thumb-size` (52px) tall with the `--hel-composer-thumb-cursor` cursor. |
 | `hel-composer-send` | The send button (a `hel-button`). |
 | `hel-composer-hint` | The line under the box. |
 | `hel-composer-attach` | The attach button (`onAttach`), a `clickable-icon` before the box; the composer then has `has-attach`. Muted, normal text on hover. |

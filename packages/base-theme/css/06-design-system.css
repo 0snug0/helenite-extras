@@ -399,6 +399,21 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-composer-input { width: 100%; height: auto; padding: var(--size-4-1) var(--size-4-2); box-sizing: border-box; resize: vertical; font-family: inherit; font-size: var(--font-ui-small); }
 :where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); }
 .hel-composer-hint { grid-column: 1 / -1; font-size: var(--font-ui-smaller); color: var(--text-faint); }
+/* A custom input (createInput): what it added is drawn as the textarea's box; an editor inside gives up its own box, sizes and scrolling to it */
+.hel-composer > .hel-composer-host { box-sizing: border-box; min-width: 0; height: auto; min-height: calc(var(--hel-composer-rows, 3) * 1.5em + 2 * var(--size-4-1)); max-height: var(--hel-composer-max-height, 320px); overflow-y: auto; padding: var(--size-4-1) var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); line-height: 1.5; color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); cursor: text; outline: none; transition: box-shadow 0.12s ease-in-out; }
+.hel-composer > .hel-composer-host:hover:not(:focus-within) { box-shadow: var(--input-shadow-hover); }
+.hel-composer > .hel-composer-host:focus-within { box-shadow: var(--hel-ring-focus); }
+.hel-composer > .hel-composer-host > [contenteditable], .hel-composer > .hel-composer-host .cm-editor .cm-content { min-height: calc(var(--hel-composer-rows, 3) * 1.5em); outline: none; }
+.hel-composer > .hel-composer-host .cm-editor { height: auto; font-size: inherit; background: transparent; outline: none; }
+.hel-composer > .hel-composer-host .cm-editor .cm-scroller { height: auto; padding: 0; font-family: inherit; font-size: inherit; line-height: inherit; }
+.hel-composer > .hel-composer-host .cm-editor .cm-sizer, .hel-composer > .hel-composer-host .cm-editor .cm-contentContainer { max-width: none; margin: 0; padding: 0; }
+.hel-composer > .hel-composer-host .cm-editor .cm-content { max-width: none; margin: 0; padding: 0; font-family: inherit; font-size: inherit; }
+.hel-composer > .hel-composer-host .cm-editor .cm-line { padding: 0; }
+.hel-composer > .hel-composer-host .cm-editor .cm-activeLine { background: transparent; }
+.hel-composer > .hel-composer-host .cm-editor .cm-placeholder { color: var(--text-faint); }
+.hel-composer > .hel-composer-host .cm-editor .cm-cursor, .hel-composer > .hel-composer-host .cm-editor .cm-dropCursor { border-left: 1.5px solid var(--text-normal); }
+.hel-composer > .hel-composer-host .cm-editor .cm-selectionBackground, .hel-composer > .hel-composer-host .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground { background: var(--text-selection); }
+.hel-composer > .hel-composer-host .image-embed img { display: block; max-width: 100%; max-height: var(--hel-composer-thumb-size, 52px); margin: var(--size-4-1) 0; border: 1px solid var(--background-modifier-border); border-radius: var(--hel-control-radius, 6px); cursor: var(--hel-composer-thumb-cursor, auto); }
 /* Finesse composer: the box takes the input's ring (hover, accent focus ring), attachments are ring chips above it, the attach button sits beside it */
 .hel-composer-input { transition: box-shadow 0.12s ease-in-out; }
 :where(textarea.hel-composer-input):hover:not(:disabled):not(:focus) { box-shadow: var(--input-shadow-hover); }
