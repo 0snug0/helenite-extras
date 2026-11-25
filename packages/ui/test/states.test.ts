@@ -84,3 +84,36 @@ describe("states: variants, warning tone, statusText, pulse", () => {
     expect(statusDot(host(), "success", "Idle").classList.contains("is-pulse")).toBe(false);
   });
 });
+
+describe("loadingState: spinner and determinate progress", () => {
+  it("draws a spinner, the text and a hidden progress bar; no value until progress is set", () => {
+    const l = loadingState(host(), "Syncing…");
+    expect(l.querySelector(".hel-spinner")?.getAttribute("aria-hidden")).toBe("true");
+    expect(l.querySelector(".hel-loading-text")?.textContent).toBe("Syncing…");
+    const bar = l.querySelector(".hel-progress")!;
+    expect(bar.getAttribute("role")).toBe("progressbar");
+    expect(bar.getAttribute("aria-label")).toBe("Syncing…");
+    expect(bar.hasAttribute("aria-valuenow")).toBe(false);
+    expect(l.classList.contains("is-determinate")).toBe(false);
+  });
+
+  it("progress option shows the bar at that share, clamped to 0 to 100", () => {
+    const l = loadingState(host(), "Uploading", { progress: 0.4 });
+    const bar = l.querySelector(".hel-progress")!;
+    expect(l.classList.contains("is-determinate")).toBe(true);
+    expect(bar.getAttribute("aria-valuenow")).toBe("40");
+    expect(l.querySelector<HTMLElement>(".hel-progress-fill")!.style.width).toBe("40%");
+    l.setProgress(2);
+    expect(bar.getAttribute("aria-valuenow")).toBe("100");
+    l.setProgress(-1);
+    expect(bar.getAttribute("aria-valuenow")).toBe("0");
+  });
+
+  it("setProgress(undefined) goes back to the spinner", () => {
+    const l = loadingState(host(), "Working", { progress: 0.5 });
+    l.setProgress(undefined);
+    expect(l.classList.contains("is-determinate")).toBe(false);
+    expect(l.querySelector(".hel-progress")!.hasAttribute("aria-valuenow")).toBe(false);
+    expect(l.querySelector<HTMLElement>(".hel-progress-fill")!.style.width).toBe("");
+  });
+});

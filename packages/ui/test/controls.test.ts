@@ -273,6 +273,18 @@ describe("slider and toolbar", () => {
     expect(onChange).toHaveBeenCalledWith(20);
   });
 
+  it("slider keeps --hel-fill at the thumb's share of the range, from the start and as it moves", () => {
+    const s = slider(host(), { min: 10, max: 30, value: 15, label: "Size", onChange: () => {} });
+    expect(s.style.getPropertyValue("--hel-fill")).toBe("25%");
+    s.value = "30";
+    s.dispatchEvent(new Event("input"));
+    expect(s.style.getPropertyValue("--hel-fill")).toBe("100%");
+    s.value = "10";
+    s.dispatchEvent(new Event("input"));
+    expect(s.style.getPropertyValue("--hel-fill")).toBe("0%");
+    expect(slider(host(), { min: 5, max: 5, value: 5, label: "x", onChange: () => {} }).style.getPropertyValue("--hel-fill")).toBe("0%");
+  });
+
   it("toolbar is a labelled role=toolbar row", () => {
     const t = toolbar(host(), { label: "Filters" });
     expect(t.classList.contains("hel-toolbar")).toBe(true);

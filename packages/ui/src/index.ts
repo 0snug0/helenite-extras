@@ -7,7 +7,7 @@ export type { SegmentedOptions } from "./segmented";
 export { table } from "./table";
 export type { TableOptions, TableColumn, TableGroup, TableHandle } from "./table";
 export { emptyState, errorState, loadingState, badge, statusDot, statusText } from "./states";
-export type { Tone, StateVariant, ErrorStateOptions, StatusTextElement } from "./states";
+export type { Tone, StateVariant, ErrorStateOptions, StatusTextElement, LoadingStateOptions, LoadingStateElement } from "./states";
 export { countBadge, chip } from "./badges";
 export type { CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions } from "./badges";
 export { field } from "./field";
