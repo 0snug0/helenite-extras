@@ -17,7 +17,7 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// catalog/plugins/helenite-homepage/src/main.ts
+// src/main.ts
 var main_exports = {};
 __export(main_exports, {
   default: () => HomepagePlugin
@@ -26,7 +26,7 @@ module.exports = __toCommonJS(main_exports);
 var import_obsidian2 = require("obsidian");
 var import_helenite2 = require("helenite");
 
-// catalog/plugins/helenite-homepage/src/homepage.ts
+// src/homepage.ts
 var DEFAULT_SETTINGS = {
   kind: "note",
   target: "Home",
@@ -92,7 +92,7 @@ function openStateFor(view) {
   return {};
 }
 
-// catalog/plugins/helenite-homepage/src/settings.ts
+// src/settings.ts
 var import_obsidian = require("obsidian");
 var import_helenite = require("helenite");
 var NoteSuggest = class extends import_obsidian.AbstractInputSuggest {
@@ -193,7 +193,7 @@ var HomepageSettingTab = class extends import_obsidian.PluginSettingTab {
   }
 };
 
-// catalog/plugins/helenite-homepage/src/main.ts
+// src/main.ts
 var HomepagePlugin = class extends import_obsidian2.Plugin {
   settings = readSettings(void 0);
   /** Main-area tabs that existed already, so only tabs opened later count as new. */

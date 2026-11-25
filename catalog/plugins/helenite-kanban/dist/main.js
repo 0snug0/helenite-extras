@@ -17,7 +17,7 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// catalog/plugins/helenite-kanban/src/main.ts
+// src/main.ts
 var main_exports = {};
 __export(main_exports, {
   default: () => KanbanPlugin
@@ -26,7 +26,7 @@ module.exports = __toCommonJS(main_exports);
 var import_obsidian2 = require("obsidian");
 var import_helenite2 = require("helenite");
 
-// catalog/plugins/helenite-kanban/src/board.ts
+// src/board.ts
 var FRONTMATTER_KEY = "kanban-plugin";
 var nextId = 0;
 var newId = (prefix) => `${prefix}${++nextId}`;
@@ -189,11 +189,11 @@ function newBoardMarkdown(lanes = ["To do", "Doing", "Done"]) {
   });
 }
 
-// catalog/plugins/helenite-kanban/src/view.ts
+// src/view.ts
 var import_obsidian = require("obsidian");
 var import_helenite = require("helenite");
 
-// catalog/plugins/helenite-kanban/src/ops.ts
+// src/ops.ts
 var clone = (b) => structuredClone(b);
 function findCard(b, cardId) {
   for (const lane of b.lanes) {
@@ -317,7 +317,7 @@ function archiveDone(board, laneId) {
   return b;
 }
 
-// catalog/plugins/helenite-kanban/src/view.ts
+// src/view.ts
 var VIEW_TYPE = "helenite-kanban";
 var toPrompt = (text) => text.replace(/\r?\n/g, "<br>");
 var fromPrompt = (text) => text.replace(/<br>/g, "\n");
@@ -541,7 +541,7 @@ var KanbanView = class extends import_obsidian.TextFileView {
   }
 };
 
-// catalog/plugins/helenite-kanban/src/main.ts
+// src/main.ts
 var KanbanPlugin = class extends import_obsidian2.Plugin {
   /** Leaves the user switched to markdown, with the note they did it for. They stay markdown until the note changes. */
   asMarkdown = /* @__PURE__ */ new WeakMap();
