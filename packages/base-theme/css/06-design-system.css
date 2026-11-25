@@ -29,22 +29,31 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 :where(.hel-button).clickable-icon:hover { background-color: var(--background-modifier-hover); opacity: var(--icon-opacity-hover); color: var(--icon-color-hover); }
 :where(.hel-button-icon) > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); flex-shrink: 0; }
 
-/* table (moved from core-settings .helenite-inventory* / .helenite-across-*) */
-.hel-table { width: 100%; border-collapse: collapse; }
-.hel-table th, .hel-table td { text-align: left; padding: var(--size-2-2) var(--size-4-2); border-bottom: 1px solid var(--background-modifier-border); overflow-wrap: break-word; }
+/* table (Finesse-style, from the shared tokens): a soft-ringed card of rows; a small muted header on a faint wash, hairline
+   row dividers, a hover wash, 6px corners. --hel-table-* are the knobs; each defaults to the form-field ring and surfaces. */
+.hel-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--font-ui-small); border-radius: var(--hel-table-radius, var(--hel-control-radius, 6px)); box-shadow: 0 0 0 1px var(--hel-table-ring, var(--background-modifier-border)); }
+.hel-table th, .hel-table td { text-align: left; padding: var(--size-4-2) var(--size-4-3); border-bottom: 1px solid var(--hel-table-divider, var(--background-modifier-border)); overflow-wrap: break-word; }
 /* A header is one line. break-word (not anywhere) breaks only a word too long for its cell alone, and leaves a column's
    min-content at its longest word, so no column shrinks below a word: "Version" never draws as "Ver/sio/n". */
-.hel-table th { font-weight: var(--font-semibold); color: var(--text-muted); white-space: nowrap; }
+.hel-table th { font-weight: var(--font-semibold); font-size: var(--font-ui-smaller); color: var(--text-muted); white-space: nowrap; background-color: var(--hel-table-head, var(--background-secondary)); }
+.hel-table thead th:first-child { border-top-left-radius: inherit; }
+.hel-table thead th:last-child { border-top-right-radius: inherit; }
+.hel-table tbody tr:last-child td { border-bottom: 0; }
+.hel-table tbody tr:last-child td:first-child { border-bottom-left-radius: inherit; }
+.hel-table tbody tr:last-child td:last-child { border-bottom-right-radius: inherit; }
 /* A column of short values (TableColumn.fit): as wide as its content, on one line; the other columns share the rest. */
 .hel-table th.is-fit, .hel-table td.is-fit { width: 1%; white-space: nowrap; }
-.hel-table-group td { font-weight: var(--font-semibold); padding-top: var(--size-4-3); }
+.hel-table-row { transition: background-color 0.12s ease-in-out; }
+.hel-table-row:hover { background-color: var(--hel-table-hover, var(--background-modifier-hover)); }
+.hel-table-group td { font-weight: var(--font-semibold); font-size: var(--font-ui-smaller); color: var(--text-muted); background-color: var(--hel-table-head, var(--background-secondary)); padding-top: var(--size-4-3); }
 .hel-table-group button { margin-left: var(--size-4-2); }
 .hel-table th.hel-table-actions, .hel-table td.hel-table-actions { white-space: nowrap; text-align: right; width: 1%; }
 .hel-table-buttons { display: inline-flex; gap: var(--size-2-2); align-items: center; }
 .hel-table-buttons > .clickable-icon { width: var(--size-4-8, 32px); height: var(--size-4-8, 32px); padding: 0; }
-.hel-table td.is-link { cursor: pointer; }
+.hel-table td.is-link { cursor: pointer; color: var(--text-accent); }
+.hel-table td.is-link:hover { text-decoration: underline; }
 .hel-table td.is-default { color: var(--text-faint); }
-.hel-table td.is-different { color: var(--text-accent); }
+.hel-table td.is-different { color: var(--text-accent); font-weight: var(--font-medium, 500); }
 
 /* states */
 .hel-empty, .hel-loading { color: var(--text-muted); padding: var(--size-4-4); text-align: center; }
@@ -115,6 +124,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-chip > .hel-chip-remove:hover { opacity: 1; background-color: var(--background-modifier-hover); }
 .hel-chip > .hel-chip-remove .svg-icon { width: var(--icon-xs); height: var(--icon-xs); }
 .hel-table-row.is-clickable { cursor: pointer; }
+.hel-table-row.is-clickable:active { background-color: var(--hel-table-active, var(--background-modifier-active-hover, var(--background-modifier-hover))); }
 
 /* form controls, tabs and toolbar (lifted from ui-kit). The controls also carry Obsidian's classes (dropdown,
    checkbox-container, search-input-container, slider), so base.css and a theme style them in the host. The :where()

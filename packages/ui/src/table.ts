@@ -11,6 +11,11 @@ export interface TableColumn<R> {
    * a dropdown or a button. Leave it off the column with long text (a name and description), which takes the rest.
    */
   fit?: boolean;
+  /**
+   * A cell's value state: `default` (faint: the value is the inherited default) or `different` (accent: it differs
+   * from the one beside it). Sets `is-default` / `is-different` on the cell; return nothing for a normal cell.
+   */
+  state?: (row: R) => "default" | "different" | void;
 }
 
 export interface TableGroup<R> {
@@ -65,6 +70,8 @@ export function table<R>(parent: HTMLElement, o: TableOptions<R>): TableHandle<R
     for (const c of o.columns) {
       const td = tr.insertCell();
       classes(td, c);
+      const state = c.state?.(row);
+      if (state) td.classList.add(`is-${state}`);
       const text = c.cell(row, td);
       if (typeof text === "string") td.textContent = text;
     }

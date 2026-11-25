@@ -115,4 +115,22 @@ describe("table", () => {
     expect(t.el.querySelectorAll("tr.hel-table-group").length).toBe(1);
     expect(t.el.querySelectorAll("tr.hel-table-row").length).toBe(2);
   });
+
+  it("a column's state() sets is-default / is-different on the cell and leaves other cells plain", () => {
+    const t = table(host(), {
+      columns: [{ ...cols[0], state: (r: R) => (r.n === 1 ? "default" : "different") }, { ...cols[1], state: () => undefined }],
+      rows,
+    });
+    const trs = t.el.querySelectorAll("tbody tr");
+    expect(trs[0].querySelector("td")!.classList.contains("is-default")).toBe(true);
+    expect(trs[1].querySelector("td")!.classList.contains("is-different")).toBe(true);
+    expect(t.el.querySelectorAll("td:nth-child(2).is-default, td:nth-child(2).is-different").length).toBe(0);
+    expect(t.el.querySelector("thead th.is-default")).toBeNull();
+  });
+
+  it("a clickable row is is-clickable on every row, including grouped rows, but not group headings", () => {
+    const t = table(host(), { columns: cols, groups: [{ title: "G", rows }], onRowClick: () => {} });
+    expect(t.el.querySelectorAll("tr.hel-table-row.is-clickable").length).toBe(2);
+    expect(t.el.querySelector("tr.hel-table-group")!.classList.contains("is-clickable")).toBe(false);
+  });
 });
