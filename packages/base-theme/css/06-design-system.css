@@ -482,6 +482,10 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-vault-scope-list { padding: 0 0 var(--size-4-3) var(--size-4-3); margin-inline-start: var(--size-2-2); border-inline-start: 2px solid var(--hel-vault-scope-rail, var(--background-modifier-border)); }
 .hel-vault-scope-list[hidden] { display: none; }
 .hel-vault-scope-note { padding-top: 0; margin: 0 0 var(--size-4-2); }
+/* disabled settings row (`Setting.setDisabled`): the name and description fade and the controls take no pointer. Only the
+   text fades here, as the controls draw their own disabled look. */
+.setting-item.is-disabled > .setting-item-info { opacity: 0.5; cursor: default; }
+.setting-item.is-disabled > .setting-item-control { pointer-events: none; }
 
 /* notice variants and danger menu items */
 /* Finesse Snackbars: a dark bar, light text, 6px corners and a lifted shadow; the kind is a small leading dot. */

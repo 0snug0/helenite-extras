@@ -31,6 +31,14 @@ describe("Finesse settings parts", () => {
     expect(block).not.toMatch(/^\.setting-item(-name|-description|-control)? \{/m);
   });
 
+  it("fades a disabled row's name and description and makes its controls non-interactive", () => {
+    expect(block).toMatch(/\.setting-item\.is-disabled > \.setting-item-info \{[^}]*opacity: 0\.5;/);
+    expect(block).toMatch(/\.setting-item\.is-disabled > \.setting-item-control \{[^}]*pointer-events: none;/);
+    // The controls fade through their own disabled look; fading the row or the control cell too would double it.
+    expect(block).not.toMatch(/\.setting-item\.is-disabled(?: > \.setting-item-control)? \{[^}]*opacity/);
+    expect(styling).toContain("| `setting-item is-disabled` |");
+  });
+
   it("STYLING.md has a row for each new class and variable", () => {
     for (const name of ["`hel-subpage-back`", "`hel-scope-bar-hint`", "`--hel-subpage-header-bg`", "`--hel-subpage-header-border`", "`--hel-summary-row-radius`", "`--hel-scope-bar-bg`", "`--hel-scope-bar-defaults-bg`", "`--hel-vault-scope-rail`"]) expect(styling).toContain(`| ${name} |`);
   });
