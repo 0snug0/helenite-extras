@@ -731,6 +731,8 @@ declare module 'helenite/internal/ui/src/list-row' {
       badge?: {
           count: number;
       } & CountBadgeOptions;
+      /** A trailing chevron: the row opens something (a detail, a sub-page), as in a settings list. */
+      chevron?: boolean;
       active?: boolean;
       dot?: {
           tone: Tone;

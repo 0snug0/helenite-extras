@@ -28,6 +28,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-segment-active-bg` | `var(--background-primary)` | The chosen segment of `hel-segmented` (raised on the track) |
 | `--hel-segment-active-fg` | `var(--text-normal)` | The text colour on it |
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
+| `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
+| `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-toolbar-gap` | `var(--size-4-2)` | The space between a `hel-toolbar`'s controls |
 | `--hel-button-active-bg` | `var(--interactive-accent)` | `hel-button.is-active` (a toggled toolbar button) |
 | `--hel-button-active-fg` | `var(--text-on-accent)` | The text colour on it |
@@ -172,16 +174,17 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. |
+| `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. Finesse list rows: a smooth-rectangle row (`--hel-list-row-radius`), the icon muted until hover (then normal text) and accent on the chosen row, the focus ring of the other controls. |
 | `hel-list-row-icon` | The row's icon. |
 | `hel-list-row-title` | The row's title. |
 | `hel-list-row-tag` | The row's tag ("not installed"). |
 | `hel-list-row-sub` | The row's second line (`sub`). The row also gets `has-sub`, and `has-dot` when it has a status dot. |
+| `hel-list-row-chevron` | The trailing chevron (`chevron: true`): the row opens something. Faint; nudges right on hover. Hidden from screen readers. |
 | `hel-list-row-meta` | The row's faint meta text (a time, a folder). |
 | `hel-list-row-actions` | The row's icon buttons, shown on hover, focus or when active. |
 | `hel-list-row-action` | One of those buttons (a `hel-button`). |
 | `hel-list-group` | `ui.listGroup`. `is-collapsed` while collapsed. |
-| `hel-list-group-header` | The group's header (a `role=button`). |
+| `hel-list-group-header` | The group's header (a `role=button`), drawn as Finesse's section label: small, medium weight, muted, normal text on hover. |
 | `hel-list-group-chevron` | The header's chevron. `is-collapsed` turns it. |
 | `hel-list-group-title` | The group's title. |
 | `hel-list-group-count` | The group's count. |
@@ -248,7 +251,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-pane-header` | `ui.paneHeader`. Also Obsidian's `nav-header`; holds a `nav-buttons-container` (`role=toolbar`) of icon `hel-button`s that are also `nav-action-button`. Styled by base.css and the theme only. |
+| `hel-pane-header` | `ui.paneHeader`. Also Obsidian's `nav-header`; holds a `nav-buttons-container` (`role=toolbar`) of icon `hel-button`s that are also `nav-action-button`. Finesse: on a hairline (`--hel-pane-header-border`) with the buttons a little apart; the rest of its look is base.css and the theme. |
 
 ### Vault app parts (`@helenite/ui-kit`)
 
