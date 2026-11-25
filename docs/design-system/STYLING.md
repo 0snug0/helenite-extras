@@ -136,11 +136,12 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. `is-solid` fills it with the tone's colour (`--hel-callout-solid-fg` text, a contrasting action button). Finesse Alerts: an 8% tint of the tone inside a hairline ring of it, 6px corners. |
 | `hel-callout-text` | The callout's text. |
 | `hel-callout-action` | The callout's button (a `hel-button`). |
-| `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. `is-attention` (a card waiting on the user: thick toned border, tint, focus ring, its own interface font with monospace only for code, and roomier choice-list rows with a tinted pick and key hints in muted text that brighten on hover, focus or pick), `is-sticky` (pinned to the top of its pane, with a shadow), `is-busy` (dimmed while its action runs) and `is-pulse` (briefly, from `pulse()`). |
+| `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`): a `--hel-ring-card` ring (no border), `--hel-card-radius` corners, head, body and footer slots. In a `hel-cards` grid the ring rises on hover and shows the focus ring while the card's button has focus. Tones (a coloured ring): `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. `is-attention` (a card waiting on the user: thick toned border, tint, focus ring, its own interface font with monospace only for code, and roomier choice-list rows with a tinted pick and key hints in muted text that brighten on hover, focus or pick), `is-sticky` (pinned to the top of its pane, with a shadow), `is-busy` (dimmed while its action runs) and `is-pulse` (briefly, from `pulse()`). |
 | `hel-card-head` | The card's head: icon and title. Hidden while empty. |
 | `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head, the vault rows of Accounts). |
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
+| `hel-card-footer` | The card's footer slot (`CardHandle.footer`): a strip under the body with a hairline above and a wash, for actions or a status. Hidden while empty. |
 
 ### Check lists and choice lists
 
@@ -256,7 +257,7 @@ Defined in `packages/ui-kit/src/ui-kit.css`. Only vault apps use these. The part
 
 | Class | What it is |
 | --- | --- |
-| `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. Each card is a `hel-card` with a `hel-card-body` and `hel-card-title` (see Callouts and cards). |
+| `hel-cards` | The grid from `cardGrid`. Its minimum card width is `--hel-card-min`. Each card is a `hel-card` with a `hel-card-body` and `hel-card-title`, with the grid's hover and focus ring (see Callouts and cards). |
 | `hel-card-main` | The card's clickable area. |
 | `hel-card-poster` | The poster slot of a card. |
 | `hel-card-sub` | A card's subtitle. |
