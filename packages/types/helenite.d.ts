@@ -7,11 +7,11 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
-  import { badge, button, callout, card, checkList, choiceList, chip, composer, countBadge, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, searchInput, segmented, slider, statusDot, statusText, table, tabs, textInput, toggle, toolbar } from 'helenite/internal/ui/src/index';
+  import { badge, button, callout, card, checkList, choiceList, chip, composer, countBadge, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, table, tabs, textInput, toggle, toolbar } from 'helenite/internal/ui/src/index';
   import { choose, confirm, form, prompt } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   import { dialog } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   import { menu, menuButton, moreButton } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -22,7 +22,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { card as settingsCard, openSubpage, section, subpageRow, summaryRow } from 'helenite/internal/obsidian-api/src/ui/design/settings';
   import { scopeBar } from 'helenite/internal/obsidian-api/src/ui/scope-bar';
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, } from 'helenite/internal/ui/src/index';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   export type { DialogOptions, DialogAction, DialogContext } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -62,6 +62,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       listGroup: typeof listGroup;
       composer: typeof composer;
       keyValue: typeof keyValue;
+      meter: typeof meter;
       confirm: typeof confirm;
       prompt: typeof prompt;
       choose: typeof choose;
@@ -121,6 +122,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           listGroup: typeof listGroup;
           composer: typeof composer;
           keyValue: typeof keyValue;
+          meter: typeof meter;
           confirm: typeof confirm;
           prompt: typeof prompt;
           choose: typeof choose;
@@ -190,6 +192,8 @@ declare module 'helenite/internal/ui/src/index' {
   export type { ListRowOptions, ListRowAction, ListGroupOptions } from "helenite/internal/ui/src/list-row";
   export { composer } from "helenite/internal/ui/src/composer";
   export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "helenite/internal/ui/src/composer";
+  export { meter } from "helenite/internal/ui/src/meter";
+  export type { MeterOptions } from "helenite/internal/ui/src/meter";
   export { keyValue } from "helenite/internal/ui/src/key-value";
   export type { KeyValueRow } from "helenite/internal/ui/src/key-value";
   export { setMenuRenderer, openMenu } from "helenite/internal/ui/src/menu";
@@ -868,6 +872,23 @@ declare module 'helenite/internal/ui/src/composer' {
   export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle;
 }
 
+declare module 'helenite/internal/ui/src/meter' {
+  import { type Tone } from "helenite/internal/ui/src/states";
+  export interface MeterOptions {
+      /** What is measured ("Context", "5h"). Also the meter's accessible name. */
+      label: string;
+      /** How full, 0 to 100 (clamped). Leave out when only the text is known: no bar is drawn. */
+      value?: number;
+      /** The reading in words ("40k / 200k", "42%"). */
+      text: string;
+      /** Colours the bar's fill. `default` is muted. */
+      tone?: Tone;
+      title?: string;
+  }
+  /** A labelled usage meter on one line: the label, a short bar, the reading. */
+  export function meter(parent: HTMLElement, o: MeterOptions): HTMLElement;
+}
+
 declare module 'helenite/internal/ui/src/key-value' {
   export interface KeyValueRow {
       key: string;
@@ -1471,7 +1492,10 @@ declare module 'helenite/internal/obsidian-api/src/ui/design/settings' {
 }
 
 declare module 'helenite/internal/obsidian-api/src/ui/scope-bar' {
-  /** "Editing: Home | Vault Defaults": which layer a plugin's settings page edits. Home is pressed unless `editingDefaults`. */
+  /**
+   * "Editing: Home | Vault Defaults": which layer a plugin's settings page edits. Home is pressed unless `editingDefaults`.
+   * The bar is `is-defaults` while it edits the Vault Defaults, and a hint at its end says where a change goes.
+   */
   export function scopeBar(parent: HTMLElement, o: {
       editingDefaults: boolean;
       onChange: (editingDefaults: boolean) => void;

@@ -27,6 +27,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | Rows in a sidebar pane | `ui.listRow` in a `ui.listGroup`, with `ui.paneHeader` above |
 | Nothing to show, loading, failed | `ui.emptyState`, `ui.loadingState`, `ui.errorState` |
 | A status | `ui.badge`, `ui.statusDot`, `ui.statusText`, `ui.countBadge` |
+| How full something is (context, a quota), on one line | `ui.meter` |
 | A banner or inline message | `ui.callout` |
 | A boxed group | `ui.card` (`ui.settings.card` on a settings page) |
 | Ask yes or no | `ui.confirm` (`danger: true` when it destroys something) |
