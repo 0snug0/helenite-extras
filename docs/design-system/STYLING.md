@@ -35,6 +35,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-button-active-fg` | `var(--text-on-accent)` | The text colour on it |
 | `--hel-snackbar-bg` | `var(--background-modifier-message)` | A `hel-notice` (snackbar) background |
 | `--hel-snackbar-fg` | `#fff` | Its text |
+| `--hel-menu-radius` | `var(--hel-dialog-radius)` (12px) | The corner radius of a menu (`menu`) |
+| `--hel-menu-item-radius` | `var(--hel-control-radius)` (6px) | The corner radius of a menu item |
 | `--hel-count-badge-attention-fg` | `var(--text-on-accent)` | The number on a danger `hel-count-badge` (on `--color-red`: about 6:1 in the default dark theme, 5:1 in light) |
 | `--hel-callout-solid-fg` | `var(--text-on-accent)` | The text on a solid `hel-callout` |
 | `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
@@ -247,6 +249,14 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-notice` | The message element of the notice made by `ui.notice` (inside Obsidian's `notice`, which draws the bar). Kinds: `is-info`, `is-success`, `is-error`, shown as a small leading dot in the kind's colour (`--hel-notice-tone`). `is-clickable` when it has `onClick` (lighter on hover). Finesse Snackbars: `--hel-snackbar-bg` with `--hel-snackbar-fg` text, 6px corners, `--shadow-l`. |
 | `hel-notice-text` | The notice's text, when it has an action. |
 | `hel-notice-action` | The notice's action button (a `hel-button`): pushed to the end, flat, semibold, a light wash on hover. |
+
+| Class | What it is |
+| --- | --- |
+| `menu` | Obsidian's menu, made by `ui.menu`. Finesse Menu: the primary background on `--hel-ring-overlay` (no border), `--hel-menu-radius` corners, small padding. |
+| `menu-item` | One item: icon, title, 6px corners, a hover wash. `is-disabled` is at 50%. |
+| `menu-item-icon` | The leading icon, muted. The trailing check of a `checked` item (`mod-checked`) is pushed to the end in normal text. |
+| `menu-separator` | A hairline between groups. |
+| `menu-item.is-danger` | A red label and icon, with a faint red wash on hover (`ui.menu` adds it for `danger: true`; Obsidian's `is-warning` looks the same). |
 
 `menu-item.is-danger` is Obsidian's `menu-item` with a red label and icon; `ui.menu` adds it for `danger: true` items. A `checked` item is Obsidian's `menu-item.mod-checked` with its check icon.
 

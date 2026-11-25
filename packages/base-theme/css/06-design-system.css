@@ -1,6 +1,8 @@
 /* Helenite design-system parts (@helenite/ui). Obsidian variables first; --hel-* only where Obsidian has none. */
 /* Defined on body, not :root: --interactive-accent lives on .theme-light/.theme-dark (body); a :root var() reference would resolve invalid and be inherited as such. */
 body {
+  --hel-menu-radius: var(--hel-dialog-radius, 12px); /* the menu's corners; its items use --hel-menu-item-radius */
+  --hel-menu-item-radius: var(--hel-control-radius, 6px);
   --hel-count-badge-attention-fg: var(--text-on-accent); /* on --color-red: about 6:1 (default dark) and 5:1 (default light) */
   --hel-callout-solid-fg: var(--text-on-accent);
   /* Knobs for the covered parts. The rings (--hel-ring, --hel-ring-hover, --hel-ring-focus) are the Finesse tokens in 02-colors. */
@@ -453,4 +455,15 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-notice button.hel-notice-action:hover { background-color: color-mix(in srgb, var(--hel-snackbar-fg) 14%, transparent); box-shadow: none; }
 .menu-item.is-danger { color: var(--text-error); }
 .menu-item.is-danger .menu-item-icon { color: var(--text-error); }
+
+/* Finesse Menu: a floating panel on the overlay ring, 6px-cornered items, a hairline separator, a muted icon column and a trailing check. */
+.menu { background-color: var(--background-primary); border: 0; border-radius: var(--hel-menu-radius); box-shadow: var(--hel-ring-overlay, var(--shadow-l)); padding: var(--size-2-2); }
+.menu .menu-item { gap: var(--size-4-2); padding: var(--size-2-3) var(--size-4-2); border-radius: var(--hel-menu-item-radius); }
+.menu .menu-item.selected, .menu .menu-item:hover { background-color: var(--background-modifier-hover); }
+.menu .menu-item.is-disabled { opacity: 0.5; pointer-events: none; }
+.menu .menu-item-icon { color: var(--text-muted); }
+.menu .menu-item.mod-checked .menu-item-icon.mod-checked { margin-inline-start: auto; color: var(--text-normal); }
+.menu .menu-item.is-danger:hover, .menu .menu-item.is-warning:hover { background-color: color-mix(in srgb, var(--text-error) 10%, transparent); }
+.menu .menu-item.is-danger .menu-item-icon, .menu .menu-item.is-warning .menu-item-icon { color: var(--text-error); }
+.menu .menu-separator { margin: var(--size-2-2) calc(var(--size-2-2) * -1); border-bottom-color: var(--background-modifier-border); }
 
