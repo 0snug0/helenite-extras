@@ -27,6 +27,23 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-callout-solid-fg` | `var(--text-on-accent)` | The text on a solid `hel-callout` |
 | `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
 
+### Finesse tokens
+
+The base theme's look comes from Finesse UI (Community, CC BY 4.0). Most of it is Obsidian's own variables (`--interactive-accent` is dark slate in light mode, light slate in dark mode; `--input-radius` and `--button-radius` are 6px; `--modal-radius` is 12px; `--font-default` starts with the bundled Inter). These `--hel-*` tokens fill the gaps. Parts use the rings in place of a 1px border.
+
+| Variable | Default | Used by |
+| --- | --- | --- |
+| `--hel-ring` | Light: a 1px slate ring at 10% and a 1px drop shadow. Dark: a 1px hairline ring at 10% white | Controls: buttons, inputs, selects (via `--input-shadow`) |
+| `--hel-ring-hover` | The same ring, stronger | A control under the pointer (via `--input-shadow-hover`) |
+| `--hel-ring-card` | A faint ring and a soft drop shadow | Cards, thumbs (via `--shadow-s`) |
+| `--hel-ring-overlay` | A faint ring and a deeper drop shadow | Menus, modals, popovers (via `--shadow-l`) |
+| `--hel-ring-focus` | A 1px accent ring and a 4px accent halo | A focused control |
+| `--hel-control-radius` | `var(--input-radius)` (6px) | Buttons, inputs, selects, tables |
+| `--hel-card-radius` | `var(--radius-l)` (10px) | Cards |
+| `--hel-dialog-radius` | `var(--modal-radius)` (12px) | Dialogs and modals |
+| `--hel-badge-radius` | `var(--radius-s)` (4px) | Badges |
+| `--hel-corner-shape` | `superellipse(1.5)` | `corner-shape` for smooth-rectangle corners where the engine has it |
+
 ## Classes
 
 ### Buttons and segmented controls

@@ -16,7 +16,8 @@
 /* ───────────────────────── 1. Scheme-independent variables ───────────────── */
 body {
   /* Fonts: theme slot -> user override -> default */
-  --font-default: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+  /* Finesse UI type: Inter (bundled in 00-inter.css), the system sans as fallback. */
+  --font-default: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-monospace-default: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --font-interface-override: '??';
   --font-text-override: '??';
@@ -75,11 +76,18 @@ body {
   --size-4-16: 64px;
   --size-4-18: 72px;
 
+  /* Finesse UI corners (smooth rectangles): 4px badges, 6px controls, 10px cards, 12px dialogs. */
   --radius-xs: 2px;
   --radius-s: 4px;
-  --radius-m: 7px;
-  --radius-l: 11px;
-  --radius-xl: 15px;
+  --radius-m: 6px;
+  --radius-l: 10px;
+  --radius-xl: 16px;
+  --hel-badge-radius: var(--radius-s);
+  --hel-control-radius: var(--input-radius);
+  --hel-card-radius: var(--radius-l);
+  --hel-dialog-radius: var(--modal-radius);
+  /* Squircle-like corners where the engine supports corner-shape (Chromium 139+); a plain round corner elsewhere. */
+  --hel-corner-shape: superellipse(1.5);
   --border-width: 1px;
 
   --layer-cover: 5;
@@ -270,7 +278,7 @@ body {
   --callout-border-width: 0px;
   --callout-border-opacity: 0.25;
   --callout-padding: var(--size-4-3) var(--size-4-3) var(--size-4-3) var(--size-4-6);
-  --callout-radius: var(--radius-s);
+  --callout-radius: var(--radius-m);
   --callout-blend-mode: var(--highlight-mix-blend-mode);
   --callout-title-padding: 0;
   --callout-title-size: inherit;
@@ -306,7 +314,7 @@ body {
 
   /* Controls */
   --input-height: 30px;
-  --input-radius: 5px;
+  --input-radius: 6px;
   --input-font-weight: var(--font-normal);
   --input-border-width: 1px;
   --button-radius: var(--input-radius);
@@ -332,7 +340,7 @@ body {
   --modal-max-width: 1100px;
   --modal-max-height: 1000px;
   --modal-max-width-narrow: 800px;
-  --modal-radius: var(--radius-l);
+  --modal-radius: 12px;
   --modal-border-width: var(--border-width);
   --dialog-width: 560px;
   --dialog-max-width: 80vw;
@@ -354,7 +362,7 @@ body {
   --pill-weight: inherit;
   --pill-decoration: none;
   --pill-decoration-hover: none;
-  --menu-radius: var(--radius-m);
+  --menu-radius: var(--radius-l);
   --menu-border-width: var(--border-width);
   --swatch-radius: 14px;
   --swatch-height: 24px;

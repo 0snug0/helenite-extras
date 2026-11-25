@@ -4,6 +4,23 @@
 
 Nothing here is copied from Obsidian's `app.css`. Do not paste Obsidian CSS into this package.
 
+## Credits
+
+- **Look:** the colours, corner radii, ring shadows and type follow [Finesse UI (Community)](https://www.figma.com/community/file/1227728490805632361), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Helenite changed it: the values are Helenite's own reading of the kit's look, written as Obsidian variables in `css/01-variables.css` and `css/02-colors.css`, with a dark mode derived from the same slate ramp. No Finesse files are included.
+- **Font:** [Inter](https://github.com/rsms/inter) by The Inter Project Authors, SIL Open Font License 1.1 ([`fonts/Inter-OFL.txt`](fonts/Inter-OFL.txt)). `css/00-inter.css` inlines the variable Latin subset as a `data:` font, so app frames (no network, `font-src data:`) render it as well.
+
+### Finesse tokens
+
+| Token | Light | Dark |
+|---|---|---|
+| Accent (`--interactive-accent`) | `#1e293b` dark slate | `#e2e8f0` light slate |
+| Neutrals (`--color-base-00` … `-100`) | slate, `#ffffff` … `#0f172a` | slate inverted, `#0f172a` … `#f1f5f9` |
+| Component ring (`--hel-ring`, `--input-shadow`) | 1px ring at 10% slate, plus a 1px drop shadow | 1px hairline ring at 10% white |
+| Card (`--hel-ring-card`, `--shadow-s`) / overlay (`--hel-ring-overlay`, `--shadow-l`) | ring plus a soft drop shadow | hairline ring plus a dark drop shadow |
+| Radii | badges 4px (`--radius-s`), controls 6px (`--input-radius`, `--button-radius`), cards 10px (`--radius-l`), dialogs 12px (`--modal-radius`) | same |
+| Corner shape (`--hel-corner-shape`) | `superellipse(1.5)`, a smooth rectangle | same |
+| Font (`--font-default`) | Inter | same |
+
 Everything below is the Phase 0 theme spike's findings, kept here as the contract for this package.
 
 ---

@@ -139,8 +139,8 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 /* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */
 .hel-input.is-multiline { height: auto; box-sizing: border-box; }
-:where(textarea.hel-input) { width: 100%; padding: var(--size-4-1) var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); resize: vertical; }
-:where(input.hel-input) { height: var(--input-height); padding: 0 var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
+:where(textarea.hel-input) { width: 100%; padding: var(--size-4-1) var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); resize: vertical; }
+:where(input.hel-input) { height: var(--input-height); padding: 0 var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); }
 :where(.search-input-container) { position: relative; }
 /* base.css gives the search pane's container a margin; a search box in a toolbar or field sits flush */
 .search-input-container:has(> .hel-search) { margin: 0; }
@@ -293,10 +293,10 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--size-4-2); align-items: end; }
 /* base.css gives a textarea an input's one-line height; the composer's grows with its rows */
 .hel-composer-input { width: 100%; height: auto; padding: var(--size-4-1) var(--size-4-2); box-sizing: border-box; resize: vertical; font-family: inherit; font-size: var(--font-ui-small); }
-:where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: var(--input-border-width) solid var(--background-modifier-border); border-radius: var(--input-radius); }
+:where(textarea.hel-composer-input) { color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); }
 .hel-composer-hint { grid-column: 1 / -1; font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .hel-composer.is-busy { cursor: progress; }
-.hel-composer-menu { position: fixed; box-sizing: border-box; z-index: var(--layer-popover); max-height: 240px; overflow-y: auto; padding: var(--size-2-2); background-color: var(--background-primary); border: var(--border-width) solid var(--background-modifier-border); border-radius: var(--radius-m); box-shadow: var(--shadow-s); }
+.hel-composer-menu { position: fixed; box-sizing: border-box; z-index: var(--layer-popover); max-height: 240px; overflow-y: auto; padding: var(--size-2-2); background-color: var(--background-primary); border: 0; border-radius: var(--radius-l); box-shadow: var(--shadow-l); }
 .hel-composer-menu[hidden] { display: none; }
 .hel-composer-menu-item { display: flex; gap: var(--size-4-2); align-items: baseline; padding: var(--size-2-2) var(--size-4-2); border-radius: var(--radius-s); cursor: pointer; font-size: var(--font-ui-small); }
 .hel-composer-menu-item:hover, .hel-composer-menu-item.is-selected { background-color: var(--background-modifier-hover); }

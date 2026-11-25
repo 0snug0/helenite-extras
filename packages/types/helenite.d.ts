@@ -252,6 +252,11 @@ declare module 'helenite/internal/ui/src/table' {
        * a dropdown or a button. Leave it off the column with long text (a name and description), which takes the rest.
        */
       fit?: boolean;
+      /**
+       * A cell's value state: `default` (faint: the value is the inherited default) or `different` (accent: it differs
+       * from the one beside it). Sets `is-default` / `is-different` on the cell; return nothing for a normal cell.
+       */
+      state?: (row: R) => "default" | "different" | void;
   }
   export interface TableGroup<R> {
       title: string | ((td: HTMLTableCellElement) => void);
