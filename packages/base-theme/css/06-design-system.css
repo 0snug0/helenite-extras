@@ -111,6 +111,12 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 /* inline: the look of a bare setting-item-description (the empty also carries that class); pane: left-aligned in a sidebar pane (the empty also carries pane-empty) */
 .hel-empty.is-inline, .hel-error.is-inline { padding: var(--size-2-2) 0 0; text-align: start; justify-content: flex-start; font-size: var(--font-ui-smaller); }
 .hel-empty.is-pane, .hel-error.is-pane { padding: var(--size-4-2) 0; text-align: start; justify-content: flex-start; font-size: var(--font-ui-small); }
+/* Empty and error states (Finesse-style, tokens only so light and dark follow the theme). Centered: a quiet panel, dashed for empty, a tinted error ring for errors.
+   Inline and pane stay unboxed (a settings line, a sidebar line) so the setting-item-description and pane-empty look is untouched. */
+.hel-empty:not(.is-inline):not(.is-pane) { padding: var(--size-4-6) var(--size-4-4); border: 1px dashed var(--background-modifier-border-hover); border-radius: var(--hel-card-radius); background-color: var(--background-secondary); font-size: var(--font-ui-small); }
+.hel-error:not(.is-inline):not(.is-pane) { flex-wrap: wrap; padding: var(--size-4-4); border-radius: var(--hel-card-radius); background-color: color-mix(in srgb, var(--text-error) 8%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-error) 30%, transparent); font-size: var(--font-ui-small); }
+.hel-error-text { min-width: 0; overflow-wrap: anywhere; }
+.hel-error.is-inline .hel-button, .hel-error.is-pane .hel-button { margin-inline-start: var(--size-2-2); }
 /* Finesse Badges: a soft tint of the tone with a hairline ring of it and 4px corners; the text is the tone's text colour. */
 .hel-badge { --hel-badge-tone: var(--text-muted); display: inline-flex; align-items: center; gap: var(--size-2-1); padding: 0 var(--size-4-1); border-radius: var(--hel-badge-radius, 4px); font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); line-height: 1.6; background-color: color-mix(in srgb, var(--hel-badge-tone) 10%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hel-badge-tone) 22%, transparent); color: var(--text-muted); }
 .hel-badge.is-accent { --hel-badge-tone: var(--interactive-accent); color: var(--text-accent); }
