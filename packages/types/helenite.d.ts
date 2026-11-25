@@ -617,7 +617,7 @@ declare module 'helenite/internal/ui/src/card' {
       /** Pulses the card's outline a few times to draw the eye. Nothing moves under reduced motion. */
       pulse(): void;
   }
-  /** A bordered block with an optional head (icon, title) and a body. */
+  /** A ringed block with an optional head (icon, title), a body and a footer. */
   export function card(parent: HTMLElement, o?: CardOptions): CardHandle;
 }
 
