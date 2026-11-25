@@ -253,6 +253,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-vault-scope` | `ui.settings.vaultScope`: its `setting-item` row (with a `dropdown`) and the list under it. Not drawn with `inline: true`, where the `dropdown` and the list go straight into the given element. |
 | `hel-vault-scope-list` | The vault list: a `hel-check-list`, on a rail (`--hel-vault-scope-rail`) under its row. Has the `hidden` attribute while the scope is all or none. |
 | `hel-vault-scope-note` | A line in the list ("Home can always use it.", "No other vaults yet."). Also `setting-item-description`. |
+| `setting-item is-disabled` | A settings row turned off with `setDisabled(true)` (`ui.settings.row`, or Obsidian's `Setting`). Finesse: the name and description are at 50% and the controls take no pointer input. `setDisabled` also disables the row's own components, which draw their disabled look; a control added to `controlEl` by hand has to be disabled by its owner, so the keyboard skips it too. |
 
 ### Notices and menus
 
