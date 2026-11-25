@@ -420,10 +420,10 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-subpage-header > .hel-subpage-back { flex: none; margin-inline-start: calc(-1 * var(--size-2-3)); border-radius: var(--hel-control-radius, 6px); }
 .hel-subpage-header > .hel-subpage-back:hover { box-shadow: var(--hel-ring); }
 .hel-subpage-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--font-semibold); font-size: var(--font-ui-medium); letter-spacing: -0.01em; color: var(--text-normal); }
-.hel-summary-row.is-clickable { cursor: pointer; padding-inline: var(--size-4-2); margin-inline: calc(-1 * var(--size-4-2)); border-radius: var(--hel-summary-row-radius, var(--hel-control-radius, 6px)); transition: background-color 0.12s ease-in-out; }
-.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); }
+.hel-summary-row.is-clickable { cursor: pointer; border-radius: var(--hel-summary-row-radius, var(--hel-control-radius, 6px)); transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-summary-row.is-clickable:hover { background-color: var(--background-modifier-hover); box-shadow: 0 0 0 var(--size-4-2) var(--background-modifier-hover); border-top-color: transparent; }
 .hel-summary-row.is-clickable:hover + .setting-item { border-top-color: transparent; }
-.hel-summary-row.is-clickable:has(:focus-visible) { box-shadow: var(--hel-ring-focus); }
+.hel-summary-row.is-clickable:has(:focus-visible) { outline: 1px solid var(--interactive-accent); outline-offset: var(--size-4-2); }
 .hel-summary-row.is-clickable:has(:focus-visible) .extra-setting-button:focus-visible { box-shadow: none; }
 .hel-summary-row .extra-setting-button { color: var(--text-faint); transition: transform 0.12s ease-in-out, color 0.12s ease-in-out; }
 .hel-summary-row.is-clickable:hover .extra-setting-button { color: var(--text-muted); transform: translateX(2px); background: transparent; }

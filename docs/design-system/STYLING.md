@@ -234,7 +234,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | Class | What it is |
 | --- | --- |
 | `hel-section` | The container `ui.settings.section` returns, under a heading row. |
-| `hel-summary-row` | A `setting-item` with a one-line summary. `is-clickable` when the whole row opens something: Finesse washes it on hover (`--hel-summary-row-radius`, inset so the text stays put), rings it while its chevron has keyboard focus, and fades the chevron (`extra-setting-button`) to faint, nudging it right on hover. `is-subpage` when it opens a sub-page (`ui.settings.subpageRow`). |
+| `hel-summary-row` | A `setting-item` with a one-line summary. `is-clickable` when the whole row opens something: Finesse washes it on hover (`--hel-summary-row-radius`; the wash spreads past the row so the text stays put), outlines it in the accent while its chevron has keyboard focus, and fades the chevron (`extra-setting-button`) to faint, nudging it right on hover. `is-subpage` when it opens a sub-page (`ui.settings.subpageRow`). |
 | `hel-subpage` | The drill-in page opened by `ui.settings.openSubpage`. While one is open, the tab's content container has `has-subpage` and its other children are hidden. |
 | `hel-subpage-header` | The page header: Back button and title. Finesse: sticky at the top of the page on `--hel-subpage-header-bg`, over a hairline (`--hel-subpage-header-border`). |
 | `hel-subpage-back` | The Back button: the standard `back` action (`ui.action`, an icon button named "Back"). Takes a ring on hover; focused when the page opens. |
