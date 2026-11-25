@@ -17,7 +17,7 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// catalog/plugins/sample-design-system/src/main.ts
+// src/main.ts
 var main_exports = {};
 __export(main_exports, {
   default: () => SampleDesignSystemPlugin

@@ -27,6 +27,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-segment-track` | `var(--background-modifier-hover)` | The muted track behind a `hel-segmented` group's segments |
 | `--hel-segment-active-bg` | `var(--background-primary)` | The chosen segment of `hel-segmented` (raised on the track) |
 | `--hel-segment-active-fg` | `var(--text-normal)` | The text colour on it |
+| `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
+| `--hel-toolbar-gap` | `var(--size-4-2)` | The space between a `hel-toolbar`'s controls |
 | `--hel-button-active-bg` | `var(--interactive-accent)` | `hel-button.is-active` (a toggled toolbar button) |
 | `--hel-button-active-fg` | `var(--text-on-accent)` | The text colour on it |
 | `--hel-snackbar-bg` | `var(--background-modifier-message)` | A `hel-notice` (snackbar) background |
@@ -121,10 +123,11 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled (50%). Finesse Toggles: the accent track when on, `--toggle-track-color` when off, each a step darker on hover; `--hel-ring-focus` around the switch on keyboard focus. |
 | `hel-toggle-label` | The toggle's label text. |
 | `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. The track is filled with the accent up to the thumb: `ui.slider` sets `--hel-fill` (a percentage) on it as it moves. |
-| `hel-tabs` | The tab strip from `ui.tabs`. |
+| `hel-tabs` | The tab strip from `ui.tabs`. Finesse Tabs: a flat strip on a hairline; muted text, normal text on hover (with a faint indicator); the chosen tab is normal text with a 2px `--hel-tab-indicator` underline (default `--text-normal`); `--hel-ring-focus` on keyboard focus. |
 | `hel-tab` | One tab. `is-active` marks the chosen one. |
-| `hel-tab-badge` | The count shown on a tab. |
-| `hel-toolbar` | A row of controls made by `ui.toolbar`. |
+| `hel-tab-badge` | The count shown on a tab: a muted pill with tabular numbers; on the chosen tab an accent tint with `--text-accent`. Hidden at 0. |
+| `hel-toolbar` | A row of controls made by `ui.toolbar`, on one baseline, `--hel-toolbar-gap` apart (default `--size-4-2`). A search box in it is 16em wide at most. |
+| `hel-toolbar-end` | Add to a child of `hel-toolbar` to push it, and what follows, to the far end. |
 
 ### Callouts and cards
 

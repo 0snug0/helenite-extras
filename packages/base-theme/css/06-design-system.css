@@ -193,14 +193,22 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 :where(.hel-toggle .checkbox-container input[type=checkbox]) { position: absolute; opacity: 0; inset: 0; margin: 0; }
 :where(.hel-toggle .checkbox-container)::after { content: ""; position: absolute; top: var(--toggle-border-width); left: var(--toggle-border-width); width: var(--toggle-thumb-width); height: var(--toggle-thumb-height); border-radius: var(--toggle-thumb-radius); background-color: var(--toggle-thumb-color); box-shadow: var(--shadow-s); transition: transform 0.15s ease-in-out; }
 :where(.hel-toggle .checkbox-container.is-enabled)::after { transform: translateX(calc(var(--toggle-width) - var(--toggle-thumb-width) - var(--toggle-border-width) * 2)); }
-.hel-toolbar { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; margin-bottom: var(--size-4-3); }
+/* Finesse Toolbar: a row of controls on one baseline; --hel-toolbar-gap apart. A child with hel-toolbar-end (and the ones after it) sits at the far end. */
+.hel-toolbar { display: flex; flex-wrap: wrap; gap: var(--hel-toolbar-gap, var(--size-4-2)); align-items: center; margin-bottom: var(--size-4-3); }
+.hel-toolbar > .hel-toolbar-end { margin-inline-start: auto; }
+.hel-toolbar > .search-input-container { flex: 0 1 16em; min-width: 8em; }
+.hel-toolbar > :is(.hel-segmented, .hel-toggle, .hel-select) { flex: none; }
+/* Finesse Tabs: a flat strip on a hairline; muted text, normal text on hover, the chosen tab medium weight with a 2px indicator. */
 .hel-tabs { display: flex; gap: var(--size-4-1); border-bottom: 1px solid var(--background-modifier-border); margin-bottom: var(--size-4-3); }
 /* button.hel-tab outranks base.css's button:not(.clickable-icon) and its :hover, which would draw each tab as a filled button */
-.hel-tabs > button.hel-tab { height: auto; font: inherit; font-size: var(--font-ui-small); padding: var(--size-4-2) var(--size-4-3); border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; box-shadow: none; color: var(--text-muted); cursor: pointer; }
-.hel-tabs > button.hel-tab:hover { background: transparent; box-shadow: none; color: var(--text-normal); }
-.hel-tabs > button.hel-tab.is-active { color: var(--text-normal); border-bottom-color: var(--interactive-accent); }
-.hel-tab:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
-.hel-tab-badge { margin-left: var(--size-4-1); font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-tabs > button.hel-tab { display: inline-flex; align-items: center; gap: var(--size-4-2); height: auto; margin-bottom: -1px; font: inherit; font-size: var(--font-ui-small); font-weight: var(--font-medium, 500); padding: var(--size-4-2) var(--size-4-3); border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; box-shadow: none; color: var(--text-muted); cursor: pointer; transition: color 0.12s ease-in-out, border-color 0.12s ease-in-out; }
+.hel-tabs > button.hel-tab:hover { background: transparent; box-shadow: none; color: var(--text-normal); border-bottom-color: var(--background-modifier-border-hover); }
+.hel-tabs > button.hel-tab.is-active { color: var(--text-normal); border-bottom-color: var(--hel-tab-indicator, var(--text-normal)); }
+.hel-tab:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); border-radius: var(--hel-control-radius, 6px); }
+/* A count on a tab: a muted pill; the chosen tab's is the accent tint. Hidden at 0 (the display below would override [hidden]). */
+.hel-tab-badge { display: inline-block; min-width: 1.5em; box-sizing: border-box; padding: 0 var(--size-2-3); border-radius: 999px; font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); font-variant-numeric: tabular-nums; line-height: 1.5; text-align: center; background-color: var(--background-modifier-hover); color: var(--text-muted); }
+.hel-tab-badge[hidden] { display: none; }
+.hel-tab.is-active > .hel-tab-badge { background-color: color-mix(in srgb, var(--interactive-accent) 12%, transparent); color: var(--text-accent); }
 
 /* callout: also Obsidian's callout (with data-callout), so a theme's callout colours apply; the part sets its own
    spacing and keeps mix-blend-mode off, since it holds a button */
