@@ -92,13 +92,14 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 
 | Class | What it is |
 | --- | --- |
-| `hel-empty` | `ui.emptyState`. Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`). |
+| `hel-empty` | `ui.emptyState`. Finesse: centered is a quiet panel (dashed `--background-modifier-border-hover` outline, `--hel-card-radius`, secondary background). Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`), both unboxed. |
 | `hel-loading` | `ui.loadingState`. `is-determinate` swaps the spinner for the progress bar (`progress` option or `setProgress`). Colours: `--hel-progress-fill` (default the accent) and `--hel-progress-track`; height `--hel-progress-height` (6px). |
 | `hel-spinner` | The loading line's spinning ring (the `hel-spin` animation, slower under reduced motion). |
 | `hel-loading-text` | The loading line's text. |
 | `hel-progress` | The loading line's bar track (a `progressbar` with `aria-valuenow`); shown only with `is-determinate`. |
 | `hel-progress-fill` | The bar's filled part; its width is the progress. |
-| `hel-error` | `ui.errorState`, with its retry button. Variants: `is-inline`, `is-pane`. |
+| `hel-error` | `ui.errorState`, with its retry button. Finesse: centered is a panel with an 8% `--text-error` wash inside a 30% `--text-error` ring (`--hel-card-radius`); the text wraps and the retry button follows it. Variants: `is-inline`, `is-pane`, both unboxed. |
+| `hel-error-text` | The message inside `hel-error`; wraps long text. |
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. Finesse Badges: a 10% tint of the tone (`--hel-badge-tone`, set per tone) inside a hairline ring of it, `--hel-badge-radius` corners, medium weight; the text is the tone's text colour (`--text-accent`, `--text-error`, `--text-success`; normal text for warning). |
 | `hel-status-dot` | `ui.statusDot`, an 8px dot. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
 | `hel-status-text` | `ui.statusText`. Tones as for badges. Finesse status text: medium weight, in the tone's text colour (`--text-muted`, `--text-accent`, `--text-error`, `--text-success`, `--text-warning`). |
