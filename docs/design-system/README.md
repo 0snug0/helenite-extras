@@ -122,6 +122,16 @@ ui.statusText(el, 'Not signed in', 'danger');
 
 Tones: `default`, `accent`, `danger`, `success`, `warning`. The element `statusText` returns also has `setTone(tone)`, for a status that changes (set its text with `setText`). `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
 
+### ui.meter
+
+```ts
+ui.meter(el, { label: 'Context', value: 20, text: '40k / 200k', tone: 'success' });
+ui.meter(el, { label: '5h', value: 95, text: '95%', tone: 'danger', title: 'Resets at 14:00' });
+ui.meter(el, { label: 'Context', text: '40k' }); // no value: no bar
+```
+
+How full something is, on one line: the label, a short bar, the reading. `value` is 0 to 100 (clamped); `tone` colours the fill (`default` is muted). With a value it is a `meter` for screen readers, named by the label and read as the text. Returns the element. It does not update: redraw it when the reading changes. For work in progress use `ui.loadingState` with `progress`.
+
 ### ui.countBadge
 
 ```ts
@@ -427,7 +437,7 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
