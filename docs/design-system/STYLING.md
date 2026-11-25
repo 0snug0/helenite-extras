@@ -29,6 +29,7 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-segment-active-fg` | `var(--text-normal)` | The text colour on it |
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
+| `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-toolbar-gap` | `var(--size-4-2)` | The space between a `hel-toolbar`'s controls |
 | `--hel-button-active-bg` | `var(--interactive-accent)` | `hel-button.is-active` (a toggled toolbar button) |
@@ -201,10 +202,10 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-composer-hint` | The line under the box. |
 | `hel-composer-menu` | The "/" menu above the box (`slashCommands`), a `role="listbox"`. |
 | `hel-composer-menu-item` | One command; `is-selected` on the highlighted one. `hel-composer-menu-name` and `hel-composer-menu-desc` inside. |
-| `hel-kv` | `ui.keyValue`, a `<dl>`. |
-| `hel-kv-row` | One key and its value. |
+| `hel-kv` | `ui.keyValue`, a `<dl>`. A Finesse-style key-value list (Finesse has none, so it is drawn from the tokens): two columns, the keys muted and medium weight, the values in normal text. |
+| `hel-kv-row` | One key and its value. Rows share the list's columns (subgrid) and are split by a `--hel-kv-divider` hairline. |
 | `hel-kv-key` | The key (`<dt>`). |
-| `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list item is `is-new` when `isNew` marks it, plus `is-warning` with `newTone: 'warning'`. |
+| `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list value stacks its items without bullets. A list item is `is-new` when `isNew` marks it, plus `is-warning` with `newTone: 'warning'`. |
 
 ### Modals
 
