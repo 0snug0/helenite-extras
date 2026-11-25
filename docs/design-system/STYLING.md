@@ -59,7 +59,11 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | Class | What it is |
 | --- | --- |
 | `hel-empty` | `ui.emptyState`. Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`). |
-| `hel-loading` | `ui.loadingState`. |
+| `hel-loading` | `ui.loadingState`. `is-determinate` swaps the spinner for the progress bar (`progress` option or `setProgress`). Colours: `--hel-progress-fill` (default the accent) and `--hel-progress-track`; height `--hel-progress-height` (6px). |
+| `hel-spinner` | The loading line's spinning ring (the `hel-spin` animation, slower under reduced motion). |
+| `hel-loading-text` | The loading line's text. |
+| `hel-progress` | The loading line's bar track (a `progressbar` with `aria-valuenow`); shown only with `is-determinate`. |
+| `hel-progress-fill` | The bar's filled part; its width is the progress. |
 | `hel-error` | `ui.errorState`, with its retry button. Variants: `is-inline`, `is-pane`. |
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. |
 | `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
@@ -84,10 +88,10 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-field-error` | The error line from `setError`. Hidden while there is no error. |
 | `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`). |
 | `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. |
-| `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. `is-compact` is shorter. |
+| `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. A soft ring instead of a border, a focus ring, 6px corners (`--hel-control-radius`). `is-compact` is shorter. |
 | `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled. |
 | `hel-toggle-label` | The toggle's label text. |
-| `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. |
+| `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. The track is filled with the accent up to the thumb: `ui.slider` sets `--hel-fill` (a percentage) on it as it moves. |
 | `hel-tabs` | The tab strip from `ui.tabs`. |
 | `hel-tab` | One tab. `is-active` marks the chosen one. |
 | `hel-tab-badge` | The count shown on a tab. |

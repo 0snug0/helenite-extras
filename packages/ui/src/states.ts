@@ -24,9 +24,39 @@ export function emptyState(parent: HTMLElement, text: string, o: { variant?: Sta
   return make(parent, "div", ["hel-empty", ...EMPTY_VARIANT[o.variant ?? "centered"]], text);
 }
 
-export function loadingState(parent: HTMLElement, text = "Loading…"): HTMLElement {
-  const el = make(parent, "div", ["hel-loading"], text);
+export interface LoadingStateOptions {
+  /** A determinate progress bar, 0 to 1. Leave out for the spinner. */
+  progress?: number;
+}
+
+/** What `loadingState` returns; `setProgress` moves the bar (`undefined` goes back to the spinner). */
+export type LoadingStateElement = HTMLElement & { setProgress(p: number | undefined): void };
+
+/** A "Loading…" line with a spinner, or with a progress bar when `progress` (0 to 1) is given. */
+export function loadingState(parent: HTMLElement, text = "Loading…", o: LoadingStateOptions = {}): LoadingStateElement {
+  const el = make(parent, "div", ["hel-loading"]) as LoadingStateElement;
   el.setAttribute("role", "status");
+  make(el, "span", ["hel-spinner"]).setAttribute("aria-hidden", "true");
+  make(el, "span", ["hel-loading-text"], text);
+  const bar = make(el, "div", ["hel-progress"]);
+  bar.setAttribute("role", "progressbar");
+  bar.setAttribute("aria-valuemin", "0");
+  bar.setAttribute("aria-valuemax", "100");
+  bar.setAttribute("aria-label", text);
+  const fill = make(bar, "div", ["hel-progress-fill"]);
+  el.setProgress = (p) => {
+    const on = p !== undefined && Number.isFinite(p);
+    el.classList.toggle("is-determinate", on);
+    if (on) {
+      const pct = Math.round(Math.min(1, Math.max(0, p)) * 100);
+      bar.setAttribute("aria-valuenow", String(pct));
+      fill.style.width = `${pct}%`;
+    } else {
+      bar.removeAttribute("aria-valuenow");
+      fill.style.removeProperty("width");
+    }
+  };
+  el.setProgress(o.progress);
   return el;
 }
 

@@ -162,7 +162,7 @@ declare module 'helenite/internal/ui/src/index' {
   export { table } from "helenite/internal/ui/src/table";
   export type { TableOptions, TableColumn, TableGroup, TableHandle } from "helenite/internal/ui/src/table";
   export { emptyState, errorState, loadingState, badge, statusDot, statusText } from "helenite/internal/ui/src/states";
-  export type { Tone, StateVariant, ErrorStateOptions, StatusTextElement } from "helenite/internal/ui/src/states";
+  export type { Tone, StateVariant, ErrorStateOptions, StatusTextElement, LoadingStateOptions, LoadingStateElement } from "helenite/internal/ui/src/states";
   export { countBadge, chip } from "helenite/internal/ui/src/badges";
   export type { CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions } from "helenite/internal/ui/src/badges";
   export { field } from "helenite/internal/ui/src/field";
@@ -283,7 +283,16 @@ declare module 'helenite/internal/ui/src/states' {
   export function emptyState(parent: HTMLElement, text: string, o?: {
       variant?: StateVariant;
   }): HTMLElement;
-  export function loadingState(parent: HTMLElement, text?: string): HTMLElement;
+  export interface LoadingStateOptions {
+      /** A determinate progress bar, 0 to 1. Leave out for the spinner. */
+      progress?: number;
+  }
+  /** What `loadingState` returns; `setProgress` moves the bar (`undefined` goes back to the spinner). */
+  export type LoadingStateElement = HTMLElement & {
+      setProgress(p: number | undefined): void;
+  };
+  /** A "Loading…" line with a spinner, or with a progress bar when `progress` (0 to 1) is given. */
+  export function loadingState(parent: HTMLElement, text?: string, o?: LoadingStateOptions): LoadingStateElement;
   export interface ErrorStateOptions {
       variant?: StateVariant;
       /** The retry button's text. Default "Try again". */
@@ -400,7 +409,7 @@ declare module 'helenite/internal/ui/src/inputs' {
       label: string;
       onChange: (v: number) => void;
   }
-  /** Obsidian's range slider. `onChange` runs as it moves. */
+  /** Obsidian's range slider, its track filled up to the thumb. `onChange` runs as it moves. */
   export function slider(parent: HTMLElement, o: SliderOptions): HTMLInputElement;
 }
 

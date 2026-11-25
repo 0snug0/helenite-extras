@@ -131,13 +131,25 @@ export interface SliderOptions {
   onChange: (v: number) => void;
 }
 
-/** Obsidian's range slider. `onChange` runs as it moves. */
+/** Sets `--hel-fill` (0% to 100%) so the track can show the part before the thumb filled. */
+function setFill(el: HTMLInputElement): void {
+  const min = Number(el.min);
+  const span = Number(el.max) - min;
+  const pct = span > 0 ? ((Number(el.value) - min) / span) * 100 : 0;
+  el.style.setProperty("--hel-fill", `${Math.min(100, Math.max(0, pct))}%`);
+}
+
+/** Obsidian's range slider, its track filled up to the thumb. `onChange` runs as it moves. */
 export function slider(parent: HTMLElement, o: SliderOptions): HTMLInputElement {
   const el = input(parent, "range", ["slider", "hel-slider"], o.label);
   el.min = String(o.min);
   el.max = String(o.max);
   el.step = String(o.step ?? 1);
   el.value = String(o.value);
-  el.addEventListener("input", () => o.onChange(Number(el.value)));
+  setFill(el);
+  el.addEventListener("input", () => {
+    setFill(el);
+    o.onChange(Number(el.value));
+  });
   return el;
 }

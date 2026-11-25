@@ -95,7 +95,9 @@ Headers are one line, and a cell breaks a word only when that word alone is wide
 
 ```ts
 ui.emptyState(el, 'Nothing here yet.');
-ui.loadingState(el);                       // "Loading…"
+ui.loadingState(el);                       // "Loading…" with a spinner
+const up = ui.loadingState(el, 'Uploading', { progress: 0 }); // a progress bar instead
+up.setProgress(0.4);                        // 0 to 1; setProgress(undefined) goes back to the spinner
 ui.errorState(el, 'Could not load.', retry); // adds a "Try again" button when retry is given
 ui.emptyState(el, 'No accounts yet.', { variant: 'inline' });
 ui.errorState(el, 'Could not connect.', retry, { variant: 'inline', retryLabel: 'Reconnect' });

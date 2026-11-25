@@ -48,6 +48,29 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 
 /* states */
 .hel-empty, .hel-loading { color: var(--text-muted); padding: var(--size-4-4); text-align: center; }
+/* Loading (Finesse-style, from the shared tokens): a spinner and the text; a bar under them when the progress is known.
+   --hel-progress-* default to the accent and the form-field ring, so the Finesse tokens only have to set those. */
+.hel-loading { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--size-4-2); font-size: var(--font-ui-small); }
+.hel-spinner { width: 14px; height: 14px; flex-shrink: 0; box-sizing: border-box; border: 2px solid var(--hel-progress-track, var(--background-modifier-border)); border-top-color: var(--hel-progress-fill, var(--interactive-accent)); border-radius: 50%; animation: hel-spin 0.8s linear infinite; }
+@keyframes hel-spin { to { transform: rotate(360deg); } }
+.hel-progress { display: none; flex-basis: 100%; height: var(--hel-progress-height, 6px); overflow: hidden; border-radius: 999px; background-color: var(--hel-progress-track, var(--background-modifier-border)); }
+.hel-loading.is-determinate .hel-progress { display: block; }
+.hel-loading.is-determinate .hel-spinner { display: none; }
+.hel-progress-fill { height: 100%; width: 0; border-radius: inherit; background-color: var(--hel-progress-fill, var(--interactive-accent)); transition: width 0.2s ease-out; }
+.hel-loading.is-inline, .hel-loading.is-pane { justify-content: flex-start; }
+@media (prefers-reduced-motion: reduce) { .hel-spinner { animation-duration: 2.4s; } .hel-progress-fill { transition: none; } }
+/* Dropdown (Finesse-style): a soft ring instead of a border, a clear focus ring, 6px corners. Under :where() so a theme's .dropdown wins. */
+:where(.hel-select) { -webkit-appearance: none; appearance: none; height: var(--input-height); padding: var(--dropdown-padding, 0 1.9em 0 0.8em); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--dropdown-background, var(--background-modifier-form-field)); border: 0; border-radius: var(--hel-control-radius, 6px); box-shadow: 0 0 0 1px var(--background-modifier-border), var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05)); background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'); background-repeat: no-repeat; background-position: right 0.6em center; background-size: 0.9em; cursor: var(--cursor); transition: box-shadow 0.12s ease-in-out; }
+:where(.hel-select:hover:not(:disabled)) { box-shadow: 0 0 0 1px var(--background-modifier-border-hover), var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05)); }
+.hel-select:focus-visible { outline: none; box-shadow: 0 0 0 1px var(--background-modifier-border-focus), 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
+.hel-select:disabled { opacity: 0.5; cursor: default; }
+/* Slider (Finesse-style): a rounded track filled with the accent up to the thumb (--hel-fill, set by ui.slider), a white thumb with a ring. */
+:where(.hel-slider) { -webkit-appearance: none; appearance: none; width: 140px; height: var(--hel-slider-track, 6px); border-radius: 999px; outline: none; cursor: var(--cursor); background: linear-gradient(to right, var(--interactive-accent) var(--hel-fill, 0%), var(--background-modifier-border) var(--hel-fill, 0%)); }
+:where(.hel-slider)::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--hel-slider-thumb, #fff); border: 0; box-shadow: 0 0 0 1px var(--background-modifier-border-hover), var(--shadow-s); transition: box-shadow 0.12s ease-in-out; }
+:where(.hel-slider)::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--hel-slider-thumb, #fff); border: 0; box-shadow: 0 0 0 1px var(--background-modifier-border-hover), var(--shadow-s); }
+.hel-slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 1px var(--interactive-accent), 0 0 0 4px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
+.hel-slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 1px var(--interactive-accent), 0 0 0 4px color-mix(in srgb, var(--interactive-accent) 30%, transparent); }
+.hel-slider:disabled { opacity: 0.5; cursor: default; }
 .hel-error { color: var(--text-error); padding: var(--size-4-4); display: flex; gap: var(--size-4-2); align-items: center; justify-content: center; }
 /* inline: the look of a bare setting-item-description (the empty also carries that class); pane: left-aligned in a sidebar pane (the empty also carries pane-empty) */
 .hel-empty.is-inline, .hel-error.is-inline { padding: var(--size-2-2) 0 0; text-align: start; justify-content: flex-start; font-size: var(--font-ui-smaller); }
