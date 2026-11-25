@@ -189,7 +189,7 @@ declare module 'helenite/internal/ui/src/index' {
   export { listRow, listGroup } from "helenite/internal/ui/src/list-row";
   export type { ListRowOptions, ListRowAction, ListGroupOptions } from "helenite/internal/ui/src/list-row";
   export { composer } from "helenite/internal/ui/src/composer";
-  export type { ComposerOptions, ComposerHandle, ComposerField, SlashCommand } from "helenite/internal/ui/src/composer";
+  export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "helenite/internal/ui/src/composer";
   export { keyValue } from "helenite/internal/ui/src/key-value";
   export type { KeyValueRow } from "helenite/internal/ui/src/key-value";
   export { setMenuRenderer, openMenu } from "helenite/internal/ui/src/menu";
@@ -811,6 +811,14 @@ declare module 'helenite/internal/ui/src/composer' {
       selectionStart: number | null;
       setSelectionRange(start: number, end: number): void;
   };
+  /** A file (or anything else) attached to the message: shown as a removable chip above the box. */
+  export interface ComposerAttachment {
+      name: string;
+      /** An icon name for the chip. Default "paperclip". */
+      icon?: string;
+      /** Whatever the caller needs back on submit, such as a path or a File. */
+      data?: unknown;
+  }
   export interface ComposerOptions {
       /** Builds the text box in place of the plain textarea (appended to the composer by the callback). */
       createInput?: (parent: HTMLElement) => ComposerField;
@@ -831,7 +839,14 @@ declare module 'helenite/internal/ui/src/composer' {
        * Gets the text. The box is cleared when it returns, or when its promise resolves (busy until then). Returning (or
        * resolving to) `false` means nothing was sent and keeps the text, as a throw does.
        */
-      onSubmit: (text: string) => unknown;
+      onSubmit: (text: string, attachments?: ComposerAttachment[]) => unknown;
+      /**
+       * Turns on attachments: an attach button beside the box that calls this and adds what it returns as chips. The chips
+       * go to `onSubmit` and are cleared with the text. Without it there is no button; `addAttachment` still works.
+       */
+      onAttach?: () => ComposerAttachment[] | void | Promise<ComposerAttachment[] | void>;
+      /** The attach button's accessible name. Default "Attach". */
+      attachLabel?: string;
       /**
        * Turns on a "/" menu: typing "/" at the start of the box lists these, filtered as you type. Arrow keys move, Enter or
        * Tab inserts `/name ` and Escape closes. Called once, the first time the menu opens.
@@ -843,9 +858,13 @@ declare module 'helenite/internal/ui/src/composer' {
       input: ComposerField;
       setBusy(b: boolean): void;
       focus(): void;
+      /** Clears the text and the attachments. */
       clear(): void;
+      /** Adds an attachment chip; returns a function that removes it. */
+      addAttachment(a: ComposerAttachment): () => void;
+      attachments(): ComposerAttachment[];
   }
-  /** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty`. */
+  /** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty` or it has an attachment. */
   export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle;
 }
 
