@@ -21,8 +21,16 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 
 | Variable | Default | Used by |
 | --- | --- | --- |
-| `--hel-segment-active-bg` | `var(--interactive-accent)` | The pressed segment of `hel-segmented`, and `hel-button.is-active` |
-| `--hel-segment-active-fg` | `var(--text-on-accent)` | The text colour on those |
+| `--hel-shadow-xs` | `0 1px 2px rgba(0, 0, 0, 0.05)` | The faint drop under a primary or danger button and a solid callout |
+| `--hel-error-ring` | A 1px `--text-error` ring and a faint drop | An input with `aria-invalid="true"` (a `ui.field` showing an error) |
+| `--hel-error-focus` | A 1px `--text-error` ring and a 4px red halo | That input while focused |
+| `--hel-segment-track` | `var(--background-modifier-hover)` | The muted track behind a `hel-segmented` group's segments |
+| `--hel-segment-active-bg` | `var(--background-primary)` | The chosen segment of `hel-segmented` (raised on the track) |
+| `--hel-segment-active-fg` | `var(--text-normal)` | The text colour on it |
+| `--hel-button-active-bg` | `var(--interactive-accent)` | `hel-button.is-active` (a toggled toolbar button) |
+| `--hel-button-active-fg` | `var(--text-on-accent)` | The text colour on it |
+| `--hel-snackbar-bg` | `var(--background-modifier-message)` | A `hel-notice` (snackbar) background |
+| `--hel-snackbar-fg` | `#fff` | Its text |
 | `--hel-count-badge-attention-fg` | `var(--text-on-accent)` | The number on a danger `hel-count-badge` (on `--color-red`: about 6:1 in the default dark theme, 5:1 in light) |
 | `--hel-callout-solid-fg` | `var(--text-on-accent)` | The text on a solid `hel-callout` |
 | `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
@@ -57,7 +65,11 @@ The base theme's look comes from Finesse UI (Community, CC BY 4.0). Most of it i
 | `hel-segmented-label` | The group's label, such as "Editing:". |
 | `hel-segment` | One option in the group. `aria-pressed="true"` marks the chosen one. |
 
-Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton` is `is-menu` (with `aria-haspopup="menu"`).
+Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton` is `is-menu` (with `aria-haspopup="menu"`), and shows a small chevron after its text.
+
+Finesse Buttons and Icon Buttons: the primary (`mod-cta`) is the accent fill with a faint drop; the secondary is the `--interactive-normal` fill inside `--input-shadow`'s ring; the danger (`mod-warning`) darkens a step on hover. Every `hel-button` nudges down half a pixel when pressed, draws `--hel-ring-focus` on keyboard focus and is at 50% opacity when disabled. An icon button (`clickable-icon`) gets the active-hover wash when pressed and 40% opacity when disabled.
+
+Finesse Segmented Control: the segments are joined on the `--hel-segment-track`; each is flat, muted text, normal text on hover; the chosen one (`aria-pressed="true"`) is raised: `--hel-segment-active-bg` with `--hel-ring`. A focused segment draws `--hel-ring-focus`; a disabled one is at 50%.
 
 ### Tables
 
@@ -82,10 +94,10 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-progress` | The loading line's bar track (a `progressbar` with `aria-valuenow`); shown only with `is-determinate`. |
 | `hel-progress-fill` | The bar's filled part; its width is the progress. |
 | `hel-error` | `ui.errorState`, with its retry button. Variants: `is-inline`, `is-pane`. |
-| `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. |
-| `hel-status-dot` | `ui.statusDot`. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
+| `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. Finesse Badges: a 10% tint of the tone (`--hel-badge-tone`, set per tone) inside a hairline ring of it, `--hel-badge-radius` corners, medium weight; the text is the tone's text colour (`--text-accent`, `--text-error`, `--text-success`; normal text for warning). |
+| `hel-status-dot` | `ui.statusDot`, an 8px dot. Tones as for badges. `is-pulse` blinks it (the `hel-pulse` animation, off under reduced motion). |
 | `hel-status-text` | `ui.statusText`. Tones as for badges. |
-| `hel-count-badge` | `ui.countBadge`. `is-accent` (default), `is-danger` (red, `--hel-count-badge-attention-fg` text) or `is-warning` (normal text on an orange tint) is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header it is a centred pill with a small gap. |
+| `hel-count-badge` | `ui.countBadge`, a solid pill with tabular numbers. `is-accent` (default), `is-danger` (red, `--hel-count-badge-attention-fg` text) or `is-warning` (normal text on an orange tint) is its tone; `is-pulse` blinks it. Hidden (the `hidden` attribute) at 0. In a tab header it is a centred pill with a small gap. |
 | `is-overlay` / `hel-has-overlay-badge` | `ui.countBadge(..., { overlay: true })`: a small (14px, 10px text) badge out of the flow on the parent's top-right corner, so what it counts (a ribbon icon) never moves; it takes no clicks. The parent gets `hel-has-overlay-badge` (`position: relative`). |
 | `hel-count-badge-icon` | The optional icon before a count badge's number. |
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
@@ -98,15 +110,15 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 | Class | What it is |
 | --- | --- |
-| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-invalid` while an error is shown. |
-| `hel-field-label` | The field's `<label>`. |
+| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-invalid` while an error is shown (its control also gets `aria-invalid="true"`, which rings it in `--hel-error-ring`). |
+| `hel-field-label` | The field's `<label>`, medium weight in normal text. |
 | `hel-field-control` | The slot the control is drawn into. |
-| `hel-field-hint` | The hint line. |
-| `hel-field-error` | The error line from `setError`. Hidden while there is no error. |
-| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`). |
-| `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. |
+| `hel-field-hint` | The helper text line, in muted text. |
+| `hel-field-error` | The error line from `setError`, in `--text-error`. Hidden while there is no error. |
+| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`). Finesse Inputs: `--hel-ring` instead of a border (`--hel-ring-hover` on hover), `--hel-ring-focus` when focused, `--hel-error-ring` when `aria-invalid`, 50% on a secondary background when disabled, faint placeholder. |
+| `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. Ringed and focused as `hel-input`. |
 | `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. A soft ring instead of a border, a focus ring, 6px corners (`--hel-control-radius`). `is-compact` is shorter. |
-| `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled. |
+| `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled (50%). Finesse Toggles: the accent track when on, `--toggle-track-color` when off, each a step darker on hover; `--hel-ring-focus` around the switch on keyboard focus. |
 | `hel-toggle-label` | The toggle's label text. |
 | `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. The track is filled with the accent up to the thumb: `ui.slider` sets `--hel-fill` (a percentage) on it as it moves. |
 | `hel-tabs` | The tab strip from `ui.tabs`. |
@@ -118,7 +130,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 | Class | What it is |
 | --- | --- |
-| `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. `is-solid` fills it with the tone's colour (`--hel-callout-solid-fg` text, a contrasting action button). |
+| `hel-callout` | `ui.callout`, a banner or inline message. Also Obsidian's `callout` with `data-callout` (`info`, `note` for accent, `warning`, `danger`, `success`), so a theme's callout colours apply. Tones: `is-info`, `is-accent`, `is-warning`, `is-danger`, `is-success`. `is-solid` fills it with the tone's colour (`--hel-callout-solid-fg` text, a contrasting action button). Finesse Alerts: an 8% tint of the tone inside a hairline ring of it, 6px corners. |
 | `hel-callout-text` | The callout's text. |
 | `hel-callout-action` | The callout's button (a `hel-button`). |
 | `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`). Tones: `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. `is-attention` (a card waiting on the user: thick toned border, tint, focus ring, its own interface font with monospace only for code, and roomier choice-list rows with a tinted pick and key hints in muted text that brighten on hover, focus or pick), `is-sticky` (pinned to the top of its pane, with a shadow), `is-busy` (dimmed while its action runs) and `is-pulse` (briefly, from `pulse()`). |
@@ -132,12 +144,12 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | Class | What it is |
 | --- | --- |
 | `hel-check-list` | `ui.checkList`, a `role=group` of checkboxes (also a form's `multi` field). |
-| `hel-check` | One checkbox row (a `<label>`). `is-disabled` when disabled. |
+| `hel-check` | One checkbox row (a `<label>`). `is-disabled` when disabled. Finesse Checkboxes: its `<input type=checkbox>` is a 16px box with `--hel-badge-radius` corners and a ring (darker on hover); checked, it fills with the accent (`--interactive-accent-hover` on hover) and shows a check mark in `--text-on-accent`; `--hel-ring-focus` on keyboard focus. |
 | `hel-check-body` | The row's text and detail. |
 | `hel-check-text` | The row's text. |
 | `hel-check-detail` | The row's second line; also a form checkbox field's `detail`. |
 | `hel-choice-list` | `ui.choiceList`, a listbox of option rows. `is-multi` when any number can be picked. |
-| `hel-choice` | One option row. States: `is-selected`, `is-disabled`. In `ui.choose` the rows also have `hel-modal-choice`. |
+| `hel-choice` | One option row. States: `is-selected`, `is-disabled`. In `ui.choose` the rows also have `hel-modal-choice`. Finesse Radio Buttons / Check Circles: a row with `--hel-ring` (its 1px border stays, transparent, for themes), `--hel-ring-hover` and a faint wash on hover, `--hel-ring-focus` on focus; a selected row has a 2px accent ring. |
 | `hel-choice-icon` | The row's icon. |
 | `hel-choice-body` | The row's title line and detail. |
 | `hel-choice-title` | The title line: text and tag. |
@@ -146,9 +158,9 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-choice-detail` | The option's second line. |
 | `hel-choice-preview` | The option's `preview`, under its detail inside the row. |
 | `hel-choice-key` | The key hint (a `<kbd>`). |
-| `hel-choice-indicator` | The mark before a row when the list has an `indicator`: `is-radio` (a radio dot) or `is-check` (a checkbox), filled when the row is selected. |
+| `hel-choice-indicator` | The 16px circle before a row when the list has an `indicator`, ringed while unpicked: `is-radio` (a radio: filled with the accent and a light centre dot when selected) or `is-check` (a Check Circle: filled with the accent and a check mark when selected). |
 | `hel-choice-badge` | The option's `badge` at the end of the row (a `hel-badge`). |
-| `hel-choice-item` | The wrapper of an option that has a `trailing` slot: it draws the row's border, around the option and the slot. |
+| `hel-choice-item` | The wrapper of an option that has a `trailing` slot: it draws the row's ring (the 2px accent ring when its option is selected), around the option and the slot. |
 | `hel-choice-extra` | The `trailing` slot beside the option (outside the `role=option` element). |
 
 ### List rows and groups
@@ -223,9 +235,9 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-notice` | The notice made by `ui.notice`. Kinds: `is-info`, `is-success`, `is-error`. `is-clickable` when it has `onClick`. |
+| `hel-notice` | The message element of the notice made by `ui.notice` (inside Obsidian's `notice`, which draws the bar). Kinds: `is-info`, `is-success`, `is-error`, shown as a small leading dot in the kind's colour (`--hel-notice-tone`). `is-clickable` when it has `onClick` (lighter on hover). Finesse Snackbars: `--hel-snackbar-bg` with `--hel-snackbar-fg` text, 6px corners, `--shadow-l`. |
 | `hel-notice-text` | The notice's text, when it has an action. |
-| `hel-notice-action` | The notice's action button (a `hel-button`). |
+| `hel-notice-action` | The notice's action button (a `hel-button`): pushed to the end, flat, semibold, a light wash on hover. |
 
 `menu-item.is-danger` is Obsidian's `menu-item` with a red label and icon; `ui.menu` adds it for `danger: true` items. A `checked` item is Obsidian's `menu-item.mod-checked` with its check icon.
 

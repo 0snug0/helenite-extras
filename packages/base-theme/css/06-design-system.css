@@ -3,18 +3,44 @@
 body {
   --hel-count-badge-attention-fg: var(--text-on-accent); /* on --color-red: about 6:1 (default dark) and 5:1 (default light) */
   --hel-callout-solid-fg: var(--text-on-accent);
-  --hel-segment-active-bg: var(--interactive-accent);
-  --hel-segment-active-fg: var(--text-on-accent);
+  /* Knobs for the covered parts. The rings (--hel-ring, --hel-ring-hover, --hel-ring-focus) are the Finesse tokens in 02-colors. */
+  --hel-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --hel-error-ring: 0 0 0 1px var(--text-error), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --hel-error-focus: 0 0 0 1px var(--text-error), 0 0 0 4px color-mix(in srgb, var(--text-error) 20%, transparent);
+  --hel-segment-track: var(--background-modifier-hover);
+  --hel-segment-active-bg: var(--background-primary);
+  --hel-segment-active-fg: var(--text-normal);
+  --hel-button-active-bg: var(--interactive-accent);
+  --hel-button-active-fg: var(--text-on-accent);
+  --hel-snackbar-bg: var(--background-modifier-message);
+  --hel-snackbar-fg: #fff;
 }
 
-.hel-segmented { display: inline-flex; gap: var(--size-2-1); align-items: center; }
-.hel-segmented-label { color: var(--text-muted); margin-right: var(--size-4-2); }
-.hel-segmented > .hel-segment[aria-pressed="true"] { background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); }
+/* Finesse Segmented Control: joined segments, flat on a muted track; the chosen one is raised with a ring. A label sits before
+   the track (the label is outside it, so the track is drawn by the segments themselves). */
+.hel-segmented { display: inline-flex; align-items: center; }
+.hel-segmented-label { color: var(--text-muted); margin-right: var(--size-4-2); font-size: var(--font-ui-small); }
+.hel-segmented > button.hel-segment { height: var(--input-height); padding: 0 var(--size-4-3); border: 0; border-radius: 0; background-color: var(--hel-segment-track); box-shadow: none; color: var(--text-muted); font-weight: var(--font-medium, 500); transition: background-color 0.12s ease-in-out, color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-segmented > button.hel-segment:first-of-type { border-start-start-radius: var(--hel-control-radius, 6px); border-end-start-radius: var(--hel-control-radius, 6px); }
+.hel-segmented > button.hel-segment:last-of-type { border-start-end-radius: var(--hel-control-radius, 6px); border-end-end-radius: var(--hel-control-radius, 6px); }
+.hel-segmented > button.hel-segment:hover { background-color: var(--hel-segment-track); box-shadow: none; color: var(--text-normal); }
+.hel-segmented > button.hel-segment[aria-pressed="true"] { position: relative; z-index: 1; border-radius: var(--hel-control-radius, 6px); background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); box-shadow: var(--hel-ring); }
+.hel-segmented > button.hel-segment:focus-visible { position: relative; z-index: 2; outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-segmented > button.hel-segment:disabled { opacity: 0.5; cursor: default; }
 
 .hel-button.is-link { background: none; box-shadow: none; border: none; padding: 0; color: var(--text-accent); cursor: pointer; text-decoration: underline; }
 .hel-button.is-link:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
 .hel-button[hidden] { display: none; }
-.hel-button.is-active { background-color: var(--hel-segment-active-bg); color: var(--hel-segment-active-fg); }
+.hel-button.is-active { background-color: var(--hel-button-active-bg); color: var(--hel-button-active-fg); box-shadow: none; }
+/* Finesse Buttons: states every variant shares. The base look and hover come from base.css (or a theme); these add the
+   pressed step, a two-ring focus that clears the button's own ring, and a quiet disabled. */
+button.hel-button { transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+button.hel-button:not(.clickable-icon):not(.is-link):active { transform: translateY(0.5px); filter: brightness(0.97); }
+button.hel-button:focus-visible, .hel-button.clickable-icon:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+button.hel-button:disabled, button.hel-button[aria-disabled="true"] { opacity: 0.5; cursor: default; transform: none; filter: none; }
+button.hel-button.is-menu > .hel-button-text::after { content: ""; display: inline-block; width: 0.9em; height: 0.9em; margin-inline-start: var(--size-2-2); vertical-align: -0.1em; background-color: currentColor; opacity: 0.6; -webkit-mask: no-repeat center / contain url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'); mask: no-repeat center / contain url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'); }
+.hel-button.clickable-icon:active { background-color: var(--background-modifier-active-hover, var(--background-modifier-hover)); }
+.hel-button.clickable-icon:disabled { opacity: 0.4; cursor: default; background: transparent; }
 .hel-button.is-busy { cursor: progress; opacity: 0.7; }
 .hel-button-icon:empty { display: none; }
 .hel-button-icon { display: inline-flex; align-items: center; }
@@ -22,9 +48,10 @@ body {
 /* Variant looks for app frames, which load this file but not base.css. Same specificity and values as base.css's
    button.mod-cta / button.mod-warning / .clickable-icon / .svg-icon rules (:where() adds nothing), so the host renders
    unchanged and a theme's rules on those classes still win in both places. */
-button:where(.hel-button).mod-cta { background-color: var(--interactive-accent); color: var(--text-on-accent); box-shadow: none; }
+button:where(.hel-button).mod-cta { background-color: var(--interactive-accent); color: var(--text-on-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
 button:where(.hel-button).mod-cta:hover { background-color: var(--interactive-accent-hover); }
-button:where(.hel-button).mod-warning { background-color: var(--background-modifier-error); color: var(--text-on-accent); box-shadow: none; }
+button:where(.hel-button).mod-warning { background-color: var(--background-modifier-error); color: var(--text-on-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srgb, var(--background-modifier-error) 88%, black); }
 :where(.hel-button).clickable-icon { display: flex; align-items: center; justify-content: center; background: transparent; border: 0; box-shadow: none; padding: var(--size-2-2) var(--size-2-3); border-radius: var(--clickable-icon-radius); color: var(--icon-color); opacity: var(--icon-opacity); cursor: var(--cursor); }
 :where(.hel-button).clickable-icon:hover { background-color: var(--background-modifier-hover); opacity: var(--icon-opacity-hover); color: var(--icon-color-hover); }
 :where(.hel-button-icon) > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); flex-shrink: 0; }
@@ -84,11 +111,12 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 /* inline: the look of a bare setting-item-description (the empty also carries that class); pane: left-aligned in a sidebar pane (the empty also carries pane-empty) */
 .hel-empty.is-inline, .hel-error.is-inline { padding: var(--size-2-2) 0 0; text-align: start; justify-content: flex-start; font-size: var(--font-ui-smaller); }
 .hel-empty.is-pane, .hel-error.is-pane { padding: var(--size-4-2) 0; text-align: start; justify-content: flex-start; font-size: var(--font-ui-small); }
-.hel-badge { display: inline-block; padding: 0 var(--size-4-2); border-radius: var(--radius-s); font-size: var(--font-ui-smaller); background-color: var(--background-modifier-hover); color: var(--text-muted); }
-.hel-badge.is-accent { background-color: var(--interactive-accent); color: var(--text-on-accent); }
-.hel-badge.is-danger { background-color: var(--background-modifier-error); color: var(--text-on-accent); }
-.hel-badge.is-success { background-color: var(--background-modifier-success); color: var(--text-on-accent); }
-.hel-badge.is-warning { background-color: rgba(var(--color-orange-rgb), 0.2); color: var(--text-normal); } /* white on --color-orange is about 3.6:1 in light themes; normal text on a tint, as Obsidian's callouts do */
+/* Finesse Badges: a soft tint of the tone with a hairline ring of it and 4px corners; the text is the tone's text colour. */
+.hel-badge { --hel-badge-tone: var(--text-muted); display: inline-flex; align-items: center; gap: var(--size-2-1); padding: 0 var(--size-4-1); border-radius: var(--hel-badge-radius, 4px); font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); line-height: 1.6; background-color: color-mix(in srgb, var(--hel-badge-tone) 10%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hel-badge-tone) 22%, transparent); color: var(--text-muted); }
+.hel-badge.is-accent { --hel-badge-tone: var(--interactive-accent); color: var(--text-accent); }
+.hel-badge.is-danger { --hel-badge-tone: var(--color-red); color: var(--text-error); }
+.hel-badge.is-success { --hel-badge-tone: var(--color-green); color: var(--text-success); }
+.hel-badge.is-warning { --hel-badge-tone: var(--color-orange); color: var(--text-normal); } /* orange text on its tint is under 4.5:1 in light themes: normal text, as Obsidian's callouts do */
 .hel-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-faint); }
 .hel-status-dot.is-accent { background-color: var(--interactive-accent); }
 .hel-status-dot.is-danger { background-color: var(--text-error); }
@@ -99,7 +127,7 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-status-text.is-danger { color: var(--text-error); }
 .hel-status-text.is-success { color: var(--text-success); }
 .hel-status-text.is-warning { color: var(--text-warning); }
-.hel-count-badge { display: inline-block; min-width: 1.5em; padding: 0 var(--size-2-2); border-radius: var(--radius-l); font-size: var(--font-ui-smaller); line-height: 1.5; text-align: center; background-color: var(--interactive-accent); color: var(--text-on-accent); }
+.hel-count-badge { display: inline-block; min-width: 1.5em; box-sizing: border-box; padding: 0 var(--size-2-3); border-radius: 999px; font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); font-variant-numeric: tabular-nums; line-height: 1.5; text-align: center; background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .hel-count-badge[hidden] { display: none; }
 .hel-count-badge.is-danger { background-color: var(--color-red); color: var(--hel-count-badge-attention-fg); }
 .hel-count-badge.is-warning { background-color: rgba(var(--color-orange-rgb), 0.2); color: var(--text-normal); } /* no on-accent text reaches 4.5:1 on --color-orange in both themes: normal text on a tint, as hel-badge */
@@ -133,12 +161,20 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-field { display: flex; flex-direction: column; gap: var(--size-4-1); margin-bottom: var(--size-4-3); }
 .hel-field.is-inline { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--size-4-3); row-gap: var(--size-4-1); }
 .hel-field.is-inline > .hel-field-hint, .hel-field.is-inline > .hel-field-error { grid-column: 2; }
-.hel-field-label { font-size: var(--font-ui-small); color: var(--text-muted); }
+.hel-field-label { font-size: var(--font-ui-small); font-weight: var(--font-medium, 500); color: var(--text-normal); }
 .hel-field-control { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; min-width: 0; }
-.hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-faint); }
+.hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 /* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */
 .hel-input.is-multiline { height: auto; box-sizing: border-box; }
+/* Finesse Inputs: a ring and a faint drop instead of a border; focus adds the accent halo; an invalid field rings red. */
+:is(input.hel-input, textarea.hel-input, input.hel-search) { border-color: transparent; box-shadow: var(--hel-ring); transition: box-shadow 0.12s ease-in-out; }
+:is(input.hel-input, textarea.hel-input, input.hel-search):hover:not(:disabled):not(:focus) { box-shadow: var(--hel-ring-hover); }
+:is(input.hel-input, textarea.hel-input, input.hel-search):focus { outline: none; border-color: transparent; box-shadow: var(--hel-ring-focus); }
+:is(input.hel-input, textarea.hel-input, input.hel-search)[aria-invalid="true"] { box-shadow: var(--hel-error-ring); }
+:is(input.hel-input, textarea.hel-input, input.hel-search)[aria-invalid="true"]:focus { box-shadow: var(--hel-error-focus); }
+:is(input.hel-input, textarea.hel-input, input.hel-search):disabled { opacity: 0.5; cursor: not-allowed; background-color: var(--background-secondary); }
+:is(.hel-input, .hel-search)::placeholder { color: var(--text-faint); }
 :where(textarea.hel-input) { width: 100%; padding: var(--size-4-1) var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); resize: vertical; }
 :where(input.hel-input) { height: var(--input-height); padding: 0 var(--size-4-2); font-family: inherit; font-size: var(--font-ui-small); color: var(--text-normal); background-color: var(--background-modifier-form-field); border: 0; box-shadow: var(--input-shadow); border-radius: var(--input-radius); }
 :where(.search-input-container) { position: relative; }
@@ -148,7 +184,10 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-select.is-compact { height: calc(var(--input-height) - var(--size-4-2)); font-size: var(--font-ui-smaller); }
 .hel-toggle { display: inline-flex; align-items: center; gap: var(--size-4-2); font-size: var(--font-ui-small); color: var(--text-normal); cursor: var(--cursor); }
 .hel-toggle.is-disabled { opacity: 0.5; cursor: default; }
-.hel-toggle .checkbox-container:has(input:focus-visible) { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
+.hel-toggle .checkbox-container:has(input:focus-visible) { outline: none; box-shadow: var(--hel-ring-focus); }
+/* Finesse Toggles: the track darkens a step on hover, on or off. */
+.hel-toggle:not(.is-disabled) .checkbox-container:not(.is-enabled):hover { background-color: var(--background-modifier-border-hover); }
+.hel-toggle:not(.is-disabled) .checkbox-container.is-enabled:hover { background-color: var(--interactive-accent-hover); }
 :where(.hel-toggle .checkbox-container) { position: relative; display: inline-block; flex-shrink: 0; width: var(--toggle-width); height: calc(var(--toggle-thumb-height) + var(--toggle-border-width) * 2); border-radius: var(--toggle-radius); background-color: var(--toggle-track-color); cursor: var(--cursor); transition: background 0.15s ease-in-out; }
 :where(.hel-toggle .checkbox-container.is-enabled) { background-color: var(--interactive-accent); }
 :where(.hel-toggle .checkbox-container input[type=checkbox]) { position: absolute; opacity: 0; inset: 0; margin: 0; }
@@ -165,16 +204,17 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 
 /* callout: also Obsidian's callout (with data-callout), so a theme's callout colours apply; the part sets its own
    spacing and keeps mix-blend-mode off, since it holds a button */
-.hel-callout { --callout-color: var(--callout-info); display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2) var(--size-4-3); margin: 0 0 var(--size-4-3); padding: var(--size-4-2) var(--size-4-3); border-style: solid; border-width: var(--callout-border-width); border-color: rgba(var(--callout-color), var(--callout-border-opacity)); border-radius: var(--callout-radius); background-color: rgba(var(--callout-color), 0.1); color: var(--text-normal); font-size: var(--font-ui-small); mix-blend-mode: normal; }
+/* Finesse Alerts: a soft tint of the tone inside a hairline border of it (--callout-border-opacity), 6px corners. */
+.hel-callout { --callout-color: var(--callout-info); display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2) var(--size-4-3); margin: 0 0 var(--size-4-3); padding: var(--size-4-3) var(--size-4-4); border-style: solid; border-width: var(--callout-border-width); border-color: rgba(var(--callout-color), var(--callout-border-opacity)); border-radius: var(--hel-control-radius, 6px); background-color: rgba(var(--callout-color), 0.08); color: var(--text-normal); font-size: var(--font-ui-small); line-height: var(--line-height-tight); mix-blend-mode: normal; }
 .hel-callout[hidden] { display: none; }
 .hel-callout.is-warning { --callout-color: var(--callout-warning); }
 .hel-callout.is-danger { --callout-color: var(--callout-error); }
 .hel-callout.is-success { --callout-color: var(--callout-success); }
-.hel-callout.is-accent { background-color: color-mix(in srgb, var(--interactive-accent) 12%, transparent); border-color: color-mix(in srgb, var(--interactive-accent) 25%, transparent); }
+.hel-callout.is-accent { background-color: color-mix(in srgb, var(--interactive-accent) 8%, transparent); border-color: color-mix(in srgb, var(--interactive-accent) 25%, transparent); }
 .hel-callout-text { flex: 1 1 12em; min-width: 0; }
 .hel-callout-action { flex: none; }
 /* solid: a filled banner for what must not be missed (an agent waiting on the user) */
-.hel-callout.is-solid { background-color: rgb(var(--callout-color)); border-color: transparent; color: var(--hel-callout-solid-fg); font-weight: var(--font-semibold); }
+.hel-callout.is-solid { background-color: rgb(var(--callout-color)); border-color: transparent; box-shadow: var(--hel-shadow-xs); color: var(--hel-callout-solid-fg); font-weight: var(--font-semibold); }
 .hel-callout.is-solid.is-accent { background-color: var(--interactive-accent); }
 .hel-callout.is-solid > button.hel-callout-action { background-color: var(--background-primary); color: var(--text-normal); box-shadow: none; }
 .hel-callout.is-solid > button.hel-callout-action:hover { background-color: var(--background-primary-alt); color: var(--text-normal); }
@@ -223,15 +263,25 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 /* check list and choice list */
 .hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
 .hel-check { display: flex; align-items: flex-start; gap: var(--size-4-2); font-size: var(--font-ui-small); color: var(--text-normal); cursor: var(--cursor); }
-.hel-check > input[type=checkbox] { flex-shrink: 0; margin: 0; }
+/* Finesse Checkboxes: a 16px box with a ring and 4px corners; checked fills with the accent and shows a check mark. */
+.hel-check > input[type=checkbox] { -webkit-appearance: none; appearance: none; position: relative; flex-shrink: 0; width: 16px; height: 16px; margin: 1px 0 0; border: 0; border-radius: var(--hel-badge-radius, 4px); background-color: var(--background-primary); box-shadow: var(--hel-ring-hover); cursor: inherit; transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-check:not(.is-disabled):hover > input[type=checkbox]:not(:checked) { box-shadow: 0 0 0 1px var(--text-faint); }
+.hel-check > input[type=checkbox]:checked { background-color: var(--interactive-accent); box-shadow: none; }
+.hel-check:not(.is-disabled):hover > input[type=checkbox]:checked { background-color: var(--interactive-accent-hover); }
+.hel-check > input[type=checkbox]:checked::after { content: ""; position: absolute; inset: 0; background-color: var(--text-on-accent); -webkit-mask: no-repeat center / 75% url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'); mask: no-repeat center / 75% url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'); }
+.hel-check > input[type=checkbox]:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
 .hel-check.is-disabled { opacity: 0.5; cursor: default; }
 .hel-check-body { display: flex; flex-direction: column; gap: var(--size-2-1); }
 .hel-check-detail { display: block; font-size: var(--font-ui-smaller); color: var(--text-muted); }
-.hel-choice-list { display: flex; flex-direction: column; gap: var(--size-2-1); }
-.hel-choice { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); cursor: pointer; }
-.hel-choice:hover, .hel-choice:focus-visible { background-color: var(--background-modifier-hover); }
-.hel-choice.is-selected { border-color: var(--interactive-accent); }
+.hel-choice-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
+/* Finesse Radio Buttons / Check Circles: rows with a ring (the 1px border stays, transparent, so a theme can still draw one);
+   the picked row takes a 2px accent ring. */
+.hel-choice { display: flex; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-3); border-radius: var(--hel-control-radius, 6px); border: 1px solid transparent; box-shadow: var(--hel-ring); background-color: var(--background-primary); cursor: pointer; transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-choice:hover { background-color: var(--background-primary-alt); box-shadow: var(--hel-ring-hover); }
+.hel-choice:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-choice.is-selected { border-color: transparent; box-shadow: 0 0 0 2px var(--interactive-accent); }
 .hel-choice.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.hel-choice.is-disabled:hover { background-color: var(--background-primary); box-shadow: var(--hel-ring); }
 .hel-choice-icon { display: inline-flex; flex: none; color: var(--icon-color); }
 .hel-choice-body { flex: 1 1 auto; min-width: 0; }
 .hel-choice-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); }
@@ -245,16 +295,17 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-choice-preview { margin-top: var(--size-4-2); padding: var(--size-4-2); max-height: 240px; overflow: auto; background: var(--background-secondary); border-radius: var(--radius-s); font-size: var(--font-ui-small); }
 .hel-choice-key { flex: none; padding: 0 var(--size-2-2); border: 1px solid var(--background-modifier-border); border-radius: var(--radius-s); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-choice-badge { flex: none; }
-.hel-choice-indicator { flex: none; position: relative; width: 14px; height: 14px; border: 1px solid var(--text-faint); background-color: var(--background-primary); }
-.hel-choice-indicator.is-radio { border-radius: 50%; }
-.hel-choice-indicator.is-check { border-radius: var(--checkbox-radius, var(--radius-s)); }
-.hel-choice.is-selected .hel-choice-indicator { border-color: var(--interactive-accent); background-color: var(--interactive-accent); }
-.hel-choice.is-selected .hel-choice-indicator.is-radio { box-shadow: inset 0 0 0 3px var(--background-primary); }
-.hel-choice.is-selected .hel-choice-indicator.is-check::after { content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid var(--text-on-accent); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+/* The indicator: radio is a filled circle with a light centre dot; check is a Check Circle (a filled circle with a check mark). */
+.hel-choice-indicator { flex: none; position: relative; box-sizing: border-box; width: 16px; height: 16px; border: 0; border-radius: 50%; background-color: var(--background-primary); box-shadow: var(--hel-ring-hover); transition: background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out; }
+.hel-choice:not(.is-disabled):hover .hel-choice-indicator { box-shadow: 0 0 0 1px var(--text-faint); }
+.hel-choice.is-selected .hel-choice-indicator, .hel-choice.is-selected:hover .hel-choice-indicator { background-color: var(--interactive-accent); box-shadow: none; }
+.hel-choice.is-selected .hel-choice-indicator.is-radio::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background-color: var(--text-on-accent); }
+.hel-choice.is-selected .hel-choice-indicator.is-check::after { content: ""; position: absolute; inset: 0; background-color: var(--text-on-accent); -webkit-mask: no-repeat center / 70% url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'); mask: no-repeat center / 70% url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'); }
 /* An option with something beside it: the wrapper draws the row's border, so the extra sits inside it visually. */
-.hel-choice-item { display: flex; align-items: center; gap: var(--size-4-2); padding-right: var(--size-4-3); border-radius: var(--radius-s); border: 1px solid var(--background-modifier-border); }
-.hel-choice-item > .hel-choice { flex: 1 1 auto; min-width: 0; border-color: transparent; }
-.hel-choice-item:has(> .hel-choice.is-selected) { border-color: var(--interactive-accent); }
+.hel-choice-item { display: flex; align-items: center; gap: var(--size-4-2); padding-right: var(--size-4-3); border-radius: var(--hel-control-radius, 6px); border: 1px solid transparent; box-shadow: var(--hel-ring); background-color: var(--background-primary); }
+.hel-choice-item > .hel-choice { flex: 1 1 auto; min-width: 0; border-color: transparent; box-shadow: none; background: transparent; }
+.hel-choice-item > .hel-choice:focus-visible { box-shadow: var(--hel-ring-focus); }
+.hel-choice-item:has(> .hel-choice.is-selected) { box-shadow: 0 0 0 2px var(--interactive-accent); }
 .hel-choice-extra { flex: none; display: flex; align-items: center; gap: var(--size-4-2); }
 
 /* list rows and groups (sidebar panes). With obsidianClass a row also carries Obsidian's tree classes; the :where()
@@ -347,11 +398,19 @@ button:where(.hel-button).mod-warning { background-color: var(--background-modif
 .hel-vault-scope-note { padding-top: 0; margin: 0 0 var(--size-4-2); }
 
 /* notice variants and danger menu items */
-.hel-notice.is-info { border-left: 3px solid var(--interactive-accent); }
-.hel-notice.is-success { border-left: 3px solid var(--color-green); }
-.hel-notice.is-error { border-left: 3px solid var(--color-red); }
+/* Finesse Snackbars: a dark bar, light text, 6px corners and a lifted shadow; the kind is a small leading dot. */
+/* hel-notice is the notice's message element; the .notice around it is the bar. */
+.notice:has(> .hel-notice) { padding: var(--size-4-2) var(--size-4-3); border-radius: var(--hel-control-radius, 6px); background-color: var(--hel-snackbar-bg); color: var(--hel-snackbar-fg); box-shadow: var(--shadow-l); }
+.hel-notice { --hel-notice-tone: var(--interactive-accent); display: flex; align-items: center; gap: var(--size-4-2); }
+.hel-notice::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background-color: var(--hel-notice-tone); }
+.hel-notice.is-info { --hel-notice-tone: color-mix(in srgb, var(--interactive-accent) 55%, white); }
+.hel-notice.is-success { --hel-notice-tone: var(--color-green); }
+.hel-notice.is-error { --hel-notice-tone: var(--color-red); }
+.notice:has(> .hel-notice.is-clickable):hover { background-color: color-mix(in srgb, var(--hel-snackbar-bg) 88%, white); }
 .hel-notice.is-clickable { cursor: pointer; }
-.hel-notice-action { margin-left: var(--size-4-2); }
+.hel-notice-action { margin-left: auto; }
+.hel-notice button.hel-notice-action { height: auto; padding: var(--size-2-1) var(--size-2-3); background: transparent; box-shadow: none; color: inherit; font-weight: var(--font-semibold); }
+.hel-notice button.hel-notice-action:hover { background-color: color-mix(in srgb, var(--hel-snackbar-fg) 14%, transparent); box-shadow: none; }
 .menu-item.is-danger { color: var(--text-error); }
 .menu-item.is-danger .menu-item-icon { color: var(--text-error); }
 
