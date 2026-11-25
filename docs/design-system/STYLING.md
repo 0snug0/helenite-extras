@@ -218,16 +218,16 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. |
+| `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. Finesse dialog: `--hel-ring-overlay` (a faint ring and a deep drop shadow) in place of the border (kept, transparent, so a theme's `--modal-border-color` still has a place), `--hel-dialog-radius` (12px) corners, a 24px frame and a semibold title; the close button is a 6px control with the focus ring. Only `.hel-modal` is styled this way: the Settings modal and plugins' own `Modal`s keep the base look. A vault app's `api.ui.modal` is drawn by the host as a `ui.dialog`, so it looks the same. |
 | `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
 | `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |
-| `hel-modal-message` | The message paragraph of a confirm modal, and a form's `message`. |
-| `hel-modal-label` | A field label. |
+| `hel-modal-message` | The message paragraph of a confirm modal, a form's `message`, and a vault app modal's `{ text }` block. Muted text. |
+| `hel-modal-label` | A field label: normal text, medium weight, above its input. |
 | `hel-modal-input` | A text input. |
 | `hel-modal-field` | One field row in a form. |
 | `hel-modal-check` | A checkbox row. Its `detail` follows as a `hel-check-detail`. |
-| `hel-modal-error` | The inline validation message, and the message of a failed `onConfirm`, `onSubmit` or dialog action. Collapses when empty. |
-| `hel-modal-actions` | The button row at the bottom (Cancel, then the action). Also Obsidian's `modal-button-container`; `hel-modal-actions`' own spacing wins over base.css's, and a theme's `modal-button-container` rules apply. While an action runs, its button is `is-busy` and the others are disabled. |
+| `hel-modal-error` | The inline validation message, and the message of a failed `onConfirm`, `onSubmit` or dialog action. A Finesse error alert (error text on a faint error wash with a faint error ring, control radius) above the actions; hidden while empty. |
+| `hel-modal-actions` | The button row at the bottom (Cancel, then the action), right-aligned and pinned to the bottom of a tall modal. The main action is a primary (`mod-cta`) button, or the danger fill (`mod-warning`) for a destructive one. Also Obsidian's `modal-button-container`; `hel-modal-actions`' own spacing wins over base.css's, and a theme's `modal-button-container` rules apply. While an action runs, its button is `is-busy` (with a progress cursor over the row) and the others are disabled. |
 | `hel-modal-choices` | The scrolling list of choices: a `hel-choice-list`. |
 | `hel-modal-choice` | One choice: a `hel-choice` (see Choice lists). |
 
