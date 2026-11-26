@@ -299,6 +299,34 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-cards > .hel-card:has(.hel-card-main:focus-visible) { box-shadow: var(--hel-ring-focus); }
 @media (prefers-reduced-motion: reduce) { .hel-cards > .hel-card { transition: none; } }
 
+/* board (ui.board): a row of lanes that scrolls sideways; each lane's cards scroll on their own and keep their full height.
+   hel-board-page goes on the container: it fills the pane, and the board takes what the rows above it leave. */
+.hel-board-page { display: flex; flex-direction: column; height: 100%; overflow: hidden; box-sizing: border-box; padding: var(--size-4-3); }
+.view-content.hel-board-page { overflow: hidden; } /* a pane's .view-content is scrolled by a workspace rule one class would lose to */
+.hel-board-page > :not(.hel-board) { flex: none; }
+.hel-board-page > .hel-card { margin-bottom: var(--size-4-3); }
+.hel-board-page > .hel-card > .hel-card-body { overflow-x: auto; } /* a table in a card above the board keeps its actions reachable in a narrow pane */
+.hel-board { display: flex; align-items: stretch; gap: var(--hel-board-gap, var(--size-4-3)); flex: 1 1 auto; height: 100%; min-height: 0; overflow-x: auto; }
+.hel-board-page > .hel-board { flex: 1 1 0; }
+.hel-board-lane { display: flex; flex-direction: column; flex: 0 0 var(--hel-board-lane-width, 280px); min-height: 0; }
+.hel-board-lane-head { display: flex; flex: none; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); min-height: var(--input-height); margin-bottom: var(--size-4-2); }
+.hel-board-lane-head:empty { display: none; }
+.hel-board-lane-head > .hel-toolbar-end { margin-inline-start: auto; }
+/* The padding keeps the cards' rings inside the scrolling list. */
+.hel-board-list { display: flex; flex-direction: column; gap: var(--size-4-2); flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--size-2-2); border-radius: var(--hel-card-radius); }
+.hel-board-list > * { flex: none; }
+.hel-board-list > .hel-button { align-self: center; }
+.hel-board-list.is-drop-target { outline: 2px dashed var(--interactive-accent); outline-offset: -2px; }
+.hel-board-card { overflow-wrap: anywhere; }
+.hel-board-card.is-clickable { cursor: var(--cursor-link, pointer); }
+.hel-board-card[draggable="true"] { cursor: grab; }
+.hel-board-card:is(.is-clickable, [draggable="true"]):not(.is-accent, .is-warning, :focus-visible):hover { box-shadow: var(--hel-ring-hover); }
+.hel-board-card:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-board-card.is-dragging { opacity: 0.5; }
+.hel-board-card .hel-status-dot { flex: none; } /* a title that wraps must not squash a dot beside it */
+.hel-board-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-1); }
+.hel-board-card-meta:empty { display: none; }
+
 /* check list and choice list */
 .hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }
 .hel-check { display: flex; align-items: flex-start; gap: var(--size-4-2); font-size: var(--font-ui-small); color: var(--text-normal); cursor: var(--cursor); }

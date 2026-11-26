@@ -132,6 +132,25 @@ ui.meter(el, { label: 'Context', text: '40k' }); // no value: no bar
 
 How full something is, on one line: the label, a short bar, the reading. `value` is 0 to 100 (clamped); `tone` colours the fill (`default` is muted). With a value it is a `meter` for screen readers, named by the label and read as the text. Returns the element. It does not update: redraw it when the reading changes. For work in progress use `ui.loadingState` with `progress`.
 
+### ui.board
+
+```ts
+el.addClass('hel-board-page'); // the container fills the pane; the board takes what is left
+const b = ui.board(el, { label: 'Tickets', onDragStart: () => hold(), onDragEnd: () => release(), onDrop: (id, lane, index) => move(id, lane, index) });
+const todo = b.lane({ id: 'todo', label: 'To do' });
+ui.statusText(todo.head, 'To do');
+ui.badge(todo.head, '1');
+const c = todo.card({ id: 'T-1', title: 'Fix the login', tone: 'warning', onOpen: () => open('T-1') });
+ui.badge(c.meta, 'P1', 'warning');
+ui.chip(c.meta, 'Needs your reply', { tone: 'warning' });
+```
+
+A kanban board: a fixed-height row of lanes that scrolls sideways, each lane with a head slot and its own scrolling list. `lane()` returns `{ el, head, list, card }`; `card()` returns a `ui.card` handle (compact; `body`, `footer`, `setTone`) with `meta`, a wrapping row for chips and badges. Draw an empty state or a "Load more" button into `list`.
+
+With `onDrop` the cards can be dragged (`draggable: false` keeps one still). The board outlines the lane under the pointer, dims the dragged card, and reports a drop as the card's id, the lane's id and the place: before the first of that lane's cards whose middle is below the pointer, not counting the dragged one. It does not move anything itself: change your data and redraw. A redraw during a drag would take the card away, so hold redraws from `onDragStart` until `onDragEnd`, which runs once per drag, before `onDrop`. Dragging has no keyboard equivalent, so offer another way to move a card (its `onOpen` view, a menu).
+
+`onOpen` makes the card a button, opened by a click, Enter or Space (not by the buttons and links inside it); `label` names it when the title is not enough.
+
 ### ui.countBadge
 
 ```ts
@@ -437,7 +456,7 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
