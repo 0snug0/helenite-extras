@@ -29,7 +29,7 @@
       "id": "sample-design-system",
       "name": "Design system (sample)",
       "kind": "plugin",
-      "description": "Sample plugin that uses Helenite's design-system parts: a settings tab with a section, a sub-page table, a scope bar and a delete action, and a ribbon icon that opens a form.",
+      "description": "Sample plugin that shows every part of Helenite's design system with no stylesheet of its own: a tab of live parts, a settings tab, and a ribbon icon that opens a form.",
       "author": "Helenite",
       "path": "catalog/plugins/sample-design-system/dist",
       "files": [

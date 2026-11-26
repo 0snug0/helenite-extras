@@ -34,5 +34,5 @@ None of these packages is published to npm. See [publishing.md](./publishing.md)
 
 - [docs/design-system/README.md](../design-system/README.md): every `ui` part, its options and its handle.
 - [docs/design-system/STYLING.md](../design-system/STYLING.md): every public class and `--hel-*` variable.
-- `catalog/plugins/sample-design-system`: a plugin that uses the parts, with a test.
+- `catalog/plugins/sample-design-system`: a plugin that uses every part with no CSS of its own, with screenshots and a test.
 - `catalog/plugins/sample-letterboxd-account`: a plugin that adds an account type (its README explains the contract).
