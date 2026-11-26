@@ -305,6 +305,12 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-list-group-count` | The group's count. |
 | `hel-list-group-body` | The container for the group's rows. Hidden while collapsed. |
 
+### Code blocks
+
+| Class | What it is |
+| --- | --- |
+| `hel-code-block` | `ui.codeBlock`, a `<pre>` of source code (Finesse has none, so it is drawn from the tokens): the monospace font at `--font-ui-smaller` on the `--code-background` fill inside a hairline ring (`--hel-ring`, the accent focus ring `--hel-ring-focus` on keyboard focus), never wrapped (a long line scrolls sideways) and selectable. The rule is `pre.hel-code-block`, so a reading view's `pre` style does not wrap it. |
+
 ### Composer and key-value lists
 
 | Class | What it is |

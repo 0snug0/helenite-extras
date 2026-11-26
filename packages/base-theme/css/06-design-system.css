@@ -610,6 +610,11 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-kv-value li.is-new { color: var(--text-accent); }
 .hel-kv-value li.is-new.is-warning { color: var(--text-warning); }
 
+/* code block (ui.codeBlock; Finesse has none, so it is drawn from the tokens): source on the code fill inside a hairline ring,
+   never wrapped, so a long line scrolls sideways. pre.hel-code-block ties with .markdown-rendered pre and comes later. */
+pre.hel-code-block { box-sizing: border-box; min-width: 0; max-width: 100%; margin: 0 0 var(--size-4-3); padding: var(--size-4-3) var(--size-4-4); overflow: auto; border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background: var(--code-background); box-shadow: var(--hel-ring); color: var(--code-normal); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); line-height: var(--line-height-normal); text-align: start; white-space: pre; overflow-wrap: normal; tab-size: 2; -webkit-user-select: text; user-select: text; cursor: text; }
+pre.hel-code-block:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+
 /* thread (Finesse has none, so it is drawn from the tokens): spaced entries and event lines; replies indent along a rail until a list is flat. */
 .hel-thread, .hel-thread-entry, .hel-thread-replies { display: flex; flex-direction: column; gap: var(--size-4-2); min-width: 0; }
 .hel-thread-replies { margin-inline-start: var(--hel-thread-indent); padding-inline-start: var(--hel-thread-indent); border-inline-start: 2px solid var(--hel-thread-rail); }

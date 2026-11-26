@@ -26,7 +26,7 @@ Copy `dist/manifest.json` and `dist/main.js` into `<vault>/.obsidian/plugins/sam
 | `src/pages/board.ts` | `board`, `moreButton` |
 | `src/pages/inputs.ts` | `button`, `field`, `textInput`, `toggle`, `slider`, `checkList`, `choiceList`, `composer` |
 | `src/pages/status.ts` | `callout`, `badge`, `statusDot`, `statusText`, `countBadge`, `chip`, `avatar`, `swatch`, `meter`, `barChart`, `loadingState`, `emptyState`, `errorState`, `settings.row` |
-| `src/pages/cards.ts` | `card`, `disclosure`, `keyValue`, `thread`, `threadText` |
+| `src/pages/cards.ts` | `card`, `disclosure`, `keyValue`, `codeBlock`, `thread`, `threadText` |
 | `src/pages/dialogs.ts` | `confirm`, `prompt`, `choose`, `form`, `dialog`, `popover`, `menu`, `menuButton`, `action`, `STANDARD_ACTIONS` |
 | `src/item-parts.ts` | `table`, a delete `action`, a menu's items, `dialog` with a side panel |
 | `src/settings.ts` | `settings.section`, `row`, `summaryRow`, `subpageRow`, `openSubpage`, `card`, `vaultScope`, `scopeBar` |

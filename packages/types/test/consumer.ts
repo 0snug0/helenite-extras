@@ -60,6 +60,7 @@ ui.popover(null).footer.append(pop.body);
 ui.popover();
 ui.composer(rowEl, { submitOn: 'mod-enter', onSubmit: async (text: string) => text }).setBusy(false);
 ui.keyValue(document.body, [{ key: 'Hosts', value: ['a.com'], isNew: () => true }]);
+ui.codeBlock(document.body, 'const a = 1;', { label: 'Example' }).textContent = 'const a = 2;';
 const talk: Thread = ui.thread(document.body, { maxIndent: 2 });
 const said: ThreadEntry = talk.entry();
 const under: HTMLElement = said.replies().event('Started');

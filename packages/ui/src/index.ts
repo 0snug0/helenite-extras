@@ -51,6 +51,8 @@ export { swatch } from "./swatch";
 export type { SwatchOptions, SwatchKind } from "./swatch";
 export { thread, threadText } from "./thread";
 export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
+export { codeBlock } from "./code-block";
+export type { CodeBlockOptions } from "./code-block";
 export { keyValue } from "./key-value";
 export type { KeyValueRow } from "./key-value";
 export { setMenuRenderer, openMenu } from "./menu";
