@@ -29,6 +29,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-segment-active-fg` | `var(--text-normal)` | The text colour on it |
 | `--hel-meter-width` | `56px` | The length of a `hel-meter`'s bar |
 | `--hel-meter-height` | `4px` | The thickness of that bar |
+| `--hel-board-lane-width` | `280px` | The width of a `hel-board-lane` |
+| `--hel-board-gap` | `var(--size-4-3)` | The space between a `hel-board`'s lanes |
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
@@ -166,6 +168,18 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 | `hel-card-footer` | The card's footer slot (`CardHandle.footer`): a strip under the body with a hairline above and a wash, for actions or a status. Hidden while empty. |
+
+### Boards
+
+| Class | What it is |
+| --- | --- |
+| `hel-board` | `ui.board`: a row of lanes that fills the height it is given and scrolls sideways (`--hel-board-gap` apart). |
+| `hel-board-page` | Add to the board's container: it fills the pane without scrolling, the rows above the board keep their height and the board takes the rest. A `hel-card` among those rows gets a margin below it, and its body scrolls sideways. |
+| `hel-board-lane` | One lane, `--hel-board-lane-width` wide. |
+| `hel-board-lane-head` | The lane's head slot (`BoardLaneHandle.head`), for its name, count and actions; a `hel-toolbar-end` child sits at the far end. Hidden while empty. |
+| `hel-board-list` | The lane's cards, scrolling on their own. `is-drop-target` (a dashed accent outline) while a card is dragged over it. |
+| `hel-board-card` | A `hel-card` (`is-compact`) in a lane. `is-clickable` when it opens, `draggable="true"` when it moves (grab cursor); either raises the ring on hover (a toned card keeps its tone). `--hel-ring-focus` on keyboard focus, `is-dragging` (half opacity) while dragged. |
+| `hel-board-card-meta` | The card's wrapping row of chips and badges (`BoardCardHandle.meta`). Hidden while empty. |
 
 ### Check lists and choice lists
 

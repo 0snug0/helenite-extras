@@ -7,11 +7,11 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
-  import { badge, button, callout, card, checkList, choiceList, chip, composer, countBadge, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, table, tabs, textInput, thread, threadText, toggle, toolbar } from 'helenite/internal/ui/src/index';
+  import { badge, board, button, callout, card, checkList, choiceList, chip, composer, countBadge, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, table, tabs, textInput, thread, threadText, toggle, toolbar } from 'helenite/internal/ui/src/index';
   import { choose, confirm, form, prompt } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   import { dialog } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   import { menu, menuButton, moreButton } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -22,7 +22,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { card as settingsCard, openSubpage, section, subpageRow, summaryRow } from 'helenite/internal/obsidian-api/src/ui/design/settings';
   import { scopeBar } from 'helenite/internal/obsidian-api/src/ui/scope-bar';
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, } from 'helenite/internal/ui/src/index';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   export type { DialogOptions, DialogAction, DialogContext, DialogSidePanel } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -65,6 +65,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       meter: typeof meter;
       thread: typeof thread;
       threadText: typeof threadText;
+      board: typeof board;
       confirm: typeof confirm;
       prompt: typeof prompt;
       choose: typeof choose;
@@ -127,6 +128,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           meter: typeof meter;
           thread: typeof thread;
           threadText: typeof threadText;
+          board: typeof board;
           confirm: typeof confirm;
           prompt: typeof prompt;
           choose: typeof choose;
@@ -196,6 +198,8 @@ declare module 'helenite/internal/ui/src/index' {
   export type { ListRowOptions, ListRowAction, ListGroupOptions } from "helenite/internal/ui/src/list-row";
   export { composer } from "helenite/internal/ui/src/composer";
   export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "helenite/internal/ui/src/composer";
+  export { board } from "helenite/internal/ui/src/board";
+  export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle } from "helenite/internal/ui/src/board";
   export { meter } from "helenite/internal/ui/src/meter";
   export type { MeterOptions } from "helenite/internal/ui/src/meter";
   export { thread, threadText } from "helenite/internal/ui/src/thread";
@@ -880,6 +884,56 @@ declare module 'helenite/internal/ui/src/composer' {
   }
   /** A multiline text box with a send button. Empty (or blank) text is not sent, unless `allowEmpty` or it has an attachment. */
   export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle;
+}
+
+declare module 'helenite/internal/ui/src/board' {
+  import { type CardHandle, type CardTone } from "helenite/internal/ui/src/card";
+  export interface BoardOptions {
+      /** The board's accessible name. */
+      label?: string;
+      /** A card was dropped on a lane, before the `index`th of its cards (not counting the dragged one). Makes cards draggable. */
+      onDrop?: (id: string, lane: string, index: number) => void;
+      /** A card started being dragged. Do not redraw the board until `onDragEnd`. */
+      onDragStart?: (id: string) => void;
+      /** The drag is over, dropped or not. Runs before `onDrop`. */
+      onDragEnd?: () => void;
+  }
+  export interface BoardLaneOptions {
+      /** What `onDrop` reports, and the lane's `data-lane`. */
+      id: string;
+      /** The lane's accessible name. */
+      label: string;
+  }
+  export interface BoardCardOptions {
+      /** What the drag callbacks report, and the card's `data-id`. */
+      id: string;
+      title?: string;
+      tone?: CardTone;
+      /** The card's accessible name when `onOpen` makes it a button. Defaults to the title. */
+      label?: string;
+      /** Makes the card a button: a click, Enter or Space on it (not on a control inside it) calls this. */
+      onOpen?: () => void;
+      /** False for a card that stays where it is. */
+      draggable?: boolean;
+  }
+  export interface BoardCardHandle extends CardHandle {
+      /** A wrapping row for chips and badges, first in the body. Not shown while empty. */
+      meta: HTMLElement;
+  }
+  export interface BoardLaneHandle {
+      el: HTMLElement;
+      /** Draw the lane's name, count and actions into this. Not shown while empty. */
+      head: HTMLElement;
+      /** The cards, scrolling on their own. Draw an empty state or a "load more" button into it too. */
+      list: HTMLElement;
+      card(o: BoardCardOptions): BoardCardHandle;
+  }
+  export interface BoardHandle {
+      el: HTMLElement;
+      lane(o: BoardLaneOptions): BoardLaneHandle;
+  }
+  /** A fixed-height row of lanes that scrolls sideways, with cards dragged between and within them. */
+  export function board(parent: HTMLElement, o?: BoardOptions): BoardHandle;
 }
 
 declare module 'helenite/internal/ui/src/meter' {

@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, Thread, ThreadEntry } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, Thread, ThreadEntry, BoardCardHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -63,6 +63,11 @@ const reading: MeterOptions = { label: 'Context', value: 20, text: '40k / 200k',
 const gauge: HTMLElement = ui.meter(rowEl, reading);
 // @ts-expect-error: a meter needs its reading in words.
 ui.meter(gauge, { label: 'Context', value: 20 });
+const lane = ui.board(rowEl, { label: 'Tickets', onDrop: (id: string, to: string, index: number) => console.log(id, to, index) }).lane({ id: 'todo', label: 'To do' });
+const boardCard: BoardCardHandle = lane.card({ id: 'T-1', title: 'Fix it', tone: 'accent', onOpen: () => undefined });
+ui.badge(boardCard.meta, 'P1');
+// @ts-expect-error: a board card needs an id.
+lane.card({ title: 'No id' });
 const multi: Field = { id: 'caps', kind: 'multi', label: 'Capabilities', options: [{ value: 'read', label: 'Read' }] };
 const box: Field = { id: 'sync', kind: 'checkbox', label: 'Sync', detail: 'Every hour' };
 void ui.form({}, { title: 'Connect Git', fields: [multi, box], action: 'Connect' }).then((v: FieldValues | null) => v?.caps);

@@ -28,6 +28,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | Nothing to show, loading, failed | `ui.emptyState`, `ui.loadingState`, `ui.errorState` |
 | A status | `ui.badge`, `ui.statusDot`, `ui.statusText`, `ui.countBadge` |
 | How full something is (context, a quota), on one line | `ui.meter` |
+| Cards moved between columns (a kanban board) | `ui.board` |
 | A banner or inline message | `ui.callout` |
 | Comments and replies, with event lines between them | `ui.thread`, a `ui.card` per comment; `ui.threadText` for its text |
 | A boxed group | `ui.card` (`ui.settings.card` on a settings page) |
