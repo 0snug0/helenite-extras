@@ -24,7 +24,7 @@ That writes `packages/types/helenite.d.ts`, a `declare module 'helenite'` file. 
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `DialogSidePanel`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -299,6 +299,8 @@ box.focus();
 
 A text box with a send button. `submitOn: 'enter'` (default) sends on Enter; `'mod-enter'` sends on Cmd/Ctrl+Enter and leaves Enter for new lines. Blank text is not sent. When `onSubmit` returns a promise, the composer is busy until it settles. The box is cleared once `onSubmit` returns or its promise resolves; when it throws or rejects, or returns (or resolves to) `false` because nothing was sent, the text stays. An IME's Enter never sends. `allowEmpty: true` sends an empty box too, for a send button that starts something whose text is optional. Other options: `rows` (3), `submitLabel` ("Send"), `submitIcon` (an icon button instead of a text one). The handle has `input`, `setBusy`, `focus` and `clear`.
 
+`createInput: (parent) => field` puts another text box in place of the textarea, such as a markdown editor. The callback appends it to `parent` and returns the element that has `value`, `readOnly`, `selectionStart` and `setSelectionRange` and fires `input` and `keydown`. What it appended is drawn as the box (`hel-composer-host`): the textarea's rings and text, at least `rows` lines tall and scrolling past `--hel-composer-max-height` (320px), with a CodeMirror editor's own box reset and image embeds as `--hel-composer-thumb-size` (52px) thumbnails. Showing a placeholder is the caller's job, and so is keeping an editor from inserting a line on the Enter that sends.
+
 `slashCommands: () => [{ name, description? }]` (or a promise of them) turns on a "/" menu: typing "/" at the start of the box lists the commands in a popup (above the box, or below when there is more room there), filtered as you type. Arrow keys move, Enter or Tab inserts `/name ` (it never sends), Escape closes, and a click picks. The function is called once, the first time the menu opens.
 
 ### ui.keyValue
@@ -312,6 +314,19 @@ ui.keyValue(el, [
 ```
 
 A definition list. A value is text, a list of strings (drawn as a list; `isNew` marks items with a "new" badge, accent or, with `newTone: 'warning'`, warning for something to look at twice such as an added permission), or a node drawn as given. An empty string or list shows `empty` ("None" by default).
+
+### ui.thread, ui.threadText
+
+```ts
+const talk = ui.thread(el);
+talk.event('Nov 25, 4:11 PM · Started a session');
+const asked = talk.entry();
+ui.threadText(ui.card(asked.el, { compact: true, title: 'Agent', icon: 'bot' }).body, 'Which branch?\nmain or next?');
+const answer = asked.replies().entry();
+ui.threadText(ui.card(answer.el, { compact: true, title: 'You', icon: 'user', tone: 'accent' }).body, 'main');
+```
+
+A threaded conversation. `entry()` adds a comment: draw its `ui.card` into the entry's `el`. `replies()` is the list under that entry (the same kind of list, added on the first call after what the entry then holds), indented along a rail. Past `maxIndent` levels (default 3) a replies list stays level with the one above. `event(text)` adds a muted line for something that happened. Anything else, such as a callout or a `ui.composer` for a reply, goes into a list's `el`. `ui.threadText(parent, text)` draws text as written, never as markup: line breaks are kept and long words wrap. The thread does not update itself: empty the container and redraw it.
 
 ### ui.confirm, ui.prompt, ui.choose, ui.form
 
@@ -346,6 +361,19 @@ const account = await ui.dialog<Account>(app, {
 ```
 
 A modal with a body you draw. `icon` puts an icon before the title. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action's `id` becomes its button's `data-action` (Cancel's is `cancel`), for tests. `focus` names the button that has focus when it opens (`'cancel'` or an action's `id`), for a prompt where Enter alone must not run the main action. An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `ctx.button(id)` returns a button's handle (`'cancel'` for Cancel), for a dialog with steps whose buttons change: `setText`, `setDisabled` (it stays disabled after the dialog is busy), or `el.hidden` to hide it. `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
+
+For content with its properties beside it (an issue page), call `ctx.sidePanel()` in `render`: it adds two columns to the body and returns them as `{ main, side }`, the side one on the right behind a hairline. A narrow dialog stacks them, content first. Later calls return the same two. Use it with `width: 'wide'`.
+
+```ts
+ui.dialog(app, {
+  title: 'Edit ticket', width: 'wide',
+  render: (body, ctx) => {
+    const { main, side } = ctx.sidePanel();
+    ui.textInput(ui.field(main, { label: 'Title' }).control, { value: t.title });
+    ui.keyValue(side, [{ key: 'Assignee', value: t.agent }]);
+  },
+});
+```
 
 ### ui.menu, ui.moreButton, ui.menuButton
 

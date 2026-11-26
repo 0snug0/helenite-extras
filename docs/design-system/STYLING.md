@@ -34,6 +34,10 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
+| `--hel-thread-rail` | `var(--background-modifier-border)` | The rail beside a `hel-thread-replies` list |
+| `--hel-thread-indent` | `var(--size-4-3)` | The space on each side of that rail |
+| `--hel-modal-side-width` | `300px` | The width of a dialog's `hel-modal-side` column |
+| `--hel-modal-side-divider` | `var(--background-modifier-border)` | The hairline between a dialog's content and its side column |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-subpage-header-bg` | `var(--background-primary)` | The sticky `hel-subpage-header` (it covers the page as it scrolls under) |
 | `--hel-subpage-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-subpage-header` |
@@ -229,6 +233,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | --- | --- |
 | `hel-composer` | `ui.composer`: a text box and a send button. `is-busy` while a submit runs. |
 | `hel-composer-input` | The `<textarea>`: the Finesse input ring, hover ring and accent focus ring (`--hel-ring-focus`). |
+| `hel-composer-host` | The element `createInput` added, drawn as the box in place of the `<textarea>`: the same fill, text and input, hover and focus rings, at least `--hel-composer-rows` (from `rows`) lines tall, scrolling past `--hel-composer-max-height` (320px). A textarea or input inside gives up its own box. A CodeMirror editor inside gives up its own padding, height and line width; its cursor, selection and placeholder follow the theme, and image embeds are thumbnails `--hel-composer-thumb-size` (52px) tall with the `--hel-composer-thumb-cursor` cursor. |
 | `hel-composer-send` | The send button (a `hel-button`). |
 | `hel-composer-hint` | The line under the box. |
 | `hel-composer-attach` | The attach button (`onAttach`), a `clickable-icon` before the box; the composer then has `has-attach`. Muted, normal text on hover. |
@@ -241,12 +246,25 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-kv-key` | The key (`<dt>`). |
 | `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list value stacks its items without bullets. A list item is `is-new` when `isNew` marks it, plus `is-warning` with `newTone: 'warning'`. |
 
+### Threads
+
+| Class | What it is |
+| --- | --- |
+| `hel-thread` | `ui.thread`: a threaded conversation (Finesse has none, so it is drawn from the tokens), its entries and event lines spaced apart. A `hel-callout` directly in a list drops its own margin. |
+| `hel-thread-entry` | One comment (an `<article>`): its card, then its replies. |
+| `hel-thread-replies` | The list under an entry, indented along a `--hel-thread-rail` rail by `--hel-thread-indent`. `is-flat` past `maxIndent` (3): no indent and no rail, so a long back-and-forth is not squeezed. |
+| `hel-thread-event` | A muted line for something that happened. It is also a `hel-thread-text`. |
+| `hel-thread-text` | `ui.threadText`: text as written, line breaks kept and long words wrapped. |
+
 ### Modals
 
 | Class | What it is |
 | --- | --- |
 | `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. Finesse dialog: `--hel-ring-overlay` (a faint ring and a deep drop shadow) in place of the border (kept, transparent, so a theme's `--modal-border-color` still has a place), `--hel-dialog-radius` (12px) corners, a 24px frame and a semibold title; the close button is a 6px control with the focus ring. Only `.hel-modal` is styled this way: the Settings modal and plugins' own `Modal`s keep the base look. A vault app's `api.ui.modal` is drawn by the host as a `ui.dialog`, so it looks the same. |
-| `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
+| `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. `has-side-panel` once `ctx.sidePanel()` split it; it is then a size container (`hel-modal-body`) for stacking the columns. |
+| `hel-modal-split` | The two columns `ctx.sidePanel()` adds to the body. One column, content first, while the body is 600px wide or narrower. |
+| `hel-modal-main` | The content column, a vertical stack. |
+| `hel-modal-side` | The side column (a ticket's properties), `--hel-modal-side-width` wide behind a `--hel-modal-side-divider` hairline. Stacked, it spans the dialog with the hairline above it. |
 | `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |
 | `hel-modal-message` | The message paragraph of a confirm modal, a form's `message`, and a vault app modal's `{ text }` block. Muted text. |
 | `hel-modal-label` | A field label: normal text, medium weight, above its input. |

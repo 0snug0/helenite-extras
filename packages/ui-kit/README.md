@@ -2,7 +2,7 @@
 
 Plain-DOM components for sandboxed Helenite apps, built on `@helenite/ui`. No framework, no `innerHTML`, no network or storage; styled only by theme variables.
 
-The frame loads `design-system.css` (every `@helenite/ui` part: buttons, tables, states, badges, form controls, tabs, toolbar, callout, card, check and choice lists, list rows, composer, key-value list) and then the app's `view.css`, which imports `src/ui-kit.css` for the parts below.
+The frame loads `design-system.css` (every `@helenite/ui` part: buttons, tables, states, badges, form controls, tabs, toolbar, callout, card, check and choice lists, list rows, composer, key-value list, thread) and then the app's `view.css`, which imports `src/ui-kit.css` for the parts below.
 
 ```js
 import { setBridge, table, button, emptyState, cardGrid, posterRow, picker, tabs, confirm, choose, menu, notice } from "@helenite/ui-kit";
@@ -12,7 +12,7 @@ const yes = await confirm({ title: "Remove?", message: "This cannot be undone.",
 
 ## Re-exported from `@helenite/ui`
 
-`button`, `segmented`, `table`, `emptyState`, `errorState`, `loadingState`, `badge`, `statusDot`, `statusText`, `countBadge`, `chip`, `field`, `textInput`, `searchInput`, `slider`, `toggle`, `dropdown`, `tabs`, `toolbar`, `callout`, `card`, `checkList`, `choiceList`, `listRow`, `listGroup`, `composer`, `keyValue`, `meter`, `board`, `setIconRenderer`, `renderIcon`, `setMenuRenderer`, `openMenu`, `drawFields` (draws `Field`s as a form's rows and reads their values), and their option and handle types (with `Field`, `FieldValues` and `MenuItemSpec`). They are the same functions, with the same `(parent, options)` signatures as in the `helenite` module. The form controls, `tabs` and `toolbar` used to live here with options-only signatures (`textInput(o)`, `select(o)`, `checkbox(o)`, `field(label, control)`, `toolbar(...kids)`); `select` is now `dropdown` and `checkbox` is now `toggle`.
+`button`, `segmented`, `table`, `emptyState`, `errorState`, `loadingState`, `badge`, `statusDot`, `statusText`, `countBadge`, `chip`, `field`, `textInput`, `searchInput`, `slider`, `toggle`, `dropdown`, `tabs`, `toolbar`, `callout`, `card`, `checkList`, `choiceList`, `listRow`, `listGroup`, `composer`, `keyValue`, `meter`, `thread`, `threadText`, `board`, `setIconRenderer`, `renderIcon`, `setMenuRenderer`, `openMenu`, `drawFields` (draws `Field`s as a form's rows and reads their values), and their option and handle types (with `Field`, `FieldValues` and `MenuItemSpec`). They are the same functions, with the same `(parent, options)` signatures as in the `helenite` module. The form controls, `tabs` and `toolbar` used to live here with options-only signatures (`textInput(o)`, `select(o)`, `checkbox(o)`, `field(label, control)`, `toolbar(...kids)`); `select` is now `dropdown` and `checkbox` is now `toggle`.
 
 A frame has no Obsidian `setIcon`, so importing the kit installs `kitIconRenderer`: the icons in `KIT_ICONS` (the standard action icons, `more-horizontal`, `chevron-right`, `chevron-down`, `check`, `plus`, `search`) are drawn as inline SVG; other names only get `data-icon`. Call `setIconRenderer` to replace it. It also installs a menu renderer, so a `listRow`'s `menu` opens as a host menu through the bridge (call `setBridge` first).
 

@@ -30,6 +30,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | How full something is (context, a quota), on one line | `ui.meter` |
 | Cards moved between columns (a kanban board) | `ui.board` |
 | A banner or inline message | `ui.callout` |
+| Comments and replies, with event lines between them | `ui.thread`, a `ui.card` per comment; `ui.threadText` for its text |
 | A boxed group | `ui.card` (`ui.settings.card` on a settings page) |
 | Ask yes or no | `ui.confirm` (`danger: true` when it destroys something) |
 | Ask for one line of text | `ui.prompt` |

@@ -39,6 +39,8 @@ export { board } from "./board";
 export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle } from "./board";
 export { meter } from "./meter";
 export type { MeterOptions } from "./meter";
+export { thread, threadText } from "./thread";
+export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { keyValue } from "./key-value";
 export type { KeyValueRow } from "./key-value";
 export { setMenuRenderer, openMenu } from "./menu";
