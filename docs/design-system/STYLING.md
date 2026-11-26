@@ -201,7 +201,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-field-control` | The slot the control is drawn into. |
 | `hel-field-hint` | The helper text line, in muted text. |
 | `hel-field-error` | The error line from `setError`, in `--text-error`. Hidden while there is no error. |
-| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`). Finesse Inputs: `--hel-ring` instead of a border (`--hel-ring-hover` on hover), `--hel-ring-focus` when focused, `--hel-error-ring` when `aria-invalid`, 50% on a secondary background when disabled, faint placeholder. |
+| `hel-input` | `ui.textInput` (and the search box). `is-secret` for a password input; `is-multiline` for a `<textarea>` (`multiline: true`), plus `is-code` for source (`code: true`): monospace, unwrapped, on `--code-background`. Finesse Inputs: `--hel-ring` instead of a border (`--hel-ring-hover` on hover), `--hel-ring-focus` when focused, `--hel-error-ring` when `aria-invalid`, 50% on a secondary background when disabled, faint placeholder. |
 | `hel-search` | The `<input>` of `ui.searchInput`, inside Obsidian's `search-input-container` with its `search-input-clear-button`. Ringed and focused as `hel-input`. |
 | `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. A soft ring instead of a border, a focus ring, 6px corners (`--hel-control-radius`). `is-compact` is shorter. |
 | `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled (50%). Finesse Toggles: the accent track when on, `--toggle-track-color` when off, each a step darker on hover; `--hel-ring-focus` around the switch on keyboard focus. |

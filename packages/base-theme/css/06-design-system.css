@@ -259,6 +259,8 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 /* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */
 .hel-input.is-multiline { height: auto; box-sizing: border-box; }
+/* A box of source code (`code: true`) looks like a code block that can be typed in. */
+textarea.hel-input.is-code { width: 100%; padding: var(--size-4-3) var(--size-4-4); border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background-color: var(--code-background); color: var(--code-normal); font-family: var(--font-monospace); font-size: var(--font-ui-smaller); line-height: var(--line-height-normal); white-space: pre; overflow-wrap: normal; overflow: auto; tab-size: 2; }
 /* Finesse Inputs: a ring and a faint drop instead of a border; focus adds the accent halo; an invalid field rings red. */
 :is(input.hel-input, textarea.hel-input, input.hel-search) { border-color: transparent; box-shadow: var(--hel-ring); transition: box-shadow 0.12s ease-in-out; }
 :is(input.hel-input, textarea.hel-input, input.hel-search):hover:not(:disabled):not(:focus) { box-shadow: var(--hel-ring-hover); }

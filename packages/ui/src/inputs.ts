@@ -14,6 +14,8 @@ export interface TextInputOptions {
   /** A `<textarea>` for an answer of several lines, `rows` high (default 3). */
   multiline?: boolean;
   rows?: number;
+  /** With `multiline`: the box holds source code. Monospace, never wrapped, no spelling or autocapitalisation help. */
+  code?: boolean;
 }
 
 function input(parent: HTMLElement, type: string, cls: string[], label?: string): HTMLInputElement {
@@ -36,6 +38,10 @@ export function textInput(parent: HTMLElement, o: TextInputOptions = {}): HTMLIn
     el.classList.add("hel-input", "is-multiline");
     el.setAttribute("rows", String(o.rows ?? 3));
     if (o.label) el.setAttribute("aria-label", o.label);
+    if (o.code) {
+      el.classList.add("is-code");
+      for (const [k, v] of [["wrap", "off"], ["spellcheck", "false"], ["autocapitalize", "off"], ["autocomplete", "off"], ["autocorrect", "off"]]) el.setAttribute(k, v);
+    }
     joinField(parent, el);
     parent.appendChild(el);
   } else {

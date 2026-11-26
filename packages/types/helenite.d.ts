@@ -501,6 +501,8 @@ declare module 'helenite/internal/ui/src/inputs' {
       /** A `<textarea>` for an answer of several lines, `rows` high (default 3). */
       multiline?: boolean;
       rows?: number;
+      /** With `multiline`: the box holds source code. Monospace, never wrapped, no spelling or autocapitalisation help. */
+      code?: boolean;
   }
   /** A text box. With `multiline: true` it is a `<textarea>` (`hel-input is-multiline`). */
   export function textInput(parent: HTMLElement, o: TextInputOptions & {
