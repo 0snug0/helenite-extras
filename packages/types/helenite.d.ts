@@ -7,7 +7,7 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
@@ -24,7 +24,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
   export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, ThreadOptions, Thread, ThreadEntry, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
-  export type { DialogOptions, DialogAction, DialogContext } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
+  export type { DialogOptions, DialogAction, DialogContext, DialogSidePanel } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
   export type { NoticeOptions, NoticeHandle } from 'helenite/internal/obsidian-api/src/ui/design/notice';
   export type { ActionId, ActionOptions } from 'helenite/internal/obsidian-api/src/ui/design/actions';
@@ -1028,6 +1028,17 @@ declare module 'helenite/internal/obsidian-api/src/ui/design/dialog' {
        * a dialog whose steps change its buttons. A button disabled here stays disabled after the dialog is busy.
        */
       button(id: string): ButtonHandle | null;
+      /**
+       * Splits the body into content on the left and a side column on the right behind a hairline (an issue page and its
+       * properties); a narrow dialog stacks them, content first. The columns are added to the body on the first call, and
+       * later calls return the same two. Use it with `width: 'wide'`: a default-width dialog is narrow enough to stack.
+       */
+      sidePanel(): DialogSidePanel;
+  }
+  /** The two columns of `ctx.sidePanel()`. */
+  export interface DialogSidePanel {
+      main: HTMLElement;
+      side: HTMLElement;
   }
   export interface DialogAction<T> {
       text: string;
