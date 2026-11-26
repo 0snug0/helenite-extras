@@ -445,8 +445,10 @@ declare module 'helenite/internal/ui/src/badges' {
       /** Shows a remove button. A click removes the chip, then calls this. */
       onRemove?: () => void;
       title?: string;
+      /** A decorative icon before the text, the size of it. */
+      icon?: string;
   }
-  /** A tag-like label, optionally removable. */
+  /** A tag-like label, optionally with an icon, optionally removable. */
   export function chip(parent: HTMLElement, text: string, o?: ChipOptions): HTMLElement;
 }
 

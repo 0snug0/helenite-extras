@@ -128,7 +128,7 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 
 | Class | What it is |
 | --- | --- |
-| `hel-empty` | `ui.emptyState`. Finesse: centered is a quiet panel (dashed `--background-modifier-border-hover` outline, `--hel-card-radius`, secondary background). Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`), both unboxed. |
+| `hel-empty` | `ui.emptyState`. Finesse: centered is a quiet panel (dashed `--background-modifier-border-hover` outline, `--hel-card-radius`, secondary background). Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`), both unboxed. An inline empty or error state with something after it keeps a `--size-4-3` space below. |
 | `hel-loading` | `ui.loadingState`. `is-determinate` swaps the spinner for the progress bar (`progress` option or `setProgress`). Colours: `--hel-progress-fill` (default the accent) and `--hel-progress-track`; height `--hel-progress-height` (6px). |
 | `hel-spinner` | The loading line's spinning ring (the `hel-spin` animation, slower under reduced motion). |
 | `hel-loading-text` | The loading line's text. |
@@ -156,6 +156,7 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-count-badge-icon` | The optional icon before a count badge's number. |
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
 | `hel-chip` | `ui.chip`. Tones as for badges. Finesse Chips: the badge treatment (a 10% tint of the tone, `--hel-chip-tone`, inside a hairline ring of it, medium weight, the tone's text colour; normal text for warning) with `--hel-chip-radius` corners (default `--hel-control-radius`, 6px) and no border. |
+| `hel-chip-icon` | A chip's leading icon (`icon`), the size of the chip's text. Hidden from screen readers. |
 | `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. Fades up and gets a hover fill; `--hel-ring-focus` on keyboard focus. |
 | `hel-avatar` | `ui.avatar`: initials in a circle, named for screen readers (and in its tooltip) by the whole text. Finesse Avatars: a soft muted tint inside a hairline ring, medium weight, `--text-normal` text, so light and dark follow the theme. Sizes: `is-small` (20px), `is-medium` (28px, the default), `is-large` (40px). |
 | `hel-swatch` | `ui.swatch`: one CSS value on show, an image named by its label. Kinds: `is-color`, `is-radius`, `is-shadow` (a 28px square), `is-size` (a 64px track, tinted by `--hel-progress-track`), `is-font-family`, `is-font-size`, `is-font-weight` (a 40px box). |
@@ -264,6 +265,12 @@ Obsidian's classes, made by `SuggestModal` and `FuzzySuggestModal` (the command 
 | `suggestion-item` | One result row. A block; add `mod-complex` for a flex row with `suggestion-content` on the left and `suggestion-aux` on the right. |
 | `suggestion-highlight` | The letters of a row that matched the search (`renderMatches`): the accent colour, semibold. |
 
+### Pages
+
+| Class | What it is |
+| --- | --- |
+| `hel-page` | Add to what holds a view's content (`contentEl`, or a wrapper under its tabs): it pads it (`--size-4-3`). A `hel-card` (a disclosure card too), a centered empty or error state, a `hel-stats` row and a `hel-media-grid` that sit in it, or in a `hel-section` directly in it, get the same space above and below them, so stacked ones do not touch. A settings heading that starts the page loses its top padding. For a board use `hel-board-page` instead. |
+
 ### Boards
 
 | Class | What it is |
@@ -324,7 +331,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | Class | What it is |
 | --- | --- |
 | `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. Finesse list rows: a smooth-rectangle row (`--hel-list-row-radius`), the icon muted until hover (then normal text) and accent on the chosen row, the focus ring of the other controls. For drag reordering the plugin handles the drag events and adds `is-being-dragged` (half opacity) to the dragged row and `is-drop-target` (a dashed accent outline) to the row under it. |
-| `hel-list-row-icon` | The row's icon. |
+| `hel-list-row-icon` | The row's icon. In a two-line row that also has a status dot, it stands before the dot. |
 | `hel-list-row-title` | The row's title. |
 | `hel-list-row-tag` | The row's tag ("not installed"). |
 | `hel-list-row-status` | The row's status badge (`status`: a `hel-badge` with a tone class and a tooltip), after the tag. A long one ends in an ellipsis: at most 40% of the row. |
@@ -394,7 +401,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-modal-check` | A checkbox row. Its `detail` follows as a `hel-check-detail`. |
 | `hel-modal-error` | The inline validation message, and the message of a failed `onConfirm`, `onSubmit` or dialog action. A Finesse error alert (error text on a faint error wash with a faint error ring, control radius) above the actions; hidden while empty. |
 | `hel-modal-actions` | The button row at the bottom (Cancel, then the action), right-aligned and pinned to the bottom of a tall modal. The main action is a primary (`mod-cta`) button, or the danger fill (`mod-warning`) for a destructive one. Also Obsidian's `modal-button-container`; `hel-modal-actions`' own spacing wins over base.css's, and a theme's `modal-button-container` rules apply. While an action runs, its button is `is-busy` (with a progress cursor over the row) and the others are disabled. |
-| `hel-modal-choices` | The scrolling list of choices: a `hel-choice-list`. |
+| `hel-modal-choices` | The scrolling list of choices: a `hel-choice-list`. Padded by `--hel-modal-bleed` (with the same negative margin), so a focused choice's ring is not clipped. |
 | `hel-modal-choice` | One choice: a `hel-choice` (see Choice lists). |
 
 ### Settings

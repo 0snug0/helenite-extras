@@ -35,7 +35,7 @@ Every part and its options are in [docs/design-system](../../../docs/design-syst
 
 ## What to copy
 
-- **No CSS.** Lay controls out with `ui.toolbar` (a wrapping row), other small things in a settings row's `controlEl`, and group them under a `ui.settings.section` heading, in a view as much as in settings. The only classes the sample adds are the design system's own `hel-board-page` and `hel-toolbar-end`. If no part covers what you need, ask for a new part instead of styling your own.
+- **No CSS.** Lay controls out with `ui.toolbar` (a wrapping row), other small things in a settings row's `controlEl`, and group them under a `ui.settings.section` heading, in a view as much as in settings. Put a view's content in a `hel-page` element: it pads it and keeps cards and states apart. The only classes the sample adds are the design system's own `hel-page`, `hel-board-page` and `hel-toolbar-end`. If no part covers what you need, ask for a new part instead of styling your own.
 - **Redraw after a change.** Parts do not watch your data: `save()` redraws the open views, except the Inputs page, which holds what the user typed. The board holds redraws while a card is dragged.
 - **Confirm before deleting.** `ui.action(el, 'delete', { app, subject, onClick })` asks by itself.
 - **Don't draw the scope bar yourself** unless your page edits both Home and the Vault Defaults and Helenite does not draw it for you. The one at the bottom of the settings tab is a demo.
