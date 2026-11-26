@@ -19,7 +19,7 @@ Manifest keys: `helenite-app: 1`, `id` (`/^[a-z][a-z0-9-]{1,40}$/`), `name`, `ve
 
 Apps run sandboxed in an iframe: no Node, no direct network, no host DOM. They use the capability `api`: `api.vault.{read,write,list}`, `api.notes.{query,update}`, `api.store.{get,set}`, `api.net.fetch` (host-scoped; secrets are bound to hosts and never readable), `api.workspace.{openNote,openApp}`, `api.notify`, `api.agent.ask(text)`, `api.connectors.<id>.*`. Embed in a note with a fenced block `helenite-app <id>`.
 
-Tools: `app_list`, `app_open`, `app_reload`, `app_test`, `apps_add_entry` (`mcp__helenite__*`). `app_scaffold` is NOT wired in the app yet and answers "not available": do not stop there. Scaffold with the `create-helenite` script instead (skill `helenite-app-frameworks` says where it is and how to run it), then `app_reload` and `app_open`.
+Tools: `app_list`, `app_open`, `app_reload`, `apps_add_entry` (`mcp__helenite__*`). Scaffold with the `create-helenite` script (skill `helenite-app-frameworks` says where it is and how to run it), then `app_reload` and `app_open`. `app_reload` rescans the apps and remounts the open views of one app (`appId`), or of all. An app's errors are in `plugin_logs` with the app id; `view_screenshot` shows what it draws. There is no tool that scaffolds or tests an app.
 
 App UI: `@helenite/ui-kit` gives the design-system parts (`button`, `table`, `card`, ...) with the same signatures as plugins' `ui.*`. A frame cannot resolve package names, so an app imports a bundled copy (`./ui-kit.js`) and calls `setBridge(api)` before any overlay. Today only `notice` works through the bridge (without options); `confirm`, `prompt`, `choose`, `form` and `menu` need host support that is not built yet.
 
@@ -47,5 +47,5 @@ Start with `node packages/create-helenite/bin.mjs <dir> --template app-pages`. I
 
 **Migrating older apps.** An app cannot read another app's store or secrets. Merge stores with a one-time script run on the vault (see `templates/movie-tv/setup/migrate-to-media.mjs`): copy each key as `<page>:<key>` into the new app's `.helenite/apps/<id>/store.json`, never overwrite an existing key, never touch the sources. Merge each old `settings.json` the same way (same key names). Secrets live in the keychain and cannot be copied: tell the user to set them again on the Settings page.
 
-**Before telling the user it is done:** open the app (`app_open`), click every nav button and look at each page, trigger one setup state and one deep link (`page=<id>` on the fence), confirm the nav still works after a page fails, take a screenshot of each page, and run `app_test`. Fix what you saw, then report.
+**Before telling the user it is done:** open the app (`app_open`), click every nav button and look at each page, trigger one setup state and one deep link (`page=<id>` on the fence), confirm the nav still works after a page fails, take a screenshot of each page, read `plugin_logs` with the app id, and run the app's unit tests, if it has any, with a test runner. Fix what you saw, then report.
 
