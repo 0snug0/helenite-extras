@@ -1,4 +1,4 @@
-// Parts that group content: cards, disclosure cards, key-value lists and comment threads.
+// Parts that group content: cards, disclosure cards, key-value lists, code blocks and comment threads.
 import { ui } from 'helenite';
 
 export function drawCards(el: HTMLElement): void {
@@ -21,6 +21,8 @@ export function drawCards(el: HTMLElement): void {
     { key: 'Kinds', value: ['note', 'link'], isNew: (k) => k === 'link' },
     { key: 'Secrets', value: [], empty: 'None' },
   ]);
+
+  ui.codeBlock(ui.settings.section(el, 'Code block'), "const card = ui.card(el, { title: 'Reading list', icon: 'file-text' });\nui.statusText(card.body, 'Synced a minute ago', 'success');", { label: 'Card code' });
 
   const talk = ui.thread(ui.settings.section(el, 'Thread'));
   talk.event('Nov 26, 9:00 AM · Item added');
