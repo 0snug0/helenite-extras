@@ -454,19 +454,29 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-list-row-title { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } /* from no width, so it takes the spare room and a long title never squeezes a short meta */
 :where(.hel-list-row-tag) { flex: none; padding: 0 var(--size-2-2); border-radius: var(--radius-s); background-color: var(--background-secondary-alt); color: var(--text-faint); font-size: var(--font-ui-smaller); }
 .hel-list-row > .hel-status-dot { flex: none; } /* a long title must not squash the dot into a pill and push titles out of line */
-/* Two-line row. Columns: dot or icon, title, tag, badge, meta, chevron. The title's line holds the trailing parts, each in its own column so none draws over another; the details and the hover actions share the second line. */
-.hel-list-row.has-sub { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto fit-content(50%) auto; column-gap: 0; row-gap: 1px; align-items: center; }
-.hel-list-row.has-sub > .hel-status-dot, .hel-list-row.has-sub > .hel-list-row-icon { grid-column: 1; grid-row: 1; margin-inline-end: var(--size-4-2); }
-.hel-list-row.has-sub > .hel-list-row-title { grid-column: 2 / -1; grid-row: 1; margin-inline-end: 0; } /* the full width, so no blank strip beside it; an auto margin would size it to its text and stop the ellipsis */
-.hel-list-row.has-sub:has(> .hel-list-row-tag, > .hel-count-badge, > .hel-list-row-meta, > .hel-list-row-chevron) > .hel-list-row-title { grid-column: 2; }
-.hel-list-row.has-sub > .hel-list-row-tag { grid-column: 3; grid-row: 1; margin-inline-start: var(--size-4-2); }
-.hel-list-row.has-sub > .hel-count-badge { grid-column: 4; grid-row: 1; margin-inline-start: var(--size-4-2); }
-.hel-list-row.has-sub > .hel-list-row-chevron { grid-column: 6; grid-row: 1 / span 2; margin-inline-start: var(--size-4-2); }
+/* A row with more lines (a sub line, chips). Columns: dot or icon, title, tag, status, count badge, meta, chevron. The title's line holds the trailing parts, each in its own column so none draws over another; the details and the hover actions share the second line, and chips take the last. */
+.hel-list-row:is(.has-sub, .has-chips) { display: grid; grid-template-columns: auto minmax(3em, 1fr) auto fit-content(40%) auto fit-content(50%) auto; column-gap: 0; row-gap: 1px; align-items: center; }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-status-dot, .hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-icon { grid-column: 1; grid-row: 1; margin-inline-end: var(--size-4-2); }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-title { grid-column: 2 / -1; grid-row: 1; margin-inline-end: 0; } /* the full width, so no blank strip beside it; an auto margin would size it to its text and stop the ellipsis */
+.hel-list-row:is(.has-sub, .has-chips):has(> .hel-list-row-tag, > .hel-list-row-status, > .hel-count-badge, > .hel-list-row-meta, > .hel-list-row-chevron) > .hel-list-row-title { grid-column: 2; }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-tag { grid-column: 3; grid-row: 1; margin-inline-start: var(--size-4-2); }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-count-badge { grid-column: 5; grid-row: 1; margin-inline-start: var(--size-4-2); }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-chevron { grid-column: 7; grid-row: 1 / span 2; margin-inline-start: var(--size-4-2); }
 .hel-list-row-sub { grid-column: 2 / -1; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); }
-.hel-list-row.has-sub:has(> .hel-list-row-chevron) > .hel-list-row-sub { grid-column: 2 / 6; }
-.hel-list-row.has-sub > .hel-list-row-actions { grid-column: 2 / 6; grid-row: 2; align-self: center; justify-self: end; margin-block: -4px; background: inherit; } /* sits over the end of the details line when shown */
+.hel-list-row:is(.has-sub, .has-chips):has(> .hel-list-row-chevron) > .hel-list-row-sub { grid-column: 2 / 7; }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-actions { grid-column: 2 / 7; grid-row: 2; align-self: center; justify-self: end; margin-block: -4px; background: inherit; } /* sits over the end of the details line when shown */
 .hel-list-row-meta { flex: 0 1 auto; min-width: 0; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-ui-smaller); color: var(--text-faint); } /* gives way to the title */
-.hel-list-row.has-sub > .hel-list-row-meta { grid-column: 5; grid-row: 1; max-width: none; margin-inline-start: var(--size-4-2); } /* the fit-content column caps it; a percentage here would halve the column */
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-meta { grid-column: 6; grid-row: 1; max-width: none; margin-inline-start: var(--size-4-2); } /* the fit-content column caps it; a percentage here would halve the column */
+.hel-list-row.has-sub.has-chips > .hel-list-row-chevron { grid-row: 1 / span 3; }
+/* The status badge (ui.listRow's `status`): a block, so long words end in an ellipsis. */
+.hel-list-row > .hel-list-row-status { display: block; flex: 0 1 auto; min-width: 0; max-width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hel-list-row:is(.has-sub, .has-chips) > .hel-list-row-status { grid-column: 4; grid-row: 1; max-width: none; margin-inline-start: var(--size-4-2); } /* the fit-content column caps it, as the meta's */
+/* The chip line: one line, never wrapping. Chips share it evenly from no width, none wider than its words, so short ones stay whole and long ones end in an ellipsis; the "+N" keeps its width. The padding keeps the clipping edge off a chip's ring. */
+.hel-list-row-chips { grid-column: 2 / -1; grid-row: 2; display: flex; gap: var(--size-2-2); min-width: 0; overflow: hidden; padding-block: 1px; }
+.hel-list-row.has-sub > .hel-list-row-chips { grid-row: 3; }
+.hel-list-row:has(> .hel-list-row-chevron) > .hel-list-row-chips { grid-column: 2 / 7; }
+.hel-list-row-chips > .hel-chip { display: block; flex: 1 1 0; min-width: 0; max-width: max-content; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-inline: var(--size-2-3); }
+.hel-list-row-chips > .hel-list-row-chips-more { flex: none; color: var(--text-muted); }
 .hel-list-row-actions { display: flex; flex: none; gap: var(--size-2-1); opacity: 0; }
 .hel-list-row:hover > .hel-list-row-actions, .hel-list-row:focus-within > .hel-list-row-actions, .hel-list-row.is-active > .hel-list-row-actions { opacity: 1; }
 .hel-list-row-actions > .hel-list-row-action { padding: var(--size-2-1); }

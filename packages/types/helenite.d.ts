@@ -208,7 +208,7 @@ declare module 'helenite/internal/ui/src/index' {
   export { choiceList } from "helenite/internal/ui/src/choice-list";
   export type { ChoiceOption, ChoiceListOptions, ChoiceListSingleOptions, ChoiceListMultiOptions, ChoiceListHandle } from "helenite/internal/ui/src/choice-list";
   export { listRow, listGroup } from "helenite/internal/ui/src/list-row";
-  export type { ListRowOptions, ListRowAction, ListGroupOptions } from "helenite/internal/ui/src/list-row";
+  export type { ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions } from "helenite/internal/ui/src/list-row";
   export { composer } from "helenite/internal/ui/src/composer";
   export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "helenite/internal/ui/src/composer";
   export { board } from "helenite/internal/ui/src/board";
@@ -841,6 +841,12 @@ declare module 'helenite/internal/ui/src/list-row' {
       /** Set as the button's `data-action`, for tests and snippets. */
       id?: string;
   }
+  export interface ListRowChip {
+      text: string;
+      tone?: Tone;
+      /** The tooltip. Default: the text, so a cut chip can still be read. */
+      title?: string;
+  }
   export interface ListRowOptions {
       title: string;
       icon?: string;
@@ -850,6 +856,17 @@ declare module 'helenite/internal/ui/src/list-row' {
       sub?: string;
       /** A small label after the title ("not installed"). */
       tag?: string;
+      /** A toned badge with words after the title (a CI result, "Failing"). `title` is its tooltip, default the text. */
+      status?: {
+          text: string;
+          tone?: Tone;
+          title?: string;
+      };
+      /**
+       * A line of tag chips under the row (labels), after `sub`. The chips share one line and are cut with an ellipsis;
+       * five or more show three and a "+N" whose tooltip names the rest.
+       */
+      chips?: (string | ListRowChip)[];
       /** A count badge after the title, before the meta (open questions). Hidden at 0, as `countBadge`. */
       badge?: {
           count: number;

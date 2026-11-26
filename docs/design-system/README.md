@@ -333,10 +333,15 @@ ui.listRow(today.body, {
   onClick: (e) => open(e),
   menu: () => [{ title: 'Rename', onClick: rename }, 'separator', { title: 'Delete', danger: true, onClick: del }],
 });
+ui.listRow(today.body, {
+  title: 'Keep the sidebar width', sub: '#42 · ana · main', tag: 'Draft',
+  status: { text: 'Failing', tone: 'danger', title: '1 of 4 checks failed' },
+  chips: ['bug', { text: 'urgent', tone: 'danger' }],
+});
 ui.emptyState(paneEl, 'No open chats.', { variant: 'pane' });
 ```
 
-Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, a count `badge` (`{ count, ...countBadge options }`, before the meta), faint `meta` text (at most half the row; a longer one ends in an ellipsis, so put what matters first), a faint second line `sub` (the row's two-line form; see `ui.densityAction`) and icon `actions` (shown on hover, focus, or when the row is `active`; an action's `id` becomes its `data-action`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones, in a `nav-file` wrapper as Obsidian draws a file row. `listRow` returns the row.
+Rows for a sidebar pane list. A row has a title and optionally an `icon`, a status `dot`, a `tag`, a toned `status` badge with words (`{ text, tone, title }`; `title` is the tooltip), a line of tag `chips` under the row (strings or `{ text, tone, title }`; they share one line, and five or more show three and a "+N" naming the rest in its tooltip), a count `badge` (`{ count, ...countBadge options }`, before the meta), faint `meta` text (at most half the row; a longer one ends in an ellipsis, so put what matters first), a faint second line `sub` (the row's two-line form; see `ui.densityAction`) and icon `actions` (shown on hover, focus, or when the row is `active`; an action's `id` becomes its `data-action`). With `onClick` the row can be focused and Enter runs it. `menu` is built fresh on each right-click and opens like `ui.menu`. `obsidianClass: 'tree-item'` also gives the row Obsidian's file-tree classes (`tree-item-self nav-file-title`), so a theme's file-tree look applies; `'nav-file-title'` gives only the `nav-file-*` ones, in a `nav-file` wrapper as Obsidian draws a file row. `listRow` returns the row.
 
 `listGroup` is a collapsible group: a header with a chevron, the title and an optional `count`, and a `body` to put the rows in. Clicking the header (or Enter) toggles it and calls `onToggle` with the new state. Use `emptyState` with `variant: 'pane'` when a pane has no rows.
 

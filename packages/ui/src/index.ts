@@ -36,7 +36,7 @@ export type { CheckOption, CheckListOptions, CheckListHandle } from "./check-lis
 export { choiceList } from "./choice-list";
 export type { ChoiceOption, ChoiceListOptions, ChoiceListSingleOptions, ChoiceListMultiOptions, ChoiceListHandle } from "./choice-list";
 export { listRow, listGroup } from "./list-row";
-export type { ListRowOptions, ListRowAction, ListGroupOptions } from "./list-row";
+export type { ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions } from "./list-row";
 export { composer } from "./composer";
 export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "./composer";
 export { board } from "./board";
