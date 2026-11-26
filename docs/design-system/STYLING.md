@@ -82,14 +82,14 @@ The base theme's look comes from Finesse UI (Community, CC BY 4.0). Most of it i
 
 | Class | What it is |
 | --- | --- |
-| `hel-button` | A button made by `ui.button`. Also carries `mod-cta` (primary), `mod-warning` (danger) or `clickable-icon` (icon). |
+| `hel-button` | A button made by `ui.button`. Also carries `mod-cta` (primary), `mod-warning` (danger) or `clickable-icon` (icon). With the `draggable` option it has `draggable="true"` (grab cursor), and `is-dragging` (50% opacity) while dragged. |
 | `hel-button-icon` | The icon slot inside a button. Hidden when empty. |
 | `hel-button-text` | The text slot inside a button. |
 | `hel-segmented` | The group of a `ui.segmented` control. |
 | `hel-segmented-label` | The group's label, such as "Editing:". |
 | `hel-segment` | One option in the group. `aria-pressed="true"` marks the chosen one. |
 
-Button states and variants: `is-link`, `is-active`, `is-busy`. A `ui.menuButton` is `is-menu` (with `aria-haspopup="menu"`), and shows a small chevron after its text.
+Button states and variants: `is-link`, `is-active`, `is-busy`, `is-dragging`. A `ui.menuButton` is `is-menu` (with `aria-haspopup="menu"`), and shows a small chevron after its text.
 
 Finesse Buttons and Icon Buttons: the primary (`mod-cta`) is the accent fill with a faint drop; the secondary is the `--interactive-normal` fill inside `--input-shadow`'s ring; the danger (`mod-warning`) darkens a step on hover. Every `hel-button` nudges down half a pixel when pressed, draws `--hel-ring-focus` on keyboard focus and is at 50% opacity when disabled. An icon button (`clickable-icon`) gets the active-hover wash when pressed and 40% opacity when disabled.
 

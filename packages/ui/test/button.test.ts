@@ -75,6 +75,23 @@ describe("button", () => {
     expect(b.el.textContent).toBe("Two");
   });
 
+  it("draggable sets the attribute, and is-dragging for as long as it is dragged", () => {
+    const b = button(host(), { text: "Read", draggable: true });
+    expect(b.el.getAttribute("draggable")).toBe("true");
+    expect(b.el.classList.contains("is-dragging")).toBe(false);
+    b.el.dispatchEvent(new Event("dragstart"));
+    expect(b.el.classList.contains("is-dragging")).toBe(true);
+    b.el.dispatchEvent(new Event("dragend"));
+    expect(b.el.classList.contains("is-dragging")).toBe(false);
+  });
+
+  it("is not draggable unless asked", () => {
+    const b = button(host(), { text: "Read" });
+    expect(b.el.hasAttribute("draggable")).toBe(false);
+    b.el.dispatchEvent(new Event("dragstart"));
+    expect(b.el.classList.contains("is-dragging")).toBe(false);
+  });
+
   it("link variant adds is-link", () => {
     expect(button(host(), { text: "L", variant: "link" }).el.classList.contains("is-link")).toBe(true);
   });
