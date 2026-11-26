@@ -161,7 +161,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-select` | `ui.dropdown`'s `<select>`, with `dropdown`. A soft ring instead of a border, a focus ring, 6px corners (`--hel-control-radius`). `is-compact` is shorter. |
 | `hel-toggle` | The `<label>` of `ui.toggle`: the `checkbox-container` switch and the label text. `is-disabled` when disabled (50%). Finesse Toggles: the accent track when on, `--toggle-track-color` when off, each a step darker on hover; `--hel-ring-focus` around the switch on keyboard focus. |
 | `hel-toggle-label` | The toggle's label text. |
-| `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. The track is filled with the accent up to the thumb: `ui.slider` sets `--hel-fill` (a percentage) on it as it moves. |
+| `hel-slider` | `ui.slider`'s `<input type="range">`, with `slider`. The track is filled with the accent up to the thumb: `ui.slider` sets `--hel-fill` (a percentage) on it as it moves. Knobs: `--hel-slider-track` (the track's height, 6px) and `--hel-slider-thumb` (the thumb's colour, white). |
 | `hel-tabs` | The tab strip from `ui.tabs`. Finesse Tabs: a flat strip on a hairline; muted text, normal text on hover (with a faint indicator); the chosen tab is normal text with a 2px `--hel-tab-indicator` underline (default `--text-normal`); `--hel-ring-focus` on keyboard focus. |
 | `hel-tab` | One tab. `is-active` marks the chosen one. |
 | `hel-tab-badge` | The count shown on a tab: a muted pill with tabular numbers; on the chosen tab an accent tint with `--text-accent`. Hidden at 0. |
@@ -221,13 +221,14 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-check-text` | The row's text. |
 | `hel-check-detail` | The row's second line; also a form checkbox field's `detail`. |
 | `hel-choice-list` | `ui.choiceList`, a listbox of option rows. `is-multi` when any number can be picked. |
-| `hel-choice` | One option row. States: `is-selected`, `is-disabled`. In `ui.choose` the rows also have `hel-modal-choice`. Finesse Radio Buttons / Check Circles: a row with `--hel-ring` (its 1px border stays, transparent, for themes), `--hel-ring-hover` and a faint wash on hover, `--hel-ring-focus` on focus; a selected row has a 2px accent ring. |
+| `hel-choice` | One option row. States: `is-selected`, `is-disabled`; `is-expandable` when its detail is long enough to be clamped (the row's contents align to the top), `is-open` while that detail is expanded. In `ui.choose` the rows also have `hel-modal-choice`. Finesse Radio Buttons / Check Circles: a row with `--hel-ring` (its 1px border stays, transparent, for themes), `--hel-ring-hover` and a faint wash on hover, `--hel-ring-focus` on focus; a selected row has a 2px accent ring. |
 | `hel-choice-icon` | The row's icon. |
 | `hel-choice-body` | The row's title line and detail. |
 | `hel-choice-title` | The title line: text and tag. |
 | `hel-choice-text` | The option's text. |
 | `hel-choice-tag` | The option's tag (a `hel-badge`). |
-| `hel-choice-detail` | The option's second line. |
+| `hel-choice-detail` | The option's second line. A long one (over 60 characters, or more than one line) is `is-clamped` to one line with an ellipsis until the row is opened. |
+| `hel-choice-more` | The chevron of an `is-expandable` row: a click opens or clamps the detail without picking the option (Right and Left arrows do the same). It turns upward while the row is `is-open`; hidden from screen readers. |
 | `hel-choice-preview` | The option's `preview`, under its detail inside the row. |
 | `hel-choice-key` | The key hint (a `<kbd>`). |
 | `hel-choice-indicator` | The 16px circle before a row when the list has an `indicator`, ringed while unpicked: `is-radio` (a radio: filled with the accent and a light centre dot when selected) or `is-check` (a Check Circle: filled with the accent and a check mark when selected). |
