@@ -28,9 +28,12 @@ export interface BoardCardOptions {
   id: string;
   title?: string;
   tone?: CardTone;
-  /** The card's accessible name when `onOpen` makes it a button. Defaults to the title. */
+  /** The accessible name of the card's open button (`onOpen`). Defaults to the title, then to the content's text. */
   label?: string;
-  /** Makes the card a button: a click, Enter or Space on it (not on a control inside it) calls this. */
+  /**
+   * Makes the card open: a click on it (not on a control inside it) calls this, and so does its open button, which
+   * takes keyboard focus before the card's controls.
+   */
   onOpen?: () => void;
   /** False for a card that stays where it is. */
   draggable?: boolean;
@@ -88,6 +91,28 @@ function drawCheck(row: HTMLElement, check: BoardCardCheck): void {
   box.checked = check.checked;
   box.setAttribute("aria-label", check.label);
   box.addEventListener("change", () => check.onToggle(box.checked));
+}
+
+let contentIds = 0;
+
+/**
+ * The open control is a button beside the card's own controls, never around them: assistive tech reads nothing inside a
+ * button. The CSS lays it unseen over the card and out of the pointer's way, so the card itself takes the clicks.
+ */
+function wireOpen(card: HTMLElement, content: HTMLElement, open: () => void, name: string | undefined): void {
+  card.classList.add("is-clickable");
+  const button = make(card, "button", ["hel-board-card-open"]) as HTMLButtonElement;
+  card.prepend(button); // first in the tab order, before any control in the card
+  button.type = "button";
+  if (name) button.setAttribute("aria-label", name);
+  else {
+    content.id = `hel-board-card-${++contentIds}-content`;
+    button.setAttribute("aria-labelledby", content.id);
+  }
+  card.addEventListener("click", (e) => {
+    const control = (e.target as Element).closest(CONTROLS);
+    if (control === button || !control || !card.contains(control)) open();
+  });
 }
 
 /** A fixed-height row of lanes that scrolls sideways, with cards dragged between and within them. */
@@ -162,26 +187,10 @@ export function board(parent: HTMLElement, o: BoardOptions = {}): BoardHandle {
       root.classList.add("hel-board-card");
       root.dataset.id = c.id;
       if (o.onDrop && c.draggable !== false) wireDrag(root, c.id);
-      const open = c.onOpen;
-      if (open) {
-        root.classList.add("is-clickable");
-        root.tabIndex = 0;
-        root.setAttribute("role", "button");
-        const name = c.label ?? c.title;
-        if (name) root.setAttribute("aria-label", name);
-        root.addEventListener("click", (e) => {
-          const control = (e.target as Element).closest(CONTROLS);
-          if (!control || !root.contains(control)) open();
-        });
-        root.addEventListener("keydown", (e) => {
-          if (e.target !== root || (e.key !== "Enter" && e.key !== " ")) return;
-          e.preventDefault();
-          open();
-        });
-      }
       const row = make(handle.body, "div", ["hel-board-card-row"]);
       if (c.check) drawCheck(row, c.check);
       const content = make(row, "div", ["hel-board-card-content", "markdown-rendered"]);
+      if (c.onOpen) wireOpen(root, content, c.onOpen, c.label ?? c.title);
       const actions = make(row, "div", ["hel-board-card-actions"]);
       return { ...handle, content, actions, meta: make(handle.body, "div", ["hel-board-card-meta"]) };
     };

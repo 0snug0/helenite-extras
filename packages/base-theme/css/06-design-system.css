@@ -433,8 +433,11 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-board-card { overflow-wrap: anywhere; }
 .hel-board-card.is-clickable { cursor: var(--cursor-link, pointer); }
 .hel-board-card[draggable="true"] { cursor: grab; }
-.hel-board-card:is(.is-clickable, [draggable="true"]):not(.is-accent, .is-warning, :focus-visible):hover { box-shadow: var(--hel-ring-hover); }
-.hel-board-card:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-board-card:is(.is-clickable, [draggable="true"]):not(.is-accent, .is-warning, :has(> .hel-board-card-open:focus-visible)):hover { box-shadow: var(--hel-ring-hover); }
+/* The open button covers the card without being seen or taking the pointer; the card draws its focus ring (the
+   transparent outline shows in forced colours, which drop shadows). */
+.hel-board-card > button.hel-board-card-open:not(.clickable-icon), .hel-board-card > button.hel-board-card-open:not(.clickable-icon):is(:hover, :focus, :focus-visible, :active) { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; outline: none; pointer-events: none; }
+.hel-board-card:has(> .hel-board-card-open:focus-visible) { outline: 2px solid transparent; box-shadow: var(--hel-ring-focus); }
 .hel-board-card.is-dragging { opacity: 0.5; }
 .hel-board-card .hel-status-dot { flex: none; } /* a title that wraps must not squash a dot beside it */
 .hel-board-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-1); }

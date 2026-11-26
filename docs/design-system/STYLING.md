@@ -285,7 +285,8 @@ Obsidian's classes, made by `SuggestModal` and `FuzzySuggestModal` (the command 
 | `hel-board-lane-title` | The lane's name (`BoardLaneOptions.title`): a `span`, or with `onTitleClick` a `button` that looks like text until hover (`--background-modifier-hover`) or keyboard focus (`--hel-ring-focus`). |
 | `hel-board-list` | The lane's cards, scrolling on their own. `is-drop-target` (a dashed accent outline) while a card is dragged over it (or over the rest of its lane). |
 | `hel-board-lane-footer` | The slot under the cards (`BoardLaneHandle.footer`), centred. It follows a short list and stays in view under a long one, which scrolls. Hidden while empty. |
-| `hel-board-card` | A `hel-card` (`is-compact`) in a lane. `is-clickable` when it opens, `draggable="true"` when it moves (grab cursor); either raises the ring on hover (a toned card keeps its tone). `--hel-ring-focus` on keyboard focus, `is-dragging` (half opacity) while dragged. |
+| `hel-board-card` | A `hel-card` (`is-compact`) in a lane. `is-clickable` when it opens, `draggable="true"` when it moves (grab cursor); either raises the ring on hover (a toned card keeps its tone). `--hel-ring-focus` while its open button has keyboard focus, `is-dragging` (half opacity) while dragged. |
+| `hel-board-card-open` | The open button of a card with `onOpen`: its first child, a sibling of the card's controls. Unseen, covering the card and ignoring the pointer, so the card takes the clicks; it is what the keyboard and screen readers use, and the card draws its focus ring. |
 | `hel-board-card-meta` | The card's wrapping row of chips and badges (`BoardCardHandle.meta`). Hidden while empty. |
 | `hel-board-card-row` | The card's row above the meta: checkbox, content and actions. Hidden while there is none of them. |
 | `hel-board-card-check` | The done checkbox (`BoardCardOptions.check`), also a `hel-check`, level with the content's first line. |

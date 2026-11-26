@@ -1112,9 +1112,12 @@ declare module 'helenite/internal/ui/src/board' {
       id: string;
       title?: string;
       tone?: CardTone;
-      /** The card's accessible name when `onOpen` makes it a button. Defaults to the title. */
+      /** The accessible name of the card's open button (`onOpen`). Defaults to the title, then to the content's text. */
       label?: string;
-      /** Makes the card a button: a click, Enter or Space on it (not on a control inside it) calls this. */
+      /**
+       * Makes the card open: a click on it (not on a control inside it) calls this, and so does its open button, which
+       * takes keyboard focus before the card's controls.
+       */
       onOpen?: () => void;
       /** False for a card that stays where it is. */
       draggable?: boolean;
