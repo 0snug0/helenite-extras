@@ -817,10 +817,17 @@ button.hel-stat:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(-
 .hel-month-event { display: flex; flex: 0 0 auto; align-items: center; gap: var(--size-2-2); height: var(--hel-month-slot); min-width: 0; color: var(--text-normal); text-decoration: none; }
 a.hel-month-event:hover { text-decoration: none; }
 .hel-month-event-lead { flex: 0 0 2.2em; text-align: end; font-weight: var(--font-semibold); font-variant-numeric: tabular-nums; color: var(--hel-month-lead-color, var(--text-muted)); }
-.hel-month-event-title { flex: 1 1 auto; min-width: 0; height: var(--hel-month-slot); box-sizing: border-box; padding: 3px 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; line-height: var(--hel-month-line); border-radius: var(--hel-badge-radius, 4px); background: var(--background-primary); box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
+.hel-month-event-title { flex: 1 1 auto; min-width: 0; height: var(--hel-month-slot); box-sizing: border-box; padding: 3px 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; line-height: var(--hel-month-line); border-radius: var(--hel-badge-radius, 4px); background: var(--background-primary); box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
 a.hel-month-event:hover > .hel-month-event-title { box-shadow: inset 0 0 0 1px var(--interactive-accent); }
 a.hel-month-event:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
 .hel-month-events > button.hel-month-more { flex: 0 0 auto; width: 100%; height: var(--hel-month-slot); font-size: inherit; }
+/* A narrow day puts the lead above its title, so the title has the day's whole width; a longer word ends in an ellipsis. */
+.hel-month-day { container: hel-month-day / inline-size; }
+@container hel-month-day (max-width: 120px) {
+  .hel-month-event:has(> .hel-month-event-lead) { flex-direction: column; align-items: stretch; gap: 0; }
+  .hel-month-event > .hel-month-event-lead { flex: 0 0 var(--hel-month-line); padding: 0 5px; line-height: var(--hel-month-line); text-align: start; }
+  .hel-month-event > .hel-month-event-lead + .hel-month-event-title { flex: 0 0 var(--hel-month-line); height: var(--hel-month-line); padding-block: 0; -webkit-line-clamp: 1; }
+}
 /* Table sorting, fixed columns, trees and muted rows (ui.table) */
 .hel-table-scroll { max-width: 100%; overflow-x: auto; padding: 1px; }
 .hel-table.is-fixed { table-layout: fixed; }
