@@ -3,6 +3,9 @@
 body {
   --hel-menu-radius: var(--hel-dialog-radius, 12px); /* the menu's corners; its items use --hel-menu-item-radius */
   --hel-menu-item-radius: var(--hel-control-radius, 6px);
+  --hel-suggest-min-width: 200px; /* the input suggester popover (.suggestion-container) */
+  --hel-suggest-max-width: 500px;
+  --hel-suggest-max-height: 300px;
   --hel-count-badge-attention-fg: var(--text-on-accent); /* on --color-red: about 6:1 (default dark) and 5:1 (default light) */
   --hel-callout-solid-fg: var(--text-on-accent);
   /* Knobs for the covered parts. The rings (--hel-ring, --hel-ring-hover, --hel-ring-focus) are the Finesse tokens in 02-colors. */
@@ -678,4 +681,16 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .menu .menu-item.is-danger:hover, .menu .menu-item.is-warning:hover { background-color: color-mix(in srgb, var(--text-error) 10%, transparent); }
 .menu .menu-item.is-danger .menu-item-icon, .menu .menu-item.is-warning .menu-item-icon { color: var(--text-error); }
 .menu .menu-separator { margin: var(--size-2-2) calc(var(--size-2-2) * -1); border-bottom-color: var(--background-modifier-border); }
+
+/* Finesse Suggester: the popover of Obsidian's AbstractInputSuggest and EditorSuggest (both also mod-search-suggestion),
+   with the menu's look. A text box in a modal opens it from the body, so it sits on the menu's layer, above modals.
+   The script places it (inline left and top, and a max-height in a short window). Rows are blocks so highlighted text stays
+   together; mod-complex rows stay flex. The rules inside keep one class's specificity (:where), so plugin and theme row rules win. */
+.suggestion-container { position: fixed; z-index: var(--layer-menu, 65); box-sizing: border-box; display: flex; flex-direction: column; min-width: var(--hel-suggest-min-width); max-width: min(var(--hel-suggest-max-width), calc(100vw - var(--size-4-4))); max-height: min(var(--hel-suggest-max-height), calc(100vh - var(--size-4-4))); overflow: auto; border: 0; border-radius: var(--hel-menu-radius); corner-shape: var(--hel-corner-shape); background: var(--background-primary); color: var(--text-normal); box-shadow: var(--hel-ring-overlay, var(--shadow-l)); font-family: var(--font-interface); font-size: var(--font-ui-small); line-height: var(--line-height-tight); text-align: start; -webkit-app-region: no-drag; }
+:where(.suggestion-container) > .suggestion { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--size-2-2); }
+:where(.suggestion-container) .suggestion-item { gap: var(--size-4-2); padding: var(--size-2-3) var(--size-4-2); border-radius: var(--hel-menu-item-radius); font-size: var(--font-ui-small); overflow-wrap: anywhere; }
+:where(.suggestion-container) .suggestion-item:where(:not(.mod-complex)) { display: block; }
+:where(.suggestion-container) .suggestion-item.is-selected { background-color: var(--background-modifier-hover); }
+:where(.suggestion-container) .suggestion-empty { padding: var(--size-2-3) var(--size-4-2); color: var(--text-muted); }
+:where(.suggestion-container) > .prompt-instructions { flex: none; }
 

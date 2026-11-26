@@ -66,6 +66,9 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-snackbar-fg` | `#fff` | Its text |
 | `--hel-menu-radius` | `var(--hel-dialog-radius)` (12px) | The corner radius of a menu (`menu`) |
 | `--hel-menu-item-radius` | `var(--hel-control-radius)` (6px) | The corner radius of a menu item |
+| `--hel-suggest-min-width` | `200px` | The least width of an input suggester (`suggestion-container`) |
+| `--hel-suggest-max-width` | `500px` | The width it grows to before a long row wraps (never wider than the window) |
+| `--hel-suggest-max-height` | `300px` | How tall it grows before its list scrolls (never taller than the window) |
 | `--hel-popover-width` | `320px` | The width of a `hel-popover` (`ui.popover`'s `width` sets it) |
 | `--hel-popover-quote-max-height` | `80px` | How tall a popover's quote grows before it scrolls |
 | `--hel-count-badge-attention-fg` | `var(--text-on-accent)` | The number on a danger `hel-count-badge` (on `--color-red`: about 6:1 in the default dark theme, 5:1 in light) |
@@ -209,6 +212,18 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-popover-body` | The popover's content; scrolls when the popover is capped. |
 | `hel-popover-quote` | The `<blockquote>` of the `quote` option: muted text as written behind a hairline rail, scrolling past `--hel-popover-quote-max-height`. |
 | `hel-popover-footer` | The footer slot (`PopoverHandle.footer`): a strip under the body with a hairline above and a wash. Hidden while empty. |
+
+### Input suggesters
+
+Obsidian's classes, made by `AbstractInputSuggest` and `EditorSuggest` (and the `file` and `folder` settings controls), not by a `ui` part.
+
+| Class | What it is |
+| --- | --- |
+| `suggestion-container` | The popover under a text box or the editor's cursor. Finesse Menu: the primary background on `--hel-ring-overlay` (no border) with `--hel-menu-radius` corners. On `--layer-menu`, above modals, so a text box in Settings can open it. It opens under its anchor, or above when only that side has room, and gets an inline `max-height` when neither does. The rules for what is inside it have one class's specificity, so a plugin's or theme's row rules win. |
+| `suggestion` | The list inside it; scrolls past `--hel-suggest-max-height`. |
+| `suggestion-item` | One row: `--hel-menu-item-radius` corners, a hover wash on the chosen one (`is-selected`). A block, so highlighted text stays together and a long path wraps; a `mod-complex` row stays flex. |
+| `suggestion-empty` | A muted line a suggester adds in place of rows (`suggestions.addMessage`). |
+| `mod-search-suggestion` | On the container of every input and editor suggester, as in Obsidian. It looks like any `suggestion-container`; select it to restyle only these. |
 
 ### Boards
 

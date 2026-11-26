@@ -1223,6 +1223,16 @@ declare module 'helenite/internal/obsidian-api/src/ui/helpers' {
       flipY?: number;
       alignLeft?: boolean;
   }): void;
+  /**
+   * Places a suggestion popover under its anchor, or above it when only that side has room. When neither does, it takes the
+   * larger side with an inline max-height, so it never covers the anchor. Measured from the corner each time: a fixed box
+   * left near the right edge shrinks to the room there.
+   */
+  export function placeBeside(target: HTMLElement, anchor: {
+      left: number;
+      top: number;
+      bottom: number;
+  }, gap?: number): void;
   export function safeCall(fn: () => any): any;
 }
 
