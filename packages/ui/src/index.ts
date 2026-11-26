@@ -49,6 +49,8 @@ export { avatar } from "./avatar";
 export type { AvatarOptions } from "./avatar";
 export { swatch } from "./swatch";
 export type { SwatchOptions, SwatchKind } from "./swatch";
+export { pickerGrid } from "./picker-grid";
+export type { PickerOption, PickerGridOptions, PickerGridHandle } from "./picker-grid";
 export { thread, threadText } from "./thread";
 export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { codeBlock } from "./code-block";

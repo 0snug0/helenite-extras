@@ -8,7 +8,7 @@ export * from "./components/actions";
 export * from "./components/frame-dialog";
 export {
   STANDARD_ACTIONS, ACTION_CONFIRMS, paneHeader, densityAction,
-  button, segmented, table, emptyState, errorState, loadingState, badge, statusDot, statusText, countBadge, chip, avatar, swatch,
+  button, segmented, table, emptyState, errorState, loadingState, badge, statusDot, statusText, countBadge, chip, avatar, swatch, pickerGrid,
   field, textInput, searchInput, slider, toggle, dropdown, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup,
   popover, composer, artwork, mediaGrid, mediaCard, figures, rating, statTiles, sectionHeading, monthGrid, keyValue, codeBlock, meter, barChart, thread, threadText, board, setIconRenderer, renderIcon, setMenuRenderer, openMenu, drawFields,
 } from "@helenite/ui";
@@ -21,5 +21,5 @@ export type {
   TableSort, ArtworkOptions, MediaGridOptions, MediaCardOptions, MediaCardHandle, Figure, FiguresOptions, RatingOptions, StatTile, SectionHeadingOptions, SectionHeadingHandle, MonthEvent, MonthGridOptions,
   KeyValueRow, CodeBlockOptions, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, MenuRenderer, DrawnFields,
   ActionId, PaneHeaderAction, ListDensity,
-  AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle,
+  AvatarOptions, SwatchOptions, SwatchKind, PickerOption, PickerGridOptions, PickerGridHandle, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle,
 } from "@helenite/ui";

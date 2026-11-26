@@ -21,7 +21,7 @@ describe("Finesse field styling", () => {
   });
 
   it("a filled field gives a multiline box, a choice list and a check list a row each", () => {
-    expect(rule(`${FILL}:is(textarea.hel-input, .hel-choice-list, .hel-check-list)`)).toContain("flex: 1 1 100%; min-width: 0");
+    expect(rule(`${FILL}:is(textarea.hel-input, .hel-choice-list, .hel-check-list, .hel-picker-grid)`)).toContain("flex: 1 1 100%; min-width: 0");
   });
 
   it("STYLING.md names the modifier", () => {
