@@ -13,6 +13,8 @@ pnpm test         # package tests, plus node --test test/ for the catalog
 
 Tests that load the real plugin API (the catalog plugins' `plugin.test.ts`, the connectors' settings tabs) need the app's runtime. They run from the app (`pnpm test` there) and are skipped in a standalone clone. `packages/types/helenite.d.ts` is generated from the app's `helenite` module and committed; the app regenerates it with `pnpm --filter @helenite/types build`.
 
+Every vitest config sets `globalSetup` to `scripts/vitest-cleanup.mjs` (a test checks it), so a run leaves no temp folder behind. In the app it hands over to the app's setup, which also ends the run's processes and launchd jobs; a standalone clone removes the run's `TMPDIR` when it ends (`HELENITE_TEST_KEEP=1` keeps it).
+
 ## What is here
 
 | Path | What |

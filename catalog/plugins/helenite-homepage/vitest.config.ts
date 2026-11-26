@@ -12,5 +12,5 @@ const helenite = `${appRoot}packages/obsidian-api/src/helenite-module.ts`;
 export default defineConfig({
   resolve: { alias: { obsidian: api, helenite } },
   server: hasApp ? { fs: { allow: [appRoot] } } : {},
-  test: { environment: 'jsdom', include: hasApp ? ['test/**/*.test.ts'] : [], passWithNoTests: true, setupFiles: hasApp ? [`${appRoot}plugins/core-build/test/setup.ts`] : [], testTimeout: 20000 },
+  test: { globalSetup: ['../../../scripts/vitest-cleanup.mjs'], environment: 'jsdom', include: hasApp ? ['test/**/*.test.ts'] : [], passWithNoTests: true, setupFiles: hasApp ? [`${appRoot}plugins/core-build/test/setup.ts`] : [], testTimeout: 20000 },
 });
