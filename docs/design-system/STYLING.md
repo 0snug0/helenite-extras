@@ -40,6 +40,7 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-thread-indent` | `var(--size-4-3)` | The space on each side of that rail |
 | `--hel-modal-side-width` | `300px` | The width of a dialog's `hel-modal-side` column |
 | `--hel-modal-side-divider` | `var(--background-modifier-border)` | The hairline between a dialog's content and its side column |
+| `--hel-modal-bleed` | `4px` | The room inside a `hel-modal`'s scrolling content for the rings of parts that touch its edges (taken from the frame, so nothing moves) |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-subpage-header-bg` | `var(--background-primary)` | The sticky `hel-subpage-header` (it covers the page as it scrolls under) |
 | `--hel-subpage-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-subpage-header` |

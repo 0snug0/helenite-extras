@@ -30,6 +30,19 @@ describe("Finesse modal styling", () => {
     expect(css).toContain("button:where(.hel-button).mod-warning { background-color: var(--background-modifier-error)");
   });
 
+  it("the scrolling content has room for its children's rings, taken from the frame so nothing moves", () => {
+    expect(css).toContain("--hel-modal-bleed: 4px;");
+    expect(rule(".hel-modal > .modal-content {")).toContain("margin: calc(-1 * var(--hel-modal-bleed)); padding: var(--hel-modal-bleed);");
+    expect(styling).toContain("| `--hel-modal-bleed` |");
+  });
+
+  it("the pinned actions cover that room: flush with the scroller's bottom, full width, the buttons kept in place", () => {
+    const actions = rule(".hel-modal-actions {");
+    expect(actions).toContain("bottom: calc(-1 * var(--hel-modal-bleed))");
+    expect(actions).toContain("margin: var(--size-4-6) calc(-1 * var(--hel-modal-bleed)) calc(-1 * var(--hel-modal-bleed));");
+    expect(actions).toContain("padding: var(--size-4-2) var(--hel-modal-bleed) var(--hel-modal-bleed);");
+  });
+
   it("the error line is a tinted alert while it has a message and gone while empty; a busy action shows progress", () => {
     expect(rule(".hel-modal-error {")).toContain("color: var(--text-error)");
     expect(css).toContain(".hel-modal-error:empty { display: none; }");
