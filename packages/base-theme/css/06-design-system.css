@@ -167,6 +167,8 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-status-text.is-danger { color: var(--text-error); }
 .hel-status-text.is-success { color: var(--text-success); }
 .hel-status-text.is-warning { color: var(--text-warning); }
+/* In the status bar it is the size of the items beside it, with figures that keep their width as a count ticks. */
+.status-bar-item .hel-status-text { font-size: var(--status-bar-font-size); font-variant-numeric: tabular-nums; }
 .hel-count-badge { display: inline-block; min-width: 1.5em; box-sizing: border-box; padding: 0 var(--size-2-3); border-radius: 999px; font-size: var(--font-ui-smaller); font-weight: var(--font-medium, 500); font-variant-numeric: tabular-nums; line-height: 1.5; text-align: center; background-color: var(--interactive-accent); color: var(--text-on-accent); }
 .hel-count-badge[hidden] { display: none; }
 .hel-count-badge.is-danger { background-color: var(--color-red); color: var(--hel-count-badge-attention-fg); }

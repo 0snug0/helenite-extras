@@ -122,6 +122,8 @@ ui.statusText(el, 'Not signed in', 'danger');
 
 Tones: `default`, `accent`, `danger`, `success`, `warning`. The element `statusText` returns also has `setTone(tone)`, for a status that changes (set its text with `setText`). `pulse` makes a dot blink slowly (not when the system asks for reduced motion); keep it for something waiting on the user.
 
+Status text in a status bar item (`ui.statusText(this.addStatusBarItem(), '')`) takes the status bar's font size and tabular figures, so a countdown does not shift as it ticks; a plugin needs no CSS for it.
+
 ### ui.meter
 
 ```ts
