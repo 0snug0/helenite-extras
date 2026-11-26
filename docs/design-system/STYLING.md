@@ -54,6 +54,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-snackbar-fg` | `#fff` | Its text |
 | `--hel-menu-radius` | `var(--hel-dialog-radius)` (12px) | The corner radius of a menu (`menu`) |
 | `--hel-menu-item-radius` | `var(--hel-control-radius)` (6px) | The corner radius of a menu item |
+| `--hel-popover-width` | `320px` | The width of a `hel-popover` (`ui.popover`'s `width` sets it) |
+| `--hel-popover-quote-max-height` | `80px` | How tall a popover's quote grows before it scrolls |
 | `--hel-count-badge-attention-fg` | `var(--text-on-accent)` | The number on a danger `hel-count-badge` (on `--color-red`: about 6:1 in the default dark theme, 5:1 in light) |
 | `--hel-callout-solid-fg` | `var(--text-on-accent)` | The text on a solid `hel-callout` |
 | `--hel-card-min` | Set inline by `cardGrid` (150px unless `minWidth` is given) | The minimum card width in a `hel-cards` grid |
@@ -178,6 +180,18 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 | `hel-card-footer` | The card's footer slot (`CardHandle.footer`): a strip under the body with a hairline above and a wash, for actions or a status. Hidden while empty. |
+
+### Popover
+
+| Class | What it is |
+| --- | --- |
+| `hel-popover` | `ui.popover`: a floating `role="dialog"` panel at an anchor, `--hel-popover-width` wide, on `--hel-ring-overlay` (no border) with `--hel-card-radius` corners over the primary background. The part places it (`position: fixed`, inline `left` and `top`, and a `max-height` in a short window); `data-side` is `bottom` or `top`. `--layer-popover`, or inside the modal it was opened from. |
+| `hel-popover-head` | The popover's head: icon and title. Hidden while empty. |
+| `hel-popover-icon` | The head's icon. |
+| `hel-popover-title` | The title. A long unbroken one (a file path) wraps. |
+| `hel-popover-body` | The popover's content; scrolls when the popover is capped. |
+| `hel-popover-quote` | The `<blockquote>` of the `quote` option: muted text as written behind a hairline rail, scrolling past `--hel-popover-quote-max-height`. |
+| `hel-popover-footer` | The footer slot (`PopoverHandle.footer`): a strip under the body with a hairline above and a wash. Hidden while empty. |
 
 ### Boards
 

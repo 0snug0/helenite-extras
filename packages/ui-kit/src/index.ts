@@ -7,7 +7,7 @@ export * from "./components/calendar";
 export {
   button, segmented, table, emptyState, errorState, loadingState, badge, statusDot, statusText, countBadge, chip, avatar,
   field, textInput, searchInput, slider, toggle, dropdown, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup,
-  composer, keyValue, meter, barChart, thread, threadText, board, setIconRenderer, renderIcon, setMenuRenderer, openMenu, drawFields,
+  popover, composer, keyValue, meter, barChart, thread, threadText, board, setIconRenderer, renderIcon, setMenuRenderer, openMenu, drawFields,
 } from "@helenite/ui";
 export type {
   ButtonOptions, ButtonHandle, ButtonVariant, SegmentedOptions, TableOptions, TableColumn, TableGroup, TableHandle, Tone, StateVariant,
@@ -16,5 +16,5 @@ export type {
   CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle,
   ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle,
   KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, MenuRenderer, DrawnFields,
-  AvatarOptions,
+  AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle,
 } from "@helenite/ui";

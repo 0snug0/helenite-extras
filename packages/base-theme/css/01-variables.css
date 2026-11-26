@@ -89,6 +89,8 @@ body {
   --hel-dialog-radius: var(--modal-radius);
   /* Squircle-like corners where the engine supports corner-shape (Chromium 139+); a plain round corner elsewhere. */
   --hel-corner-shape: superellipse(1.5);
+  --hel-popover-width: 320px;
+  --hel-popover-quote-max-height: 80px;
   --border-width: 1px;
 
   --layer-cover: 5;

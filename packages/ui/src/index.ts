@@ -25,6 +25,8 @@ export { drawFields } from "./fields";
 export type { Field, FieldValues, DrawnFields } from "./fields";
 export { callout } from "./callout";
 export type { CalloutOptions, CalloutHandle, CalloutTone } from "./callout";
+export { popover } from "./popover";
+export type { PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle } from "./popover";
 export { card } from "./card";
 export type { CardOptions, CardHandle, CardTone } from "./card";
 export { checkList } from "./check-list";
