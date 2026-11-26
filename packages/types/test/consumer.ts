@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, DisclosureHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, SwatchOptions, PopoverHandle } from 'helenite';
+import type { TableHandle, CardHandle, DisclosureHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, SwatchOptions, PopoverHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -44,6 +44,8 @@ ui.emptyState(document.body, 'No accounts yet.', { variant: 'inline' });
 
 // The content parts.
 ui.callout(document.body, { tone: 'accent', text: 'Waiting', action: { text: 'Answer now' }, live: true }).setTone('danger');
+const tbl: TableHandle<{ name: string }> = ui.table(document.body, { columns: [{ key: 'name', title: 'Name', cell: (r) => r.name }], rows: [{ name: 'a' }] });
+tbl.setRows([{ name: 'b' }]);
 const c: CardHandle = ui.card(document.body, { title: 'Claude Code', icon: 'terminal', tone: 'muted', compact: true });
 c.setTone('accent');
 const caps: CheckListHandle<'mail' | 'cal'> = ui.checkList(document.body, { options: [{ value: 'mail', text: 'Mail', detail: 'd' }, { value: 'cal', text: 'Calendar' }], value: ['mail'] });
