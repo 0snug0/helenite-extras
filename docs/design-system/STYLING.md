@@ -173,7 +173,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-callout-action` | The callout's button (a `hel-button`). |
 | `hel-card` | `ui.card` (and each card of ui-kit's `cardGrid`): a `--hel-ring-card` ring (no border), `--hel-card-radius` corners, head, body and footer slots. In a `hel-cards` grid the ring rises on hover and shows the focus ring while the card's button has focus. Tones (a coloured ring): `is-accent`, `is-warning`, `is-muted`; `is-compact` has less padding. `is-attention` (a card waiting on the user: thick toned border, tint, focus ring, its own interface font with monospace only for code, and roomier choice-list rows with a tinted pick and key hints in muted text that brighten on hover, focus or pick), `is-sticky` (pinned to the top of its pane, with a shadow), `is-busy` (dimmed while its action runs) and `is-pulse` (briefly, from `pulse()`). |
 | `hel-card-head` | The card's head: icon and title. Hidden while empty. |
-| `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head, the vault rows of Accounts). |
+| `hel-card-icon` | The head's icon. Also an icon before a settings row's name (`ui.settings.card`'s head). |
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 | `hel-card-footer` | The card's footer slot (`CardHandle.footer`): a strip under the body with a hairline above and a wash, for actions or a status. Hidden while empty. |

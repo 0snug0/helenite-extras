@@ -57,7 +57,7 @@ export function createSecretsSettingTab(deps: SecretsTabDeps): PluginSettingTab 
     if (!entries.length) ui.emptyState(el, 'No app or connector declares a secret yet.', { variant: 'inline' });
     for (const e of entries) {
       const row = secretRow(el, e, `${e.name} · ${e.owner}${e.required ? ' · required' : ''} · ${setState(e)}`);
-      if (e.class !== 'shared') row.controlEl.createSpan({ text: 'Home only' });
+      if (e.class !== 'shared') ui.badge(row.controlEl, 'Home only');
       renderValue(t, row, e);
       if (e.class === 'shared') renderPolicy(t, el, e);
     }

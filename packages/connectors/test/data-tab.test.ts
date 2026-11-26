@@ -44,6 +44,8 @@ describe('Settings → Data tab', () => {
     expect(row('download-queue').classList.contains('setting-item-heading')).toBe(true);
     expect(source('sabnzbd').querySelector('.setting-item-description')!.textContent).toBe('ready');
     expect(source('qbittorrent').querySelector('.setting-item-description')!.textContent).toBe('waiting for review');
+    expect(source('sabnzbd').querySelector('.setting-item-description .hel-status-text.is-success')).toBeTruthy();
+    expect(source('qbittorrent').querySelector('.setting-item-description .hel-status-text.is-warning')).toBeTruthy();
   });
 
   it('is titled Data sources, with the vault-scoped description', async () => {
@@ -122,6 +124,12 @@ describe('Settings → Data tab', () => {
       await vi.advanceTimersByTimeAsync(450);
       expect(saved.at(-1)!.settings).toEqual({ sabnzbd: {}, qbittorrent: {} });
     } finally { vi.useRealTimers(); }
+  });
+
+  it('says there are no contracts with the inline empty state', async () => {
+    const { tab } = await make({ contracts: [] });
+    await tab.display();
+    expect(tab.containerEl.querySelector('.hel-empty.is-inline').textContent).toBe('No data contracts yet. A vault template can ship contracts; none is installed.');
   });
 
   it('says so inline when the status cannot be read', async () => {
