@@ -56,10 +56,11 @@ What it does, for people reading the note.
 | `settings` | Values the app reads from `api.settings`, each with a `default` and a `label`. |
 | `connectors`, `data` | Connector ids and data contract ids the app uses through `api.connectors.<id>` and `api.data`. |
 | `agent` | `true` to send messages to the user's agent with `api.agent.ask`. |
+| `code` | `true` to run code the app builds while it runs: the frame also allows `blob:` modules ([Running code the app builds](#running-code-the-app-builds)). |
 | `jobs`, `agentJobs` | Background jobs (`id`, `entry`, `every: 30m`, `timeout`) and headless agent runs. |
 | `trust` | Only `sandboxed` is supported. |
 
-The parser is `packages/apps-runtime/src/manifest/parse.ts`, and `packages/apps-runtime/src/manifest/schema.json` is the JSON Schema. The first time an app opens, and whenever its permissions change (trust, `net`, `vault`, `secrets`, `connectors`, `data`, `agent`, jobs), Helenite asks the user to approve them. A denied app stays closed until the user reviews its permissions again.
+The parser is `packages/apps-runtime/src/manifest/parse.ts`, and `packages/apps-runtime/src/manifest/schema.json` is the JSON Schema. The first time an app opens, and whenever its permissions change (trust, `net`, `vault`, `secrets`, `connectors`, `data`, `agent`, `code`, jobs), Helenite asks the user to approve them. A denied app stays closed until the user reviews its permissions again.
 
 ## Where an app appears
 
@@ -163,13 +164,32 @@ The kit's reference is `packages/ui-kit/README.md`, and the parts are in [docs/d
 
 Each view runs in an `<iframe sandbox="allow-scripts">` with an opaque origin, under a content security policy set for that app:
 
-- Scripts load only from the app's own folder and Helenite's frame host (no inline scripts); styles likewise, plus inline styles.
+- Scripts load only from the app's own folder and Helenite's frame host (no inline scripts, no `eval`); styles likewise, plus inline styles. `code: true` adds `blob:` modules ([below](#running-code-the-app-builds)).
 - No network from the frame (`connect-src 'none'`): `fetch`, XHR and WebSockets are blocked. Use `api.net.fetch`.
 - No forms that submit, no plugins (`object-src`), and no nested frames.
 - Images only from `data:`, `blob:` and the origins in `net`. Fonts only from `data:`.
 - No Node, no `require`, no access to the host page's DOM, no popups, and no `localStorage`. Use `api.store`.
 
 The policy is built in `packages/apps-runtime/src/host/frame.ts`. Background jobs run in a hidden frame with the same api and the same limits.
+
+### Running code the app builds
+
+An app that runs code it makes while it runs (a live code editor, a playground) declares `code: true`. The frame's `script-src` then also allows `blob:` URLs, so the app can import a module it wrote:
+
+```js
+const url = URL.createObjectURL(new Blob([`export default (ui, el) => {\n${source}\n}`], { type: "text/javascript" }));
+try {
+  const mod = await import(url); // a syntax error rejects here
+  await mod.default(kit, el); // a runtime error throws here
+} finally {
+  URL.revokeObjectURL(url);
+}
+```
+
+- The code gets nothing new: it runs in the same frame, with the same `api` and the same limits. `eval`, `new Function`, inline scripts and `data:` scripts stay blocked.
+- It does let the app turn data (a note, a fetched response, a link's params) into code, so the user is asked to approve it: "Run code it builds while it runs". Run only what the user wrote or chose to run, never a deep link's params.
+- A blob module has no folder: it cannot `import` the app's files by relative path. Pass it what it needs, as `kit` and `el` above.
+- An endless loop in the code hangs the app's frame, so run it when the user asks, not on each keystroke.
 
 ## Testing an app
 

@@ -117,6 +117,23 @@ describe("textInput multiline", () => {
   });
 });
 
+describe("textInput code", () => {
+  const box = () => document.body.appendChild(document.createElement("div"));
+  it("is a multiline box for source: never wrapped, no spelling or autocapitalisation help", () => {
+    const el = textInput(box(), { multiline: true, code: true, label: "Code" });
+    expect(el.classList.contains("is-code")).toBe(true);
+    expect(el.getAttribute("wrap")).toBe("off");
+    expect(el.getAttribute("spellcheck")).toBe("false");
+    expect(el.getAttribute("autocapitalize")).toBe("off");
+    expect(el.getAttribute("autocorrect")).toBe("off");
+  });
+  it("leaves a plain multiline box alone", () => {
+    const el = textInput(box(), { multiline: true });
+    expect(el.classList.contains("is-code")).toBe(false);
+    expect(el.hasAttribute("wrap")).toBe(false);
+  });
+});
+
 describe("searchInput", () => {
   it("sits in Obsidian's search-input-container with a clear button and debounces", () => {
     vi.useFakeTimers();
