@@ -24,7 +24,7 @@ That writes `packages/types/helenite.d.ts`, a `declare module 'helenite'` file. 
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `DialogSidePanel`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -342,6 +342,19 @@ const account = await ui.dialog<Account>(app, {
 ```
 
 A modal with a body you draw. `icon` puts an icon before the title. `render` gets the body and a context; `actions` are the buttons after Cancel (`cancel` sets Cancel's text, `false` leaves it out). An action's `id` becomes its button's `data-action` (Cancel's is `cancel`), for tests. `focus` names the button that has focus when it opens (`'cancel'` or an action's `id`), for a prompt where Enter alone must not run the main action. An action closes the dialog by calling `ctx.close(value)`; the dialog resolves to that value, or `null` on a cancel (Cancel, Escape, the backdrop). An action that returns a promise keeps the dialog busy until it settles; one that throws shows its message above the buttons and leaves the dialog open. While busy, every way of closing it (Cancel, Escape, the backdrop, the close button) does nothing, so an action that never settles keeps the dialog open; only `ctx.close` still closes it. `ctx.setBusy` and `ctx.setError` do the same by hand (`ctx.setBusy(true)` blocks closing the same way until `ctx.setBusy(false)`). `ctx.button(id)` returns a button's handle (`'cancel'` for Cancel), for a dialog with steps whose buttons change: `setText`, `setDisabled` (it stays disabled after the dialog is busy), or `el.hidden` to hide it. `width: 'wide'` gives a wider modal. `doc` opens the dialog in another document (a popout's, or the Settings window's); pass the owner document of the element the user clicked.
+
+For content with its properties beside it (an issue page), call `ctx.sidePanel()` in `render`: it adds two columns to the body and returns them as `{ main, side }`, the side one on the right behind a hairline. A narrow dialog stacks them, content first. Later calls return the same two. Use it with `width: 'wide'`.
+
+```ts
+ui.dialog(app, {
+  title: 'Edit ticket', width: 'wide',
+  render: (body, ctx) => {
+    const { main, side } = ctx.sidePanel();
+    ui.textInput(ui.field(main, { label: 'Title' }).control, { value: t.title });
+    ui.keyValue(side, [{ key: 'Assignee', value: t.agent }]);
+  },
+});
+```
 
 ### ui.menu, ui.moreButton, ui.menuButton
 

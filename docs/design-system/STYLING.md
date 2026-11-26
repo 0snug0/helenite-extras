@@ -34,6 +34,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
 | `--hel-thread-rail` | `var(--background-modifier-border)` | The rail beside a `hel-thread-replies` list |
 | `--hel-thread-indent` | `var(--size-4-3)` | The space on each side of that rail |
+| `--hel-modal-side-width` | `300px` | The width of a dialog's `hel-modal-side` column |
+| `--hel-modal-side-divider` | `var(--background-modifier-border)` | The hairline between a dialog's content and its side column |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-subpage-header-bg` | `var(--background-primary)` | The sticky `hel-subpage-header` (it covers the page as it scrolls under) |
 | `--hel-subpage-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-subpage-header` |
@@ -245,7 +247,10 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | Class | What it is |
 | --- | --- |
 | `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. Finesse dialog: `--hel-ring-overlay` (a faint ring and a deep drop shadow) in place of the border (kept, transparent, so a theme's `--modal-border-color` still has a place), `--hel-dialog-radius` (12px) corners, a 24px frame and a semibold title; the close button is a 6px control with the focus ring. Only `.hel-modal` is styled this way: the Settings modal and plugins' own `Modal`s keep the base look. A vault app's `api.ui.modal` is drawn by the host as a `ui.dialog`, so it looks the same. |
-| `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. |
+| `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. `has-side-panel` once `ctx.sidePanel()` split it; it is then a size container (`hel-modal-body`) for stacking the columns. |
+| `hel-modal-split` | The two columns `ctx.sidePanel()` adds to the body. One column, content first, while the body is 600px wide or narrower. |
+| `hel-modal-main` | The content column, a vertical stack. |
+| `hel-modal-side` | The side column (a ticket's properties), `--hel-modal-side-width` wide behind a `--hel-modal-side-divider` hairline. Stacked, it spans the dialog with the hairline above it. |
 | `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |
 | `hel-modal-message` | The message paragraph of a confirm modal, a form's `message`, and a vault app modal's `{ text }` block. Muted text. |
 | `hel-modal-label` | A field label: normal text, medium weight, above its input. |
