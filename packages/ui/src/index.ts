@@ -39,6 +39,8 @@ export { board } from "./board";
 export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle } from "./board";
 export { meter } from "./meter";
 export type { MeterOptions } from "./meter";
+export { barChart } from "./bar-chart";
+export type { BarChartOptions, BarChartBucket } from "./bar-chart";
 export { thread, threadText } from "./thread";
 export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { keyValue } from "./key-value";
