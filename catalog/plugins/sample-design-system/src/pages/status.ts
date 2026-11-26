@@ -14,7 +14,7 @@ export function drawStatus(el: HTMLElement): void {
   ui.callout(callouts, { tone: 'accent', solid: true, text: 'An agent is waiting on you.' });
 
   // A settings row's control area lays small things out side by side. (`ui.toolbar` is for controls.)
-  const labels = ui.settings.section(el, 'Badges, dots, counts, chips and avatars');
+  const labels = ui.settings.section(el, 'Badges, dots, counts, chips, avatars and swatches');
   const row = (name: string) => new ui.settings.row(labels).setName(name).controlEl;
   const badges = row('Badges');
   for (const tone of TONES) ui.badge(badges, tone, tone);
@@ -33,6 +33,12 @@ export function drawStatus(el: HTMLElement): void {
   const people = row('Avatars');
   for (const size of ['small', 'medium', 'large'] as const) ui.avatar(people, { text: 'Ada Lovelace', size });
   ui.avatar(people, { text: '+3' });
+  const values = row('Swatches');
+  ui.swatch(values, { kind: 'color', value: 'var(--interactive-accent)', label: '--interactive-accent' });
+  ui.swatch(values, { kind: 'radius', value: 'var(--radius-m)', label: '--radius-m' });
+  ui.swatch(values, { kind: 'shadow', value: 'var(--shadow-s)', label: '--shadow-s' });
+  ui.swatch(values, { kind: 'size', value: 'var(--size-4-6)', label: '--size-4-6' });
+  ui.swatch(values, { kind: 'font-family', value: 'var(--font-monospace)', label: '--font-monospace' });
 
   const readings = ui.settings.section(el, 'Meters');
   const inline = new ui.settings.row(readings).setName('Inline').controlEl;

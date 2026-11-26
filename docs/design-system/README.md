@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, the form controls, tabs, toolbar, callout, card, disclosure, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, swatch, the form controls, tabs, toolbar, callout, card, disclosure, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -132,6 +132,17 @@ ui.avatar(el, { text: 'CC', size: 'small' });      // initials as given
 ```
 
 A person or an agent as initials in a circle. `size` is `small` (20px), `medium` (28px, the default) or `large` (40px). A name is cut to the first and last word's initial; one word of one or two characters, or a count such as `+12`, is shown whole, a longer word by its first character; letters are drawn in capitals; empty text reads `?`. The whole text is the avatar's accessible name and tooltip, so pass the full name when you have it.
+
+### ui.swatch
+
+```ts
+ui.swatch(td, { kind: 'color', value: 'var(--color-red)', label: '--color-red' });
+ui.swatch(td, { kind: 'radius', value: 'var(--radius-m)', label: '--radius-m' });
+ui.swatch(td, { kind: 'size', value: '12px', label: '--size-4-3' });          // a bar that long
+ui.swatch(td, { kind: 'font-weight', value: '700', label: '--font-bold' });   // "Aa" at that weight
+```
+
+One CSS value on show, for a token table or a theme picker. `kind` is `color` (any background, so a gradient too), `radius`, `shadow`, `size`, `font-family`, `font-size` or `font-weight`; `value` is written out or a `var(--token)`, and one CSS cannot read draws nothing (a font kind still shows plain "Aa"). A swatch is a 28px square, a `size` a bar on a 64px track (a longer length fills it), a font "Aa" in a 40px box that clips a very large size. `label` is its accessible name; the tooltip is the value, or `title`. Returns the element.
 
 ### ui.meter
 
@@ -552,7 +563,7 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, disclosure, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, swatch, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 

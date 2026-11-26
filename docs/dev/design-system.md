@@ -28,6 +28,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | Nothing to show, loading, failed | `ui.emptyState`, `ui.loadingState`, `ui.errorState` |
 | A status | `ui.badge`, `ui.statusDot`, `ui.statusText`, `ui.countBadge` |
 | Who someone is: a person or an agent, as initials in a circle | `ui.avatar` |
+| What a CSS value looks like: a colour, radius, shadow, length or font | `ui.swatch` |
 | How full something is (context, a quota, a budget), on one line, stacked or as a bare bar | `ui.meter` |
 | Amounts compared across days, weeks or other buckets | `ui.barChart` |
 | Cards moved between columns (a kanban board) | `ui.board` |
