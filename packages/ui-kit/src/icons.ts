@@ -1,8 +1,9 @@
 import { setIconRenderer, type IconRenderer } from "@helenite/ui";
+import { onBridge, peekBridge, type IconShape as Shape } from "./bridge";
 
-// An app frame has no Obsidian `setIcon`, so ui-kit draws the icons its parts and the standard actions use as inline
-// SVG (Lucide shapes, 24x24, stroked with currentColor). Built with createElementNS, no HTML strings.
-type Shape = [tag: "path" | "circle" | "line" | "rect", attrs: Record<string, string>];
+// An app frame has no Obsidian `setIcon`. ui-kit holds the icons its parts and the standard actions use, so they draw at
+// once, and asks the host for any other Lucide name (`api.ui.icons`), so no app bundles the whole set. Both are drawn as
+// inline SVG (Lucide shapes, 24x24, stroked with currentColor), built with createElementNS, no HTML strings.
 const p = (d: string): Shape => ["path", { d }];
 const c = (cx: number, cy: number, r: number): Shape => ["circle", { cx: String(cx), cy: String(cy), r: String(r) }];
 const l = (x1: number, y1: number, x2: number, y2: number): Shape => ["line", { x1: String(x1), y1: String(y1), x2: String(x2), y2: String(y2) }];
@@ -37,11 +38,12 @@ export const KIT_ICONS: Record<string, Shape[]> = {
 
 const SVG = "http://www.w3.org/2000/svg";
 
-/** Draws a known icon as an inline SVG; an unknown name only tags the element (`data-icon`), like the default renderer. */
-export const kitIconRenderer: IconRenderer = (el, name) => {
-  el.dataset.icon = name;
-  const shapes = KIT_ICONS[name];
-  if (!shapes) return;
+/** What the host accepts: a name's characters, and how many names one `ui.icons` call may carry. */
+const NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const BATCH = 100;
+const iconName = (id: string) => id.replace(/^lucide-/, "");
+
+const draw = (el: HTMLElement, name: string, shapes: Shape[]) => {
   const doc = el.ownerDocument;
   const svg = doc.createElementNS(SVG, "svg");
   const attrs: Record<string, string> = {
@@ -54,7 +56,66 @@ export const kitIconRenderer: IconRenderer = (el, name) => {
     for (const [k, v] of Object.entries(a)) shape.setAttribute(k, v);
     svg.appendChild(shape);
   }
-  el.replaceChildren(svg);
+  return svg;
+};
+/** A late answer goes in beside whatever was added to the element since it asked. */
+const drawLate = (el: HTMLElement, name: string, shapes: Shape[]) => {
+  el.querySelector(":scope > svg.svg-icon")?.remove();
+  el.prepend(draw(el, name, shapes));
+};
+
+/** The host's answers; `null` is a name it does not know. */
+const answers = new Map<string, Shape[] | null>();
+/** Names still to ask for, with the elements waiting on each. */
+let waiting = new Map<string, Set<HTMLElement>>();
+let scheduled = false;
+
+function schedule(): void {
+  if (scheduled || !waiting.size) return;
+  scheduled = true;
+  queueMicrotask(ask); // one call for everything drawn in this turn
+}
+
+function ask(): void {
+  scheduled = false;
+  const ui = peekBridge()?.ui;
+  if (!ui) return; // setBridge asks again
+  const asked = waiting;
+  waiting = new Map();
+  if (!ui.icons) return; // an older host: the elements stay tagged
+  const names = [...asked.keys()];
+  for (let i = 0; i < names.length; i += BATCH) {
+    const batch = names.slice(i, i + BATCH);
+    ui.icons(batch).then((found) => {
+      for (const name of batch) {
+        const shapes = Object.hasOwn(found, name) ? found[name]! : null;
+        answers.set(name, shapes);
+        if (!shapes) continue;
+        // an element drawn again since, under another name, keeps that one
+        for (const el of asked.get(name)!) if (iconName(el.dataset.icon ?? "") === name) drawLate(el, name, shapes);
+      }
+    }).catch((err) => console.error(err));
+  }
+}
+
+onBridge(() => {
+  answers.clear();
+  schedule();
+});
+
+/** Draws a Lucide icon by name: one of `KIT_ICONS` at once, any other when the host answers (before or after
+ *  `setBridge`). A name nobody knows only tags the element (`data-icon`), like the default renderer. */
+export const kitIconRenderer: IconRenderer = (el, id) => {
+  el.dataset.icon = id;
+  const name = iconName(id);
+  const shapes = Object.hasOwn(KIT_ICONS, name) ? KIT_ICONS[name] : answers.get(name);
+  if (shapes) return el.replaceChildren(draw(el, name, shapes));
+  el.querySelector(":scope > svg.svg-icon")?.remove(); // the previous name's icon
+  if (shapes === null || !NAME.test(name)) return;
+  let els = waiting.get(name);
+  if (!els) waiting.set(name, (els = new Set()));
+  els.add(el);
+  schedule();
 };
 
 setIconRenderer(kitIconRenderer);
