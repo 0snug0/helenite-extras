@@ -61,6 +61,7 @@
 /* Prompt / suggestions (command palette, quick switcher) */
 .prompt {
   position: relative; display: flex; flex-direction: column;
+  padding: 0; /* SuggestModal's element is also a .modal: drop the dialog frame */
   width: var(--prompt-width); max-width: var(--prompt-max-width); max-height: var(--prompt-max-height);
   background-color: var(--background-primary); border: var(--prompt-border-width) solid var(--prompt-border-color);
   border-radius: var(--radius-l); box-shadow: var(--shadow-l); overflow: hidden; align-self: flex-start; margin-top: 10vh;
@@ -73,6 +74,7 @@
 .suggestion-note { color: var(--text-muted); font-size: var(--font-ui-smaller); }
 .suggestion-hotkey kbd, kbd { font-family: var(--font-monospace); font-size: var(--font-ui-smaller); background: var(--background-modifier-border); color: var(--text-muted); border-radius: var(--radius-s); padding: 1px 4px; }
 .prompt-instructions { display: flex; gap: var(--size-4-3); padding: var(--size-4-2) var(--size-4-3); border-top: var(--border-width) solid var(--background-modifier-border); color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.prompt-instructions:empty { display: none; } /* no setInstructions(): no divider and blank strip under the results */
 .prompt-instruction-command { font-weight: var(--font-semibold); margin-right: var(--size-2-2); }
 
 /* Menu */
