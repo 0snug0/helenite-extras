@@ -371,7 +371,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | --- | --- |
 | `hel-modal` | The modal element for `ui.confirm`, `ui.prompt`, `ui.choose`, `ui.form` and `ui.dialog`. Also has `is-confirm`, `is-prompt`, `is-choose`, `is-form` or `is-dialog`; `is-wide` for a dialog with `width: 'wide'`. Finesse dialog: `--hel-ring-overlay` (a faint ring and a deep drop shadow) in place of the border (kept, transparent, so a theme's `--modal-border-color` still has a place), `--hel-dialog-radius` (12px) corners, a 24px frame and a semibold title; the close button is a 6px control with the focus ring. Only `.hel-modal` is styled this way: the Settings modal and plugins' own `Modal`s keep the base look. A vault app's `api.ui.modal` is drawn by the host as a `ui.dialog`, so it looks the same. |
 | `hel-modal-body` | The element a `ui.dialog`'s `render` draws into. `has-side-panel` once `ctx.sidePanel()` split it; it is then a size container (`hel-modal-body`) for stacking the columns. |
-| `hel-modal-split` | The two columns `ctx.sidePanel()` adds to the body. One column, content first, while the body is 600px wide or narrower. |
+| `hel-modal-split` | The two columns `ctx.sidePanel()` adds to the body. Each column scrolls on its own, within the height the dialog has left. One column, content first, scrolling as one, while the body is 600px wide or narrower. |
 | `hel-modal-main` | The content column, a vertical stack. |
 | `hel-modal-side` | The side column (a ticket's properties), `--hel-modal-side-width` wide behind a `--hel-modal-side-divider` hairline. Stacked, it spans the dialog with the hairline above it. |
 | `hel-modal-title-icon` | A `ui.dialog`'s `icon`, before the title text in Obsidian's `modal-title`. |

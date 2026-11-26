@@ -652,14 +652,21 @@ pre.hel-code-block:focus-visible { outline: none; box-shadow: var(--hel-ring-foc
 .hel-modal-choices { max-height: 50vh; overflow-y: auto; padding: 2px; }
 .hel-modal-field > .hel-check-detail { margin-top: var(--size-2-1); padding-left: calc(var(--checkbox-size) + var(--size-4-2)); }
 /* a dialog with a side panel (ctx.sidePanel()): the content on the left, a side column on the right behind a hairline. The
-   body is the size container, so a narrow dialog (a small window, or a default-width one) stacks them, hairline on top. */
-.hel-modal-body.has-side-panel { container: hel-modal-body / inline-size; }
-.hel-modal-split { display: grid; grid-template-columns: minmax(0, 1fr) var(--hel-modal-side-width); gap: var(--size-4-6); align-items: start; }
-.hel-modal-main, .hel-modal-side { display: flex; flex-direction: column; gap: var(--size-4-3); min-width: 0; }
+   body is the size container, so a narrow dialog (a small window, or a default-width one) stacks them, hairline on top.
+   The columns scroll on their own: the content, body and split take only the height the dialog has left, so the buttons
+   stay put and each column scrolls inside it (stacked, the two scroll as one). Each scroller bleeds as .modal-content
+   does, so the rings of what touches its edges are not clipped. */
+.hel-modal > .modal-content:has(> .hel-modal-body.has-side-panel) { display: flex; flex-direction: column; }
+.hel-modal-body.has-side-panel { container: hel-modal-body / inline-size; display: flex; flex-direction: column; min-height: 0; }
+.hel-modal-body.has-side-panel > :not(.hel-modal-split) { flex: none; }
+.hel-modal-split { display: grid; grid-template-columns: minmax(0, 1fr) var(--hel-modal-side-width); grid-template-rows: minmax(0, 1fr); gap: var(--size-4-6); min-height: 0; overflow: hidden; margin: calc(-1 * var(--hel-modal-bleed)); }
+.hel-modal-main, .hel-modal-side { display: flex; flex-direction: column; gap: var(--size-4-3); min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--hel-modal-bleed); }
+:is(.hel-modal-main, .hel-modal-side) > * { flex-shrink: 0; }
 .hel-modal-side { padding-inline-start: var(--size-4-4); border-inline-start: var(--border-width) solid var(--hel-modal-side-divider); }
 @container hel-modal-body (max-width: 600px) {
-  .hel-modal-split { grid-template-columns: minmax(0, 1fr); }
-  .hel-modal-side { padding-inline-start: 0; padding-top: var(--size-4-4); border-inline-start: none; border-top: var(--border-width) solid var(--hel-modal-side-divider); }
+  .hel-modal-split { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; align-content: start; overflow-y: auto; }
+  .hel-modal-main, .hel-modal-side { min-height: auto; overflow: visible; }
+  .hel-modal-side { padding-inline-start: var(--hel-modal-bleed); padding-top: var(--size-4-4); border-inline-start: none; border-top: var(--border-width) solid var(--hel-modal-side-divider); }
 }
 
 /* settings: sub-pages, summary rows, scope bar */

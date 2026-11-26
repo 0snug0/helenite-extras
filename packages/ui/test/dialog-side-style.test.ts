@@ -25,9 +25,18 @@ describe("dialog side panel styling", () => {
   it("stacks to one column when the dialog body is narrow, with the hairline on top", () => {
     expect(rule(".hel-modal-body.has-side-panel {")).toContain("container: hel-modal-body / inline-size");
     expect(narrow).toContain("(max-width: 600px)");
-    expect(narrow).toContain(".hel-modal-split { grid-template-columns: minmax(0, 1fr); }");
+    expect(narrow).toContain(".hel-modal-split { grid-template-columns: minmax(0, 1fr);");
     expect(narrow).toContain("border-inline-start: none");
     expect(narrow).toContain("border-top: var(--border-width) solid var(--hel-modal-side-divider)");
+  });
+
+  it("each column scrolls on its own, and the two as one when stacked", () => {
+    expect(rule(".hel-modal > .modal-content:has(> .hel-modal-body.has-side-panel) {")).toContain("flex-direction: column");
+    for (const start of [".hel-modal-body.has-side-panel {", ".hel-modal-split {", ".hel-modal-main, .hel-modal-side {"]) expect(rule(start)).toContain("min-height: 0");
+    expect(rule(".hel-modal-split {")).toContain("grid-template-rows: minmax(0, 1fr)");
+    expect(rule(".hel-modal-main, .hel-modal-side {")).toContain("overflow-y: auto");
+    expect(narrow).toMatch(/\.hel-modal-split \{[^}]*overflow-y: auto/);
+    expect(narrow).toMatch(/\.hel-modal-main, \.hel-modal-side \{[^}]*overflow: visible/);
   });
 
   it("uses tokens only, so light and dark follow the theme", () => {
