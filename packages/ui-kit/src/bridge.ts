@@ -23,7 +23,12 @@ export interface MenuSpec { items: MenuItem[]; /** Client coordinates inside the
 
 export type NoticeKind = "info" | "success" | "error";
 
+/** One element of a 24x24 stroked icon, as the host sends it. */
+export type IconShape = [tag: "path" | "circle" | "line" | "rect" | "ellipse" | "polyline" | "polygon", attrs: Record<string, string>];
+
 export interface HostUi {
+  /** The shapes of up to 100 Lucide icons, by name; a name the host does not know is left out. Absent on an older host. */
+  icons?(names: string[]): Promise<Record<string, IconShape[]>>;
   modal(spec: ModalSpec): Promise<ModalResult>;
   /** Resolves with the chosen item id, or `null` when dismissed. */
   menu(spec: MenuSpec): Promise<string | null>;
@@ -41,7 +46,17 @@ export interface KitApi {
 
 let current: KitApi | null = null;
 
-export function setBridge(api: KitApi | null): void { current = api; }
+const listeners: (() => void)[] = [];
+
+export function setBridge(api: KitApi | null): void {
+  if (api === current) return; // each of an app's pages may call it
+  current = api;
+  for (const l of listeners) l();
+}
+/** Runs `fn` each time the bridge changes. */
+export function onBridge(fn: () => void): void { listeners.push(fn); }
+/** The bridge, or `null` before `setBridge`. */
+export function peekBridge(): KitApi | null { return current; }
 export function getBridge(): KitApi {
   if (!current) throw new Error("ui-kit: no host bridge. Call setBridge(api) with the app's capability api first.");
   return current;
