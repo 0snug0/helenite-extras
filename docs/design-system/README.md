@@ -212,6 +212,7 @@ const name = ui.field(el, { label: 'Name', hint: 'Shown in the sidebar.' });
 ui.textInput(name.control, { value: note.name, onInput: (v) => name.setError(v.trim() ? null : 'Enter a name.') });
 
 const kind = ui.field(el, { label: 'Kind', inline: true });              // label and control on one row
+const path = ui.field(el, { label: 'Location', fill: true });             // the control takes the full width
 const pick = ui.dropdown(kind.control, { options: [{ value: 'local', text: 'Local' }, { value: 'synced', text: 'Synced' }], value: 'local', onChange: setKind });
 
 const sync = ui.toggle(el, { value: true, label: 'Sync this vault', onChange: setSync });
@@ -222,7 +223,7 @@ ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) }
 
 | Part | Returns | Notes |
 | --- | --- | --- |
-| `field(parent, { label, hint?, inline? })` | `{ el, control, setError(msg \| null), setHint(text) }` | `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
+| `field(parent, { label, hint?, inline?, fill? })` | `{ el, control, setError(msg \| null), setHint(text) }` | A control keeps its own width unless `fill: true`: then a text box, dropdown or search box fills the slot (sharing the row with a button drawn beside it), and a multiline box, choice list or check list gets a row of its own. Use it for paths, links and lists. `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
 | `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter?, multiline?, rows? })` | the `<input>` (a `<textarea>` with `multiline`) | `type` is `text` (default) or `number`; `secret` hides the text. `multiline: true` makes a box of several lines (`rows`, default 3) for a longer answer; Enter starts a new line there and `onEnter` is not called. |
 | `toggle(parent, { value, label, disabled?, hideLabel?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. `hideLabel` keeps the label as the switch's accessible name without showing it, for a row that shows the name elsewhere. |
 | `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |

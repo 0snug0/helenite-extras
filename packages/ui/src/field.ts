@@ -5,6 +5,11 @@ export interface FieldOptions {
   hint?: string;
   /** Label and control on one row. */
   inline?: boolean;
+  /**
+   * The control takes the slot's width: a text box or dropdown fills the row (sharing it with a button drawn beside
+   * it), and a multiline box, choice list or check list gets a row of its own. Without it, each keeps its own width.
+   */
+  fill?: boolean;
 }
 
 export interface FieldHandle {
@@ -24,6 +29,7 @@ export function field(parent: HTMLElement, o: FieldOptions): FieldHandle {
   const el = doc.createElement("div");
   el.classList.add("hel-field");
   if (o.inline) el.classList.add("is-inline");
+  if (o.fill) el.classList.add("is-fill");
   const label = doc.createElement("label");
   label.classList.add("hel-field-label");
   label.id = `${id}-label`;

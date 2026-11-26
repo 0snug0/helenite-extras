@@ -31,6 +31,11 @@ describe("field", () => {
     expect(g.el.querySelector(".hel-field-hint")!.textContent).toBe("New");
   });
 
+  it("fill marks the field so its control takes the slot's width", () => {
+    expect(field(host(), { label: "x", fill: true }).el.classList.contains("is-fill")).toBe(true);
+    expect(field(host(), { label: "x" }).el.classList.contains("is-fill")).toBe(false);
+  });
+
   it("has a label, a control slot, a hint, and an error line hidden until set", () => {
     const f = field(host(), { label: "Name", hint: "Shown in the sidebar." });
     expect(f.el.classList.contains("hel-field")).toBe(true);

@@ -215,6 +215,9 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-field.is-inline > .hel-field-hint, .hel-field.is-inline > .hel-field-error { grid-column: 2; }
 .hel-field-label { font-size: var(--font-ui-small); font-weight: var(--font-medium, 500); color: var(--text-normal); }
 .hel-field-control { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; min-width: 0; }
+.hel-field-control > :is(.hel-input, .hel-select) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.hel-field.is-fill > .hel-field-control > :is(input.hel-input, .hel-select, .search-input-container) { flex: 1 1 12em; min-width: 0; box-sizing: border-box; }
+.hel-field.is-fill > .hel-field-control > :is(textarea.hel-input, .hel-choice-list, .hel-check-list) { flex: 1 1 100%; min-width: 0; box-sizing: border-box; }
 .hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 /* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */
