@@ -84,7 +84,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
 .side-dock-vault-header { display: flex; justify-content: center; }
 .side-dock-vault-header:empty { display: none; }
 .helenite-vault-circle {
-  --vault-color: hsl(var(--vault-hue, 220) 55% 52%);
+  --vault-color: hsl(var(--vault-hue, 220) var(--vault-saturation, 55%) 52%);
   position: relative;
   width: 30px; height: 30px; padding: 0; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -133,7 +133,7 @@ body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:active { background-color
   color: var(--text-on-accent); background-color: var(--interactive-accent); pointer-events: none;
 }
 .side-dock-actions.mod-vault .side-dock-ribbon-action {
-  --vault-color: hsl(var(--vault-hue, 220) 55% 52%);
+  --vault-color: hsl(var(--vault-hue, 220) var(--vault-saturation, 55%) 52%);
   border-radius: var(--radius-s);
   background-color: color-mix(in srgb, var(--vault-color) 16%, transparent);
   color: var(--vault-color);
