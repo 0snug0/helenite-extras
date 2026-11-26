@@ -371,11 +371,25 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-board-lane-head { display: flex; flex: none; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); min-height: var(--input-height); margin-bottom: var(--size-4-2); }
 .hel-board-lane-head:empty { display: none; }
 .hel-board-lane-head > .hel-toolbar-end { margin-inline-start: auto; }
+/* A drawn title (BoardLaneOptions.title) wraps beside the count and menu, which keep their size on its first line. */
+.hel-board-lane-head:has(> .hel-board-lane-title) { flex-wrap: nowrap; align-items: baseline; }
+.hel-board-lane-head:has(> .hel-board-lane-title) > :not(.hel-board-lane-title) { flex: none; }
+.hel-board-lane-head:has(> .hel-board-lane-title) > .hel-toolbar-end { align-self: flex-start; min-height: var(--input-height); }
+.hel-board-lane-head > .hel-board-lane-title { flex: 0 1 auto; min-width: 0; padding: calc((var(--input-height) - 1lh) / 2) var(--size-2-2); font-family: inherit; font-size: var(--font-ui-small); font-weight: var(--font-medium, 500); line-height: 1.4; text-align: start; overflow-wrap: anywhere; }
+/* A title that is a button reads as the title: these outrank base.css's button:not(.clickable-icon), one filled line. */
+.hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon) { display: block; height: auto; white-space: normal; margin: 0; border: 0; border-radius: var(--hel-control-radius, 6px); background: none; box-shadow: none; color: inherit; cursor: var(--cursor-link, pointer); }
+.hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon):hover { background-color: var(--background-modifier-hover); box-shadow: none; }
+.hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon):focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
 /* The padding keeps the cards' rings inside the scrolling list. */
 .hel-board-list { display: flex; flex-direction: column; gap: var(--size-4-2); flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--size-2-2); border-radius: var(--hel-card-radius); }
 .hel-board-list > * { flex: none; }
 .hel-board-list > .hel-button { align-self: center; }
 .hel-board-list.is-drop-target { outline: 2px dashed var(--interactive-accent); outline-offset: -2px; }
+/* With a footer the list stops at its cards (and still shrinks and scrolls), so the footer sits right under them. */
+.hel-board-lane-footer { display: flex; flex: none; flex-wrap: wrap; justify-content: center; gap: var(--size-4-2); padding: var(--size-4-1) var(--size-2-2) var(--size-2-2); }
+.hel-board-lane-footer:empty { display: none; }
+.hel-board-lane:has(> .hel-board-lane-footer:not(:empty)) > .hel-board-list { flex-grow: 0; }
+.hel-board-lane > .hel-board-list.is-drop-target:empty { min-height: var(--input-height); }
 .hel-board-card { overflow-wrap: anywhere; }
 .hel-board-card.is-clickable { cursor: var(--cursor-link, pointer); }
 .hel-board-card[draggable="true"] { cursor: grab; }
@@ -385,6 +399,17 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-board-card .hel-status-dot { flex: none; } /* a title that wraps must not squash a dot beside it */
 .hel-board-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-1); }
 .hel-board-card-meta:empty { display: none; }
+/* The card's row: checkbox, content, actions. The side parts are one line tall, so they sit level with the first line. */
+.hel-board-card > .hel-card-head:empty + .hel-card-body { padding-top: var(--size-4-2); }
+.hel-board-card-row { display: flex; align-items: flex-start; gap: var(--size-4-2); line-height: var(--line-height-normal); }
+.hel-board-card-row:has(> .hel-board-card-content:first-child:empty + .hel-board-card-actions:empty) { display: none; }
+.hel-board-card-row > .hel-board-card-check { display: flex; flex: none; align-items: center; height: 1lh; }
+.hel-board-card-row > .hel-board-card-check > input[type=checkbox] { margin: 0; }
+.hel-board-card-content { flex: 1 1 0; min-width: 0; }
+.hel-board-card-content > :first-child, .hel-board-card-content > :first-child > :first-child { margin-block-start: 0; }
+.hel-board-card-content > :last-child, .hel-board-card-content > :last-child > :last-child { margin-block-end: 0; }
+.hel-board-card-actions { display: flex; flex: none; align-items: center; height: 1lh; }
+.hel-board-card-actions:empty { display: none; }
 
 /* check list and choice list */
 .hel-check-list { display: flex; flex-direction: column; gap: var(--size-4-2); }

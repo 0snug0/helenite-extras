@@ -156,11 +156,21 @@ ui.badge(todo.head, '1');
 const c = todo.card({ id: 'T-1', title: 'Fix the login', tone: 'warning', onOpen: () => open('T-1') });
 ui.badge(c.meta, 'P1', 'warning');
 ui.chip(c.meta, 'Needs your reply', { tone: 'warning' });
+
+const done = b.lane({ id: 'done', label: 'Done', title: 'Done', onTitleClick: () => rename('done') });
+const d = done.card({ id: 'T-2', check: { checked: true, label: 'Mark as not done', onToggle: (checked) => setDone('T-2', checked) } });
+await MarkdownRenderer.render(app, text, d.content, path, component);
+ui.moreButton(d.actions, () => cardItems('T-2'), 'Card options');
+ui.button(done.footer, { text: 'Add a card', icon: 'plus', variant: 'link', onClick: () => add('done') });
 ```
 
-A kanban board: a fixed-height row of lanes that scrolls sideways, each lane with a head slot and its own scrolling list. `lane()` returns `{ el, head, list, card }`; `card()` returns a `ui.card` handle (compact; `body`, `footer`, `setTone`) with `meta`, a wrapping row for chips and badges. Draw an empty state or a "Load more" button into `list`.
+A kanban board: a fixed-height row of lanes that scrolls sideways, each lane with a head slot and its own scrolling list. `lane()` returns `{ el, head, list, footer, card }`; `card()` returns a `ui.card` handle (compact; `body`, `footer`, `setTone`) with `content`, `actions` and `meta`. Draw an empty state or a "Load more" button into `list`.
 
-With `onDrop` the cards can be dragged (`draggable: false` keeps one still). The board outlines the lane under the pointer, dims the dragged card, and reports a drop as the card's id, the lane's id and the place: before the first of that lane's cards whose middle is below the pointer, not counting the dragged one. It does not move anything itself: change your data and redraw. A redraw during a drag would take the card away, so hold redraws from `onDragStart` until `onDragEnd`, which runs once per drag, before `onDrop`. Dragging has no keyboard equivalent, so offer another way to move a card (its `onOpen` view, a menu).
+A lane's `title` is drawn first in its head and wraps when long; `onTitleClick` makes it a button. Draw a count and a menu button (class `hel-toolbar-end` for the far end) into `head` after it. The lane's `footer` is for an "Add a card" button: it sits under the cards of a short list and stays in view under a long one.
+
+A card has a row for what it says: `check` draws a done checkbox (`checked`, its accessible `label`, `onToggle(checked)`), `content` takes text or rendered markdown with the margins at its edges trimmed, and `actions` holds buttons at the far end. The checkbox and actions stay level with the first line. `meta` is a wrapping row for chips and badges under it. Like a drop, a tick only reports: change your data and redraw.
+
+With `onDrop` the cards can be dragged (`draggable: false` keeps one still). The board outlines the lane under the pointer, dims the dragged card, and reports a drop as the card's id, the lane's id and the place: before the first of that lane's cards whose middle is below the pointer, not counting the dragged one (the top for a drop on the lane's head, the end for one on its footer). It does not move anything itself: change your data and redraw. A redraw during a drag would take the card away, so hold redraws from `onDragStart` until `onDragEnd`, which runs once per drag, before `onDrop`. Dragging has no keyboard equivalent, so offer another way to move a card (its `onOpen` view, a menu).
 
 `onOpen` makes the card a button, opened by a click, Enter or Space (not by the buttons and links inside it); `label` names it when the title is not enough.
 

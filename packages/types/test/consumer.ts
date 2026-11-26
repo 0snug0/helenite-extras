@@ -73,6 +73,11 @@ ui.meter(gauge, { layout: 'stacked', label: 'Weekly', text: '30%', sub: 'resets 
 const lane = ui.board(rowEl, { label: 'Tickets', onDrop: (id: string, to: string, index: number) => console.log(id, to, index) }).lane({ id: 'todo', label: 'To do' });
 const boardCard: BoardCardHandle = lane.card({ id: 'T-1', title: 'Fix it', tone: 'accent', onOpen: () => undefined });
 ui.badge(boardCard.meta, 'P1');
+const doneCard = lane.card({ id: 'T-2', check: { checked: false, label: 'Done', onToggle: (checked: boolean) => console.log(checked) } });
+doneCard.content.textContent = 'text';
+ui.moreButton(doneCard.actions, () => []);
+const titled = ui.board(rowEl).lane({ id: 'x', label: 'X', title: 'X', onTitleClick: () => undefined });
+ui.button(titled.footer, { text: 'Add a card' });
 const who: AvatarOptions = { text: 'Ada Lovelace', size: 'small' };
 const face: HTMLElement = ui.avatar(boardCard.meta, who);
 // @ts-expect-error: an avatar needs its text.

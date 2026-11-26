@@ -232,10 +232,16 @@ Obsidian's classes, made by `AbstractInputSuggest` and `EditorSuggest` (and the 
 | `hel-board` | `ui.board`: a row of lanes that fills the height it is given and scrolls sideways (`--hel-board-gap` apart). |
 | `hel-board-page` | Add to the board's container: it fills the pane without scrolling, the rows above the board keep their height and the board takes the rest. A `hel-card` among those rows gets a margin below it, and its body scrolls sideways. |
 | `hel-board-lane` | One lane, `--hel-board-lane-width` wide. |
-| `hel-board-lane-head` | The lane's head slot (`BoardLaneHandle.head`), for its name, count and actions; a `hel-toolbar-end` child sits at the far end. Hidden while empty. |
-| `hel-board-list` | The lane's cards, scrolling on their own. `is-drop-target` (a dashed accent outline) while a card is dragged over it. |
+| `hel-board-lane-head` | The lane's head slot (`BoardLaneHandle.head`), for its name, count and actions; a `hel-toolbar-end` child sits at the far end. Hidden while empty. With a `hel-board-lane-title` it stays one row: the title wraps and the rest sit level with its first line. |
+| `hel-board-lane-title` | The lane's name (`BoardLaneOptions.title`): a `span`, or with `onTitleClick` a `button` that looks like text until hover (`--background-modifier-hover`) or keyboard focus (`--hel-ring-focus`). |
+| `hel-board-list` | The lane's cards, scrolling on their own. `is-drop-target` (a dashed accent outline) while a card is dragged over it (or over the rest of its lane). |
+| `hel-board-lane-footer` | The slot under the cards (`BoardLaneHandle.footer`), centred. It follows a short list and stays in view under a long one, which scrolls. Hidden while empty. |
 | `hel-board-card` | A `hel-card` (`is-compact`) in a lane. `is-clickable` when it opens, `draggable="true"` when it moves (grab cursor); either raises the ring on hover (a toned card keeps its tone). `--hel-ring-focus` on keyboard focus, `is-dragging` (half opacity) while dragged. |
 | `hel-board-card-meta` | The card's wrapping row of chips and badges (`BoardCardHandle.meta`). Hidden while empty. |
+| `hel-board-card-row` | The card's row above the meta: checkbox, content and actions. Hidden while there is none of them. |
+| `hel-board-card-check` | The done checkbox (`BoardCardOptions.check`), also a `hel-check`, level with the content's first line. |
+| `hel-board-card-content` | The card's text or markdown (`BoardCardHandle.content`, also `markdown-rendered`), with the margins at its top and bottom edges trimmed. |
+| `hel-board-card-actions` | Buttons at the far end of the row (`BoardCardHandle.actions`), level with the first line. Hidden while empty. |
 
 ### Check lists and choice lists
 

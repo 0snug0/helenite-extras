@@ -1,6 +1,6 @@
 // The board view: a TextFileView over a board note. Edits go through ops.ts and are written straight back to the note.
 import { MarkdownRenderer, TextFileView, type WorkspaceLeaf } from 'obsidian';
-import { ui, type BoardHandle, type MenuItemSpec } from 'helenite';
+import { ui, type BoardCardHandle, type BoardHandle, type MenuItemSpec } from 'helenite';
 import { parseBoard, serializeBoard, type Board, type Card, type Lane } from './board';
 import * as ops from './ops';
 
@@ -11,12 +11,6 @@ const toPrompt = (text: string): string => text.replace(/\r?\n/g, '<br>');
 const fromPrompt = (text: string): string => text.replace(/<br>/g, '\n');
 const firstLine = (text: string): string => text.split('\n')[0] || '(empty card)';
 const required = (what: string) => (v: string) => (v.trim() ? null : `Enter a ${what}.`);
-
-/** A card of one paragraph is shown without the paragraph's margins, so it is no taller than its text. */
-function unwrapParagraph(el: HTMLElement): void {
-  const only = el.children.length === 1 ? el.firstElementChild! : null;
-  if (only?.tagName === 'P') only.replaceWith(...Array.from(only.childNodes));
-}
 
 interface Scroll {
   x: number;
@@ -126,33 +120,29 @@ export class KanbanView extends TextFileView {
   /** Returns when each card's markdown is drawn. */
   private renderLane(board: BoardHandle, lane: Lane, index: number): Promise<void>[] {
     const title = lane.title || 'Untitled list';
-    const { head, list, card } = board.lane({ id: lane.id, label: title });
-    ui.statusText(head, title).addEventListener('dblclick', () => void this.renameLane(lane));
+    const { head, list, footer, card } = board.lane({ id: lane.id, label: title, title, onTitleClick: () => void this.renameLane(lane) });
     const count = lane.maxItems ? `${lane.cards.length}/${lane.maxItems}` : String(lane.cards.length);
     ui.badge(head, count, lane.maxItems && lane.cards.length > lane.maxItems ? 'danger' : lane.markComplete ? 'success' : 'default');
     ui.moreButton(head, () => this.laneMenu(lane, index), 'List options').el.classList.add('hel-toolbar-end');
 
     if (!lane.cards.length) ui.emptyState(list, 'No cards', { variant: 'inline' });
-    const drawn = lane.cards.map((c) => this.renderCard(card({ id: c.id, tone: c.checked ? 'muted' : 'default' }).head, c, lane));
-    ui.button(list, { text: 'Add a card', icon: 'plus', variant: 'link', onClick: () => this.addCard(lane) });
+    const drawn = lane.cards.map((c) => {
+      const check = {
+        checked: c.checked,
+        label: c.checked ? 'Mark card as not done' : 'Mark card as done',
+        onToggle: () => this.update(ops.toggleCard(this.board, c.id)),
+      };
+      return this.renderCard(card({ id: c.id, tone: c.checked ? 'muted' : 'default', check }), c, lane);
+    });
+    ui.button(footer, { text: 'Add a card', icon: 'plus', variant: 'link', onClick: () => this.addCard(lane) });
     return drawn;
   }
 
-  /** The done checkbox, the card's markdown and its menu, side by side in the card's head (a part for this: HELENITE-185). */
-  private renderCard(row: HTMLElement, card: Card, lane: Lane): Promise<void> {
-    // In a box of its own, or long text beside it squeezes the checkbox.
-    const check = row.createDiv().createEl('input', { cls: 'task-list-item-checkbox', type: 'checkbox' });
-    check.checked = card.checked;
-    check.setAttribute('aria-label', card.checked ? 'Mark card as not done' : 'Mark card as done');
-    check.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.update(ops.toggleCard(this.board, card.id));
-    });
-    const body = row.createDiv({ cls: 'markdown-rendered' });
-    const drawn = MarkdownRenderer.render(this.app, card.text, body, this.file?.path ?? '', this).then(() => unwrapParagraph(body));
-    body.addEventListener('dblclick', () => void this.editCard(card));
-    ui.moreButton(row, () => this.cardMenu(card, lane), 'Card options');
-    return drawn;
+  /** The card's markdown and its menu; returns when the markdown is drawn. */
+  private renderCard({ content, actions }: BoardCardHandle, card: Card, lane: Lane): Promise<void> {
+    content.addEventListener('dblclick', () => void this.editCard(card));
+    ui.moreButton(actions, () => this.cardMenu(card, lane), 'Card options');
+    return MarkdownRenderer.render(this.app, card.text, content, this.file?.path ?? '', this);
   }
 
   private endDrag(): void {

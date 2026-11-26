@@ -55,20 +55,103 @@ describe("board", () => {
     expect(lane.el.dataset.lane).toBe("todo");
     expect(lane.el.getAttribute("role")).toBe("group");
     expect(lane.el.getAttribute("aria-label")).toBe("To do");
-    expect([...lane.el.children]).toEqual([lane.head, lane.list]);
+    expect([...lane.el.children]).toEqual([lane.head, lane.list, lane.footer]);
     expect(lane.head.className).toBe("hel-board-lane-head");
     expect(lane.list.className).toBe("hel-board-list");
+    expect(lane.footer.className).toBe("hel-board-lane-footer");
+    expect(lane.footer.childNodes.length).toBe(0);
   });
 
-  it("a card is a compact ui.card in the lane's list, with an empty meta row first in its body", () => {
+  it("a drop on the footer goes last and on the head first, wherever a scrolled list has put its cards", () => {
+    const { todo, cards, log } = setup();
+    todo.footer.appendChild(document.createElement("button"));
+    // Scrolled: the first card is above the view, and the others reach past the fold, under the footer.
+    place(cards[1]!.el, 300);
+    place(cards[2]!.el, 320);
+    place(cards[0]!.el, -40);
+    for (const [dragged, target, y, index] of [[0, todo.footer.firstElementChild!, 200, 2], [2, todo.head, 0, 0]] as const) {
+      log.length = 0;
+      fire(cards[dragged]!.el, "dragstart");
+      fire(target, "drop", { clientY: y });
+      expect(log.at(-1)).toBe(`drop ${cards[dragged]!.el.dataset.id} todo ${index}`);
+    }
+  });
+
+  it("a lane title is drawn first in the head, as text or as a button when it can be clicked", () => {
+    const b = board(host());
+    const plain = b.lane({ id: "a", label: "A", title: "Backlog" });
+    expect(plain.head.firstElementChild!.tagName).toBe("SPAN");
+    expect(plain.head.firstElementChild!.className).toBe("hel-board-lane-title");
+    expect(plain.head.textContent).toBe("Backlog");
+    let clicked = 0;
+    const named = b.lane({ id: "b", label: "B", title: "Doing", onTitleClick: () => { clicked++; } });
+    const title = named.head.firstElementChild as HTMLButtonElement;
+    expect(title.tagName).toBe("BUTTON");
+    expect(title.type).toBe("button");
+    expect(title.className).toBe("hel-board-lane-title");
+    expect(title.textContent).toBe("Doing");
+    title.click();
+    expect(clicked).toBe(1);
+    expect(b.lane({ id: "c", label: "C" }).head.childNodes.length).toBe(0);
+  });
+
+  it("a drop on a lane's footer or head lands in its list", () => {
+    const { todo, cards, log } = setup();
+    for (const [target, y, index] of [[todo.footer, 100, 2], [todo.head, -5, 0]] as const) {
+      log.length = 0;
+      fire(cards[0]!.el, "dragstart");
+      expect(fire(target, "dragover").defaultPrevented).toBe(true);
+      expect(todo.list.classList.contains("is-drop-target")).toBe(true);
+      // Moving between the lane's own parts is not leaving it.
+      fire(target, "dragleave", { relatedTarget: todo.list });
+      expect(todo.list.classList.contains("is-drop-target")).toBe(true);
+      fire(target, "drop", { clientY: y });
+      expect(log).toEqual(["start a", "end", `drop a todo ${index}`]);
+    }
+  });
+
+  it("a card is a compact ui.card in the lane's list, with an empty row and meta row in its body", () => {
     const { todo } = setup();
     const c = todo.card({ id: "d", title: "Fix it", tone: "warning" });
     expect(c.el.parentElement).toBe(todo.list);
     expect([...c.el.classList]).toEqual(["hel-card", "is-compact", "is-warning", "hel-board-card"]);
     expect(c.el.dataset.id).toBe("d");
     expect(c.titleEl!.textContent).toBe("Fix it");
-    expect(c.body.firstElementChild).toBe(c.meta);
+    const row = c.content.parentElement!;
+    expect([...c.body.children]).toEqual([row, c.meta]);
+    expect(row.className).toBe("hel-board-card-row");
+    expect([...row.children]).toEqual([c.content, c.actions]);
+    expect(c.content.className).toBe("hel-board-card-content markdown-rendered");
+    expect(c.actions.className).toBe("hel-board-card-actions");
     expect(c.meta.className).toBe("hel-board-card-meta");
+    for (const el of [c.content, c.actions, c.meta]) expect(el.childNodes.length).toBe(0);
+  });
+
+  it("check draws a done checkbox first in the card's row, named by its label, that reports what it was set to", () => {
+    const { todo } = setup();
+    const seen: boolean[] = [];
+    let opened = 0;
+    const c = todo.card({ id: "d", onOpen: () => { opened++; }, check: { checked: true, label: "Mark card as not done", onToggle: (v) => seen.push(v) } });
+    const row = c.content.parentElement!;
+    const check = row.firstElementChild as HTMLLabelElement;
+    expect(check.tagName).toBe("LABEL");
+    expect(check.className).toBe("hel-check hel-board-card-check");
+    expect([...row.children]).toEqual([check, c.content, c.actions]);
+    const box = check.firstElementChild as HTMLInputElement;
+    expect(box.type).toBe("checkbox");
+    expect(box.checked).toBe(true);
+    expect(box.getAttribute("aria-label")).toBe("Mark card as not done");
+    box.click();
+    box.click();
+    expect(seen).toEqual([false, true]);
+    check.click();
+    expect(opened).toBe(0);
+  });
+
+  it("a card without check has no checkbox, and an unchecked one starts unchecked", () => {
+    const { todo } = setup();
+    expect(todo.card({ id: "d" }).el.querySelector("input")).toBeNull();
+    expect(todo.card({ id: "e", check: { checked: false, label: "Done", onToggle: () => {} } }).el.querySelector("input")!.checked).toBe(false);
   });
 
   it("onOpen makes the card a button named by its label, opened by a click, Enter or Space but not by what is inside it", () => {
@@ -192,7 +275,7 @@ describe("Finesse board styling", () => {
   it("outlines the drop target and gives cards a grab cursor, hover and focus rings and a dimmed drag", () => {
     expect(rule(".hel-board-list.is-drop-target {")).toContain("outline: 2px dashed var(--interactive-accent)");
     expect(rule('.hel-board-card[draggable="true"] {')).toContain("cursor: grab");
-    expect(rules.find((l) => l.includes(":hover {"))).toContain("var(--hel-ring-hover)");
+    expect(rule(".hel-board-card:is(.is-clickable,")).toContain("var(--hel-ring-hover)");
     expect(rule(".hel-board-card:focus-visible {")).toContain("var(--hel-ring-focus)");
     expect(rule(".hel-board-card.is-dragging {")).toContain("opacity: 0.5");
     expect(rule(".hel-board-card-meta {")).toContain("flex-wrap: wrap");
@@ -202,12 +285,46 @@ describe("Finesse board styling", () => {
     expect(css.indexOf(".hel-board-card:focus-visible {")).toBeGreaterThan(css.indexOf(".hel-card.is-muted {"));
   });
 
+  it("the card row lines the checkbox and the actions up with the first line, with the actions at the far end", () => {
+    expect(rule(".hel-board-card-row {")).toContain("align-items: flex-start");
+    for (const side of [".hel-board-card-row > .hel-board-card-check {", ".hel-board-card-actions {"]) {
+      for (const d of ["height: 1lh", "flex: none", "align-items: center"]) expect(rule(side), side).toContain(d);
+    }
+    for (const d of ["flex: 1 1 0", "min-width: 0"]) expect(rule(".hel-board-card-content {")).toContain(d);
+    expect(css).toContain(".hel-board-card-actions:empty { display: none; }");
+    expect(css).toContain(".hel-board-card-row:has(> .hel-board-card-content:first-child:empty + .hel-board-card-actions:empty) { display: none; }");
+  });
+
+  it("trims the margins at the edges of a card's markdown, however many blocks it has", () => {
+    expect(rule(".hel-board-card-content > :first-child,")).toContain(".hel-board-card-content > :first-child > :first-child { margin-block-start: 0; }");
+    expect(rule(".hel-board-card-content > :last-child,")).toContain(".hel-board-card-content > :last-child > :last-child { margin-block-end: 0; }");
+  });
+
+  it("a lane title wraps, beside a count and menu that keep their size, and a title button looks like text", () => {
+    const title = rule(".hel-board-lane-head > .hel-board-lane-title {");
+    for (const d of ["flex: 0 1 auto", "min-width: 0", "overflow-wrap: anywhere", "text-align: start"]) expect(title).toContain(d);
+    expect(css).toContain(".hel-board-lane-head:has(> .hel-board-lane-title) { flex-wrap: nowrap; align-items: baseline; }");
+    expect(css).toContain(".hel-board-lane-head:has(> .hel-board-lane-title) > :not(.hel-board-lane-title) { flex: none; }");
+    // Beats base.css's button:not(.clickable-icon) (one line, a fixed height, a filled button) and its :hover.
+    const button = css.split("\n").find((l) => l.startsWith(".hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon) {"))!;
+    for (const d of ["height: auto", "white-space: normal", "background: none", "box-shadow: none"]) expect(button).toContain(d);
+    expect(css).toContain(".hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon):hover {");
+    expect(css).toContain(".hel-board-lane-head > button.hel-board-lane-title:not(.clickable-icon):focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }");
+  });
+
+  it("a lane footer follows the cards and stays in view under a long list", () => {
+    expect(rule(".hel-board-lane-footer {")).toContain("flex: none");
+    expect(css).toContain(".hel-board-lane-footer:empty { display: none; }");
+    // The list stops at its cards (and still shrinks and scrolls), so the footer sits right under them.
+    expect(css).toContain(".hel-board-lane:has(> .hel-board-lane-footer:not(:empty)) > .hel-board-list { flex-grow: 0; }");
+  });
+
   it("uses tokens only, so light and dark follow the theme", () => {
     expect(rules.length).toBeGreaterThan(10);
     expect(rules.join("\n")).not.toMatch(/#[0-9a-fA-F]{3,8}\b|rgba?\(/);
   });
 
   it("STYLING.md has a row for each class and variable", () => {
-    for (const name of ["`hel-board`", "`hel-board-page`", "`hel-board-lane`", "`hel-board-lane-head`", "`hel-board-list`", "`hel-board-card`", "`hel-board-card-meta`", "`--hel-board-lane-width`", "`--hel-board-gap`"]) expect(styling).toContain(`| ${name} |`);
+    for (const name of ["`hel-board`", "`hel-board-page`", "`hel-board-lane`", "`hel-board-lane-head`", "`hel-board-list`", "`hel-board-card`", "`hel-board-card-meta`", "`hel-board-card-row`", "`hel-board-card-check`", "`hel-board-card-content`", "`hel-board-card-actions`", "`hel-board-lane-title`", "`hel-board-lane-footer`", "`--hel-board-lane-width`", "`--hel-board-gap`"]) expect(styling).toContain(`| ${name} |`);
   });
 });
