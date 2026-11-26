@@ -140,6 +140,7 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-count-badge-spoken` | The visually hidden text a screen reader reads for a count badge (the exact count and label). |
 | `hel-chip` | `ui.chip`. Tones as for badges. Finesse Chips: the badge treatment (a 10% tint of the tone, `--hel-chip-tone`, inside a hairline ring of it, medium weight, the tone's text colour; normal text for warning) with `--hel-chip-radius` corners (default `--hel-control-radius`, 6px) and no border. |
 | `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. Fades up and gets a hover fill; `--hel-ring-focus` on keyboard focus. |
+| `hel-avatar` | `ui.avatar`: initials in a circle, named for screen readers (and in its tooltip) by the whole text. Finesse Avatars: a soft muted tint inside a hairline ring, medium weight, `--text-normal` text, so light and dark follow the theme. Sizes: `is-small` (20px), `is-medium` (28px, the default), `is-large` (40px). |
 
 ### Form controls, tabs and toolbar
 

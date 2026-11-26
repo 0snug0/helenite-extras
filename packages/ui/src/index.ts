@@ -41,6 +41,8 @@ export { meter } from "./meter";
 export type { MeterOptions } from "./meter";
 export { barChart } from "./bar-chart";
 export type { BarChartOptions, BarChartBucket } from "./bar-chart";
+export { avatar } from "./avatar";
+export type { AvatarOptions } from "./avatar";
 export { thread, threadText } from "./thread";
 export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { keyValue } from "./key-value";
