@@ -9,6 +9,8 @@ export interface ButtonOptions {
   variant?: ButtonVariant;
   pressed?: boolean;
   disabled?: boolean;
+  /** Makes the button a drag source: a grab cursor, dimmed while dragged. Set the drag's data in your own `dragstart` listener on `el`. */
+  draggable?: boolean;
   onClick?: (e: MouseEvent) => unknown;
 }
 
@@ -70,6 +72,11 @@ export function button(parent: HTMLElement, o: ButtonOptions): ButtonHandle {
   };
   if (o.pressed !== undefined) setPressed(o.pressed);
   sync();
+  if (o.draggable) {
+    el.setAttribute("draggable", "true");
+    el.addEventListener("dragstart", () => el.classList.add("is-dragging"));
+    el.addEventListener("dragend", () => el.classList.remove("is-dragging"));
+  }
 
   el.addEventListener("click", (e) => {
     if (busy || !o.onClick) return;

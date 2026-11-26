@@ -230,6 +230,8 @@ declare module 'helenite/internal/ui/src/button' {
       variant?: ButtonVariant;
       pressed?: boolean;
       disabled?: boolean;
+      /** Makes the button a drag source: a grab cursor, dimmed while dragged. Set the drag's data in your own `dragstart` listener on `el`. */
+      draggable?: boolean;
       onClick?: (e: MouseEvent) => unknown;
   }
   export interface ButtonHandle {
