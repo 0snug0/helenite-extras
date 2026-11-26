@@ -306,6 +306,7 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-card.is-attention :is(input, textarea, select, button) { font-family: inherit; }
 .hel-card.is-attention :is(code, pre, kbd) { font-family: var(--font-monospace); }
 .hel-card.is-attention.is-warning { border-color: var(--color-orange); background: color-mix(in srgb, var(--color-orange) 9%, var(--background-primary)); }
+.hel-card.is-attention > .hel-card-footer { border-radius: 0 0 calc(var(--hel-card-radius) - 2px) calc(var(--hel-card-radius) - 2px); corner-shape: var(--hel-corner-shape); } /* attention cards keep overflow visible, so the footer's wash must follow the card's inner bottom radius (2px border) */
 .hel-card.is-attention > .hel-card-head { flex-wrap: wrap; row-gap: var(--size-2-2); padding: var(--size-4-3) var(--size-4-4) 0; }
 .hel-card.is-attention > .hel-card-body { padding: var(--size-4-3) var(--size-4-4) var(--size-4-4); gap: var(--size-4-2); font-size: var(--font-ui-medium); line-height: var(--line-height-normal, 1.5); }
 .hel-card.is-attention .hel-card-title { font-size: var(--font-ui-medium); }
