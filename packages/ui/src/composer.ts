@@ -127,6 +127,8 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
     el.classList.add("has-attach");
     const attach = button(el, { variant: "icon", icon: "paperclip", label: o.attachLabel ?? "Attach" });
     attach.el.classList.add("hel-composer-attach");
+    // Before the box: the grid places its cells in DOM order, and the box takes the wide middle column.
+    el.insertBefore(attach.el, chips.nextSibling);
     attach.el.addEventListener("click", () => {
       if (busy) return;
       void Promise.resolve()
