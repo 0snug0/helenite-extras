@@ -82,10 +82,10 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       menuButton: typeof menuButton;
       notice: typeof notice;
       action: typeof action;
-      STANDARD_ACTIONS: Record<import("helenite/internal/obsidian-api/src/helenite-module").ActionId, {
+      STANDARD_ACTIONS: Record<import("helenite/internal/ui/src/index").ActionId, {
           icon: string;
           label: string;
-          variant: import("helenite/internal/ui/src/index").ButtonOptions['variant'];
+          variant: import("helenite/internal/ui/src/index").ButtonVariant;
       }>;
       paneHeader: typeof paneHeader;
       densityAction: typeof densityAction;
@@ -150,10 +150,10 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           menuButton: typeof menuButton;
           notice: typeof notice;
           action: typeof action;
-          STANDARD_ACTIONS: Record<import("helenite/internal/obsidian-api/src/helenite-module").ActionId, {
+          STANDARD_ACTIONS: Record<import("helenite/internal/ui/src/index").ActionId, {
               icon: string;
               label: string;
-              variant: import("helenite/internal/ui/src/index").ButtonOptions['variant'];
+              variant: import("helenite/internal/ui/src/index").ButtonVariant;
           }>;
           paneHeader: typeof paneHeader;
           densityAction: typeof densityAction;
@@ -229,6 +229,10 @@ declare module 'helenite/internal/ui/src/index' {
   export type { KeyValueRow } from "helenite/internal/ui/src/key-value";
   export { setMenuRenderer, openMenu } from "helenite/internal/ui/src/menu";
   export type { MenuItemSpec, MenuRenderer } from "helenite/internal/ui/src/menu";
+  export { STANDARD_ACTIONS, ACTION_CONFIRMS } from "helenite/internal/ui/src/actions";
+  export type { ActionId } from "helenite/internal/ui/src/actions";
+  export { paneHeader, densityAction } from "helenite/internal/ui/src/pane-header";
+  export type { PaneHeaderAction, ListDensity } from "helenite/internal/ui/src/pane-header";
 }
 
 declare module 'helenite/internal/ui/src/icons' {
@@ -1206,6 +1210,49 @@ declare module 'helenite/internal/ui/src/key-value' {
   export function keyValue(parent: HTMLElement, rows: KeyValueRow[]): HTMLElement;
 }
 
+declare module 'helenite/internal/ui/src/actions' {
+  import type { ButtonVariant } from "helenite/internal/ui/src/button";
+  export type ActionId = "back" | "close" | "reset" | "useDefault" | "editInHome" | "configure" | "turnOff" | "delete" | "open" | "remove" | "add" | "moveUp" | "moveDown" | "reconnect";
+  /**
+   * The standard actions' icon, label and button variant. `ui.action` (the helenite module) and ui-kit's `action` draw
+   * from this one table, so a plugin's Delete and an app's Delete look and read the same.
+   */
+  export const STANDARD_ACTIONS: Record<ActionId, {
+      icon: string;
+      label: string;
+      variant: ButtonVariant;
+  }>;
+  /** The confirm copy for the actions that ask first. Remove does not claim the thing is gone for good. */
+  export const ACTION_CONFIRMS: Partial<Record<ActionId, (subject: string) => {
+      title: string;
+      message: string;
+      action: string;
+  }>>;
+}
+
+declare module 'helenite/internal/ui/src/pane-header' {
+  export interface PaneHeaderAction {
+      icon: string;
+      /** The accessible name and tooltip. */
+      label: string;
+      onClick: (e: MouseEvent) => void;
+      /** Set as the button's `data-action`, for tests and snippets. */
+      id?: string;
+  }
+  /** How much a list row shows: `compact` is one line, `detailed` adds a second line of details (`ui.listRow`'s `sub`). */
+  export type ListDensity = "compact" | "detailed";
+  /**
+   * The pane-header button that switches a list between one line and two lines per row. Its icon and label name what a
+   * click switches to. Rebuild the header after `onChange` so they follow (`paneHeader` is cheap to redo).
+   */
+  export function densityAction(density: ListDensity, onChange: (next: ListDensity) => void): PaneHeaderAction;
+  /**
+   * The icon-button row at the top of a pane (Obsidian's `nav-header` / `nav-buttons-container` / `nav-action-button`,
+   * so themes style it). Placed first in `contentEl`; returns the header.
+   */
+  export function paneHeader(contentEl: HTMLElement, actions: PaneHeaderAction[]): HTMLElement;
+}
+
 declare module 'helenite/internal/obsidian-api/src/ui/design/modals' {
   import type { Field, FieldValues } from 'helenite/internal/ui/src/index';
   import type { AnyApp } from 'helenite/internal/obsidian-api/src/ui/helpers';
@@ -1393,26 +1440,8 @@ declare module 'helenite/internal/obsidian-api/src/ui/design/menu' {
 }
 
 declare module 'helenite/internal/obsidian-api/src/ui/design/pane-header' {
-  export interface PaneHeaderAction {
-      icon: string;
-      /** The accessible name and tooltip. */
-      label: string;
-      onClick: (e: MouseEvent) => void;
-      /** Set as the button's `data-action`, for tests and snippets. */
-      id?: string;
-  }
-  /** How much a list row shows: `compact` is one line, `detailed` adds a second line of details (`ui.listRow`'s `sub`). */
-  export type ListDensity = 'compact' | 'detailed';
-  /**
-   * The pane-header button that switches a list between one line and two lines per row. Its icon and label name what a
-   * click switches to. Rebuild the header after `onChange` so they follow (`paneHeader` is cheap to redo).
-   */
-  export function densityAction(density: ListDensity, onChange: (next: ListDensity) => void): PaneHeaderAction;
-  /**
-   * The icon-button row at the top of a sidebar pane (Obsidian's `nav-header` / `nav-buttons-container` /
-   * `nav-action-button`, so themes style it). Placed first in `contentEl`; returns the header.
-   */
-  export function paneHeader(contentEl: HTMLElement, actions: PaneHeaderAction[]): HTMLElement;
+  export { paneHeader, densityAction } from 'helenite/internal/ui/src/index';
+  export type { PaneHeaderAction, ListDensity } from 'helenite/internal/ui/src/index';
 }
 
 declare module 'helenite/internal/obsidian-api/src/ui/design/vault-scope' {
@@ -1739,14 +1768,11 @@ declare module 'helenite/internal/obsidian-api/src/ui/design/notice' {
 }
 
 declare module 'helenite/internal/obsidian-api/src/ui/design/actions' {
-  import type { ButtonHandle, ButtonOptions } from 'helenite/internal/ui/src/index';
+  import { STANDARD_ACTIONS } from 'helenite/internal/ui/src/index';
+  import type { ActionId, ButtonHandle } from 'helenite/internal/ui/src/index';
   import type { AnyApp } from 'helenite/internal/obsidian-api/src/ui/helpers';
-  export type ActionId = 'back' | 'close' | 'reset' | 'useDefault' | 'editInHome' | 'configure' | 'turnOff' | 'delete' | 'open' | 'remove' | 'add' | 'moveUp' | 'moveDown' | 'reconnect';
-  export const STANDARD_ACTIONS: Record<ActionId, {
-      icon: string;
-      label: string;
-      variant: ButtonOptions['variant'];
-  }>;
+  export { STANDARD_ACTIONS };
+  export type { ActionId };
   export interface ActionOptions {
       onClick: () => unknown;
       label?: string;
