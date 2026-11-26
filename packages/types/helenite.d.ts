@@ -1269,7 +1269,7 @@ declare module 'helenite/internal/ui/src/picker-grid' {
   }
   /**
    * Picks one icon or colour from a grid: a radio group with one Tab stop. Arrow keys move and pick (up and down by a
-   * row), Home and End jump to the ends; a click picks.
+   * row), wrapping at the ends; Home and End jump to the first and last cell; a click picks.
    */
   export function pickerGrid<T>(parent: HTMLElement, o: PickerGridOptions<T>): PickerGridHandle<T>;
 }

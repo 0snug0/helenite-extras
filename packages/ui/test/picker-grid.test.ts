@@ -99,16 +99,16 @@ describe("pickerGrid", () => {
     expect(onChange.mock.calls.map((c) => c[0])).toEqual(["music", "code", "book", "code", "book", "code"]);
   });
 
-  it("up and down move a row, to the nearest cell, and stay put past the first and last rows", () => {
+  it("up and down move a row, to the nearest cell, wrapping past the first and last rows", () => {
     const g = pickerGrid(host(), { options: icons, value: "music", onChange: () => {} }); // code music star / home book
     layOut(g.el, 3);
     cells(g.el)[1].focus();
     press(document.activeElement!, "ArrowDown");
     expect(checked(g.el)).toEqual(["book"]);
-    press(document.activeElement!, "ArrowDown");
-    expect(checked(g.el)).toEqual(["book"]);
-    press(document.activeElement!, "ArrowUp");
+    press(document.activeElement!, "ArrowDown"); // past the last row: back to the first
     expect(checked(g.el)).toEqual(["music"]);
+    press(document.activeElement!, "ArrowUp"); // past the first row: round to the last
+    expect(checked(g.el)).toEqual(["book"]);
     press(document.activeElement!, "ArrowUp");
     expect(checked(g.el)).toEqual(["music"]);
     cells(g.el)[2].click();
@@ -156,6 +156,14 @@ describe("pickerGrid", () => {
     expect(all).toContain(":focus-visible");
     expect(all).not.toContain("--icon-opacity");
     expect(all).not.toMatch(/#[0-9a-fA-F]{3,8}\b|rgb\(/);
+  });
+
+  it("keeps the colours, the checked icon and the focus visible in forced colours", () => {
+    const at = css.indexOf("@media (forced-colors: active) {\n  .hel-picker-dot { forced-color-adjust: none; }");
+    expect(at).toBeGreaterThan(-1);
+    const block = css.slice(at, css.indexOf("\n}", at));
+    expect(block).toContain('[aria-checked="true"]:not(.is-color) { outline: 2px solid Highlight');
+    expect(block).toContain(":focus-visible { outline: 2px solid CanvasText");
   });
 
   it("STYLING.md has a row for each class", () => {

@@ -171,6 +171,12 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-picker-icon > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); }
 .hel-picker-dot { display: block; box-sizing: border-box; width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
 .hel-picker-cell[aria-checked="true"] > .hel-picker-dot { outline: 2px solid var(--text-normal); outline-offset: 2px; }
+/* Forced colours drop backgrounds and shadows: the dots keep theirs (they are the content), the checked icon and the focus get system outlines. */
+@media (forced-colors: active) {
+  .hel-picker-dot { forced-color-adjust: none; }
+  .hel-picker-grid > button.hel-picker-cell[aria-checked="true"]:not(.is-color) { outline: 2px solid Highlight; outline-offset: -2px; }
+  .hel-picker-grid > button.hel-picker-cell:focus-visible { outline: 2px solid CanvasText; outline-offset: 1px; }
+}
 /* Meter (ui.meter): inline (one line, the default), stacked (label and reading above a full-width bar) or a bare bar. The font and the label's colour come from the parent; the sub line and a stacked reading are smaller and muted. */
 .hel-meter { display: inline-flex; align-items: center; gap: var(--size-2-3); }
 .hel-meter-label, .hel-meter-text { white-space: nowrap; }

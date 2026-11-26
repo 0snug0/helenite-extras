@@ -157,7 +157,7 @@ ui.pickerGrid(el, { label: 'Icon', options: [{ value: 'home', label: 'Home', ico
 colors.setValue('red'); // no onChange
 ```
 
-One icon or colour picked from a grid. Each option has a `value`, a `label` (the cell's accessible name and tooltip) and an `icon` (a Lucide name) or a `color` (any CSS background, drawn as a round dot). It is a radio group with one Tab stop (the checked cell, else the first): Left and Right move and pick, wrapping; Up and Down move a row; Home and End jump to the ends; a click picks. `onChange` gets the new value and is not called for the cell already checked. `value` may be left out (nothing checked); values are compared with `===`. `label` names the group; in a `ui.field` control the field's label does. The handle has `el` and `setValue`. For a few text choices use `ui.segmented`; for rows with details, `ui.choiceList`.
+One icon or colour picked from a grid. Each option has a `value`, a `label` (the cell's accessible name and tooltip) and an `icon` (a Lucide name) or a `color` (any CSS background, drawn as a round dot). It is a radio group with one Tab stop (the checked cell, else the first): Left and Right move and pick, wrapping; Up and Down move a row, wrapping too; Home and End jump to the first and last cell; a click picks. `onChange` gets the new value and is not called for the cell already checked. `value` may be left out (nothing checked); values are compared with `===`. `label` names the group; in a `ui.field` control the field's label does. The handle has `el` and `setValue`. For a few text choices use `ui.segmented`; for rows with details, `ui.choiceList`.
 
 ### ui.meter
 

@@ -28,7 +28,7 @@ export interface PickerGridHandle<T> {
 
 /**
  * Picks one icon or colour from a grid: a radio group with one Tab stop. Arrow keys move and pick (up and down by a
- * row), Home and End jump to the ends; a click picks.
+ * row), wrapping at the ends; Home and End jump to the first and last cell; a click picks.
  */
 export function pickerGrid<T>(parent: HTMLElement, o: PickerGridOptions<T>): PickerGridHandle<T> {
   const el = make(parent, "div", ["hel-picker-grid"]);
@@ -71,7 +71,7 @@ export function pickerGrid<T>(parent: HTMLElement, o: PickerGridOptions<T>): Pic
   const rowStep = (from: number, by: 1 | -1): number => {
     const tops = [...new Set(cells.map((c) => c.offsetTop))].sort((a, b) => a - b);
     if (tops.length < 2) return (from + by + cells.length) % cells.length;
-    const top = tops[tops.indexOf(cells[from]!.offsetTop) + by];
+    const top = tops[(tops.indexOf(cells[from]!.offsetTop) + by + tops.length) % tops.length];
     const away = (i: number): number => Math.abs(cells[i]!.offsetLeft - cells[from]!.offsetLeft);
     return cells.reduce((best, c, i) => (c.offsetTop === top && (best === from || away(i) < away(best)) ? i : best), from);
   };
