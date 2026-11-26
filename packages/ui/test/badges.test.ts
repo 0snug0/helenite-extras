@@ -81,6 +81,17 @@ describe("chip", () => {
     expect(parent.contains(c)).toBe(false);
   });
 
+  it("icon draws a hidden icon before the text, and the remove label stays the text", () => {
+    const c = chip(host(), "Reading list", { icon: "file-text", onRemove: () => {} });
+    const icon = c.firstElementChild as HTMLElement;
+    expect(icon.className).toBe("hel-chip-icon");
+    expect(icon.getAttribute("aria-hidden")).toBe("true");
+    expect(icon.dataset.icon).toBe("file-text");
+    expect(c.textContent).toBe("Reading list");
+    expect(c.querySelector("button")!.getAttribute("aria-label")).toBe("Remove Reading list");
+    expect(chip(host(), "x").querySelector(".hel-chip-icon")).toBeNull();
+  });
+
   it("every tone gets its class and, with onRemove, its own labelled remove button", () => {
     for (const tone of ["default", "accent", "danger", "success", "warning"] as const) {
       const c = chip(host(), tone, { tone, onRemove: () => {} });
