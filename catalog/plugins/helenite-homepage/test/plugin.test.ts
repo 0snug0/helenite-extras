@@ -1,8 +1,11 @@
 // Loads the built plugin (`pnpm test` here builds it first) into a real Helenite App.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { loadBuiltPlugin, makeApp, tick } from '../../../../../plugins/core-build/test/harness';
+
+/** Poll until `check` passes: disk writes and view changes finish later than any fixed sleep on a loaded machine. */
+const until = <T>(check: () => T) => vi.waitFor(check, { timeout: 10000, interval: 10 });
 
 async function setup(settings: Record<string, unknown> = {}, files: Record<string, string> = { 'Home.md': '# Home', 'Other.md': 'other' }) {
   const { app, vaultPath } = await makeApp(files);
@@ -24,8 +27,10 @@ async function setup(settings: Record<string, unknown> = {}, files: Record<strin
 
 it('opens the homepage on startup, replacing the open tabs', async () => {
   const { ws, paths } = await setup();
-  expect(paths()).toEqual(['Home.md']);
-  expect(ws.activeLeaf.view.file.path).toBe('Home.md');
+  await until(() => {
+    expect(paths()).toEqual(['Home.md']);
+    expect(ws.activeLeaf.view.file.path).toBe('Home.md');
+  });
 });
 
 it('does nothing on startup when that is off', async () => {
@@ -35,19 +40,23 @@ it('does nothing on startup when that is off', async () => {
 
 it('keeps tabs and opens a new one in "keep" mode; the command switches to it when it is already open', async () => {
   const { app, ws, paths } = await setup({ openMode: 'keep' });
-  expect(paths()).toEqual(['Other.md', 'Home.md']);
+  await until(() => {
+    expect(paths()).toEqual(['Other.md', 'Home.md']);
+    expect(ws.activeLeaf.view.file.path).toBe('Home.md');
+  });
   ws.setActiveLeaf(ws.getLeavesOfType('markdown').find((l: any) => l.view.file.path === 'Other.md'));
   expect(app.commands.executeCommandById('helenite-homepage:open')).toBe(true);
-  await tick(30);
+  await until(() => expect(ws.activeLeaf.view.file.path).toBe('Home.md'));
   expect(paths()).toEqual(['Other.md', 'Home.md']);
-  expect(ws.activeLeaf.view.file.path).toBe('Home.md');
 });
 
 it('creates a missing homepage note, folders included', async () => {
   const { app, paths, vaultPath } = await setup({ target: '[[Notes/Start]]' });
-  expect(existsSync(join(vaultPath, 'Notes/Start.md'))).toBe(true);
-  expect(app.vault.getFileByPath('Notes/Start.md')).toBeTruthy();
-  expect(paths()).toEqual(['Notes/Start.md']);
+  await until(() => {
+    expect(existsSync(join(vaultPath, 'Notes/Start.md'))).toBe(true);
+    expect(app.vault.getFileByPath('Notes/Start.md')).toBeTruthy();
+    expect(paths()).toEqual(['Notes/Start.md']);
+  });
 });
 
 it('shows an error notice instead of creating the note when that is off', async () => {
@@ -60,8 +69,7 @@ it('a new empty tab shows the homepage when that is on, and a tab opened for a f
   const { app, ws, paths } = await setup({ openOnStartup: false, openInNewTab: true });
   const fresh = ws.getLeaf('tab');
   ws.setActiveLeaf(fresh);
-  await tick(40);
-  expect(fresh.view.file?.path).toBe('Home.md');
+  await until(() => expect(fresh.view.file?.path).toBe('Home.md'));
   await ws.getLeaf('tab').openFile(app.vault.getFileByPath('Other.md'));
   await tick(40);
   expect(paths()).toEqual(['Other.md', 'Home.md', 'Other.md']);
@@ -76,9 +84,10 @@ it('the settings tab is built from design-system parts', async () => {
   expect(el.querySelectorAll('.hel-segmented')).toHaveLength(2);
   const random = [...el.querySelectorAll<HTMLElement>('.hel-segment')].find((b) => b.textContent === 'A random note')!;
   random.click();
-  await tick(5);
-  expect(plugin.settings.kind).toBe('random');
-  expect(tab.containerEl.textContent).not.toContain('Create the note if it is missing');
+  await until(() => {
+    expect(plugin.settings.kind).toBe('random');
+    expect(tab.containerEl.textContent).not.toContain('Create the note if it is missing');
+  });
   const open = [...tab.containerEl.querySelectorAll<HTMLElement>('.hel-button')].find((b) => b.textContent?.includes('Open'));
   expect(open).toBeTruthy();
 });

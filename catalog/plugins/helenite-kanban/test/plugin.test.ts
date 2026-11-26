@@ -2,8 +2,11 @@
 // Helenite App and drives the board view through its design-system controls.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { loadBuiltPlugin, makeApp, tick } from '../../../../../plugins/core-build/test/harness';
+
+/** Poll until `check` passes: disk writes and view changes finish later than any fixed sleep on a loaded machine. */
+const until = <T>(check: () => T) => vi.waitFor(check, { timeout: 10000, interval: 10 });
 
 const BOARD = '---\n\nkanban-plugin: board\n\n---\n\n## To do\n\n- [ ] a\n- [ ] b\n\n\n## Done\n\n**Complete**\n- [x] c\n\n\n\n\n%% kanban:settings\n```\n{"kanban-plugin":"board"}\n```\n%%';
 
@@ -19,18 +22,16 @@ async function setup(files: Record<string, string> = { 'Board.md': BOARD, 'Plain
 async function openBoard(app: any) {
   const leaf = app.workspace.getLeaf(false);
   await leaf.openFile(app.vault.getFileByPath('Board.md'));
-  for (let i = 0; i < 50 && !(leaf.view.getViewType() === 'helenite-kanban' && leaf.view.data); i++) await tick(10);
+  await until(() => expect(leaf.view.getViewType() === 'helenite-kanban' && !!leaf.view.data).toBe(true));
   return leaf;
 }
 
 async function answerPrompt(value: string) {
-  await tick(5);
-  const modal = document.querySelector('.hel-modal') as HTMLElement;
+  const modal = await until(() => document.querySelector('.hel-modal') ?? expect.fail('no prompt yet'));
   const input = modal.querySelector('.hel-modal-input') as HTMLInputElement;
   input.value = value;
   input.dispatchEvent(new Event('input'));
   (modal.querySelector('.hel-modal-actions .mod-cta') as HTMLElement).click();
-  await tick(20);
 }
 
 it('a board note opens as a board, and a plain note stays markdown', async () => {
@@ -53,13 +54,12 @@ it('checking a card and adding a card write the Obsidian Kanban format back to t
   const leaf = await openBoard(app);
   const root: HTMLElement = leaf.view.contentEl;
   (root.querySelector('.hel-board-card-check > input') as HTMLInputElement).click();
-  await tick(20);
-  expect(disk('Board.md')).toContain('## To do\n\n- [x] a\n- [ ] b\n');
+  await until(() => expect(disk('Board.md')).toContain('## To do\n\n- [x] a\n- [ ] b\n'));
 
   const addCard = root.querySelector('.hel-board-lane-footer > .hel-button') as HTMLElement;
   addCard.click();
   await answerPrompt('New card<br>with detail');
-  expect(disk('Board.md')).toContain('- [ ] b\n- [ ] New card\n\twith detail\n\n\n## Done');
+  await until(() => expect(disk('Board.md')).toContain('- [ ] b\n- [ ] New card\n\twith detail\n\n\n## Done'));
   expect(disk('Board.md').endsWith('%% kanban:settings\n```\n{"kanban-plugin":"board"}\n```\n%%')).toBe(true);
 });
 
@@ -76,8 +76,11 @@ it('deleting a list asks first and says it cannot be undone', async () => {
   const modal = document.querySelector('.hel-modal') as HTMLElement;
   expect(modal.textContent).toContain('Delete Done and its 1 card? This cannot be undone.');
   (modal.querySelector('.hel-button.mod-warning') as HTMLElement).click();
-  await tick(20);
-  expect(disk('Board.md')).not.toContain('## Done');
+  // Both halves, so a note read while it is being written (empty) does not count as deleted.
+  await until(() => {
+    expect(disk('Board.md')).toContain('## To do');
+    expect(disk('Board.md')).not.toContain('## Done');
+  });
 });
 
 it('dragging a card onto another list moves it, and checks it off in a complete list', async () => {
@@ -91,8 +94,7 @@ it('dragging a card onto another list moves it, and checks it off in a complete 
   const drop = new Event('drop', { bubbles: true, cancelable: true });
   Object.assign(drop, { clientY: 1000 });
   done.dispatchEvent(drop);
-  await tick(20);
-  expect(disk('Board.md')).toContain('## To do\n\n- [ ] b\n\n\n## Done\n\n**Complete**\n- [x] c\n- [x] a\n');
+  await until(() => expect(disk('Board.md')).toContain('## To do\n\n- [ ] b\n\n\n## Done\n\n**Complete**\n- [x] c\n- [x] a\n'));
   expect(root.querySelectorAll('.hel-board-card.is-muted')).toHaveLength(2);
 });
 
@@ -105,7 +107,8 @@ it('a card dropped after the note changed under the drag writes nothing', async 
   // Written by hand, so any rewrite would show.
   const changed = '---\nkanban-plugin: basic\n---\n\n## To do\n\n- [ ] b2\n';
   await app.vault.modify(app.vault.getFileByPath('Board.md'), changed);
-  await tick(30);
+  // The view has to have read the change before the drop, or the drop would still be on the old board.
+  await until(() => expect(leaf.view.data).toBe(changed));
   list.dispatchEvent(new Event('drop', { bubbles: true, cancelable: true }));
   await tick(20);
   expect(disk('Board.md')).toBe(changed);
@@ -121,8 +124,7 @@ it('a list keeps its scroll when the list before it moves', async () => {
   (root.querySelector('[aria-label="List options"]') as HTMLElement).click();
   await tick(5);
   [...document.querySelectorAll<HTMLElement>('.menu-item')].find((m) => m.textContent?.includes('Move list right'))!.click();
-  await tick(20);
-  expect(lists().map((l) => l.scrollTop)).toEqual([0, 40]);
+  await until(() => expect(lists().map((l) => l.scrollTop)).toEqual([0, 40]));
 });
 
 it('clicking a list name renames the list', async () => {
@@ -130,16 +132,15 @@ it('clicking a list name renames the list', async () => {
   const leaf = await openBoard(app);
   (leaf.view.contentEl.querySelector('.hel-board-lane-head > button.hel-board-lane-title') as HTMLElement).click();
   await answerPrompt('Soon');
-  expect(disk('Board.md')).toContain('## Soon\n\n- [ ] a');
+  await until(() => expect(disk('Board.md')).toContain('## Soon\n\n- [ ] a'));
 });
 
 it("a card is a checkbox, its markdown and its menu, in the design system's card row", async () => {
   const { app } = await setup();
   const leaf = await openBoard(app);
-  await tick(20);
   const card = leaf.view.contentEl.querySelector('.hel-board-card') as HTMLElement;
   expect(card.querySelector('.hel-board-card-check > input')?.getAttribute('aria-label')).toBe('Mark card as done');
-  expect(card.querySelector('.hel-board-card-content.markdown-rendered')?.textContent).toBe('a');
+  await until(() => expect(card.querySelector('.hel-board-card-content.markdown-rendered')?.textContent).toBe('a'));
   expect(card.querySelector('.hel-board-card-actions > [aria-label="Card options"]')).not.toBeNull();
 });
 
@@ -148,7 +149,7 @@ it("double-clicking a card's text edits the card", async () => {
   const leaf = await openBoard(app);
   (leaf.view.contentEl.querySelector('.hel-board-card-content') as HTMLElement).dispatchEvent(new Event('dblclick'));
   await answerPrompt('a2');
-  expect(disk('Board.md')).toContain('- [ ] a2\n- [ ] b');
+  await until(() => expect(disk('Board.md')).toContain('- [ ] a2\n- [ ] b'));
 });
 
 it('just viewing a hand-written board leaves the file as it was', async () => {
@@ -167,18 +168,17 @@ it('"Open as markdown" keeps that tab in markdown, and the command switches back
   const leaf = await openBoard(app);
   app.workspace.setActiveLeaf(leaf);
   (app.plugins.getPlugin('helenite-kanban') as any).openAsMarkdown(leaf);
-  await tick(30);
-  expect(leaf.view.getViewType()).toBe('markdown');
+  // The command needs the markdown view to have its note, not just to be there.
+  await until(() => expect([leaf.view.getViewType(), leaf.view.file?.path]).toEqual(['markdown', 'Board.md']));
   expect(app.commands.executeCommandById('helenite-kanban:toggle-view')).toBe(true);
-  await tick(30);
-  expect(leaf.view.getViewType()).toBe('helenite-kanban');
+  await until(() => expect(leaf.view.getViewType()).toBe('helenite-kanban'));
 });
 
 it('the "New board" command creates a board note and opens it as a board', async () => {
   const { app, disk } = await setup({});
   expect(app.commands.executeCommandById('helenite-kanban:create-board')).toBe(true);
-  for (let i = 0; i < 30 && !app.vault.getFileByPath('Untitled Kanban.md'); i++) await tick(10);
-  await tick(30);
-  expect(disk('Untitled Kanban.md')).toContain('kanban-plugin: board');
-  expect(app.workspace.getLeavesOfType('helenite-kanban')).toHaveLength(1);
+  await until(() => {
+    expect(disk('Untitled Kanban.md')).toContain('kanban-plugin: board');
+    expect(app.workspace.getLeavesOfType('helenite-kanban')).toHaveLength(1);
+  });
 });
