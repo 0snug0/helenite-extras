@@ -128,9 +128,11 @@ Tones: `default`, `accent`, `danger`, `success`, `warning`. The element `statusT
 ui.meter(el, { label: 'Context', value: 20, text: '40k / 200k', tone: 'success' });
 ui.meter(el, { label: '5h', value: 95, text: '95%', tone: 'danger', title: 'Resets at 14:00' });
 ui.meter(el, { label: 'Context', text: '40k' }); // no value: no bar
+ui.meter(el, { layout: 'stacked', label: 'Weekly', value: 75, text: '75% used', sub: 'resets in 3d', tone: 'warning' });
+ui.meter(td, { layout: 'bar', label: 'llama3', value: 40, tone: 'accent' }); // only the bar
 ```
 
-How full something is, on one line: the label, a short bar, the reading. `value` is 0 to 100 (clamped); `tone` colours the fill (`default` is muted). With a value it is a `meter` for screen readers, named by the label and read as the text. Returns the element. It does not update: redraw it when the reading changes. For work in progress use `ui.loadingState` with `progress`.
+How full something is: a quota, a budget, a context window. `value` is 0 to 100 (clamped); `tone` colours the fill (`default` is muted). `layout` is `inline` (the default: the label, a short bar, the reading on one line), `stacked` (label and reading above a full-width bar) or `bar` (only the full-width bar, for a table cell). `sub` adds a faint line under an inline or stacked meter. With a value the bar is a `progressbar` for screen readers, named by the label and read as the `text`; without one there is no bar, only the words (a `bar` with no value draws nothing). Returns the element. It does not update: redraw it when the reading changes. For work in progress use `ui.loadingState` with `progress`.
 
 ### ui.board
 

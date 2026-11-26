@@ -63,6 +63,8 @@ const reading: MeterOptions = { label: 'Context', value: 20, text: '40k / 200k',
 const gauge: HTMLElement = ui.meter(rowEl, reading);
 // @ts-expect-error: a meter needs its reading in words.
 ui.meter(gauge, { label: 'Context', value: 20 });
+ui.meter(gauge, { layout: 'bar', label: 'llama3', value: 20 });
+ui.meter(gauge, { layout: 'stacked', label: 'Weekly', text: '30%', sub: 'resets in 3d' });
 const lane = ui.board(rowEl, { label: 'Tickets', onDrop: (id: string, to: string, index: number) => console.log(id, to, index) }).lane({ id: 'todo', label: 'To do' });
 const boardCard: BoardCardHandle = lane.card({ id: 'T-1', title: 'Fix it', tone: 'accent', onOpen: () => undefined });
 ui.badge(boardCard.meta, 'P1');
