@@ -1,11 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
 // The sample's tests run without a DOM, so the settings tab base class and ui.notice are stand-ins.
 const notices = vi.hoisted(() => [] as string[]);
+const rows = vi.hoisted(() => [] as { el: unknown; name?: string }[]);
 vi.mock('obsidian', async (orig) => ({
   ...(await orig<object>()),
   PluginSettingTab: class { constructor(public app: unknown, public plugin: unknown) {} },
 }));
-vi.mock('helenite', () => ({ ui: { notice: (msg: string) => void notices.push(msg) } }));
+vi.mock('helenite', () => ({ ui: {
+  notice: (msg: string) => void notices.push(msg),
+  settings: { row: class {
+    row: { el: unknown; name?: string };
+    constructor(el: unknown) { rows.push((this.row = { el })); }
+    setName(name: string) { this.row.name = name; return this; }
+    setDesc() { return this; }
+    addText() { return this; }
+  } },
+} }));
 
 import LetterboxdVaultPlugin, { diaryMarkdown } from '../src/main';
 import LetterboxdAccountsEntry, { letterboxd } from '../src/accounts';
@@ -43,6 +53,13 @@ describe('main entry (vault feature)', () => {
     expect(commands.map((c) => c.id)).toEqual(['letterboxd-account:insert-latest-diary']);
     expect(tabs).toHaveLength(1);
     expect(app.accounts.registerAccountType).toBeUndefined();
+  });
+  it('draws its settings tab with the design-system settings row', async () => {
+    const { tabs } = await load(async () => [], null);
+    const containerEl = { empty: vi.fn() };
+    tabs[0].containerEl = containerEl;
+    tabs[0].display();
+    expect(rows).toEqual([{ el: containerEl, name: 'Account label' }]);
   });
   it('calls the diary method of the configured account and inserts a list at the cursor', async () => {
     const { commands, app } = await load(async () => [entry()], { accountLabel: 'Letterboxd (me)' });

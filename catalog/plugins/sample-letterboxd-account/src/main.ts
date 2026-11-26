@@ -1,6 +1,6 @@
 // The vault-feature entry of the sample plugin (`main.js`). It loads in a vault under the normal enable rules and uses the
 // account only through `app.accounts.call`; the account type itself lives in accounts.ts.
-import { Plugin, PluginSettingTab, Setting, type App, type Editor } from 'obsidian';
+import { Plugin, PluginSettingTab, type App, type Editor } from 'obsidian';
 import { ui } from 'helenite';
 import type { DiaryEntry } from './accounts';
 
@@ -54,7 +54,7 @@ class LetterboxdSettingTab extends PluginSettingTab {
 
   display(): void {
     this.containerEl.empty();
-    new Setting(this.containerEl)
+    new ui.settings.row(this.containerEl)
       .setName('Account label')
       .setDesc('The Letterboxd account to read, exactly as listed in Settings, Accounts. The vault must be granted "Read diary" on it.')
       .addText((t) => t.setPlaceholder('Letterboxd (me)').setValue(this.plugin.settings.accountLabel).onChange(async (v) => {
