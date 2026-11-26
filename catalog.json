@@ -22,8 +22,7 @@
       "path": "catalog/plugins/helenite-kanban/dist",
       "files": [
         "main.js",
-        "manifest.json",
-        "styles.css"
+        "manifest.json"
       ]
     },
     {

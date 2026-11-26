@@ -99,19 +99,17 @@ export function toggleCard(board: Board, cardId: string): Board {
   return b;
 }
 
-/** Move a card to `to` in another (or the same) lane. Into a "complete" lane checks it off; out of one reopens it. */
+/** Move a card before the `to`th card of a lane, not counting the card itself. Into a "complete" lane checks it off; out of one reopens it. */
 export function moveCard(board: Board, cardId: string, toLaneId: string, to: number): Board {
   const b = clone(board);
   const hit = findCard(b, cardId);
   const dest = b.lanes[laneIndex(b, toLaneId)];
   if (!hit || !dest) return b;
   const [card] = hit.list.splice(hit.index, 1);
-  // Dropping below itself in the same lane: the removal shifted the target up by one.
   const same = hit.list === dest.cards;
-  const index = same && to > hit.index ? to - 1 : to;
   if (dest.markComplete) setDone(card, true);
   else if (hit.lane?.markComplete && !same) setDone(card, false);
-  dest.cards.splice(clamp(index, 0, dest.cards.length), 0, card);
+  dest.cards.splice(clamp(to, 0, dest.cards.length), 0, card);
   return b;
 }
 

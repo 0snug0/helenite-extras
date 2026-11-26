@@ -38,6 +38,9 @@ describe('board edits', () => {
     expect(texts(b)[0]).toEqual(['b', 'c', 'a']);
     b = ops.moveCard(b, c.id, todo.id, 0);
     expect(texts(b)[0]).toEqual(['c', 'b', 'a']);
+    b = ops.moveCard(b, c.id, todo.id, 1); // one down: the position does not count the card itself
+    expect(texts(b)[0]).toEqual(['b', 'c', 'a']);
+    b = ops.moveCard(b, c.id, todo.id, 0);
     b = ops.moveCard(b, c.id, done.id, 0);
     expect(texts(b)).toEqual([['b', 'a'], ['c✓', 'd✓']]);
     b = ops.moveCard(b, b.lanes[1].cards[1].id, todo.id, 99);

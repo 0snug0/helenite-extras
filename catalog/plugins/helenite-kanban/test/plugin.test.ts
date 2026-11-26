@@ -37,9 +37,9 @@ it('a board note opens as a board, and a plain note stays markdown', async () =>
   const { app } = await setup();
   const leaf = await openBoard(app);
   expect(leaf.view.getViewType()).toBe('helenite-kanban');
-  const lanes = leaf.view.contentEl.querySelectorAll('.helenite-kanban-lane');
-  expect([...lanes].map((l: any) => l.querySelector('.helenite-kanban-lane-title').textContent)).toEqual(['To do', 'Done']);
-  expect(lanes[0].querySelectorAll('.helenite-kanban-card')).toHaveLength(2);
+  const lanes = leaf.view.contentEl.querySelectorAll('.hel-board-lane');
+  expect([...lanes].map((l: any) => l.getAttribute('aria-label'))).toEqual(['To do', 'Done']);
+  expect(lanes[0].querySelectorAll('.hel-board-card')).toHaveLength(2);
   expect(lanes[0].querySelector('.hel-badge')?.textContent).toBe('2');
 
   const other = app.workspace.getLeaf('tab');
@@ -52,11 +52,11 @@ it('checking a card and adding a card write the Obsidian Kanban format back to t
   const { app, disk } = await setup();
   const leaf = await openBoard(app);
   const root: HTMLElement = leaf.view.contentEl;
-  (root.querySelector('.helenite-kanban-check') as HTMLInputElement).click();
+  (root.querySelector('.task-list-item-checkbox') as HTMLInputElement).click();
   await tick(20);
   expect(disk('Board.md')).toContain('## To do\n\n- [x] a\n- [ ] b\n');
 
-  const addCard = [...root.querySelectorAll('.helenite-kanban-lane')][0].querySelector('.hel-button.is-link') as HTMLElement;
+  const addCard = root.querySelector('.hel-board-list > .hel-button') as HTMLElement;
   addCard.click();
   await answerPrompt('New card<br>with detail');
   expect(disk('Board.md')).toContain('- [ ] b\n- [ ] New card\n\twith detail\n\n\n## Done');
@@ -66,8 +66,8 @@ it('checking a card and adding a card write the Obsidian Kanban format back to t
 it('deleting a list asks first and says it cannot be undone', async () => {
   const { app, disk } = await setup();
   const leaf = await openBoard(app);
-  const done = [...leaf.view.contentEl.querySelectorAll('.helenite-kanban-lane')][1] as HTMLElement;
-  (done.querySelector('.helenite-kanban-lane-header .hel-button') as HTMLElement).click();
+  const done = [...leaf.view.contentEl.querySelectorAll('.hel-board-lane')][1] as HTMLElement;
+  (done.querySelector('[aria-label="List options"]') as HTMLElement).click();
   await tick(5);
   const item = [...document.querySelectorAll<HTMLElement>('.menu-item')].find((m) => m.textContent?.includes('Delete list'))!;
   expect(item.classList.contains('is-danger')).toBe(true);
@@ -78,6 +78,69 @@ it('deleting a list asks first and says it cannot be undone', async () => {
   (modal.querySelector('.hel-button.mod-warning') as HTMLElement).click();
   await tick(20);
   expect(disk('Board.md')).not.toContain('## Done');
+});
+
+it('dragging a card onto another list moves it, and checks it off in a complete list', async () => {
+  const { app, disk } = await setup();
+  const leaf = await openBoard(app);
+  const root: HTMLElement = leaf.view.contentEl;
+  const card = root.querySelector('.hel-board-card') as HTMLElement;
+  expect(card.getAttribute('draggable')).toBe('true');
+  card.dispatchEvent(new Event('dragstart', { bubbles: true }));
+  const done = root.querySelectorAll('.hel-board-list')[1] as HTMLElement;
+  const drop = new Event('drop', { bubbles: true, cancelable: true });
+  Object.assign(drop, { clientY: 1000 });
+  done.dispatchEvent(drop);
+  await tick(20);
+  expect(disk('Board.md')).toContain('## To do\n\n- [ ] b\n\n\n## Done\n\n**Complete**\n- [x] c\n- [x] a\n');
+  expect(root.querySelectorAll('.hel-board-card.is-muted')).toHaveLength(2);
+});
+
+it('a card dropped after the note changed under the drag writes nothing', async () => {
+  const { app, disk } = await setup();
+  const leaf = await openBoard(app);
+  const root: HTMLElement = leaf.view.contentEl;
+  const list = root.querySelectorAll('.hel-board-list')[1] as HTMLElement;
+  (root.querySelector('.hel-board-card') as HTMLElement).dispatchEvent(new Event('dragstart', { bubbles: true }));
+  // Written by hand, so any rewrite would show.
+  const changed = '---\nkanban-plugin: basic\n---\n\n## To do\n\n- [ ] b2\n';
+  await app.vault.modify(app.vault.getFileByPath('Board.md'), changed);
+  await tick(30);
+  list.dispatchEvent(new Event('drop', { bubbles: true, cancelable: true }));
+  await tick(20);
+  expect(disk('Board.md')).toBe(changed);
+  expect(root.textContent).toContain('b2');
+});
+
+it('a list keeps its scroll when the list before it moves', async () => {
+  const { app } = await setup();
+  const leaf = await openBoard(app);
+  const root: HTMLElement = leaf.view.contentEl;
+  const lists = () => [...root.querySelectorAll<HTMLElement>('.hel-board-list')];
+  lists()[0].scrollTop = 40;
+  (root.querySelector('[aria-label="List options"]') as HTMLElement).click();
+  await tick(5);
+  [...document.querySelectorAll<HTMLElement>('.menu-item')].find((m) => m.textContent?.includes('Move list right'))!.click();
+  await tick(20);
+  expect(lists().map((l) => l.scrollTop)).toEqual([0, 40]);
+});
+
+it('double-clicking a list name renames the list', async () => {
+  const { app, disk } = await setup();
+  const leaf = await openBoard(app);
+  const name = leaf.view.contentEl.querySelector('.hel-board-lane-head > .hel-status-text') as HTMLElement;
+  name.dispatchEvent(new Event('dblclick'));
+  await answerPrompt('Soon');
+  expect(disk('Board.md')).toContain('## Soon\n\n- [ ] a');
+});
+
+it('a card is shown as its text, without paragraph margins', async () => {
+  const { app } = await setup();
+  const leaf = await openBoard(app);
+  await tick(20);
+  const text = leaf.view.contentEl.querySelector('.hel-board-card .markdown-rendered') as HTMLElement;
+  expect(text.textContent).toBe('a');
+  expect(text.querySelector('p')).toBeNull();
 });
 
 it('just viewing a hand-written board leaves the file as it was', async () => {
