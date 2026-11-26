@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { composer } from "../src";
+import { composer, type ComposerField } from "../src";
 
 const css = readFileSync(resolve(__dirname, "../../base-theme/css/06-design-system.css"), "utf8");
 const styling = readFileSync(resolve(__dirname, "../../../docs/design-system/STYLING.md"), "utf8");
@@ -75,5 +75,96 @@ describe("Finesse composer styling", () => {
 
   it("STYLING.md has a row for each new class", () => {
     for (const name of ["`hel-composer-attach`", "`hel-composer-attachments`", "`hel-composer-attachment`"]) expect(styling).toContain(`| ${name} |`);
+  });
+});
+
+/** A textarea-shaped contenteditable inside a wrapper, the shape an editor has. */
+const editorInput = (parent: HTMLElement) => {
+  const wrap = parent.appendChild(document.createElement("div"));
+  wrap.className = "my-editor";
+  const field = wrap.appendChild(document.createElement("div")) as unknown as ComposerField;
+  field.setAttribute("contenteditable", "true");
+  field.tabIndex = 0;
+  Object.defineProperties(field, { value: { value: "", writable: true }, readOnly: { value: false, writable: true }, selectionStart: { value: 0 } });
+  field.setSelectionRange = () => {};
+  return field;
+};
+
+describe("composer around a custom input", () => {
+  it("marks the element createInput added as the host, with the rows for its height", () => {
+    const c = composer(host(), { rows: 5, createInput: editorInput, onSubmit: () => {} });
+    const box = c.el.querySelector<HTMLElement>(":scope > .my-editor")!;
+    expect(box.classList.contains("hel-composer-host")).toBe(true);
+    expect(box.style.getPropertyValue("--hel-composer-rows")).toBe("5");
+    // The input is the editor's own: an editor rewrites its classes, so the composer puts none there.
+    expect(c.input.className).toBe("");
+  });
+
+  it("defaults to 3 rows, and a field added without a wrapper is its own host", () => {
+    const bare = (p: HTMLElement) => {
+      const f = editorInput(p);
+      p.querySelector(".my-editor")!.remove();
+      return p.appendChild(f) as ComposerField;
+    };
+    const c = composer(host(), { createInput: bare, onSubmit: () => {} });
+    expect(c.input.classList.contains("hel-composer-host")).toBe(true);
+    expect(c.input.style.getPropertyValue("--hel-composer-rows")).toBe("3");
+  });
+
+  it("the plain textarea has no host", () => {
+    expect(composer(host(), { onSubmit: () => {} }).el.querySelector(".hel-composer-host")).toBeNull();
+  });
+
+  it("a press on the box's padding focuses the input, as it does on a textarea; a press inside or on the scrollbar is left alone", () => {
+    const c = composer(host(), { createInput: editorInput, onSubmit: () => {} });
+    const box = c.el.querySelector<HTMLElement>(".hel-composer-host")!;
+    Object.defineProperties(box, { clientWidth: { value: 300 }, clientHeight: { value: 80 } });
+    const press = (target: HTMLElement, offsetX = 4, offsetY = 4) => {
+      const e = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      Object.defineProperties(e, { offsetX: { value: offsetX }, offsetY: { value: offsetY } });
+      target.dispatchEvent(e);
+      return e.defaultPrevented;
+    };
+    expect(press(c.input)).toBe(false);
+    expect(press(box, 305)).toBe(false);
+    expect(press(box, 4, 85)).toBe(false);
+    expect(press(box)).toBe(true);
+    expect(document.activeElement).toBe(c.input);
+  });
+
+  const H = ".hel-composer > .hel-composer-host";
+  const rule = (selector: string) => css.split("\n").find((l) => l.startsWith(`${selector} {`)) ?? "";
+
+  it("gives the host the textarea's box, rings and a height from rows up to a scrolling maximum", () => {
+    const parts = [
+      "background-color: var(--background-modifier-form-field)",
+      "box-shadow: var(--input-shadow)",
+      "border-radius: var(--input-radius)",
+      "font-size: var(--font-ui-small)",
+      "height: auto",
+      "min-height: calc(var(--hel-composer-rows, 3) * 1.5em",
+      "max-height: var(--hel-composer-max-height, 320px)",
+      "overflow-y: auto",
+      // A field that is its own host would otherwise keep the browser's focus outline inside the ring.
+      "outline: none",
+    ];
+    for (const part of parts) expect(rule(H)).toContain(part);
+    expect(rule(`${H}:hover:not(:focus-within)`)).toContain("box-shadow: var(--input-shadow-hover)");
+    expect(rule(`${H}:focus-within`)).toContain("box-shadow: var(--hel-ring-focus)");
+  });
+
+  it("resets the editor's own box and styles its text, caret, selection and thumbnails", () => {
+    const rules = css.split("\n").filter((l) => l.startsWith(H)).join("\n");
+    for (const cls of [".cm-editor", ".cm-scroller", ".cm-sizer", ".cm-contentContainer", ".cm-content", ".cm-line", ".cm-activeLine", ".cm-placeholder", ".cm-cursor", ".cm-dropCursor", ".cm-selectionBackground", ".image-embed img"]) expect(rules).toContain(cls);
+    expect(rules).toContain("max-height: var(--hel-composer-thumb-size, 52px)");
+  });
+
+  it("a textarea or input inside a wrapper gives up its own box too", () => {
+    const own = css.split("\n").find((l) => l.startsWith(`${H} > :is(textarea, input), `)) ?? "";
+    for (const part of ["border: 0", "background: transparent", "box-shadow: none", "padding: 0", "width: 100%"]) expect(own).toContain(part);
+  });
+
+  it("STYLING.md has a row for the host", () => {
+    expect(styling).toContain("| `hel-composer-host` |");
   });
 });

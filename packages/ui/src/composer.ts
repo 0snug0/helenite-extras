@@ -29,10 +29,14 @@ export interface ComposerAttachment {
 }
 
 export interface ComposerOptions {
-  /** Builds the text box in place of the plain textarea (appended to the composer by the callback). */
+  /**
+   * Builds the text box in place of the plain textarea (appended to the composer by the callback), such as an editor.
+   * What it appends is drawn as the box (`hel-composer-host`): the textarea's rings and text, at least `rows` lines
+   * tall and scrolling past `--hel-composer-max-height` (320px). Showing `placeholder` in it is the caller's job.
+   */
   createInput?: (parent: HTMLElement) => ComposerField;
   placeholder?: string;
-  /** The text box's height in lines. Default 3. */
+  /** The text box's height in lines (a custom input's smallest height). Default 3. */
   rows?: number;
   /** The send button's text (and its accessible name with `submitIcon`). Default "Send". */
   submitLabel?: string;
@@ -79,8 +83,10 @@ export interface ComposerHandle {
 export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandle {
   const el = make(parent, "div", ["hel-composer"]);
   let input: ComposerField;
-  if (o.createInput) input = o.createInput(el);
-  else {
+  if (o.createInput) {
+    input = o.createInput(el);
+    hostInput(el, input, o.rows ?? 3);
+  } else {
     const ta = make(el, "textarea", ["hel-composer-input"]) as HTMLTextAreaElement;
     ta.rows = o.rows ?? 3;
     if (o.placeholder !== undefined) ta.placeholder = o.placeholder;
@@ -196,6 +202,23 @@ export function composer(parent: HTMLElement, o: ComposerOptions): ComposerHandl
   });
   send.el.addEventListener("click", submit);
   return { el, input, setBusy, focus: () => input.focus(), clear, addAttachment, attachments: () => [...attached] };
+}
+
+/**
+ * Draws the composer's child that holds a custom input as the text box. The class goes there, not on the input: an
+ * editor rewrites its content element's classes.
+ */
+function hostInput(el: HTMLElement, input: ComposerField, rows: number): void {
+  let box: HTMLElement = input;
+  while (box.parentElement && box.parentElement !== el) box = box.parentElement;
+  box.classList.add("hel-composer-host");
+  box.style.setProperty("--hel-composer-rows", String(rows));
+  // A textarea focuses from anywhere in its box; do the same for the padding around the input (not its scrollbars).
+  box.addEventListener("mousedown", (e) => {
+    if (e.target !== box || box === input || e.offsetX >= box.clientWidth || e.offsetY >= box.clientHeight) return;
+    e.preventDefault();
+    input.focus();
+  });
 }
 
 /** The "/" menu: a listbox above the box, driven from the textarea (focus stays there). */

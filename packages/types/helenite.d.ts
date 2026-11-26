@@ -824,10 +824,14 @@ declare module 'helenite/internal/ui/src/composer' {
       data?: unknown;
   }
   export interface ComposerOptions {
-      /** Builds the text box in place of the plain textarea (appended to the composer by the callback). */
+      /**
+       * Builds the text box in place of the plain textarea (appended to the composer by the callback), such as an editor.
+       * What it appends is drawn as the box (`hel-composer-host`): the textarea's rings and text, at least `rows` lines
+       * tall and scrolling past `--hel-composer-max-height` (320px). Showing `placeholder` in it is the caller's job.
+       */
       createInput?: (parent: HTMLElement) => ComposerField;
       placeholder?: string;
-      /** The text box's height in lines. Default 3. */
+      /** The text box's height in lines (a custom input's smallest height). Default 3. */
       rows?: number;
       /** The send button's text (and its accessible name with `submitIcon`). Default "Send". */
       submitLabel?: string;
