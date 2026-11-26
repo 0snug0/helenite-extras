@@ -736,3 +736,127 @@ pre.hel-code-block:focus-visible { outline: none; box-shadow: var(--hel-ring-foc
 :where(.suggestion-container) .suggestion-empty { padding: var(--size-2-3) var(--size-4-2); color: var(--text-muted); }
 :where(.suggestion-container) > .prompt-instructions { flex: none; }
 
+/* Artwork (ui.artwork): a poster at 2:3 (--hel-art-ratio), or its title on a wash where there is none. A clickable one lifts on hover. */
+.hel-art { display: block; width: 100%; aspect-ratio: var(--hel-art-ratio, 2 / 3); border-radius: var(--hel-control-radius, 6px); corner-shape: var(--hel-corner-shape); color: var(--text-normal); text-decoration: none; }
+.hel-art-image { display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; height: 100%; overflow: hidden; border-radius: inherit; corner-shape: inherit; background-color: var(--background-modifier-border); background-position: center; background-size: cover; background-repeat: no-repeat; box-shadow: var(--hel-ring-card); }
+.hel-art.is-missing > .hel-art-image { padding: var(--size-4-2); text-align: center; font-size: var(--font-ui-small); overflow-wrap: anywhere; }
+a.hel-art:hover { text-decoration: none; }
+a.hel-art:hover > .hel-art-image { box-shadow: var(--hel-ring-hover), 0 4px 12px color-mix(in srgb, var(--text-normal) 14%, transparent); }
+a.hel-art:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+/* Media grid and cards (ui.mediaGrid, ui.mediaCard): cards led by artwork, as a grid of equal columns (--hel-media-min) or one scrolling strip. */
+.hel-media-grid.is-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--hel-media-min, 150px), 1fr)); gap: var(--size-4-2); align-items: stretch; }
+.hel-media-grid.is-strip { display: flex; gap: var(--size-4-2); align-items: stretch; overflow-x: auto; padding: var(--size-2-1) var(--size-2-1) var(--size-4-2); }
+.hel-media-grid.is-strip > * { flex: 0 0 var(--hel-media-min, 150px); min-width: 0; }
+.hel-card.hel-media-card { display: flex; flex-direction: column; align-items: stretch; padding: var(--size-4-2); text-align: center; }
+.hel-media-card.is-tile > .hel-card-body { flex: 1; align-items: center; gap: var(--size-2-1); min-width: 0; padding: var(--size-2-3) 0 0; }
+.hel-media-card.is-tile > .hel-card-body > * { max-width: 100%; }
+.hel-media-card.is-tile > .hel-card-footer { flex-wrap: wrap; justify-content: center; gap: var(--size-2-2); margin-top: auto; padding: var(--size-4-2) 0 0; border-top: 0; background: none; }
+.hel-card.hel-media-card.is-row { flex-direction: row; align-items: center; gap: var(--size-4-2); padding: var(--size-2-3); text-align: start; }
+.hel-media-card.is-row > .hel-art { flex: none; width: var(--hel-media-row-art, 44px); border-radius: var(--hel-badge-radius, 4px); }
+.hel-media-card.is-row > .hel-art.is-missing > .hel-art-image { font-size: 0; }
+.hel-media-card.is-row > .hel-card-body { flex: 1; min-width: 0; padding: 0; }
+.hel-media-card.is-row > .hel-card-footer { flex: none; padding: 0; border-top: 0; background: none; }
+.hel-card.hel-media-card.is-plain { padding: 0; overflow: visible; background: none; box-shadow: none; }
+.hel-card.hel-media-card.is-focused { box-shadow: 0 0 0 2px var(--interactive-accent), var(--hel-ring-card); }
+.hel-media-title { width: 100%; height: calc(2 * 1.25em); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; font-size: var(--font-ui-small); line-height: 1.25; }
+.hel-media-card.is-row .hel-media-title { height: auto; font-weight: var(--font-semibold); }
+.hel-media-detail { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: var(--font-ui-smaller); color: var(--text-muted); }
+.hel-media-grid > .hel-media-card:not(.is-plain) { transition: box-shadow 0.12s ease-in-out; }
+.hel-media-grid > .hel-media-card:not(.is-plain, .is-focused, .is-accent):hover { box-shadow: var(--hel-ring-hover), 0 4px 12px color-mix(in srgb, var(--text-normal) 10%, transparent); }
+@media (prefers-reduced-motion: reduce) { .hel-media-grid > .hel-media-card:not(.is-plain) { transition: none; } }
+/* Figures (ui.figures): small figures with an icon each (ratings); is-columns pairs them to the edges. */
+.hel-figures { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--size-2-1) var(--size-4-2); width: 100%; font-size: var(--font-ui-smaller); font-variant-numeric: tabular-nums; }
+.hel-figures.is-columns { display: grid; grid-template-columns: auto auto; justify-content: space-between; }
+.hel-figures.is-columns > :nth-child(even) { justify-self: end; }
+.hel-figure { display: inline-flex; align-items: center; gap: var(--size-2-2); min-height: 1.5em; white-space: nowrap; color: var(--text-muted); text-decoration: none; }
+a.hel-figure { color: var(--text-normal); }
+a.hel-figure:hover { text-decoration: underline; }
+.hel-figure:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); border-radius: var(--hel-badge-radius, 4px); }
+.hel-figure-icon { display: inline-flex; flex: none; }
+.hel-figure-icon > .svg-icon { width: var(--icon-xs); height: var(--icon-xs); }
+/* Rating (ui.rating): stars filled to the value (--hel-rating-color). */
+.hel-rating { position: relative; display: inline-block; height: 1em; font-size: var(--font-ui-medium); line-height: 1; letter-spacing: 1px; white-space: nowrap; }
+.hel-rating.is-none { visibility: hidden; }
+.hel-rating-base { color: var(--background-modifier-border-hover); }
+.hel-rating-fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; color: var(--hel-rating-color, var(--text-normal)); }
+/* Stat tiles (ui.statTiles): headline numbers in a ringed row, hairlines between them. */
+.hel-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--hel-stat-min, 110px), 1fr)); gap: 1px; overflow: hidden; border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background: var(--background-modifier-border); box-shadow: var(--hel-ring-card); }
+.hel-stat { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--size-2-2); min-width: 0; padding: var(--size-4-3) var(--size-4-2); border: 0; background: var(--background-secondary); color: var(--text-normal); text-align: center; }
+button.hel-stat { height: auto; border-radius: 0; box-shadow: none; font: inherit; cursor: pointer; }
+button.hel-stat:hover { background: var(--background-modifier-hover); box-shadow: none; }
+button.hel-stat:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--interactive-accent); }
+.hel-stat-value { font-size: var(--hel-stat-size, 24px); font-weight: var(--font-semibold); line-height: 1.15; font-variant-numeric: tabular-nums; }
+.hel-stat-label { font-size: var(--font-ui-smaller); color: var(--text-muted); }
+/* Section heading (ui.sectionHeading): a title, a faint note and buttons on one line. */
+.hel-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--size-4-2); margin: var(--size-4-4) 0 var(--size-4-2); }
+.hel-heading.is-level-1 { align-items: center; margin-top: 0; }
+.hel-heading-title { margin: 0; font-size: var(--font-ui-medium); font-weight: var(--font-semibold); line-height: var(--line-height-tight); color: var(--text-normal); }
+.hel-heading.is-level-1 > .hel-heading-title { font-size: var(--h1-size, 1.6em); }
+.hel-heading.is-level-3 { margin-top: var(--size-4-2); }
+.hel-heading.is-level-3 > .hel-heading-title { font-size: var(--font-ui-small); }
+.hel-heading-extra { font-size: var(--font-ui-smaller); color: var(--text-muted); }
+.hel-heading-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--size-4-2); margin-inline-start: auto; }
+.hel-heading-actions:empty { display: none; }
+/* Month grid (ui.monthGrid): seven columns of ringed days, each as tall as --hel-month-rows events of two lines. */
+.hel-month, .hel-month-list { --hel-month-line: 1.25em; --hel-month-slot: calc(2 * var(--hel-month-line) + 6px); font-size: var(--font-ui-smaller); }
+.hel-month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--size-2-2); }
+.hel-month-weekday { padding-bottom: var(--size-2-1); text-align: center; font-weight: var(--font-medium, 500); color: var(--text-muted); }
+.hel-month-day { display: flex; flex-direction: column; gap: var(--size-2-2); min-width: 0; padding: var(--size-2-2); border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background: var(--background-secondary); box-shadow: var(--hel-ring); }
+.hel-month-day.is-outside { background: transparent; opacity: 0.45; }
+.hel-month-day.is-today { box-shadow: 0 0 0 2px var(--interactive-accent); }
+.hel-month-num { text-align: center; font-weight: var(--font-semibold); font-variant-numeric: tabular-nums; line-height: 1.3; }
+.hel-month-events { display: flex; flex-direction: column; gap: var(--size-2-2); height: calc(var(--hel-month-rows, 3) * var(--hel-month-slot) + (var(--hel-month-rows, 3) - 1) * var(--size-2-2)); }
+.hel-month-list { display: flex; flex-direction: column; gap: var(--size-2-2); }
+.hel-month-event { display: flex; flex: 0 0 auto; align-items: center; gap: var(--size-2-2); height: var(--hel-month-slot); min-width: 0; color: var(--text-normal); text-decoration: none; }
+a.hel-month-event:hover { text-decoration: none; }
+.hel-month-event-lead { flex: 0 0 2.2em; text-align: end; font-weight: var(--font-semibold); font-variant-numeric: tabular-nums; color: var(--hel-month-lead-color, var(--text-muted)); }
+.hel-month-event-title { flex: 1 1 auto; min-width: 0; height: var(--hel-month-slot); box-sizing: border-box; padding: 3px 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; line-height: var(--hel-month-line); border-radius: var(--hel-badge-radius, 4px); background: var(--background-primary); box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
+a.hel-month-event:hover > .hel-month-event-title { box-shadow: inset 0 0 0 1px var(--interactive-accent); }
+a.hel-month-event:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-month-events > button.hel-month-more { flex: 0 0 auto; width: 100%; height: var(--hel-month-slot); font-size: inherit; }
+/* Table sorting, fixed columns, trees and muted rows (ui.table) */
+.hel-table-scroll { max-width: 100%; overflow-x: auto; padding: 1px; }
+.hel-table.is-fixed { table-layout: fixed; }
+.hel-table.is-fixed :is(th, td) { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; vertical-align: middle; }
+.hel-table :is(th, td).is-end { text-align: end; font-variant-numeric: tabular-nums; }
+.hel-table td.is-truncate { max-width: var(--hel-table-truncate, 520px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.hel-table.is-fixed td.is-truncate { max-width: none; }
+.hel-table-row[data-level="1"] > td.is-tree { padding-inline-start: var(--size-4-6); }
+.hel-table-row[data-level="2"] > td.is-tree { padding-inline-start: calc(2 * var(--size-4-6)); color: var(--text-muted); }
+/* A tree's expander sits on the title's line, and a link cut by the column ends in an ellipsis */
+.hel-table td.is-tree > .clickable-icon { display: inline-flex; width: 24px; height: 24px; margin-inline-end: var(--size-2-2); padding: 0; vertical-align: middle; }
+.hel-table td.is-truncate > .hel-button.is-link { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+.hel-table td.is-tree > .hel-table-spacer { display: inline-block; width: 24px; margin-inline-end: var(--size-2-2); } /* a row with nothing to expand lines up with those that have */
+.hel-table td.is-truncate > .hel-table-spacer + .hel-button.is-link, .hel-table td.is-truncate > .clickable-icon + .hel-button.is-link { max-width: calc(100% - 24px - var(--size-2-2)); }
+.hel-table-row.is-nested > td { background: var(--background-primary-alt); }
+.hel-table-row.is-muted { opacity: 0.45; }
+.hel-table th > button.hel-table-sort { display: inline-flex; align-items: center; gap: var(--size-2-1); max-width: 100%; height: auto; padding: 0; border: 0; border-radius: var(--hel-badge-radius, 4px); background: none; box-shadow: none; font: inherit; color: inherit; white-space: nowrap; cursor: pointer; }
+.hel-table th > button.hel-table-sort:hover { background: none; box-shadow: none; color: var(--text-normal); }
+.hel-table th > button.hel-table-sort:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-table-sort-label { display: inline-flex; align-items: center; }
+/* The arrow keeps its slot whether shown or not, so sorting moves nothing; it sits away from the edge the column aligns to. */
+.hel-table-sort::after { content: "\25B2"; display: inline-block; width: 1.2em; text-align: center; visibility: hidden; }
+.hel-table th[aria-sort] > .hel-table-sort::after { visibility: visible; }
+.hel-table th[aria-sort="descending"] > .hel-table-sort::after { content: "\25BC"; }
+.hel-table th.is-end > .hel-table-sort { flex-direction: row-reverse; }
+/* A bare meter with its reading beside it, for a table cell */
+.hel-meter.is-bar.has-text { display: flex; align-items: center; gap: var(--size-4-2); }
+.hel-meter.is-bar.has-text > .hel-meter-bar { flex: 1 1 auto; width: auto; min-width: 24px; }
+.hel-meter.is-bar.has-text > .hel-meter-text { flex: none; min-width: var(--hel-meter-text-width, 4ch); text-align: end; }
+/* Selectable and not-yet-reached bar chart columns, and every column named */
+button.hel-bar-chart-col { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; cursor: pointer; }
+button.hel-bar-chart-col:hover { background: var(--background-modifier-hover); box-shadow: none; }
+button.hel-bar-chart-col:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-bar-chart-col.is-muted { border-bottom: 2px solid var(--background-modifier-border); }
+.hel-bar-chart-axis.is-all { justify-content: stretch; gap: 2px; }
+.hel-bar-chart-axis.is-all > span { flex: 1 1 0; min-width: 0; overflow: hidden; text-align: center; white-space: nowrap; }
+/* The armed second click of a two-click delete, and a toolbar that stays at the top of its pane */
+button.hel-button.is-armed, button.hel-button.is-armed:hover:not(:disabled) { background-color: var(--background-modifier-error); color: var(--text-on-accent); }
+.hel-toolbar > .hel-tabs { flex: 1 1 0; min-width: 0; margin-bottom: 0; overflow-x: auto; }
+.hel-toolbar.is-sticky { position: sticky; top: 0; z-index: 5; padding-block: var(--size-2-2); background: var(--background-primary); }
+/* Frame dialog (ui-kit's frameDialog): a large dialog the app draws itself; its content scrolls. */
+.hel-frame-dialog > .hel-frame-dialog-box { outline: none; display: flex; flex-direction: column; width: min(var(--hel-frame-dialog-width, 1000px), 92vw); height: var(--hel-frame-dialog-height, 85vh); }
+.hel-frame-dialog-box > .modal-content { flex: 1; min-height: 0; overflow: auto; padding: var(--size-2-1); }
+.hel-frame-dialog-box > .modal-content > :first-child > .hel-heading:first-child { margin-top: 0; }
+/* A toolbar in a disclosure's always-shown row sits in the card's padding, at the small size */
+.hel-disclosure-peek > .hel-toolbar { margin: 0; padding: var(--size-4-2) var(--size-4-4) var(--size-4-2); font-size: var(--font-ui-smaller); }

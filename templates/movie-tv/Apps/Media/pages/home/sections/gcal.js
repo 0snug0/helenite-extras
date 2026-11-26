@@ -2,8 +2,8 @@
 // Until the user has connected it (Settings -> Secrets -> Google Calendar -> Connect), the call fails and this card says
 // "connect your calendar". The OAuth flow is host-level, so the card only points at it and offers a retry.
 import { addDays, fmtMonthDay, parse, startOfDay } from "../dates.js";
-import { div, el } from "../ui.js";
-import { button, emptyState } from "../../../core/ui-kit.js";
+import { panel } from "../panel.js";
+import { button, emptyState, listRow } from "../../../core/ui-kit.js";
 
 const timeOf = s => {
 	const d = new Date(s);
@@ -23,22 +23,18 @@ export async function loadEvents(api, today) {
 }
 
 export function renderCalendarEvents(root, ctx, result) {
-	const box = div(root, "home-panel");
-	div(box, "home-panel-title", "Google Calendar");
+	const box = panel(root, "Google Calendar", "home-events");
 	if (result.state === "ok") {
-		if (!result.events.length) return emptyState(box, "No events in the next 7 days.");
-		const ul = el(box, "ul", { cls: "home-events" });
+		if (!result.events.length) return emptyState(box, "No events in the next 7 days.", { variant: "inline" });
 		for (const ev of result.events.slice(0, 12)) {
-			const li = el(ul, "li");
 			const day = String(ev.start ?? "").slice(0, 10);
-			el(li, "span", { cls: "home-event-when", text: `${day ? fmtMonthDay(parse(day) ?? new Date(ev.start)) : ""}${ev.allDay ? "" : ` ${timeOf(ev.start)}`}`.trim() });
-			el(li, "span", { cls: "home-event-title", text: ev.summary ?? "(no title)" });
+			const when = `${day ? fmtMonthDay(parse(day) ?? new Date(ev.start)) : ""}${ev.allDay ? "" : ` ${timeOf(ev.start)}`}`.trim();
+			listRow(box, { title: ev.summary ?? "(no title)", meta: when });
 		}
 		return;
 	}
-	const connect = div(box, "home-connect");
-	emptyState(connect, result.state === "unavailable"
+	emptyState(box, result.state === "unavailable"
 		? "Connect your calendar: the Google Calendar connector is not available in this build yet."
 		: "Connect your calendar to see the week's events here: Settings → Secrets → Google Calendar → Connect.");
-	button(connect, { text: "I've connected it: retry", disabled: result.state === "unavailable", onClick: () => ctx.refresh() });
+	button(box, { text: "I've connected it: retry", disabled: result.state === "unavailable", onClick: () => ctx.refresh() });
 }

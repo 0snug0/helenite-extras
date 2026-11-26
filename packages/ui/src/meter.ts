@@ -22,8 +22,9 @@ export type MeterOptions = MeterBase & (
   | {
       /** Only the full-width bar, for a table cell. */
       layout: "bar";
-      /** The reading in words, announced but not shown. */
+      /** The reading in words, announced; shown beside the bar with `showText`. */
       text?: string;
+      showText?: boolean;
     }
 );
 
@@ -47,8 +48,12 @@ export function meter(parent: HTMLElement, o: MeterOptions): HTMLElement {
   const tag = layout === "inline" ? "span" : "div";
   const el = make(parent, tag, ["hel-meter", `is-${o.tone ?? "default"}`, ...(layout === "inline" ? [] : [`is-${layout}`])]);
   if (o.title) el.title = o.title;
-  if (layout === "bar") {
+  if (o.layout === "bar") {
     drawBar(el, tag, o);
+    if (o.showText) {
+      el.classList.add("has-text");
+      make(el, "span", ["hel-meter-text"], o.text ?? "–");
+    }
     return el;
   }
   const head = layout === "stacked" ? make(el, tag, ["hel-meter-head"]) : el;

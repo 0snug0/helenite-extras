@@ -1,8 +1,7 @@
 // The release-picker modal shared by the Movies and TV pages: a dialog mounted on document.body, rebuilt on every draw.
 // Lifted from Downloadrr/modal.js and DownloadrrTV/modal.js, which are the same code over different context shapes
 // (`c.state` + `c.drawModal` vs `ctx.state` + `ctx.modal.el`); this keeps the TV shape's explicit parameters.
-// TODO(ui-kit): an inline overlay on purpose. ui-kit's `form`/`choose` overlays are host-rendered, and the host does not
-// render app modals yet (docs/design-system/README.md, "Vault apps"); switch once it does.
+// It is ui-kit's frameDialog, not a host modal: a host modal cannot hold a table with its own buttons.
 //
 // createReleaseModal({ state, api, draw, releasePanel, register, onHide }) -> { el(), closeModal, drawModal, redrawModal }
 //   state         the page's state; the modal is open while state.panel is set (state.panel.key is the item's key,
@@ -14,10 +13,11 @@
 //   onHide(cb)    the page ctx's onHide: the shell hides a page without unmounting it, so the modal (on document.body) closes
 //                 itself then, even while state.grabbing, and does not come back when the page is shown again
 // drawModal(items): items is the page's list of films/shows; the modal shows the one whose key is state.panel.key.
-// Needs createDiv (host element helpers) and a document.
+// Needs a document.
+import { frameDialog } from "./ui-kit.js";
 
 export function createReleaseModal({ state, api, draw, releasePanel, register, onHide }) {
-	let modalEl = null;
+	let modalEl = null, bodyEl = null;
 	// draw() rebuilds everything, so the modal is rebuilt too; its scroll position is carried over.
 	function closeModal() {
 		if (!state.panel || state.grabbing) return;
@@ -60,21 +60,21 @@ export function createReleaseModal({ state, api, draw, releasePanel, register, o
 	const redrawModal = () => drawModal(lastItems);
 	function drawModal(items) {
 		lastItems = items;
-		const scroll = modalEl?.querySelector(".modal-content")?.scrollTop ?? 0;
+		const scroll = bodyEl?.scrollTop ?? 0;
 		const typing = modalEl?.querySelector(".dl-find-input") === document.activeElement;
 		const caret = typing ? document.activeElement.selectionStart : null;
 		modalEl?.remove();
-		modalEl = null;
+		modalEl = bodyEl = null;
 		const item = state.panel && items.find(f => f.key === state.panel.key);
 		setModalScope(!!item);
 		if (!item) return;
-		modalEl = document.body.createDiv({ cls: "modal-container mod-dim" });
-		modalEl.createDiv({ cls: "modal-bg" }).addEventListener("click", closeModal);
-		const modal = modalEl.createDiv({ cls: "modal media-modal media-scope", attr: { style: "width: min(1000px, 92vw); height: 85vh; display: flex; flex-direction: column;" } });
-		const body = modal.createDiv({ cls: "modal-content", attr: { style: "flex: 1; min-height: 0; overflow: auto;" } });
+		const dialog = frameDialog({ label: item.title, onClose: closeModal });
+		modalEl = dialog.el;
+		bodyEl = dialog.body;
+		dialog.modal.classList.add("media-modal");
 		const panel = releasePanel(item);
-		if (panel) body.appendChild(panel);
-		body.scrollTop = scroll;
+		if (panel) dialog.body.appendChild(panel);
+		dialog.body.scrollTop = scroll;
 		const input = modalEl.querySelector(".dl-find-input");
 		if (input && (state.panel.findFocus || typing)) {
 			input.focus();

@@ -36,6 +36,12 @@ const d: DropdownHandle<'list' | 'grid'> = ui.dropdown(document.body, { options:
 d.setValue('list');
 // @ts-expect-error: not one of the dropdown's values.
 d.setValue('board');
+const tile = ui.mediaCard(ui.mediaGrid(document.body, { layout: 'strip', minWidth: 120 }), { art: { title: 'Heat', src: null }, title: 'Heat', layout: 'tile' });
+ui.figures(tile.body, [{ text: '92%', label: 'Critics', onClick: () => undefined }], { columns: 2 });
+ui.rating(tile.body, { value: 4.5 });
+ui.statTiles(document.body, [{ value: '12', label: 'Films' }]);
+ui.sectionHeading(document.body, { title: 'Stats', level: 3 }).actions.append('x');
+ui.monthGrid(document.body, { month: new Date(), events: () => [{ title: 'Heat', lead: '4.0' }] });
 const tone: Tone = 'warning';
 ui.statusText(document.body, 'Partly works', tone);
 ui.countBadge(document.body, 3, { pulse: true }).set(0);

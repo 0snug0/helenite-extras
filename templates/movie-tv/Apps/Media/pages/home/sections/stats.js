@@ -3,24 +3,19 @@
 // click now lists the films behind the number in a panel below (each opens its note).
 import { fmtMonthDay, isoWeekStart, addDays, parse } from "../dates.js";
 import { computeStats, withDates, yearsOf } from "../stats-data.js";
-import { clear, div, plural, span } from "../ui.js";
-import { button, emptyState } from "../../../core/ui-kit.js";
+import { clear, div, plural } from "../ui.js";
+import { barChart, button, card, emptyState, sectionHeading, statTiles, statusText, toolbar } from "../../../core/ui-kit.js";
 
 const state = { year: null };
 const instances = new Set();
-const RAMP = [[0, 224, 84], [32, 200, 180], [64, 188, 244]];
-function ramp(t) {
-	const seg = t <= 0.5 ? 0 : 1, u = (t - seg * 0.5) * 2;
-	const [a, b] = [RAMP[seg], RAMP[seg + 1]];
-	return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * u)).join(",")})`;
-}
 const fmt1 = n => (Math.round(n * 10) / 10).toLocaleString(undefined, { minimumFractionDigits: n % 1 ? 1 : 0, maximumFractionDigits: 1 });
 
-function section(parent, title, extra) {
-	const head = div(parent, "ms-section");
-	span(head, "ms-section-title", title);
-	div(head, "ms-rule");
-	if (extra) span(head, "ms-section-extra", extra);
+// A titled card around one chart.
+function section(parent, cls, title, extra) {
+	const c = card(parent, { compact: true });
+	c.el.classList.add("ms-panel", cls);
+	sectionHeading(c.body, { title, extra, level: 3 });
+	return c.body;
 }
 
 // part: "numbers" | "charts" | "all". `bodies` (path -> text) feeds the review count.
@@ -29,57 +24,26 @@ export function renderStats(root, ctx, { part = "all" } = {}) {
 	const years = yearsOf(all);
 	if (state.year == null || !years.includes(state.year)) state.year = years.at(-1) ?? ctx.today.getFullYear();
 	const box = div(root, `movie-stats ms-part-${part}`);
-	const tip = div(box, "ms-tip");
 
-	const showTip = (target, text) => {
-		tip.textContent = text;
-		tip.classList.add("is-visible");
-		const r = target.getBoundingClientRect(), o = box.getBoundingClientRect();
-		const x = Math.min(Math.max(r.left + r.width / 2 - o.left, tip.offsetWidth / 2), Math.max(o.width - tip.offsetWidth / 2, 0));
-		tip.style.left = `${x}px`;
-		tip.style.top = `${r.top - o.top - tip.offsetHeight - 6}px`;
-	};
-	const hideTip = () => tip.classList.remove("is-visible");
-	const clickable = (node, tipText, title, paths) => {
-		node.addEventListener("mouseenter", () => showTip(node, tipText));
-		node.addEventListener("mouseleave", hideTip);
-		if (paths?.length) {
-			node.classList.add("is-clickable");
-			node.addEventListener("click", () => { hideTip(); ctx.showSelection(title, paths); });
-		}
-	};
-
-	function bars(parent, items, { cls = "", colored = true, labels = true } = {}) {
-		const max = Math.max(1, ...items.map(i => i.paths.length));
-		const wrap = div(parent, `ms-bars ${cls}`);
-		items.forEach((it, i) => {
-			const n = it.paths.length;
-			const col = div(wrap, "ms-bar-col");
-			const bar = div(div(col, "ms-bar-track"), "ms-bar" + (it.future ? " is-future" : "") + (n ? "" : " is-zero"));
-			if (!it.future) {
-				bar.style.height = n ? `${Math.max(4, (n / max) * 100)}%` : "2px";
-				if (colored && n) bar.style.background = ramp(items.length > 1 ? i / (items.length - 1) : 0);
-				clickable(col, `${it.tip} · ${plural(n)}`, it.title ?? it.tip, it.paths);
-			}
-			if (labels) div(col, "ms-bar-label", it.label);
-		});
-		return wrap;
+	// items: [{ paths, tip, title?, label?, future? }], one column each; a column with films lists them.
+	function bars(parent, label, items, labels) {
+		const buckets = items.map((it, i) => ({ key: String(i), value: it.paths.length, label: it.label ?? "", muted: !!it.future, title: it.future ? undefined : `${it.tip} · ${plural(it.paths.length)}` }));
+		barChart(parent, { label, buckets, labels, onSelect: b => { const it = items[Number(b.key)]; ctx.showSelection(it.title ?? it.tip, it.paths); } });
 	}
 
 	async function render() {
 		clear(box);
-		box.appendChild(tip);
-		hideTip();
 		const year = state.year;
-		const nav = div(box, "ms-nav");
+		const nav = toolbar(box);
+		nav.classList.add("ms-nav");
 		const btn = (icon, label, delta) => {
 			const i = years.indexOf(year) + delta;
 			button(nav, { icon, label, variant: "icon", disabled: i < 0 || i >= years.length, onClick: () => { state.year = years[i]; renderAll(); } });
 		};
 		btn("chevron-left", "Previous year", -1);
-		div(nav, "ms-year", String(year));
+		sectionHeading(nav, { title: String(year), level: 3 }).titleEl.classList.add("ms-year");
 		btn("chevron-right", "Next year", 1);
-		if (year === ctx.today.getFullYear()) span(nav, "ms-asof", `through ${fmtMonthDay(ctx.today)}`);
+		if (year === ctx.today.getFullYear()) statusText(nav, `through ${fmtMonthDay(ctx.today)}`).classList.add("ms-asof");
 
 		// Review counts need each note's body; load only the notes of the selected year, once.
 		const yearRows = all.filter(x => x.d.getFullYear() === year);
@@ -89,61 +53,48 @@ export function renderStats(root, ctx, { part = "all" } = {}) {
 		const paths = xs => xs.map(x => x.p.file.path);
 
 		if (part !== "charts") {
-			const tiles = div(box, "ms-tiles");
-			const tile = (value, label, tipText, title, ps) => {
-				const t = div(tiles, "ms-tile");
-				div(t, "ms-tile-value", value);
-				div(t, "ms-tile-label", label);
-				clickable(t, tipText, title, ps);
-			};
+			const tile = (value, label, title, heading, ps) => ({ value, label, title, onClick: ps?.length ? () => ctx.showSelection(heading, ps) : undefined });
 			const from = s.bestRun.length ? fmtMonthDay(parse(s.bestRun[0])) : "", to = s.bestRun.length ? fmtMonthDay(parse(s.bestRun.at(-1))) : "";
-			tile(s.rows.length.toLocaleString(), "Diary entries", `All ${year} diary entries · ${plural(s.rows.length)}`, `${year} diary`, paths(s.rows));
-			tile(fmt1(s.perMonth), "Per month", "Average films per month");
-			tile(fmt1(s.perWeek), "Per week", "Average films per week");
-			tile(String(s.reviewed.length), "Reviews", `Films you reviewed · ${plural(s.reviewed.length)}`, `${year} reviews`, paths(s.reviewed));
-			tile(String(s.newReleases.length), `${year} releases`, `Films released in ${year} · ${plural(s.newReleases.length)}`, `${year} releases`, paths(s.newReleases));
-			tile(String(s.bestRun.length), "Day streak", `${from} – ${to} · ${plural(s.streakPaths.length)} · watched on ${s.dayKeys.length} days`, `Longest streak · ${from} – ${to}, ${year}`, s.streakPaths);
+			const tiles = statTiles(box, [
+				tile(s.rows.length.toLocaleString(), "Diary entries", `All ${year} diary entries · ${plural(s.rows.length)}`, `${year} diary`, paths(s.rows)),
+				tile(fmt1(s.perMonth), "Per month", "Average films per month"),
+				tile(fmt1(s.perWeek), "Per week", "Average films per week"),
+				tile(String(s.reviewed.length), "Reviews", `Films you reviewed · ${plural(s.reviewed.length)}`, `${year} reviews`, paths(s.reviewed)),
+				tile(String(s.newReleases.length), `${year} releases`, `Films released in ${year} · ${plural(s.newReleases.length)}`, `${year} releases`, paths(s.newReleases)),
+				tile(String(s.bestRun.length), "Day streak", `${from} – ${to} · ${plural(s.streakPaths.length)} · watched on ${s.dayKeys.length} days`, `Longest streak · ${from} – ${to}, ${year}`, s.streakPaths),
+			]);
+			tiles.classList.add("ms-tiles");
+			for (const t of tiles.children) t.classList.add("ms-tile");
 		}
 		if (part === "numbers") return;
 
-		const activity = div(box, "ms-row ms-row-split ms-activity");
-		const weekPanel = div(activity, "ms-panel ms-panel-week");
-		section(weekPanel, "By week", `busiest: ${fmtMonthDay(parse(s.busiestDay))} · ${plural(s.busiestPaths.length)}`);
-		const weekChart = div(weekPanel, "ms-week-chart");
-		bars(weekChart, Array.from({ length: s.weeks }, (_, i) => {
+		const activity = div(box, "ms-row ms-activity");
+		const week = section(activity, "ms-panel-week", "By week", `busiest: ${fmtMonthDay(parse(s.busiestDay))} · ${plural(s.busiestPaths.length)}`);
+		bars(week, "Films per week", Array.from({ length: s.weeks }, (_, i) => {
 			const start = isoWeekStart(year, i + 1);
 			const range = `${fmtMonthDay(start)} – ${fmtMonthDay(addDays(start, 6))}`;
 			const w = String(i + 1).padStart(2, "0");
-			return { paths: s.byWeek.get(i + 1) ?? [], future: i + 1 > s.thisWeek, tip: `W${w} · ${range}`, title: `${year}-W${w} · ${range}` };
-		}), { cls: "ms-bars-week", labels: false });
-		const axis = div(weekChart, "ms-axis");
-		span(axis, "", "Jan");
-		span(axis, "", "Dec");
+			return { paths: s.byWeek.get(i + 1) ?? [], future: i + 1 > s.thisWeek, tip: `W${w} · ${range}`, title: `${year}-W${w} · ${range}`, label: i === 0 ? "Jan" : i === s.weeks - 1 ? "Dec" : "" };
+		}), "ends");
 
-		const dowPanel = div(activity, "ms-panel ms-panel-dow");
-		section(dowPanel, "By day");
+		const dow = section(activity, "ms-panel-dow", "By day");
 		const longDows = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-		bars(dowPanel, "MTWTFSS".split("").map((label, i) => ({
+		bars(dow, "Films per weekday", "MTWTFSS".split("").map((label, i) => ({
 			label, paths: s.byDow.get(i + 1) ?? [], tip: longDows[i], title: `${longDows[i]}s in ${year}`,
-		})), { cls: "ms-bars-dow", colored: false });
+		})), "all");
 
-		const lower = div(box, "ms-row ms-row-split");
-		const left = div(lower, "ms-panel");
-		section(left, "Ratings", `avg ${s.avgRating.toFixed(2)} ★`);
-		const ratingWrap = div(left, "ms-ratings");
-		span(ratingWrap, "ms-star-end", "★");
-		bars(ratingWrap, Array.from({ length: 10 }, (_, i) => {
+		const lower = div(box, "ms-row");
+		const ratings = section(lower, "ms-panel-ratings", "Ratings", `avg ${s.avgRating.toFixed(2)} ★`);
+		bars(ratings, "Films per rating", Array.from({ length: 10 }, (_, i) => {
 			const v = (i + 1) / 2;
 			const label = "★".repeat(Math.floor(v)) + (v % 1 ? "½" : "");
-			return { paths: s.byHalf.get(v) ?? [], tip: label, title: `Rated ${label} in ${year}` };
-		}), { cls: "ms-bars-rating", colored: false, labels: false });
-		span(ratingWrap, "ms-star-end", "★★★★★");
+			return { paths: s.byHalf.get(v) ?? [], tip: label, title: `Rated ${label} in ${year}`, label: i === 0 ? "½" : i === 9 ? "★★★★★" : "" };
+		}), "ends");
 
-		const right = div(lower, "ms-panel");
-		section(right, "Release decades");
+		const eras = section(lower, "ms-panel-decades", "Release decades");
 		const decades = [...s.byDecade.keys()].sort((a, b) => a - b);
 		const span10 = decades.length ? Array.from({ length: (decades.at(-1) - decades[0]) / 10 + 1 }, (_, i) => decades[0] + i * 10) : [];
-		bars(right, span10.map(d => ({ label: `'${String(d).slice(2)}s`, paths: s.byDecade.get(d) ?? [], tip: `${d}s releases`, title: `${d}s films watched in ${year}` })), { cls: "ms-bars-decade" });
+		bars(eras, "Films per release decade", span10.map(d => ({ label: `'${String(d).slice(2)}s`, paths: s.byDecade.get(d) ?? [], tip: `${d}s releases`, title: `${d}s films watched in ${year}` })), "all");
 	}
 
 	const inst = { box, render };

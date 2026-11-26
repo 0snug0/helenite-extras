@@ -1,22 +1,20 @@
 // Score badges and the scraping plumbing shared by the Movies and TV pages.
-// scoreRow is Downloadrr/films.js scoreRow with DownloadrrTV's extra lbTip/lbDigits options (their defaults are the Movies
+// The badges are ui-kit figures. scoreRow is Downloadrr/films.js scoreRow with DownloadrrTV's extra lbTip/lbDigits options (their defaults are the Movies
 // page's behaviour). The scrapers themselves differ per page (Letterboxd + Wikidata via TMDB for films, Serializd + Wikidata
 // via TheTVDB + OMDb for shows) and stay in the pages; what they share is below. Needs createDiv/createEl (host element helpers).
+
+import { figures } from "./ui-kit.js";
 
 // One line of score badges under a card. open(url) opens a link (in Helenite, through workspace.openUrl).
 // lbTip / lbDigits relabel the first badge (the TV page shows the Serializd average there, to two places).
 export function scoreRow(parent, { lb, rt, aud, lbUrl, rtUrl, imdb, imdbUrl, lbTip = "Letterboxd average", lbDigits = 1 }, open) {
-	const row = parent.createDiv({ cls: "fl-scores" });
-	const badge = (cls, text, url, title) => {
-		if (text == null) return;
-		const el = row.createEl(url ? "a" : "span", { cls: `fl-score ${cls}`, text, attr: { title, ...(url ? { href: url } : {}) } });
-		if (url) el.addEventListener("click", e => { e.preventDefault(); open(url); });
-	};
-	badge("fl-lb", lb != null ? `★ ${Number(lb).toFixed(lbDigits)}` : null, lbUrl, lbTip);
-	badge("fl-rt", rt != null ? `🍅 ${rt}%` : null, rtUrl, "Rotten Tomatoes critics");
-	badge("fl-aud", aud != null ? `🍿 ${aud}%` : null, rtUrl, "Rotten Tomatoes audience");
-	badge("fl-imdb", imdb != null ? `IMDb ${imdb}` : null, imdbUrl, "IMDb rating");
-	return row;
+	const items = [];
+	const add = (key, text, url, label) => { if (text != null) items.push({ key, text, label, onClick: url ? () => open(url) : undefined }); };
+	add("lb", lb != null ? `★ ${Number(lb).toFixed(lbDigits)}` : null, lbUrl, lbTip);
+	add("rt", rt != null ? `🍅 ${rt}%` : null, rtUrl, "Rotten Tomatoes critics");
+	add("aud", aud != null ? `🍿 ${aud}%` : null, rtUrl, "Rotten Tomatoes audience");
+	add("imdb", imdb != null ? `IMDb ${imdb}` : null, imdbUrl, "IMDb rating");
+	return figures(parent, items);
 }
 
 // A scraped page's text, or "" on any failure (HTTP error, offline, blocked). Both pages define this inline.

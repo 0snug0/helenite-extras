@@ -1,18 +1,18 @@
 import { normalizeRelease, renderReleaseTable } from "../../core/releases.js";
 import { RELEASE_SORT_KEY } from "./consts.js";
-import { button, emptyState, errorState, loadingState } from "../../core/ui-kit.js";
+import { button, callout, emptyState, errorState, loadingState, sectionHeading } from "../../core/ui-kit.js";
 
 // Part of the Movies page; `c` is the context shared by every part (see index.js).
 export function install(c) {
 function releasePanel(film) {
 	const p = c.state.panel;
 	const el = createDiv({ cls: "dl-panel" });
-	const head = el.createDiv({ cls: "dl-panel-head" });
-	head.createSpan({ cls: "dl-panel-title", text: `Releases for ${film.title}${film.year ? ` (${film.year})` : ""}` });
-	button(head, { text: "Refresh", disabled: c.busy(), onClick: () => { c.state.sent.clear(); loadReleases(film, true); } });
-	button(head, { text: "Close", disabled: !!c.state.grabbing, onClick: () => { c.state.panel = null; c.draw(); } });
+	const head = sectionHeading(el, { title: `Releases for ${film.title}${film.year ? ` (${film.year})` : ""}` });
+	head.titleEl.classList.add("dl-panel-title");
+	button(head.actions, { text: "Refresh", disabled: c.busy(), onClick: () => { c.state.sent.clear(); loadReleases(film, true); } });
+	button(head.actions, { text: "Close", disabled: !!c.state.grabbing, onClick: () => { c.state.panel = null; c.draw(); } });
 
-	if (p.notice) el.createDiv({ cls: "dl-notice", text: p.notice });
+	if (p.notice) callout(el, { tone: "success", text: p.notice }).el.classList.add("dl-notice");
 	if (p.error) errorState(el, p.error);
 	if (p.phase === "loading") { loadingState(el, "Searching indexers… this can take a few seconds."); return el; }
 	if (p.phase === "error") return el;

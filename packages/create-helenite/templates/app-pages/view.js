@@ -3,6 +3,7 @@
 // A page is `pages/<id>/index.js` with `export default async function mount(el, ctx)` returning an optional cleanup.
 // Pages are imported on first visit, mounted once, then hidden and kept alive, so release timers and listeners in the cleanup.
 import { mountShell } from "./shell.js";
+import { button, chip, errorState, tabs, toolbar } from "./ui-kit.js";
 
 // Nav buttons, in order. Every id needs an entry in PAGES. "home" is where an unknown page id lands.
 const NAV = [["home", "Home"], ["about", "About"]];
@@ -11,5 +12,5 @@ const page = name => () => import(/* @vite-ignore */ `./pages/${name}/index.js`)
 const PAGES = { home: page("home"), about: page("about") };
 
 export default function mount(root, api) {
-	return mountShell(root, api, { nav: NAV, pages: PAGES, prefix: "app" });
+	return mountShell(root, api, { nav: NAV, pages: PAGES, prefix: "app", parts: { button, chip, errorState, tabs, toolbar } });
 }

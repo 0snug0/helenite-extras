@@ -2,7 +2,7 @@
 // Helpers are lifted from Downloadrr/lib.js (DownloadrrTV/base.js is a byte copy of it). renderReleaseTable is the table of
 // Downloadrr/releases.js and DownloadrrTV/panels.js releaseTable, which differ only in an extra "Episodes" column on TV, the
 // service's name in two tooltips, and what Select/Confirm do: those are options. Needs createDiv/createEl (host helpers).
-import { button, emptyState, table } from "./ui-kit.js";
+import { button, emptyState, statusText, table, textInput, toolbar } from "./ui-kit.js";
 
 export function formatSize(bytes) {
 	if (!(bytes > 0)) return "–";
@@ -85,51 +85,47 @@ export function filterReleases(list, query) {
 export function renderReleaseTable(el, { p, releases, state, service, extraColumn, sortExtra, onGrab, draw, redrawModal, saveSort }) {
 	const sorted = filterReleases(sortReleases(releases, p.sortKey, p.sortDir, sortExtra), p.findOpen ? p.find : "");
 	if (p.findOpen) {
-		const bar = el.createDiv({ cls: "dl-findbar" });
-		const input = bar.createEl("input", { cls: "dl-find-input", attr: { type: "text", placeholder: "Search releases…", "aria-label": "Search releases", spellcheck: "false" } });
-		input.value = p.find ?? "";
-		input.addEventListener("input", () => { p.find = input.value; redrawModal(); });
-		bar.createSpan({ cls: "dl-find-count", text: `${sorted.length} of ${releases.length}` });
+		const bar = toolbar(el);
+		const input = textInput(bar, { placeholder: "Search releases…", label: "Search releases", value: p.find ?? "", onInput: v => { p.find = v; redrawModal(); } });
+		input.classList.add("dl-find-input");
+		input.spellcheck = false;
+		statusText(bar, `${sorted.length} of ${releases.length}`).classList.add("dl-find-count");
 	}
 	if (!sorted.length) emptyState(el, "No releases match.");
 
-	const SORTABLE = [["title", "Release"], ...(extraColumn ? [[extraColumn.key, extraColumn.label]] : []), ["resolution", "Resolution"], ["size", "Size"], ["age", "Age"]];
 	const why = r => (r.rejected ? (r.reasons[0] ?? `Rejected by ${service}`) : null);
+	const sortable = col => ({ ...col, sortable: true, className: [col.className, "dl-th"].filter(Boolean).join(" ") });
 	const t = table(el, {
 		className: "dl-table",
+		sort: { key: p.sortKey, dir: p.sortDir },
+		onSort: key => {
+			p.sortDir = p.sortKey === key && p.sortDir === "desc" ? "asc" : "desc";
+			p.sortKey = key;
+			saveSort({ key: p.sortKey, dir: p.sortDir });
+			draw();
+		},
+		rowMuted: r => !!why(r),
 		columns: [
-			{ key: "title", title: "", className: "dl-cell-title", cell: (r, td) => {
-				const w = why(r), tr = td.parentElement;
-				if (w) { tr.classList.add("dl-row-rejected"); tr.title = w; }
+			sortable({ key: "title", title: "Release", truncate: true, cell: (r, td) => {
+				const w = why(r);
+				if (w) td.parentElement.title = w;
 				td.title = w ? `${r.title}\n${w}` : r.title;
 				return r.title;
-			} },
-			...(extraColumn ? [{ key: extraColumn.key, title: "", cell: extraColumn.cell }] : []),
-			{ key: "resolution", title: "", cell: (r, td) => { td.title = why(r) ? `${r.qualityName}\n${why(r)}` : r.qualityName; return resolutionLabel(r.resolution); } },
-			{ key: "size", title: "", cell: r => formatSize(r.size) },
-			{ key: "age", title: "", cell: r => formatAge(r.ageHours) },
+			} }),
+			...(extraColumn ? [sortable({ key: extraColumn.key, title: extraColumn.label, cell: extraColumn.cell })] : []),
+			sortable({ key: "resolution", title: "Resolution", cell: (r, td) => { td.title = why(r) ? `${r.qualityName}\n${why(r)}` : r.qualityName; return resolutionLabel(r.resolution); } }),
+			sortable({ key: "size", title: "Size", cell: r => formatSize(r.size) }),
+			sortable({ key: "age", title: "Age", cell: r => formatAge(r.ageHours) }),
 		],
 		rows: sorted,
 		actions: (r, cell) => {
 			if (p.confirm === r.guid) button(cell, { text: state.grabbing === r.guid ? "Sending…" : "Confirm", variant: "primary", disabled: !!state.grabbing, onClick: () => onGrab(r) });
-			else if (state.sent.has(r.guid)) cell.createSpan({ cls: "dl-sent", text: "Sent" });
+			else if (state.sent.has(r.guid)) statusText(cell, "Sent", "success").classList.add("dl-sent");
 			else {
 				const pick = button(cell, { text: "Select", disabled: !r.allowed || !!state.grabbing, onClick: () => { p.confirm = r.guid; p.notice = null; draw(); } });
 				if (!r.allowed) pick.el.title = `${service} will not download this release`;
 			}
 		},
-	});
-	// Sortable headers: the kit writes plain titles; the arrow and click-to-sort are this table's.
-	SORTABLE.forEach(([key, label], i) => {
-		const th = t.el.tHead.rows[0].cells[i];
-		th.classList.add("dl-th");
-		th.textContent = label + (p.sortKey === key ? (p.sortDir === "asc" ? " ▲" : " ▼") : "");
-		th.addEventListener("click", () => {
-			p.sortDir = p.sortKey === key && p.sortDir === "desc" ? "asc" : "desc";
-			p.sortKey = key;
-			saveSort({ key: p.sortKey, dir: p.sortDir });
-			draw();
-		});
 	});
 	return t;
 }

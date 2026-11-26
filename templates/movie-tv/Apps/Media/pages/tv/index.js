@@ -8,8 +8,6 @@
 // and the poll), fill.js (Plex, missing shows, availability, scores). Each exports install(c).
 // Shared code is in ../../core/: services (SABnzbd, Plex, TMDB), the release table and modal, posters, score badges.
 // Store keys are used under their old names through ctx.store, which stores them as `tv:<key>` (core/migrate-keys.js).
-// TODO(ui-kit): the release modal and the two-click delete (active.js xButton) become ui-kit `form`/`confirm` overlays
-// once the host renders app modals; until then they stay inline.
 import lib from "./lib.js";
 import * as fl from "../../core/films.js";
 import { createClient } from "./sonarr.js";
@@ -34,7 +32,7 @@ export default async function mount(host, ctx) {
 	setBridge(api);
 	// ui-kit draws its standard icons; this page's own (file, Sonarr, bookmark, grid, pause, play) are inline SVG strings, registered into the app-wide renderer (core/icons.js).
 	registerIcons(ICONS);
-	const root = host.createDiv({ cls: "media-tv media-scope" });
+	const root = host.createDiv({ cls: "media-tv" });
 	let dispose = null, booting = false;
 	// Back from Settings with the Sonarr key now saved: start the page for real.
 	const offParams = ctx.onParams(() => { if (!dispose && !booting) boot().catch(() => { /* the setup state or the failed first boot already shows */ }); });
