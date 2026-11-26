@@ -418,7 +418,7 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 /* Two-line row: the dot sits beside the title (first line); the details and the hover actions share the second line. */
 .hel-list-row.has-sub { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 0; row-gap: 1px; align-items: center; }
 .hel-list-row.has-sub > .hel-status-dot, .hel-list-row.has-sub > .hel-list-row-icon { grid-column: 1; grid-row: 1; margin-inline-end: var(--size-4-2); }
-.hel-list-row.has-sub > .hel-list-row-title { grid-column: 2 / -1; grid-row: 1; } /* the full width, so no blank strip beside it */
+.hel-list-row.has-sub > .hel-list-row-title { grid-column: 2 / -1; grid-row: 1; margin-inline-end: 0; } /* the full width, so no blank strip beside it; an auto margin would size it to its text and stop the ellipsis */
 .hel-list-row.has-sub:has(> .hel-list-row-tag, > .hel-count-badge, > .hel-list-row-chevron) > .hel-list-row-title { grid-column: 2; }
 .hel-list-row.has-sub > .hel-list-row-chevron { grid-column: 3; grid-row: 1 / span 2; margin-inline-start: var(--size-4-2); }
 .hel-list-row.has-sub > .hel-list-row-tag, .hel-list-row.has-sub > .hel-count-badge { grid-column: 3; grid-row: 1; margin-inline-start: var(--size-4-2); }
