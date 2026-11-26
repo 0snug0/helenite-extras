@@ -21,6 +21,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | A button | `ui.button`; for a common job (back, close, reset, configure, delete, remove, add, open...) `ui.action`, which fixes the icon, label and look |
 | One choice from a few | `ui.segmented` (or `ui.tabs` when each choice shows its own panel) |
 | One choice from many | `ui.dropdown`; rows with details, picked inline: `ui.choiceList` |
+| One icon or colour from a grid | `ui.pickerGrid` |
 | Several on/off choices | `ui.checkList` |
 | A labelled input | `ui.field` with `ui.textInput`, `ui.toggle`, `ui.dropdown` or `ui.slider` in its `control`; `fill: true` for a full-width one |
 | A list of records | `ui.table`, with `ui.action` buttons in its `actions` column |

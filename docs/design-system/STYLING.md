@@ -185,6 +185,9 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `is-armed` | `ui.button` with `armed`: the second click of a two-click delete, a danger fill at the same size. |
 | `hel-frame-dialog` / `hel-frame-dialog-box` | `frameDialog` in `@helenite/ui-kit`: a large dialog an app draws itself (`--hel-frame-dialog-width`, `--hel-frame-dialog-height`). |
 | `hel-swatch-fill` | The part of a swatch the value is set on, inline: its background, corners, shadow or width, or the "Aa" of a font. |
+| `hel-picker-grid` | `ui.pickerGrid`: a radio group of 32px cells that wrap. |
+| `hel-picker-cell` | One cell, a `radio` button. Checked (`aria-checked`), an icon cell takes `--hel-button-active-bg` and `--hel-button-active-fg`. `is-color` is a round colour cell. |
+| `hel-picker-icon` / `hel-picker-dot` | An icon cell's icon, and a colour cell's 22px round dot (the colour set inline), ringed in `--text-normal` when checked. |
 
 ### Form controls, tabs and toolbar
 
@@ -192,7 +195,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 | Class | What it is |
 | --- | --- |
-| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-fill` (`fill: true`) makes a text box, dropdown, search box, choice list or check list in `hel-field-control` take the slot's width; `is-invalid` while an error is shown (its control also gets `aria-invalid="true"`, which rings it in `--hel-error-ring`). |
+| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-fill` (`fill: true`) makes a text box, dropdown, search box, choice list, check list or picker grid in `hel-field-control` take the slot's width; `is-invalid` while an error is shown (its control also gets `aria-invalid="true"`, which rings it in `--hel-error-ring`). |
 | `hel-field-label` | The field's `<label>`, medium weight in normal text. |
 | `hel-field-control` | The slot the control is drawn into. |
 | `hel-field-hint` | The helper text line, in muted text. |

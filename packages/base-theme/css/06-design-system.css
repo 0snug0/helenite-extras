@@ -158,6 +158,19 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-swatch.is-size > .hel-swatch-fill { flex: none; width: 0; max-width: 100%; background-color: var(--interactive-accent); }
 .hel-swatch:is(.is-font-family, .is-font-size, .is-font-weight) { width: 40px; overflow: hidden; color: var(--text-normal); font-size: var(--font-ui-medium); line-height: 1; white-space: nowrap; }
 .hel-swatch:is(.is-font-family, .is-font-size, .is-font-weight) > .hel-swatch-fill { width: auto; height: auto; }
+/* Picker grid (ui.pickerGrid): one icon or colour of many, 32px cells that wrap. A checked icon cell fills with the accent; a colour cell is a round dot at full strength, ringed when checked. The buttons outrank base.css's button:not(.clickable-icon) and its :hover. */
+.hel-picker-grid { display: flex; flex-wrap: wrap; gap: var(--size-4-1); }
+.hel-picker-grid[hidden] { display: none; }
+.hel-picker-grid > button.hel-picker-cell { display: inline-flex; flex: none; align-items: center; justify-content: center; box-sizing: border-box; width: var(--size-4-8); height: var(--size-4-8); padding: 0; border: 0; border-radius: var(--hel-control-radius, 6px); background: transparent; box-shadow: none; color: var(--text-muted); cursor: pointer; }
+.hel-picker-grid > button.hel-picker-cell:hover { background: var(--background-modifier-hover); box-shadow: none; color: var(--text-normal); }
+.hel-picker-grid > button.hel-picker-cell[aria-checked="true"] { background: var(--hel-button-active-bg); color: var(--hel-button-active-fg); }
+.hel-picker-grid > button.hel-picker-cell.is-color { border-radius: 50%; }
+.hel-picker-grid > button.hel-picker-cell.is-color[aria-checked="true"] { background: transparent; }
+.hel-picker-grid > button.hel-picker-cell:focus-visible { outline: none; box-shadow: var(--hel-ring-focus); }
+.hel-picker-icon { display: inline-flex; align-items: center; }
+.hel-picker-icon > .svg-icon { width: var(--icon-size); height: var(--icon-size); stroke-width: var(--icon-stroke); }
+.hel-picker-dot { display: block; box-sizing: border-box; width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--background-modifier-border); }
+.hel-picker-cell[aria-checked="true"] > .hel-picker-dot { outline: 2px solid var(--text-normal); outline-offset: 2px; }
 /* Meter (ui.meter): inline (one line, the default), stacked (label and reading above a full-width bar) or a bare bar. The font and the label's colour come from the parent; the sub line and a stacked reading are smaller and muted. */
 .hel-meter { display: inline-flex; align-items: center; gap: var(--size-2-3); }
 .hel-meter-label, .hel-meter-text { white-space: nowrap; }
@@ -232,7 +245,7 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-field-control { display: flex; flex-wrap: wrap; gap: var(--size-4-2); align-items: center; min-width: 0; }
 .hel-field-control > :is(.hel-input, .hel-select) { min-width: 0; max-width: 100%; box-sizing: border-box; }
 .hel-field.is-fill > .hel-field-control > :is(input.hel-input, .hel-select, .search-input-container) { flex: 1 1 12em; min-width: 0; box-sizing: border-box; }
-.hel-field.is-fill > .hel-field-control > :is(textarea.hel-input, .hel-choice-list, .hel-check-list) { flex: 1 1 100%; min-width: 0; box-sizing: border-box; }
+.hel-field.is-fill > .hel-field-control > :is(textarea.hel-input, .hel-choice-list, .hel-check-list, .hel-picker-grid) { flex: 1 1 100%; min-width: 0; box-sizing: border-box; }
 .hel-field-hint { font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .hel-field-error { font-size: var(--font-ui-smaller); color: var(--text-error); }
 /* base.css gives a textarea an input's one-line height; a multiline box grows with its rows */

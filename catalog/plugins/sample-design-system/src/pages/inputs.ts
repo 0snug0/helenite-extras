@@ -51,6 +51,18 @@ export function drawInputs(el: HTMLElement): void {
     onChange: () => {},
   });
 
+  const grids = ui.settings.section(el, 'Icon and colour grids');
+  ui.pickerGrid(ui.field(grids, { label: 'Icon', fill: true }).control, {
+    options: ['folder', 'star', 'book', 'music', 'code'].map((name) => ({ value: name, label: name, icon: name })),
+    value: 'folder',
+    onChange: () => {},
+  });
+  ui.pickerGrid(ui.field(grids, { label: 'Colour', fill: true }).control, {
+    options: ['red', 'orange', 'green', 'blue', 'purple'].map((name) => ({ value: name, label: name, color: `var(--color-${name})` })),
+    value: 'blue',
+    onChange: () => {},
+  });
+
   const compose = ui.settings.section(el, 'Composer');
   ui.composer(compose, {
     placeholder: 'Add a comment', hint: 'Enter sends, Shift+Enter starts a new line.',

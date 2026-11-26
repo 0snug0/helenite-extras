@@ -24,7 +24,7 @@ Copy `dist/manifest.json` and `dist/main.js` into `<vault>/.obsidian/plugins/sam
 | `src/view.ts` | `tabs`, `paneHeader`, `densityAction` |
 | `src/pages/items.ts` | `toolbar`, `searchInput`, `dropdown`, `segmented`, `listGroup`, `listRow`, `emptyState` |
 | `src/pages/board.ts` | `board`, `moreButton` |
-| `src/pages/inputs.ts` | `button`, `field`, `textInput`, `toggle`, `slider`, `checkList`, `choiceList`, `composer` |
+| `src/pages/inputs.ts` | `button`, `field`, `textInput`, `toggle`, `slider`, `checkList`, `choiceList`, `pickerGrid`, `composer` |
 | `src/pages/status.ts` | `callout`, `badge`, `statusDot`, `statusText`, `countBadge`, `chip`, `avatar`, `swatch`, `meter`, `barChart`, `loadingState`, `emptyState`, `errorState`, `settings.row` |
 | `src/pages/cards.ts` | `card`, `disclosure`, `keyValue`, `codeBlock`, `thread`, `threadText` |
 | `src/pages/dialogs.ts` | `confirm`, `prompt`, `choose`, `form`, `dialog`, `popover`, `menu`, `menuButton`, `action`, `STANDARD_ACTIONS` |

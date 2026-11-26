@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, swatch, the form controls, tabs, toolbar, callout, card, disclosure, check list, choice list, list row and group, composer, key-value list, code block, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, swatch, picker grid, the form controls, tabs, toolbar, callout, card, disclosure, check list, choice list, list row and group, composer, key-value list, code block, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -143,6 +143,21 @@ ui.swatch(td, { kind: 'font-weight', value: '700', label: '--font-bold' });   //
 ```
 
 One CSS value on show, for a token table or a theme picker. `kind` is `color` (any background, so a gradient too), `radius`, `shadow`, `size`, `font-family`, `font-size` or `font-weight`; `value` is written out or a `var(--token)`, and one CSS cannot read draws nothing (a font kind still shows plain "Aa"). A swatch is a 28px square, a `size` a bar on a 64px track (a longer length fills it), a font "Aa" in a 40px box that clips a very large size. `label` is its accessible name; the tooltip is the value, or `title`. Returns the element.
+
+### ui.pickerGrid
+
+```ts
+const colors = ui.pickerGrid(el, {
+  label: 'Colour',
+  options: [{ value: 'red', label: 'Red', color: 'var(--color-red)' }, { value: 'blue', label: 'Blue', color: 'var(--color-blue)' }],
+  value: 'blue',
+  onChange: (v) => paint(v),
+});
+ui.pickerGrid(el, { label: 'Icon', options: [{ value: 'home', label: 'Home', icon: 'home' }, { value: 'code', label: 'Code', icon: 'code' }], onChange: (v) => use(v) });
+colors.setValue('red'); // no onChange
+```
+
+One icon or colour picked from a grid. Each option has a `value`, a `label` (the cell's accessible name and tooltip) and an `icon` (a Lucide name) or a `color` (any CSS background, drawn as a round dot). It is a radio group with one Tab stop (the checked cell, else the first): Left and Right move and pick, wrapping; Up and Down move a row; Home and End jump to the ends; a click picks. `onChange` gets the new value and is not called for the cell already checked. `value` may be left out (nothing checked); values are compared with `===`. `label` names the group; in a `ui.field` control the field's label does. The handle has `el` and `setValue`. For a few text choices use `ui.segmented`; for rows with details, `ui.choiceList`.
 
 ### ui.meter
 
@@ -273,7 +288,7 @@ ui.searchInput(el, { placeholder: 'Filter plugins', onSearch: (q) => filter(q) }
 
 | Part | Returns | Notes |
 | --- | --- | --- |
-| `field(parent, { label, hint?, inline?, fill? })` | `{ el, control, setError(msg \| null), setHint(text) }` | A control keeps its own width unless `fill: true`: then a text box, dropdown or search box fills the slot (sharing the row with a button drawn beside it), and a multiline box, choice list or check list gets a row of its own. Use it for paths, links and lists. `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
+| `field(parent, { label, hint?, inline?, fill? })` | `{ el, control, setError(msg \| null), setHint(text) }` | A control keeps its own width unless `fill: true`: then a text box, dropdown or search box fills the slot (sharing the row with a button drawn beside it), and a multiline box, choice list, check list or picker grid gets a row of its own. Use it for paths, links and lists. `setError` shows the message and marks the control invalid; `null` clears it. `setHint` changes the hint (adding one if the field had none). |
 | `textInput(parent, { value?, placeholder?, secret?, type?, label?, onInput?, onEnter?, multiline?, rows? })` | the `<input>` (a `<textarea>` with `multiline`) | `type` is `text` (default) or `number`; `secret` hides the text. `multiline: true` makes a box of several lines (`rows`, default 3) for a longer answer; Enter starts a new line there and `onEnter` is not called. |
 | `toggle(parent, { value, label, disabled?, hideLabel?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's switch (`checkbox-container`) with its label; Space and Enter flip it. `setValue` does not call `onChange`. `hideLabel` keeps the label as the switch's accessible name without showing it, for a row that shows the name elsewhere. |
 | `dropdown(parent, { options: [{ value, text }], value?, label?, compact?, onChange? })` | `{ el, setValue, setDisabled }` | Obsidian's `dropdown`. `compact` is shorter, for toolbars and rows. |
@@ -601,7 +616,7 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, disclosure, listRow, mediaCard, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, swatch, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, codeBlock, meter, board, barChart, artwork, mediaGrid, mediaCard, figures, rating, statTiles, sectionHeading, monthGrid) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that takes any Lucide name and draws it as inline SVG. The standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`, and `align-justify` and `rows-2` for `densityAction`) are inside the kit and draw at once; the rest are asked of the host over the bridge (call `setBridge`) and draw when it answers, so an app does not bundle the icon set. A name the host does not know is only set as `data-icon` on the icon element. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`. Prefer `mediaGrid` and `mediaCard` for posters. For content a host modal cannot show (a table with its own buttons), `frameDialog({ label, onClose })` draws a large dialog in the frame: lift the frame with `api.ui.overlay(true)` while it is open.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, swatch, pickerGrid, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, codeBlock, meter, board, barChart, artwork, mediaGrid, mediaCard, figures, rating, statTiles, sectionHeading, monthGrid) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that takes any Lucide name and draws it as inline SVG. The standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`, and `align-justify` and `rows-2` for `densityAction`) are inside the kit and draw at once; the rest are asked of the host over the bridge (call `setBridge`) and draw when it answers, so an app does not bundle the icon set. A name the host does not know is only set as `data-icon` on the icon element. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`. Prefer `mediaGrid` and `mediaCard` for posters. For content a host modal cannot show (a table with its own buttons), `frameDialog({ label, onClose })` draws a large dialog in the frame: lift the frame with `api.ui.overlay(true)` while it is open.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
