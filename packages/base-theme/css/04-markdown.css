@@ -168,22 +168,23 @@ input[type=checkbox].task-list-item-checkbox:checked::after {
 .token.tag, .cm-tag { color: var(--code-tag); }
 .token.important { color: var(--code-important); }
 
-/* Tables */
-.markdown-rendered table { border-collapse: collapse; margin: 0 0 var(--p-spacing); font-size: var(--table-text-size); background: var(--table-background); }
-.markdown-rendered th, .markdown-rendered td, .table-editor th, .table-editor td {
+/* Tables. The design-system table (.hel-table, ui.table) keeps its own look in a note: these rules skip it, its rows and
+   its own cells, but not a markdown table drawn inside one. :where() adds no weight, so a theme's rules still beat these. */
+.markdown-rendered table:where(:not(.hel-table)) { border-collapse: collapse; margin: 0 0 var(--p-spacing); font-size: var(--table-text-size); background: var(--table-background); }
+.markdown-rendered th:where(:not(.hel-table > * > tr > *)), .markdown-rendered td:where(:not(.hel-table > * > tr > *)), .table-editor th, .table-editor td {
   border: var(--table-border-width) solid var(--table-border-color);
   padding: var(--size-2-2) var(--size-4-2);
   vertical-align: var(--table-cell-vertical-alignment);
   min-width: var(--table-column-min-width); max-width: var(--table-column-max-width);
   white-space: var(--table-white-space);
 }
-.markdown-rendered th, .table-editor th {
+.markdown-rendered th:where(:not(.hel-table > * > tr > *)), .table-editor th {
   background-color: var(--table-header-background); color: var(--table-header-color);
   font-weight: var(--table-header-weight); font-size: var(--table-header-size);
   border-color: var(--table-header-border-color); text-align: start;
 }
-.markdown-rendered tbody tr:nth-child(even) { background-color: var(--table-row-alt-background); }
-.markdown-rendered tbody tr:hover { background-color: var(--table-row-background-hover); }
+.markdown-rendered tbody tr:nth-child(even):where(:not(.hel-table > * > tr)) { background-color: var(--table-row-alt-background); }
+.markdown-rendered tbody tr:hover:where(:not(.hel-table > * > tr)) { background-color: var(--table-row-background-hover); }
 .table-editor { border-collapse: collapse; font-size: var(--table-text-size); }
 .cm-table-widget { overflow-x: auto; }
 
