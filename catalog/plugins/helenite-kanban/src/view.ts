@@ -1,6 +1,6 @@
 // The board view: a TextFileView over a board note. Edits go through ops.ts and are written straight back to the note.
 import { MarkdownRenderer, TextFileView, type WorkspaceLeaf } from 'obsidian';
-import { ui, type MenuItemSpec } from 'helenite';
+import { ui, type BoardHandle, type MenuItemSpec } from 'helenite';
 import { parseBoard, serializeBoard, type Board, type Card, type Lane } from './board';
 import * as ops from './ops';
 
@@ -12,6 +12,17 @@ const fromPrompt = (text: string): string => text.replace(/<br>/g, '\n');
 const firstLine = (text: string): string => text.split('\n')[0] || '(empty card)';
 const required = (what: string) => (v: string) => (v.trim() ? null : `Enter a ${what}.`);
 
+/** A card of one paragraph is shown without the paragraph's margins, so it is no taller than its text. */
+function unwrapParagraph(el: HTMLElement): void {
+  const only = el.children.length === 1 ? el.firstElementChild! : null;
+  if (only?.tagName === 'P') only.replaceWith(...Array.from(only.childNodes));
+}
+
+interface Scroll {
+  x: number;
+  lists: { lane: string | undefined; top: number }[];
+}
+
 export interface KanbanHost {
   /** Reopen the leaf as a plain markdown note. */
   openAsMarkdown(leaf: WorkspaceLeaf): void;
@@ -21,7 +32,9 @@ export class KanbanView extends TextFileView {
   board: Board = parseBoard('');
   /** Only an edit made here rewrites the note; just viewing a hand-written board leaves its layout alone. */
   private dirty = false;
-  private dragId: string | null = null;
+  /** While a card is dragged the board is not redrawn; a redraw asked for meanwhile runs when the drag ends. */
+  private dragging = false;
+  private pending = false;
 
   constructor(leaf: WorkspaceLeaf, private host: KanbanHost) {
     super(leaf);
@@ -45,7 +58,13 @@ export class KanbanView extends TextFileView {
     return serializeBoard(this.board, { useTab });
   }
 
-  setViewData(data: string, _clear: boolean): void {
+  setViewData(data: string, clear: boolean): void {
+    // Another note: its board starts at the top, not where the last one was scrolled to. A card dragged from the last one
+    // is gone with it, so its dragend may never come.
+    if (clear) {
+      this.contentEl.empty();
+      this.dragging = this.pending = false;
+    }
     this.data = data;
     this.dirty = false;
     this.board = parseBoard(data);
@@ -71,88 +90,100 @@ export class KanbanView extends TextFileView {
   }
 
   render(): void {
+    if (this.dragging) {
+      this.pending = true;
+      return;
+    }
     const root = this.contentEl;
+    const scroll = this.scrollPositions();
     root.empty();
-    root.addClass('helenite-kanban-view');
-    const bar = root.createDiv({ cls: 'helenite-kanban-toolbar' });
+    root.addClass('hel-board-page');
+    const bar = ui.toolbar(root, { label: 'Board' });
     ui.button(bar, { text: 'Add list', icon: 'plus', onClick: () => this.addLane() });
     if (this.board.archive.length) {
       ui.button(bar, { text: `Archived cards (${this.board.archive.length})`, icon: 'archive', onClick: () => this.restoreFromArchive() });
     }
-    const lanes = root.createDiv({ cls: 'helenite-kanban-lanes' });
     if (!this.board.lanes.length) {
-      ui.emptyState(lanes, 'No lists yet. Add a list to start the board.');
+      ui.emptyState(root, 'No lists yet. Add a list to start the board.');
       return;
     }
-    this.board.lanes.forEach((lane, i) => this.renderLane(lanes, lane, i));
+    const shown = this.board;
+    const board = ui.board(root, {
+      label: 'Lists',
+      onDragStart: () => { this.dragging = true; },
+      onDragEnd: () => this.endDrag(),
+      // The note was read again mid-drag: these ids belong to the board that was replaced, so nothing is written.
+      onDrop: (id, lane, at) => { if (this.board === shown) this.update(ops.moveCard(shown, id, lane, at)); },
+    });
+    const drawn = this.board.lanes.flatMap((lane, i) => this.renderLane(board, lane, i));
+    this.restoreScroll(scroll);
+    // Again once the cards have their text: until then a list may be too short to scroll that far.
+    void Promise.allSettled(drawn).then(() => {
+      if (board.el.parentElement === root) this.restoreScroll(scroll);
+    });
   }
 
-  private renderLane(parent: HTMLElement, lane: Lane, index: number): void {
-    const el = parent.createDiv({ cls: 'helenite-kanban-lane' });
-    el.dataset.laneId = lane.id;
-    const head = el.createDiv({ cls: 'helenite-kanban-lane-header' });
-    const title = head.createDiv({ cls: 'helenite-kanban-lane-title', text: lane.title || 'Untitled list' });
-    title.setAttribute('role', 'button');
-    title.tabIndex = 0;
-    title.addEventListener('click', () => void this.renameLane(lane));
+  /** Returns when each card's markdown is drawn. */
+  private renderLane(board: BoardHandle, lane: Lane, index: number): Promise<void>[] {
+    const title = lane.title || 'Untitled list';
+    const { head, list, card } = board.lane({ id: lane.id, label: title });
+    ui.statusText(head, title).addEventListener('dblclick', () => void this.renameLane(lane));
     const count = lane.maxItems ? `${lane.cards.length}/${lane.maxItems}` : String(lane.cards.length);
     ui.badge(head, count, lane.maxItems && lane.cards.length > lane.maxItems ? 'danger' : lane.markComplete ? 'success' : 'default');
-    ui.moreButton(head, () => this.laneMenu(lane, index), 'List options');
+    ui.moreButton(head, () => this.laneMenu(lane, index), 'List options').el.classList.add('hel-toolbar-end');
 
-    const cards = el.createDiv({ cls: 'helenite-kanban-cards' });
-    this.wireDrop(cards, lane);
-    if (!lane.cards.length) cards.createDiv({ cls: 'helenite-kanban-placeholder', text: 'No cards' });
-    for (const card of lane.cards) this.renderCard(cards, card, lane);
-    ui.button(el, { text: 'Add a card', icon: 'plus', variant: 'link', onClick: () => this.addCard(lane) });
+    if (!lane.cards.length) ui.emptyState(list, 'No cards', { variant: 'inline' });
+    const drawn = lane.cards.map((c) => this.renderCard(card({ id: c.id, tone: c.checked ? 'muted' : 'default' }).head, c, lane));
+    ui.button(list, { text: 'Add a card', icon: 'plus', variant: 'link', onClick: () => this.addCard(lane) });
+    return drawn;
   }
 
-  private renderCard(parent: HTMLElement, card: Card, lane: Lane): void {
-    const el = parent.createDiv({ cls: 'helenite-kanban-card' });
-    el.toggleClass('is-done', card.checked);
-    el.dataset.cardId = card.id;
-    el.draggable = true;
-    el.addEventListener('dragstart', (e) => {
-      this.dragId = card.id;
-      e.dataTransfer?.setData('text/plain', card.id);
-      el.addClass('is-dragging');
-    });
-    el.addEventListener('dragend', () => {
-      this.dragId = null;
-      el.removeClass('is-dragging');
-    });
-    const check = el.createEl('input', { cls: 'task-list-item-checkbox helenite-kanban-check', type: 'checkbox' });
+  /** The done checkbox, the card's markdown and its menu, side by side in the card's head (a part for this: HELENITE-185). */
+  private renderCard(row: HTMLElement, card: Card, lane: Lane): Promise<void> {
+    // In a box of its own, or long text beside it squeezes the checkbox.
+    const check = row.createDiv().createEl('input', { cls: 'task-list-item-checkbox', type: 'checkbox' });
     check.checked = card.checked;
     check.setAttribute('aria-label', card.checked ? 'Mark card as not done' : 'Mark card as done');
     check.addEventListener('click', (e) => {
       e.stopPropagation();
       this.update(ops.toggleCard(this.board, card.id));
     });
-    const body = el.createDiv({ cls: 'helenite-kanban-card-text' });
-    void MarkdownRenderer.render(this.app, card.text, body, this.file?.path ?? '', this);
+    const body = row.createDiv({ cls: 'markdown-rendered' });
+    const drawn = MarkdownRenderer.render(this.app, card.text, body, this.file?.path ?? '', this).then(() => unwrapParagraph(body));
     body.addEventListener('dblclick', () => void this.editCard(card));
-    ui.moreButton(el, () => this.cardMenu(card, lane), 'Card options');
+    ui.moreButton(row, () => this.cardMenu(card, lane), 'Card options');
+    return drawn;
   }
 
-  /** Cards can be dropped anywhere in a lane; the drop position is the first card whose middle is below the pointer. */
-  private wireDrop(cards: HTMLElement, lane: Lane): void {
-    cards.addEventListener('dragover', (e) => {
-      if (!this.dragId) return;
-      e.preventDefault();
-      cards.addClass('is-drop-target');
-    });
-    cards.addEventListener('dragleave', () => cards.removeClass('is-drop-target'));
-    cards.addEventListener('drop', (e) => {
-      cards.removeClass('is-drop-target');
-      const id = this.dragId ?? e.dataTransfer?.getData('text/plain');
-      if (!id) return;
-      e.preventDefault();
-      const items = Array.from(cards.querySelectorAll<HTMLElement>('.helenite-kanban-card'));
-      let to = items.findIndex((c) => {
-        const r = c.getBoundingClientRect();
-        return e.clientY < r.top + r.height / 2;
-      });
-      if (to < 0) to = items.length;
-      this.update(ops.moveCard(this.board, id, lane.id, to));
+  private endDrag(): void {
+    this.dragging = false;
+    if (this.pending) {
+      this.pending = false;
+      this.render();
+    }
+  }
+
+  /** How far the row of lists and each list are scrolled, so an edit's redraw leaves the board where it was. */
+  private scrollPositions(): Scroll {
+    return {
+      x: this.contentEl.querySelector<HTMLElement>('.hel-board')?.scrollLeft ?? 0,
+      lists: Array.from(this.contentEl.querySelectorAll<HTMLElement>('.hel-board-lane'), (l) => ({
+        lane: l.dataset.lane,
+        top: l.querySelector<HTMLElement>('.hel-board-list')?.scrollTop ?? 0,
+      })),
+    };
+  }
+
+  private restoreScroll(p: Scroll): void {
+    const row = this.contentEl.querySelector<HTMLElement>('.hel-board');
+    if (row) row.scrollLeft = p.x;
+    const lanes = Array.from(this.contentEl.querySelectorAll<HTMLElement>('.hel-board-lane'));
+    // A list keeps its place when lists move or go. After the note is read again the ids are new: then go by position.
+    const kept = lanes.some((l) => p.lists.some((s) => s.lane === l.dataset.lane));
+    lanes.forEach((l, i) => {
+      const saved = kept ? p.lists.find((s) => s.lane === l.dataset.lane) : p.lists[i];
+      const list = l.querySelector<HTMLElement>('.hel-board-list');
+      if (list && saved?.top) list.scrollTop = saved.top;
     });
   }
 
