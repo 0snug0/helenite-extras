@@ -7,7 +7,7 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
@@ -17,12 +17,13 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { menu, menuButton, moreButton } from 'helenite/internal/obsidian-api/src/ui/design/menu';
   import { densityAction, paneHeader } from 'helenite/internal/obsidian-api/src/ui/design/pane-header';
   import { vaultScope } from 'helenite/internal/obsidian-api/src/ui/design/vault-scope';
+  import { popover } from 'helenite/internal/obsidian-api/src/ui/design/popover';
   import { notice } from 'helenite/internal/obsidian-api/src/ui/design/notice';
   import { action } from 'helenite/internal/obsidian-api/src/ui/design/actions';
   import { card as settingsCard, openSubpage, section, subpageRow, summaryRow } from 'helenite/internal/obsidian-api/src/ui/design/settings';
   import { scopeBar } from 'helenite/internal/obsidian-api/src/ui/scope-bar';
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, } from 'helenite/internal/ui/src/index';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   export type { DialogOptions, DialogAction, DialogContext, DialogSidePanel } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -57,6 +58,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       toolbar: typeof toolbar;
       callout: typeof callout;
       card: typeof card;
+      popover: typeof popover;
       checkList: typeof checkList;
       choiceList: typeof choiceList;
       listRow: typeof listRow;
@@ -122,6 +124,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           toolbar: typeof toolbar;
           callout: typeof callout;
           card: typeof card;
+          popover: typeof popover;
           checkList: typeof checkList;
           choiceList: typeof choiceList;
           listRow: typeof listRow;
@@ -192,6 +195,8 @@ declare module 'helenite/internal/ui/src/index' {
   export type { Field, FieldValues, DrawnFields } from "helenite/internal/ui/src/fields";
   export { callout } from "helenite/internal/ui/src/callout";
   export type { CalloutOptions, CalloutHandle, CalloutTone } from "helenite/internal/ui/src/callout";
+  export { popover } from "helenite/internal/ui/src/popover";
+  export type { PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle } from "helenite/internal/ui/src/popover";
   export { card } from "helenite/internal/ui/src/card";
   export type { CardOptions, CardHandle, CardTone } from "helenite/internal/ui/src/card";
   export { checkList } from "helenite/internal/ui/src/check-list";
@@ -606,6 +611,59 @@ declare module 'helenite/internal/ui/src/callout' {
   }
   /** A banner or inline message: toned text, optionally with an action button. Also Obsidian's `callout`. */
   export function callout(parent: HTMLElement, o: CalloutOptions): CalloutHandle;
+}
+
+declare module 'helenite/internal/ui/src/popover' {
+  /** What a popover opens at: an element, a point, or a rectangle such as a caret's (client coordinates). */
+  export type PopoverAnchor = Element | {
+      x: number;
+      y: number;
+  } | {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+  };
+  /** `escape` and `outside` are the user's; `close` is `close()`, another popover opening, or the element being removed. */
+  export type PopoverCloseReason = "escape" | "outside" | "close";
+  export interface PopoverOptions {
+      title?: string;
+      icon?: string;
+      /** The accessible name of a popover with no title. */
+      label?: string;
+      /** What the popover is about, such as the selected text: a `<blockquote>` first in the body, drawn as written. */
+      quote?: string;
+      /** The side of the anchor it opens on while it fits there. Default "bottom". */
+      side?: "bottom" | "top";
+      /** The width in px. Default `--hel-popover-width` (320px). */
+      width?: number;
+      /** Where focus goes when it closes. Default: what had focus when it opened. */
+      returnFocus?: HTMLElement | null;
+      /** The document to draw in. By default an element anchor's own. */
+      document?: Document;
+      /** Runs once when it closes, after focus has gone back (except after an outside click, which settles it later). */
+      onClose?: (reason: PopoverCloseReason) => void;
+  }
+  export interface PopoverHandle {
+      el: HTMLElement;
+      /** Holds the icon and title. Not shown while empty. */
+      head: HTMLElement;
+      /** Draw the popover's content into this. It scrolls when the window is too short. */
+      body: HTMLElement;
+      /** A strip under the body for actions or a status. Not shown while empty. */
+      footer: HTMLElement;
+      /** The title element, or null when there is no title. */
+      titleEl: HTMLElement | null;
+      /** Places it again. Its content, the window's size and scrolling (with an element anchor) are followed without this. */
+      update(): void;
+      close(): void;
+  }
+  /**
+   * A floating panel at an anchor (an element, a point or a caret's rectangle) with a title, a body and a footer. It stays
+   * inside the window, flipping above the anchor or to its other edge when it has to, and closes on Escape or a click
+   * outside it, giving focus back. `null` centers it. One is open at a time.
+   */
+  export function popover(at: PopoverAnchor | null, o?: PopoverOptions): PopoverHandle;
 }
 
 declare module 'helenite/internal/ui/src/card' {
@@ -1534,6 +1592,15 @@ declare module 'helenite/internal/obsidian-api/src/ui/components/text' {
       onChanged(): void;
       updateSample(): void;
   }
+}
+
+declare module 'helenite/internal/obsidian-api/src/ui/design/popover' {
+  import type { PopoverAnchor, PopoverHandle, PopoverOptions } from 'helenite/internal/ui/src/index';
+  /**
+   * `ui.popover`: the design-system part with a key scope while it is open, so its Escape comes before that of a modal
+   * under it. The scope's parent is the one below, so hotkeys behave as they did.
+   */
+  export function popover(at: PopoverAnchor | null, o?: PopoverOptions): PopoverHandle;
 }
 
 declare module 'helenite/internal/obsidian-api/src/ui/design/notice' {

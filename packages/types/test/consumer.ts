@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, PopoverHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -53,6 +53,11 @@ ui.choiceList(document.body, { options: [{ value: 'a', text: 'A', key: '1' }], v
 ui.choiceList(document.body, { multi: true, options: [{ value: 'a', text: 'A' }], value: ['a'], onChange: (v: string[]) => v });
 const g = ui.listGroup(document.body, { title: 'Today', count: 2 });
 const rowEl: HTMLElement = ui.listRow(g.body, { title: 'Row', obsidianClass: 'tree-item', menu: () => [{ title: 'Open', onClick: () => undefined }] });
+const pop: PopoverHandle = ui.popover({ left: 0, right: 0, top: 0, bottom: 0 }, { title: 'Ask', quote: 'text', width: 380, onClose: (reason) => reason === 'outside' });
+ui.popover(rowEl, { side: 'top', returnFocus: rowEl }).close();
+ui.popover(null).footer.append(pop.body);
+// @ts-expect-error: a popover needs an anchor (null centers it).
+ui.popover();
 ui.composer(rowEl, { submitOn: 'mod-enter', onSubmit: async (text: string) => text }).setBusy(false);
 ui.keyValue(document.body, [{ key: 'Hosts', value: ['a.com'], isNew: () => true }]);
 const talk: Thread = ui.thread(document.body, { maxIndent: 2 });

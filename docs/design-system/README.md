@@ -24,7 +24,7 @@ That writes `packages/types/helenite.d.ts`, a `declare module 'helenite'` file. 
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `AvatarOptions`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `DialogSidePanel`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `AvatarOptions`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `PopoverAnchor`, `PopoverCloseReason`, `PopoverOptions`, `PopoverHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `DialogSidePanel`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -272,6 +272,20 @@ c.setTone('warning');
 A bordered block with a head (icon and title; hidden when there is neither) and a `body` you draw into. Add actions or a status to `head`. Tones: `default`, `accent`, `warning`, `muted` (a finished or inactive item). `compact` has less padding.
 
 `attention: true` is for a card that waits on the user, such as an agent's question: a thick border and a tint in its tone (`accent`, or `warning` for a permission), the icon in the tone's colour, the interface font at a readable size (set on the card, so a terminal or editor font around it never leaks in; code inside stays monospace), roomier choice-list rows with a tinted pick and key hints in muted text that brighten when a row is hovered, focused or picked, and a focus ring while focus is inside. `sticky: true` keeps it at the top of its scrolling pane, raised by a shadow. The handle's `titleEl` is the title element (null without a title); `pulse()` pulses the outline a few times to draw the eye (nothing moves under reduced motion), and `setBusy(true)` dims the card and ignores the pointer while something it started runs.
+
+### ui.popover
+
+```ts
+const p = ui.popover(button, { title: 'Rename branch', onClose: (why) => remember(why) });
+const name = ui.textInput(p.body, { value: 'main' });
+ui.button(p.footer, { text: 'Rename', variant: 'primary', onClick: () => { rename(name.value); p.close(); } });
+```
+
+A floating panel at an anchor, for a short question or detail about one thing on screen. It does not block the page; use `ui.dialog` when the user must answer before going on. The first argument is where it opens: an element, a point (`{ x, y }`), a rectangle such as a caret's (`{ left, right, top, bottom }`), or `null` for the middle of the window. It opens under the anchor (`side: 'top'` for above) with their left edges aligned, and stays inside the window: it flips to the other side or the anchor's other edge when it has no room, and its body scrolls when the window is too short. It follows its content, window resizes and, with an element anchor, scrolling (a point or rectangle stays where it was given); call `update()` after an element anchor moves some other way.
+
+Options: `title`, `icon`, `label` (its accessible name when there is no title), `quote` (what it is about, such as the selected text: a `<blockquote>` first in the body, as written), `side`, `width` (px, 320), `returnFocus`, `document` (to draw a point in another window) and `onClose`. The handle has `el`, `head`, `body`, `footer` (hidden while empty), `titleEl`, `update` and `close`.
+
+Focus moves into it (to its first control, unless you focus one yourself). Escape, a click outside it and `close()` close it, and focus goes back to `returnFocus`, or to what had it before, unless the user has moved it elsewhere. Clicks on its anchor, a menu or a suggestion list do not count as outside, so an anchor button decides itself what a second click does. One popover is open at a time. `onClose` gets why: `'escape'`, `'outside'` or `'close'`.
 
 ### ui.checkList, ui.choiceList
 

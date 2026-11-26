@@ -505,6 +505,21 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-composer-menu-name { flex: none; color: var(--text-normal); font-family: var(--font-monospace); }
 .hel-composer-menu-desc { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); }
 
+/* popover (ui.popover): a floating panel on the overlay ring, placed by the part. A title that never breaks (a file path)
+   wraps, and the body scrolls when the window is too short. */
+.hel-popover { position: fixed; z-index: var(--layer-popover); box-sizing: border-box; display: flex; flex-direction: column; width: var(--hel-popover-width); max-width: calc(100vw - var(--size-4-4)); max-height: calc(100vh - var(--size-4-4)); overflow: hidden; border: 1px solid transparent; border-radius: var(--hel-card-radius); corner-shape: var(--hel-corner-shape); background: var(--background-primary); color: var(--text-normal); box-shadow: var(--hel-ring-overlay, var(--shadow-l)); font-family: var(--font-interface); font-size: var(--font-ui-small); line-height: var(--line-height-tight); text-align: start; -webkit-app-region: no-drag; }
+.hel-popover:focus { outline: none; }
+.hel-popover-head { display: flex; flex: none; align-items: flex-start; gap: var(--size-4-2); padding: var(--size-4-3) var(--size-4-4) 0; }
+.hel-popover-head:empty { display: none; }
+.hel-popover-icon { display: inline-flex; flex: none; color: var(--icon-color); }
+.hel-popover-title { min-width: 0; overflow-wrap: anywhere; font-weight: var(--font-semibold); }
+.hel-popover-body { display: flex; flex-direction: column; gap: var(--size-4-2); min-height: 0; overflow: auto; padding: var(--size-4-3) var(--size-4-4); }
+.hel-popover-body > * { flex: none; }
+.hel-popover-head:not(:empty) + .hel-popover-body { padding-top: var(--size-4-2); }
+.hel-popover-quote { max-height: var(--hel-popover-quote-max-height); overflow: auto; margin: 0; padding: var(--size-2-1) var(--size-4-2); border-inline-start: 2px solid var(--background-modifier-border); color: var(--text-muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.hel-popover-footer { display: flex; flex: none; align-items: center; gap: var(--size-4-2); padding: var(--size-4-2) var(--size-4-4); border-top: 1px solid var(--background-modifier-border); background: var(--background-primary-alt); }
+.hel-popover-footer:empty { display: none; }
+
 /* key-value list (Finesse-style, from the tokens; Finesse has none): a muted key column and the value in normal text, rows split by a hairline.
    The rows share the list's two columns (subgrid), so the values line up. A list value keeps its bullets off and stacks with a small gap. */
 .hel-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--size-4-4); margin: 0 0 var(--size-4-3); font-size: var(--font-ui-small); line-height: var(--line-height-tight); }
