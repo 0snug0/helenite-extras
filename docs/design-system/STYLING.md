@@ -180,6 +180,11 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-card-title` | The card's title. |
 | `hel-card-body` | The card's content. |
 | `hel-card-footer` | The card's footer slot (`CardHandle.footer`): a strip under the body with a hairline above and a wash, for actions or a status. Hidden while empty. |
+| `hel-disclosure` | `ui.disclosure`: a `hel-card` whose head (a button with `aria-expanded`) opens and closes the body and footer; `is-open` while open. The head has a pointer cursor and an accent outline inside the card on keyboard focus. The body's gap is `--size-4-2`. |
+| `hel-disclosure-lead` | The head's slot before the title, for a badge or a chip. Hidden while empty. |
+| `hel-disclosure-heading` | The title and summary (a chip put between them keeps its size). A long title wraps; the summary moves to its own line when less than 8em is left beside the title. |
+| `hel-disclosure-summary` | The closed head's one-line summary, muted, at the far end, with an ellipsis. Hidden while open or empty. |
+| `hel-disclosure-peek` | Content under the head that stays on show while closed. Hidden while empty. |
 
 ### Popover
 

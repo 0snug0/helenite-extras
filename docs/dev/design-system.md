@@ -35,6 +35,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | A small panel at a button or a caret, without blocking the page | `ui.popover` |
 | Comments and replies, with event lines between them | `ui.thread`, a `ui.card` per comment; `ui.threadText` for its text |
 | A boxed group | `ui.card` (`ui.settings.card` on a settings page) |
+| A box whose head opens it (an accordion step, extra details) | `ui.disclosure` |
 | Ask yes or no | `ui.confirm` (`danger: true` when it destroys something) |
 | Ask for one line of text | `ui.prompt` |
 | Pick one of several named options | `ui.choose` |
