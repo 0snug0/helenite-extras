@@ -135,16 +135,26 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-status-dot.is-danger { background-color: var(--text-error); }
 .hel-status-dot.is-success { background-color: var(--text-success); }
 .hel-status-dot.is-warning { background-color: var(--text-warning); }
-/* meter (ui.meter): a reading on one line, label, short bar, text. Font and text colour come from the parent; the track is the progress bar's. */
+/* Meter (ui.meter): inline (one line, the default), stacked (label and reading above a full-width bar) or a bare bar. The font and the label's colour come from the parent; the sub line and a stacked reading are smaller and muted. */
 .hel-meter { display: inline-flex; align-items: center; gap: var(--size-2-3); }
 .hel-meter-label, .hel-meter-text { white-space: nowrap; }
 .hel-meter-text { font-variant-numeric: tabular-nums; }
+.hel-meter-sub { color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-meter:not(.is-stacked):has(> .hel-meter-sub) { flex-wrap: wrap; }
+.hel-meter:not(.is-stacked) > .hel-meter-sub { flex-basis: 100%; }
 .hel-meter-bar { display: block; flex-shrink: 0; width: var(--hel-meter-width, 56px); height: var(--hel-meter-height, 4px); overflow: hidden; border-radius: 999px; background-color: var(--hel-progress-track, var(--background-modifier-border)); }
 .hel-meter-fill { display: block; height: 100%; background-color: var(--text-muted); }
 .hel-meter.is-accent .hel-meter-fill { background-color: var(--interactive-accent); }
 .hel-meter.is-success .hel-meter-fill { background-color: var(--color-green, var(--text-success)); }
 .hel-meter.is-warning .hel-meter-fill { background-color: var(--color-orange, var(--text-warning)); }
 .hel-meter.is-danger .hel-meter-fill { background-color: var(--color-red, var(--text-error)); }
+.hel-meter.is-stacked { display: flex; flex-direction: column; align-items: stretch; gap: var(--size-4-1); }
+.hel-meter.is-stacked + .hel-meter.is-stacked { margin-top: var(--size-2-3); }
+.hel-meter-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--size-4-2); }
+.hel-meter.is-stacked :is(.hel-meter-label, .hel-meter-text) { min-width: 0; white-space: normal; }
+.hel-meter.is-stacked .hel-meter-text { text-align: right; color: var(--text-muted); font-size: var(--font-ui-smaller); }
+.hel-meter.is-bar { display: block; }
+.hel-meter:is(.is-stacked, .is-bar) .hel-meter-bar { width: 100%; height: var(--hel-meter-height, 6px); }
 /* bar chart (ui.barChart): a column per bucket standing on a baseline, the first and last bucket named under it. A non-zero bar is never thinner than 2px. */
 .hel-bar-chart { display: flex; flex-direction: column; gap: var(--size-4-1); }
 .hel-bar-chart-plot { display: flex; align-items: flex-end; gap: 2px; height: var(--hel-bar-chart-height, 110px); border-bottom: 1px solid var(--background-modifier-border); }
