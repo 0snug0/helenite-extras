@@ -4,7 +4,7 @@ Helenite gives plugins a set of ready-made UI parts (buttons, tables, modals, se
 
 To see every part running, open **Settings, Design system**. Each part is shown live next to the code that makes it.
 
-For restyling, see [STYLING.md](./STYLING.md). A working plugin is in `catalog/plugins/sample-design-system`.
+For restyling, see [STYLING.md](./STYLING.md). A working plugin that uses every part, with no stylesheet of its own, is in [catalog/plugins/sample-design-system](../../catalog/plugins/sample-design-system/README.md).
 
 New to building for Helenite? Start with the developer guide, [docs/dev](../dev/README.md): it scaffolds a plugin, theme or vault app (`node packages/create-helenite/bin.mjs`) and explains where these parts fit.
 
