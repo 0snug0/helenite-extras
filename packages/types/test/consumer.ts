@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -68,6 +68,10 @@ ui.meter(gauge, { layout: 'stacked', label: 'Weekly', text: '30%', sub: 'resets 
 const lane = ui.board(rowEl, { label: 'Tickets', onDrop: (id: string, to: string, index: number) => console.log(id, to, index) }).lane({ id: 'todo', label: 'To do' });
 const boardCard: BoardCardHandle = lane.card({ id: 'T-1', title: 'Fix it', tone: 'accent', onOpen: () => undefined });
 ui.badge(boardCard.meta, 'P1');
+const who: AvatarOptions = { text: 'Ada Lovelace', size: 'small' };
+const face: HTMLElement = ui.avatar(boardCard.meta, who);
+// @ts-expect-error: an avatar needs its text.
+ui.avatar(face, { size: 'large' });
 // @ts-expect-error: a board card needs an id.
 lane.card({ title: 'No id' });
 const costs: BarChartOptions = { label: 'Cost per day', buckets: [{ key: 'Nov 25', value: 2, title: '$2.00' }] };
