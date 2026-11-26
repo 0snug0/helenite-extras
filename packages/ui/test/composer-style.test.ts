@@ -20,6 +20,19 @@ describe("Finesse composer attachments", () => {
     expect(c.el.querySelector<HTMLElement>(".hel-composer-attachments")!.hidden).toBe(true);
   });
 
+  // The has-attach grid places its cells in DOM order: auto (attach), 1fr (box), auto (send).
+  it("puts the attach button before the box, so the box takes the wide column", () => {
+    const cells = (c: ReturnType<typeof composer>) => [...c.el.children].filter((n) => !n.matches(".hel-composer-attachments, .hel-composer-hint, .hel-composer-menu"));
+    const options = { onSubmit: () => {}, onAttach: () => {}, hint: "Enter sends", slashCommands: () => [] };
+    for (const c of [composer(host(), options), composer(host(), { ...options, createInput: editorInput })]) {
+      const [attach, box, send, ...rest] = cells(c);
+      expect(attach.matches(".hel-composer-attach")).toBe(true);
+      expect(box.contains(c.input)).toBe(true);
+      expect(send.matches(".hel-composer-send")).toBe(true);
+      expect(rest).toEqual([]);
+    }
+  });
+
   it("onAttach adds the picked files as chips; remove drops one; submit sends them and clears", async () => {
     const onSubmit = vi.fn();
     const c = composer(host(), { onSubmit, onAttach: async () => [{ name: "a.md", data: 1 }, { name: "b.png", icon: "image" }] });
