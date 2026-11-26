@@ -154,34 +154,55 @@ describe("board", () => {
     expect(todo.card({ id: "e", check: { checked: false, label: "Done", onToggle: () => {} } }).el.querySelector("input")!.checked).toBe(false);
   });
 
-  it("onOpen makes the card a button named by its label, opened by a click, Enter or Space but not by what is inside it", () => {
+  it("onOpen puts an open button first in the card, beside its controls, named by the label", () => {
+    const { todo } = setup();
+    const c = todo.card({ id: "d", title: "Fix it", label: "Q-1 Fix it", onOpen: () => {}, check: { checked: false, label: "Done", onToggle: () => {} } });
+    // A button's children are presentational to assistive tech, so the card must not be one around its controls.
+    for (const a of ["role", "tabindex", "aria-label"]) expect(c.el.hasAttribute(a), a).toBe(false);
+    expect(c.el.classList.contains("is-clickable")).toBe(true);
+    const open = c.el.firstElementChild as HTMLButtonElement;
+    expect(open.tagName).toBe("BUTTON");
+    expect(open.type).toBe("button");
+    expect(open.className).toBe("hel-board-card-open");
+    expect(open.getAttribute("aria-label")).toBe("Q-1 Fix it");
+    expect(open.childNodes.length).toBe(0);
+    expect(c.el.querySelector("input")!.closest("button, [role=button]")).toBeNull();
+  });
+
+  it("a click on the card or its open button opens it once, and a click on a control inside it does not", () => {
     const { todo } = setup();
     let opened = 0;
-    const c = todo.card({ id: "d", title: "Fix it", label: "Q-1 Fix it", onOpen: () => { opened++; } });
-    expect(c.el.tabIndex).toBe(0);
-    expect(c.el.getAttribute("role")).toBe("button");
-    expect(c.el.getAttribute("aria-label")).toBe("Q-1 Fix it");
-    expect(c.el.classList.contains("is-clickable")).toBe(true);
+    const c = todo.card({ id: "d", title: "Fix it", onOpen: () => { opened++; } });
     c.titleEl!.click();
-    expect(fire(c.el, "keydown", { key: "Enter" }).defaultPrevented).toBe(true);
-    expect(fire(c.el, "keydown", { key: " " }).defaultPrevented).toBe(true);
-    expect(opened).toBe(3);
+    expect(opened).toBe(1);
+    // What Enter and Space on a button do.
+    (c.el.firstElementChild as HTMLButtonElement).click();
+    expect(opened).toBe(2);
     const button = c.footer.appendChild(document.createElement("button"));
     const link = c.meta.appendChild(document.createElement("a"));
     const inner = link.appendChild(document.createElement("span"));
     button.click();
     inner.click();
-    fire(button, "keydown", { key: "Enter" });
-    fire(c.el, "keydown", { key: "a" });
-    expect(opened).toBe(3);
+    // The keys belong to the focused button; the card has no handler of its own to open it a second time.
+    expect(fire(c.el, "keydown", { key: "Enter" }).defaultPrevented).toBe(false);
+    expect(opened).toBe(2);
   });
 
-  it("the label defaults to the title, and a card without onOpen is not a button", () => {
+  it("the open button's name defaults to the title, then to the content; a card without onOpen has none", () => {
     const { todo } = setup();
-    expect(todo.card({ id: "d", title: "Fix it", onOpen: () => {} }).el.getAttribute("aria-label")).toBe("Fix it");
-    const plain = todo.card({ id: "e", title: "Read me" }).el;
-    for (const a of ["role", "tabindex", "aria-label"]) expect(plain.hasAttribute(a), a).toBe(false);
-    expect(plain.classList.contains("is-clickable")).toBe(false);
+    const open = (el: HTMLElement) => el.querySelector<HTMLButtonElement>(":scope > .hel-board-card-open");
+    expect(open(todo.card({ id: "d", title: "Fix it", onOpen: () => {} }).el)!.getAttribute("aria-label")).toBe("Fix it");
+    const [one, two] = ["e", "f"].map((id) => todo.card({ id, onOpen: () => {} }));
+    for (const c of [one!, two!]) {
+      expect(c.content.id).not.toBe("");
+      expect(open(c.el)!.getAttribute("aria-labelledby")).toBe(c.content.id);
+      expect(open(c.el)!.hasAttribute("aria-label")).toBe(false);
+    }
+    expect(one!.content.id).not.toBe(two!.content.id);
+    const plain = todo.card({ id: "g", title: "Read me" });
+    expect(open(plain.el)).toBeNull();
+    expect(plain.content.id).toBe("");
+    expect(plain.el.classList.contains("is-clickable")).toBe(false);
   });
 
   it("cards drag when the board takes drops, unless a card says otherwise", () => {
@@ -276,13 +297,21 @@ describe("Finesse board styling", () => {
     expect(rule(".hel-board-list.is-drop-target {")).toContain("outline: 2px dashed var(--interactive-accent)");
     expect(rule('.hel-board-card[draggable="true"] {')).toContain("cursor: grab");
     expect(rule(".hel-board-card:is(.is-clickable,")).toContain("var(--hel-ring-hover)");
-    expect(rule(".hel-board-card:focus-visible {")).toContain("var(--hel-ring-focus)");
+    expect(rule(".hel-board-card:has(> .hel-board-card-open:focus-visible) {")).toContain("var(--hel-ring-focus)");
     expect(rule(".hel-board-card.is-dragging {")).toContain("opacity: 0.5");
     expect(rule(".hel-board-card-meta {")).toContain("flex-wrap: wrap");
   });
 
   it("the card rules come after the card's tones, so the focus ring shows on a toned card", () => {
-    expect(css.indexOf(".hel-board-card:focus-visible {")).toBeGreaterThan(css.indexOf(".hel-card.is-muted {"));
+    expect(css.indexOf(".hel-board-card:has(> .hel-board-card-open:focus-visible) {")).toBeGreaterThan(css.indexOf(".hel-card.is-muted {"));
+  });
+
+  it("the open button lies unseen over the card and takes no pointer, so clicks, drags and links work as before", () => {
+    // Beats base.css's button:not(.clickable-icon) and its hover and focus looks.
+    const open = css.split("\n").find((l) => l.startsWith(".hel-board-card > button.hel-board-card-open:not(.clickable-icon),"))!;
+    // Space presses it, so a theme's pressed or focused button must not tint the whole card either.
+    expect(open).toContain("button.hel-board-card-open:not(.clickable-icon):is(:hover, :focus, :focus-visible, :active) {");
+    for (const d of ["position: absolute", "inset: 0", "pointer-events: none", "background: none", "box-shadow: none", "outline: none"]) expect(open).toContain(d);
   });
 
   it("the card row lines the checkbox and the actions up with the first line, with the actions at the far end", () => {
@@ -325,6 +354,6 @@ describe("Finesse board styling", () => {
   });
 
   it("STYLING.md has a row for each class and variable", () => {
-    for (const name of ["`hel-board`", "`hel-board-page`", "`hel-board-lane`", "`hel-board-lane-head`", "`hel-board-list`", "`hel-board-card`", "`hel-board-card-meta`", "`hel-board-card-row`", "`hel-board-card-check`", "`hel-board-card-content`", "`hel-board-card-actions`", "`hel-board-lane-title`", "`hel-board-lane-footer`", "`--hel-board-lane-width`", "`--hel-board-gap`"]) expect(styling).toContain(`| ${name} |`);
+    for (const name of ["`hel-board`", "`hel-board-page`", "`hel-board-lane`", "`hel-board-lane-head`", "`hel-board-list`", "`hel-board-card`", "`hel-board-card-open`", "`hel-board-card-meta`", "`hel-board-card-row`", "`hel-board-card-check`", "`hel-board-card-content`", "`hel-board-card-actions`", "`hel-board-lane-title`", "`hel-board-lane-footer`", "`--hel-board-lane-width`", "`--hel-board-gap`"]) expect(styling).toContain(`| ${name} |`);
   });
 });
