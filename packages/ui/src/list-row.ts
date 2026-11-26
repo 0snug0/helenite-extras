@@ -1,8 +1,8 @@
-import { countBadge, type CountBadgeOptions } from "./badges";
+import { chip, countBadge, type CountBadgeOptions } from "./badges";
 import { button } from "./button";
 import { renderIcon } from "./icons";
 import { openMenu, type MenuItemSpec } from "./menu";
-import { make, statusDot, type Tone } from "./states";
+import { badge, make, statusDot, type Tone } from "./states";
 
 export interface ListRowAction {
   icon: string;
@@ -11,6 +11,16 @@ export interface ListRowAction {
   /** Set as the button's `data-action`, for tests and snippets. */
   id?: string;
 }
+
+export interface ListRowChip {
+  text: string;
+  tone?: Tone;
+  /** The tooltip. Default: the text, so a cut chip can still be read. */
+  title?: string;
+}
+
+/** With more chips than this plus one, the row shows this many and counts the rest ("+3"), so a line never ends in a lone "+1". */
+const ROW_CHIPS = 3;
 
 export interface ListRowOptions {
   title: string;
@@ -21,6 +31,13 @@ export interface ListRowOptions {
   sub?: string;
   /** A small label after the title ("not installed"). */
   tag?: string;
+  /** A toned badge with words after the title (a CI result, "Failing"). `title` is its tooltip, default the text. */
+  status?: { text: string; tone?: Tone; title?: string };
+  /**
+   * A line of tag chips under the row (labels), after `sub`. The chips share one line and are cut with an ellipsis;
+   * five or more show three and a "+N" whose tooltip names the rest.
+   */
+  chips?: (string | ListRowChip)[];
   /** A count badge after the title, before the meta (open questions). Hidden at 0, as `countBadge`. */
   badge?: { count: number } & CountBadgeOptions;
   /** A trailing chevron: the row opens something (a detail, a sub-page), as in a settings list. */
@@ -60,6 +77,11 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
     const tag = make(row, "span", ["hel-list-row-tag"], o.tag);
     if (obsidian) tag.classList.add("nav-file-tag");
   }
+  if (o.status) {
+    const status = badge(row, o.status.text, o.status.tone);
+    status.classList.add("hel-list-row-status");
+    status.title = o.status.title ?? o.status.text;
+  }
   if (o.badge) {
     const { count, ...badge } = o.badge;
     countBadge(row, count, badge);
@@ -70,10 +92,21 @@ export function listRow(parent: HTMLElement, o: ListRowOptions): HTMLElement {
     chevron.setAttribute("aria-hidden", "true");
     renderIcon(chevron, "chevron-right");
   }
+  const chips = (o.chips ?? []).map((c): ListRowChip => (typeof c === "string" ? { text: c } : c));
+  if (o.dot && (o.sub || chips.length)) row.classList.add("has-dot");
   if (o.sub) {
     row.classList.add("has-sub");
-    if (o.dot) row.classList.add("has-dot");
     make(row, "div", ["hel-list-row-sub"], o.sub);
+  }
+  if (chips.length) {
+    row.classList.add("has-chips");
+    const line = make(row, "div", ["hel-list-row-chips"]);
+    const shown = chips.length > ROW_CHIPS + 1 ? chips.slice(0, ROW_CHIPS) : chips;
+    for (const c of shown) chip(line, c.text, { tone: c.tone, title: c.title ?? c.text });
+    const rest = chips.slice(shown.length);
+    if (rest.length) {
+      chip(line, `+${rest.length}`, { title: rest.map((c) => c.text).join(", ") }).classList.add("hel-list-row-chips-more");
+    }
   }
   if (o.actions?.length) {
     const box = make(row, "div", ["hel-list-row-actions"]);

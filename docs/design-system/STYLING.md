@@ -267,6 +267,9 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-list-row-icon` | The row's icon. |
 | `hel-list-row-title` | The row's title. |
 | `hel-list-row-tag` | The row's tag ("not installed"). |
+| `hel-list-row-status` | The row's status badge (`status`: a `hel-badge` with a tone class and a tooltip), after the tag. A long one ends in an ellipsis: at most 40% of the row. |
+| `hel-list-row-chips` | The row's line of chips (`chips`), under `sub`. One line, never wrapping; the `hel-chip`s share it and end in an ellipsis. The row also gets `has-chips`, and `has-dot` when it has a status dot. |
+| `hel-list-row-chips-more` | The "+N" chip after the first three when a row has five or more; its tooltip names the rest. Keeps its width. |
 | `hel-list-row-sub` | The row's second line (`sub`). The row also gets `has-sub`, and `has-dot` when it has a status dot. |
 | `hel-list-row-chevron` | The trailing chevron (`chevron: true`): the row opens something. Faint; nudges right on hover. Hidden from screen readers. |
 | `hel-list-row-meta` | The row's faint meta text (a time, a folder). It gives way to the title: at most half the row, then an ellipsis. In a two-line row it ends the title's line. |

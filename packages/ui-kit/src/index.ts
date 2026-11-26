@@ -14,7 +14,7 @@ export type {
   ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions,
   SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, IconRenderer,
   CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle,
-  ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListGroupOptions, ComposerOptions, ComposerHandle,
+  ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle,
   KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, MenuRenderer, DrawnFields,
   AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle,
 } from "@helenite/ui";

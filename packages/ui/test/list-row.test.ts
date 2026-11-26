@@ -72,6 +72,55 @@ describe("listRow", () => {
     expect(listRow(host(), { title: "None", badge: { count: 0 } }).querySelector<HTMLElement>(".hel-count-badge")!.hidden).toBe(true);
   });
 
+  it("status draws a toned badge with words and a tooltip, after the tag and before the count badge and meta", () => {
+    const row = listRow(host(), {
+      title: "PR", tag: "Draft", meta: "2m", badge: { count: 1 },
+      status: { text: "Failing", tone: "danger", title: "1 of 4 checks failed" },
+    });
+    const kids = [...row.children].map((c) => c.className.split(" ")[0]);
+    expect(kids).toEqual(["hel-list-row-title", "hel-list-row-tag", "hel-badge", "hel-count-badge", "hel-list-row-meta"]);
+    const status = row.querySelector<HTMLElement>(".hel-list-row-status")!;
+    expect(status.classList.contains("is-danger")).toBe(true);
+    expect(status.textContent).toBe("Failing");
+    expect(status.title).toBe("1 of 4 checks failed");
+    // Without a title or tone: the words are the tooltip (a cut badge is still readable), in the default tone.
+    const plain = listRow(host(), { title: "P", status: { text: "No CI" } }).querySelector<HTMLElement>(".hel-list-row-status")!;
+    expect(plain.title).toBe("No CI");
+    expect(plain.classList.contains("is-default")).toBe(true);
+  });
+
+  it("chips add a line after the sub line, each with its words as tooltip", () => {
+    const row = listRow(host(), {
+      title: "Issue", sub: "#1", dot: { tone: "default", label: "Open" }, actions: [{ icon: "x", label: "Close", onClick: () => {} }],
+      chips: ["bug", { text: "urgent", tone: "danger", title: "Needs a fix today" }],
+    });
+    expect(row.classList.contains("has-chips")).toBe(true);
+    expect([...row.children].map((c) => c.className.split(" ")[0])).toEqual(["hel-status-dot", "hel-list-row-title", "hel-list-row-sub", "hel-list-row-chips", "hel-list-row-actions"]);
+    const chips = [...row.querySelectorAll<HTMLElement>(".hel-list-row-chips > .hel-chip")];
+    expect(chips.map((c) => [c.textContent, c.title, c.classList[1]])).toEqual([["bug", "bug", "is-default"], ["urgent", "Needs a fix today", "is-danger"]]);
+    expect(row.querySelector("button.hel-chip-remove")).toBeNull();
+  });
+
+  it("chips without a sub line still mark the row; none draws no line", () => {
+    const row = listRow(host(), { title: "A", chips: ["x"], dot: { tone: "default", label: "Open" } });
+    expect(row.classList.contains("has-chips")).toBe(true);
+    expect(row.classList.contains("has-dot")).toBe(true);
+    expect(row.classList.contains("has-sub")).toBe(false);
+    const none = listRow(host(), { title: "B", chips: [] });
+    expect(none.classList.contains("has-chips")).toBe(false);
+    expect(none.querySelector(".hel-list-row-chips")).toBeNull();
+  });
+
+  it("four chips all show; five or more show three and count the rest, named in its tooltip", () => {
+    const texts = (chips: string[]) => [...listRow(host(), { title: "A", chips }).querySelectorAll(".hel-chip")].map((c) => c.textContent);
+    expect(texts(["a", "b", "c", "d"])).toEqual(["a", "b", "c", "d"]);
+    expect(texts(["a", "b", "c", "d", "e"])).toEqual(["a", "b", "c", "+2"]);
+    const row = listRow(host(), { title: "A", chips: ["a", "b", "c", "d", "e"] });
+    const more = row.querySelector<HTMLElement>(".hel-list-row-chips-more")!;
+    expect(more.title).toBe("d, e");
+    expect(more.getAttribute("aria-label")).toBe(null);
+  });
+
   it("a click or Enter runs onClick; an action runs its own handler and not the row's", () => {
     const onClick = vi.fn();
     const resume = vi.fn();
