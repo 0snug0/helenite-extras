@@ -129,7 +129,7 @@ describe('Settings → Secrets in Home', () => {
     const { store } = await makeHome();
     const g = row('Client ID');
     expect(access('provider:google/GOOGLE_CLIENT_ID')).toBeNull();
-    expect(g.querySelector('.setting-item-control')!.textContent).toContain('Home only');
+    expect(g.querySelector('.setting-item-control .hel-badge')!.textContent).toBe('Home only');
     type(g.querySelector('input')!, 'id-1');
     button(g, 'Save').click();
     expect(store.get('provider:google/GOOGLE_CLIENT_ID')).toBe('id-1');

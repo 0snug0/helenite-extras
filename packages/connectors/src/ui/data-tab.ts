@@ -26,7 +26,10 @@ export interface DataTabDeps {
 }
 
 const SAVE_DEBOUNCE_MS = 400;
-const BADGE: Record<string, string> = { ready: 'ready', 'waiting-review': 'waiting for review', rejected: 'rejected', missing: 'missing' };
+/** A source's status as the row's line: its words and tone. */
+const STATUS: Record<ContractStatus['sources'][number]['status'], [string, 'success' | 'warning' | 'danger']> = {
+  ready: ['ready', 'success'], 'waiting-review': ['waiting for review', 'warning'], rejected: ['rejected', 'danger'], missing: ['missing', 'danger'],
+};
 
 export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
   const tab: PluginSettingTab = new (class extends PluginSettingTab { display(): void {} })(deps.app, deps.plugin);
@@ -73,12 +76,13 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     };
     const bindingsOf = (contract: string) => file.bindings[contract] ?? [];
 
-    if (!status.contracts.length) new Setting(top).setName('No data contracts yet.').setDesc('A vault template can ship contracts; none is installed.');
+    if (!status.contracts.length) ui.emptyState(top, 'No data contracts yet. A vault template can ship contracts; none is installed.', { variant: 'inline' });
     for (const c of status.contracts) {
       const section = ui.settings.section(containerEl, c.name, { desc: c.error ?? (c.actions.length ? `Actions: ${c.actions.join(', ')}` : '') });
       section.dataset.contract = c.name;
       c.sources.forEach((s, i) => {
-        const row = new Setting(section).setName(s.id).setDesc(BADGE[s.status] ?? s.status);
+        const row = new Setting(section).setName(s.id);
+        ui.statusText(row.descEl, ...(STATUS[s.status] ?? [s.status, 'warning']));
         row.settingEl.dataset.source = `${c.name}/${s.id}`;
         const move = (by: number) => {
           const ids = [...bindingsOf(c.name)];
