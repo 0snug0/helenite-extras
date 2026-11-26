@@ -212,7 +212,7 @@ declare module 'helenite/internal/ui/src/index' {
   export { composer } from "helenite/internal/ui/src/composer";
   export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "helenite/internal/ui/src/composer";
   export { board } from "helenite/internal/ui/src/board";
-  export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle } from "helenite/internal/ui/src/board";
+  export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, BoardCardCheck } from "helenite/internal/ui/src/board";
   export { meter } from "helenite/internal/ui/src/meter";
   export type { MeterOptions } from "helenite/internal/ui/src/meter";
   export { barChart } from "helenite/internal/ui/src/bar-chart";
@@ -1027,6 +1027,10 @@ declare module 'helenite/internal/ui/src/board' {
       id: string;
       /** The lane's accessible name. */
       label: string;
+      /** The lane's name, drawn first in its head; a long one wraps. */
+      title?: string;
+      /** Makes the title a button (to rename the lane, say). */
+      onTitleClick?: () => void;
   }
   export interface BoardCardOptions {
       /** What the drag callbacks report, and the card's `data-id`. */
@@ -1039,17 +1043,32 @@ declare module 'helenite/internal/ui/src/board' {
       onOpen?: () => void;
       /** False for a card that stays where it is. */
       draggable?: boolean;
+      /** A done checkbox at the start of the card's row. */
+      check?: BoardCardCheck;
+  }
+  export interface BoardCardCheck {
+      checked: boolean;
+      /** The checkbox's accessible name, e.g. "Mark card as done". */
+      label: string;
+      /** The checkbox was ticked or cleared. It does not redraw the card: change your data and redraw. */
+      onToggle: (checked: boolean) => void;
   }
   export interface BoardCardHandle extends CardHandle {
-      /** A wrapping row for chips and badges, first in the body. Not shown while empty. */
+      /** Draw the card's text or rendered markdown into this, beside the checkbox. The margins at its edges are trimmed. */
+      content: HTMLElement;
+      /** Buttons at the far end of the content's first line (a `ui.moreButton`). Not shown while empty. */
+      actions: HTMLElement;
+      /** A wrapping row for chips and badges, under the content's row. Not shown while empty. */
       meta: HTMLElement;
   }
   export interface BoardLaneHandle {
       el: HTMLElement;
-      /** Draw the lane's name, count and actions into this. Not shown while empty. */
+      /** Draw the lane's count and actions (and its name, without `title`) into this. Not shown while empty. */
       head: HTMLElement;
       /** The cards, scrolling on their own. Draw an empty state or a "load more" button into it too. */
       list: HTMLElement;
+      /** Under the cards, for an "Add a card" button: it follows a short list and stays in view under a long one. Not shown while empty. */
+      footer: HTMLElement;
       card(o: BoardCardOptions): BoardCardHandle;
   }
   export interface BoardHandle {

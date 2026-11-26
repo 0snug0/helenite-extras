@@ -17,15 +17,21 @@ export function drawBoard(el: HTMLElement, plugin: SampleDesignSystemPlugin, hol
   });
   for (const status of STATUSES) {
     const items = plugin.data.items.filter((i) => i.status === status.id);
-    const lane = board.lane({ id: status.id, label: status.text });
-    ui.statusText(lane.head, status.text, status.tone);
-    ui.badge(lane.head, String(items.length));
+    const lane = board.lane({ id: status.id, label: status.text, title: status.text, onTitleClick: () => ui.notice(`${items.length} in ${status.text}`) });
+    ui.badge(lane.head, String(items.length), status.tone);
     if (!items.length) ui.emptyState(lane.list, 'No items', { variant: 'inline' });
     for (const item of items) {
-      const card = lane.card({ id: item.id, title: item.name, onOpen: () => void openItem(plugin, item) });
+      const card = lane.card({
+        id: item.id,
+        label: item.name,
+        onOpen: () => void openItem(plugin, item),
+        check: { checked: status.id === 'done', label: `Done: ${item.name}`, onToggle: (done) => void plugin.move(item.id, done ? 'done' : 'todo', 0) },
+      });
+      card.content.setText(item.name);
+      ui.moreButton(card.actions, () => itemMenu(plugin, item));
       ui.badge(card.meta, item.kind);
       if (item.pinned) ui.chip(card.meta, 'Pinned', { tone: 'accent' });
-      ui.moreButton(card.meta, () => itemMenu(plugin, item));
     }
+    if (status.id === 'todo') ui.button(lane.footer, { text: 'Add item', icon: 'plus', variant: 'link', onClick: () => void plugin.addItem() });
   }
 }

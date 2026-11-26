@@ -52,11 +52,11 @@ it('checking a card and adding a card write the Obsidian Kanban format back to t
   const { app, disk } = await setup();
   const leaf = await openBoard(app);
   const root: HTMLElement = leaf.view.contentEl;
-  (root.querySelector('.task-list-item-checkbox') as HTMLInputElement).click();
+  (root.querySelector('.hel-board-card-check > input') as HTMLInputElement).click();
   await tick(20);
   expect(disk('Board.md')).toContain('## To do\n\n- [x] a\n- [ ] b\n');
 
-  const addCard = root.querySelector('.hel-board-list > .hel-button') as HTMLElement;
+  const addCard = root.querySelector('.hel-board-lane-footer > .hel-button') as HTMLElement;
   addCard.click();
   await answerPrompt('New card<br>with detail');
   expect(disk('Board.md')).toContain('- [ ] b\n- [ ] New card\n\twith detail\n\n\n## Done');
@@ -125,22 +125,30 @@ it('a list keeps its scroll when the list before it moves', async () => {
   expect(lists().map((l) => l.scrollTop)).toEqual([0, 40]);
 });
 
-it('double-clicking a list name renames the list', async () => {
+it('clicking a list name renames the list', async () => {
   const { app, disk } = await setup();
   const leaf = await openBoard(app);
-  const name = leaf.view.contentEl.querySelector('.hel-board-lane-head > .hel-status-text') as HTMLElement;
-  name.dispatchEvent(new Event('dblclick'));
+  (leaf.view.contentEl.querySelector('.hel-board-lane-head > button.hel-board-lane-title') as HTMLElement).click();
   await answerPrompt('Soon');
   expect(disk('Board.md')).toContain('## Soon\n\n- [ ] a');
 });
 
-it('a card is shown as its text, without paragraph margins', async () => {
+it("a card is a checkbox, its markdown and its menu, in the design system's card row", async () => {
   const { app } = await setup();
   const leaf = await openBoard(app);
   await tick(20);
-  const text = leaf.view.contentEl.querySelector('.hel-board-card .markdown-rendered') as HTMLElement;
-  expect(text.textContent).toBe('a');
-  expect(text.querySelector('p')).toBeNull();
+  const card = leaf.view.contentEl.querySelector('.hel-board-card') as HTMLElement;
+  expect(card.querySelector('.hel-board-card-check > input')?.getAttribute('aria-label')).toBe('Mark card as done');
+  expect(card.querySelector('.hel-board-card-content.markdown-rendered')?.textContent).toBe('a');
+  expect(card.querySelector('.hel-board-card-actions > [aria-label="Card options"]')).not.toBeNull();
+});
+
+it("double-clicking a card's text edits the card", async () => {
+  const { app, disk } = await setup();
+  const leaf = await openBoard(app);
+  (leaf.view.contentEl.querySelector('.hel-board-card-content') as HTMLElement).dispatchEvent(new Event('dblclick'));
+  await answerPrompt('a2');
+  expect(disk('Board.md')).toContain('- [ ] a2\n- [ ] b');
 });
 
 it('just viewing a hand-written board leaves the file as it was', async () => {

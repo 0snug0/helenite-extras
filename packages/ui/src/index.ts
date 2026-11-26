@@ -40,7 +40,7 @@ export type { ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions } fro
 export { composer } from "./composer";
 export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "./composer";
 export { board } from "./board";
-export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle } from "./board";
+export type { BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, BoardCardCheck } from "./board";
 export { meter } from "./meter";
 export type { MeterOptions } from "./meter";
 export { barChart } from "./bar-chart";
