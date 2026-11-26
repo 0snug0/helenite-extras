@@ -1537,6 +1537,8 @@ declare module 'helenite/internal/obsidian-api/src/ui/helpers' {
       top: number;
       bottom: number;
   }, gap?: number): void;
+  /** Whether any of the element shows: it is in the page, in the window, and not scrolled out of a box that clips it. */
+  export function inSight(target: HTMLElement): boolean;
   export function safeCall(fn: () => any): any;
 }
 
