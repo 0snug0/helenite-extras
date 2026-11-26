@@ -1,3 +1,4 @@
+import { statusText } from "../../core/ui-kit.js";
 import lib from "./lib.js";
 import { KEYS, AVAIL_DAYS, AVAIL_VERSION, SCORE_DAYS, SERIALIZD } from "./consts.js";
 import { findShow, epKey } from "../../core/plex.js";
@@ -29,9 +30,9 @@ async function loadPlexEpisodes(show) {
 function watchMark(parent, map, e) {
 	const w = map?.get(epKey(e));
 	if (!w || (!w.watched && !w.progress)) return;
-	parent.createSpan(w.watched
-		? { cls: "dl-watch dl-watch-done", text: "✓ Watched", attr: { title: "Watched in Plex" } }
-		: { cls: "dl-watch dl-watch-part", text: `▶ ${Math.round(w.progress * 100)}%`, attr: { title: "Partway through in Plex" } });
+	const el = statusText(parent, w.watched ? "✓ Watched" : `▶ ${Math.round(w.progress * 100)}%`, w.watched ? "success" : "warning");
+	el.classList.add("dl-watch");
+	el.title = w.watched ? "Watched in Plex" : "Partway through in Plex";
 }
 
 // Every watchlist show Sonarr does not have goes into Sonarr: monitored, nothing searched (so nothing downloads until a

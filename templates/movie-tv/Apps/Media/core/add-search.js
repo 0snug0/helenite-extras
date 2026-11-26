@@ -1,7 +1,7 @@
 // The "find something new to monitor" box shared by the Movies and TV pages. An ES module.
 // Identical in Downloadrr and Downloadrr TV (byte for byte), moved here unchanged.
 // Buttons and the empty/error states are @helenite/ui-kit parts (./ui-kit.js).
-import { button, emptyState, errorState } from "./ui-kit.js";
+import { button, callout, emptyState, errorState, mediaCard, mediaGrid, textInput, toolbar } from "./ui-kit.js";
 //
 // createAddSearch({ placeholder, lookup, add, redraw, serviceName })
 //   lookup(term) -> [{ key, title, year, overview, poster, inLibrary, monitored }]   (read-only)
@@ -36,30 +36,26 @@ function createAddSearch({ placeholder, lookup, add, redraw, serviceName }) {
 
 	function render(parent) {
 		const box = parent.createDiv({ cls: "dl-add" });
-		const bar = box.createDiv({ cls: "dl-add-bar" });
-		const input = bar.createEl("input", { cls: "dl-find-input", attr: { type: "text", placeholder, "aria-label": placeholder, spellcheck: "false" } });
-		input.value = st.term;
-		input.addEventListener("input", () => { st.term = input.value; });
-		input.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); run(); } });
+		const bar = toolbar(box);
+		const input = textInput(bar, { placeholder, label: placeholder, value: st.term, onInput: v => { st.term = v; }, onEnter: () => { run(); } });
+		input.classList.add("dl-find-input");
+		input.spellcheck = false;
 		button(bar, { text: st.busy ? "Searching…" : "Find", disabled: st.busy, onClick: () => { run(); } });
 		if (st.results || st.notice || st.error) {
 			button(bar, { text: "Clear", onClick: () => { Object.assign(st, { term: "", results: null, error: null, notice: null }); redraw(); } });
 		}
 		if (st.refocus) { st.refocus = false; if (!st.busy) input.focus(); }
-		if (st.notice) box.createDiv({ cls: "dl-notice", text: st.notice });
+		if (st.notice) callout(box, { tone: "success", text: st.notice }).el.classList.add("dl-notice");
 		if (st.error) errorState(box, st.error);
 		if (!st.results) return;
 		if (!st.results.length) { emptyState(box, `${serviceName} found nothing for "${st.term}".`); return; }
-		const grid = box.createDiv({ cls: "dl-add-results" });
+		const grid = mediaGrid(box, { minWidth: 340 });
+		grid.classList.add("dl-add-results");
 		for (const r of st.results) {
-			const row = grid.createDiv({ cls: "dl-add-row" });
-			const art = row.createDiv({ cls: "dl-add-poster", attr: { role: "img", "aria-label": r.title } });
-			if (r.poster) art.style.backgroundImage = `url("${r.poster}")`;
-			const info = row.createDiv({ cls: "dl-add-info" });
-			info.createDiv({ cls: "dl-add-title", text: `${r.title}${r.year ? ` (${r.year})` : ""}` });
-			if (r.overview) info.createDiv({ cls: "dl-add-overview", text: r.overview });
+			const card = mediaCard(grid, { art: { title: r.title, src: r.poster }, layout: "row", title: `${r.title}${r.year ? ` (${r.year})` : ""}`, detail: r.overview });
+			card.el.classList.add("dl-add-row");
 			const done = r.inLibrary && r.monitored;
-			button(row, { text: done ? "Monitored" : st.adding === r.key ? "Adding…" : r.inLibrary ? "Monitor" : "Add", disabled: done || !!st.adding, onClick: done ? undefined : () => { addOne(r); } }).el.classList.add("dl-add-btn");
+			button(card.footer, { text: done ? "Monitored" : st.adding === r.key ? "Adding…" : r.inLibrary ? "Monitor" : "Add", disabled: done || !!st.adding, onClick: done ? undefined : () => { addOne(r); } }).el.classList.add("dl-add-btn");
 		}
 	}
 

@@ -3,7 +3,9 @@
 // import or mount fails gets an error state with a Retry button; the nav keeps working.
 // create-helenite copies this file and router.js from here into `--template app-pages`, so there is one copy to maintain.
 // A page keeps its scroll position while another is shown. A "Back" control appears in the nav while there is history.
-// Class names are `<prefix>-shell`, `-nav`, `-nav-btn`, `-nav-back`, `-status`, `-chip`, `-body`, `-page`, `-error`, `-retry`.
+// The nav is a sticky ui-kit toolbar holding tabs, the status strip is chips and a failed page is an errorState; the caller
+// passes those parts as `parts` (the shell cannot know where an app keeps its ui-kit.js). The shell's own layout classes are
+// `<prefix>-shell`, `-status`, `-body` and `-page`; `-nav`, `-nav-btn`, `-nav-back`, `-chip`, `-error` and `-retry` mark the parts.
 import { createRouter } from "./router.js";
 
 function h(parent, tag, cls, text) {
@@ -30,12 +32,18 @@ function scopedStore(store, page) {
 	return out;
 }
 
-/** nav: [[pageId, label], ...]; pages: { id: () => import("./pages/id/index.js") }; prefix: the CSS class prefix. */
-export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" }) {
+const TONES = { ok: "success", down: "danger", unset: "default" };
+
+/** nav: [[pageId, label], ...]; pages: { id: () => import("./pages/id/index.js") }; prefix: the CSS class prefix;
+ *  parts: { toolbar, tabs, button, chip, errorState } from ui-kit. */
+export async function mountShell(root, api, { nav: NAV, pages, prefix = "app", parts }) {
+	const { toolbar, tabs, button, chip, errorState } = parts;
 	const shell = h(root, "div", `${prefix}-shell`);
-	const nav = h(shell, "nav", `${prefix}-nav`);
-	const backBtn = h(nav, "button", `${prefix}-nav-back`, "Back");
-	backBtn.type = "button";
+	const nav = toolbar(shell, { sticky: true, label: "Pages" });
+	nav.classList.add(`${prefix}-nav`);
+	const back = button(nav, { icon: "chevron-left", label: "Back", variant: "icon", onClick: () => router.back() });
+	const backBtn = back.el;
+	backBtn.classList.add(`${prefix}-nav-back`);
 	backBtn.hidden = true;
 	const status = h(shell, "div", `${prefix}-status`);
 	const body = h(shell, "div", `${prefix}-body`);
@@ -60,8 +68,7 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 	const paint = () => {
 		status.replaceChildren();
 		for (const [service, s] of states) {
-			const chip = h(status, "span", `${prefix}-chip ${prefix}-chip-${s}`, service);
-			chip.title = `${service}: ${s}`;
+			chip(status, service, { tone: TONES[s], title: `${service}: ${s}` }).classList.add(`${prefix}-chip`, `${prefix}-chip-${s}`);
 		}
 		status.hidden = states.size === 0;
 	};
@@ -69,12 +76,10 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 
 	function showError(pane, page, err) {
 		pane.el.replaceChildren();
-		const box = h(pane.el, "div", `${prefix}-error`);
-		h(box, "p", `${prefix}-error-title`, `Could not load ${page}.`);
-		h(box, "p", `${prefix}-error-detail`, String((err && err.message) || err));
-		const retry = h(box, "button", `${prefix}-retry`, "Retry");
-		retry.type = "button";
-		retry.addEventListener("click", () => { pane.token = null; pane.failed = false; load(page); });
+		const retry = () => { pane.token = null; pane.failed = false; load(page); };
+		const box = errorState(pane.el, `Could not load ${page}. ${String((err && err.message) || err)}`, retry, { retryLabel: "Retry" });
+		box.classList.add(`${prefix}-error`);
+		box.querySelector("button").classList.add(`${prefix}-retry`);
 	}
 
 	async function load(page) {
@@ -116,9 +121,9 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		const leaving = shown && shown !== page ? panes[shown] : null;
 		if (leaving) leaving.scroll = scrollers().map(el => el.scrollTop);   // before hiding: hiding shrinks the page and clamps it
 		shown = page;
+		strip.setValue(page);
 		for (const id of Object.keys(panes)) {
 			panes[id].el.hidden = id !== page;
-			buttons[id].classList.toggle("is-active", id === page);
 			buttons[id].setAttribute("aria-current", id === page ? "page" : "false");
 		}
 		if (leaving) {
@@ -137,20 +142,23 @@ export async function mountShell(root, api, { nav: NAV, pages, prefix = "app" })
 		load(page);
 	}
 
-	router = createRouter({ pages, initial: { page: startPage, params: startParams }, onChange: render });
-	backBtn.addEventListener("click", () => router.back());
-
-	for (const [id, label] of NAV) {
-		if (!(id in pages)) continue;
-		const b = h(nav, "button", `${prefix}-nav-btn`, label);
-		b.type = "button";
-		b.addEventListener("click", () => router.go(id));
+	const known = NAV.filter(([id]) => id in pages);
+	// The tabs call onSelect only for another tab; a click on the current one still goes to it (which drops its params).
+	const strip = tabs(nav, { tabs: known.map(([id, text]) => ({ id, text })), value: "", onSelect: id => router.go(id) });
+	strip.el.addEventListener("click", e => {
+		const b = e.target.closest("[data-tab]");
+		if (b && b.classList.contains("is-active")) router.go(b.dataset.tab);
+	}, true);
+	for (const [id] of known) {
+		const b = strip.el.querySelector(`[data-tab="${id}"]`);
+		b.classList.add(`${prefix}-nav-btn`);
 		buttons[id] = b;
 		const el = h(body, "div", `${prefix}-page`);
 		el.hidden = true;
 		el.dataset.page = id;
 		panes[id] = { el, cleanup: null, token: null, failed: false, params: {}, listeners: new Set(), hideListeners: new Set() };
 	}
+	router = createRouter({ pages, initial: { page: startPage, params: startParams }, onChange: render });
 
 	const off = api.view && api.view.onNavigate ? api.view.onNavigate(p => {
 		const { page, ...rest } = p || {};

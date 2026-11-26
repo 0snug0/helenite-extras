@@ -159,6 +159,31 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-chip-remove` | A chip's × button. Also has `clickable-icon`. Fades up and gets a hover fill; `--hel-ring-focus` on keyboard focus. |
 | `hel-avatar` | `ui.avatar`: initials in a circle, named for screen readers (and in its tooltip) by the whole text. Finesse Avatars: a soft muted tint inside a hairline ring, medium weight, `--text-normal` text, so light and dark follow the theme. Sizes: `is-small` (20px), `is-medium` (28px, the default), `is-large` (40px). |
 | `hel-swatch` | `ui.swatch`: one CSS value on show, an image named by its label. Kinds: `is-color`, `is-radius`, `is-shadow` (a 28px square), `is-size` (a 64px track, tinted by `--hel-progress-track`), `is-font-family`, `is-font-size`, `is-font-weight` (a 40px box). |
+| `hel-art` / `hel-art-image` | `ui.artwork`: a poster at 2:3 (`--hel-art-ratio`) and its picture, a background image. `is-missing` shows the title on a wash instead; a clickable one is a link that lifts on hover. |
+| `hel-media-grid` | `ui.mediaGrid`: `is-grid` (equal columns, none narrower than `--hel-media-min`, 150px) or `is-strip` (one row that scrolls sideways). |
+| `hel-media-card` | `ui.mediaCard`, a `hel-card` led by artwork. `is-tile` (artwork on top, centred text, the footer at the bottom) or `is-row` (a `--hel-media-row-art` (44px) artwork beside the text); `is-plain` has no ring or padding; `is-focused` has a strong ring (a card a link led to); a selected one is the card's `is-accent`. |
+| `hel-media-title` / `hel-media-detail` | A media card's title (two lines, reserved) and its faint description (cut after two). |
+| `hel-figures` / `hel-figure` | `ui.figures`: small figures in a wrapping row, or two to a line with `is-columns`. A linked figure is an `a`. |
+| `hel-figure-icon` | The icon or mark before a figure. |
+| `hel-rating` | `ui.rating`: stars filled to the value in `--hel-rating-color`. `is-none` keeps the space and shows nothing. |
+| `hel-rating-base` / `hel-rating-fill` | The empty stars and the filled ones laid over them. |
+| `hel-stats` | `ui.statTiles`: a ringed row of tiles, none narrower than `--hel-stat-min` (110px). |
+| `hel-stat` / `hel-stat-value` / `hel-stat-label` | One tile (a button, `is-clickable`, when it has `onClick`), its number (`--hel-stat-size`, 24px) and what it counts. |
+| `hel-heading` | `ui.sectionHeading`: a title line. `is-level-1` (a page title), `is-level-2`, `is-level-3`. |
+| `hel-heading-title` / `hel-heading-extra` / `hel-heading-actions` | The heading, the faint note after it, and the buttons at the end of the line (not shown while empty). |
+| `hel-month` | `ui.monthGrid`: seven columns of days, each with room for `--hel-month-rows` (3) events. `--hel-month-slot` and `--hel-month-line` size an event. |
+| `hel-month-weekday` / `hel-month-day` / `hel-month-num` | The column names, a day (`is-today`, `is-outside` the month) and its number. |
+| `hel-month-events` / `hel-month-event` | A day's events and one of them (a link when it has `onClick`). |
+| `hel-month-event-lead` / `hel-month-event-title` | An event's short figure (`--hel-month-lead-color`) and its two-line title. |
+| `hel-month-more` / `hel-month-list` | The "+N more" button of a full day, and the list its popover shows. |
+| `hel-table-sort` / `hel-table-sort-label` | A sortable column's header button and its label; the arrow keeps its room, shown on the sorted column (`aria-sort`). |
+| `hel-table-spacer` | In a tree column, an empty element that holds an expander's room on a row that has nothing to expand. |
+| `hel-table-scroll` | The sideways scroller around a table with `minWidth`. |
+| `is-fixed` / `is-end` / `is-truncate` / `is-tree` | On `ui.table`: fixed column widths; a right-aligned column; a one-line column cut with an ellipsis (`--hel-table-truncate`, 520px); the column that indents by a row's `data-level`. Rows below another have `is-nested`, rows that cannot be used `is-muted`. |
+| `has-text` on `hel-meter.is-bar` | A bare meter with its reading beside the bar (`showText`), at least `--hel-meter-text-width` (4ch). |
+| `is-all` | A bar chart axis naming every column (`labels: 'all'`). A column with `onSelect` is a button (`is-clickable`); a `muted` one is `is-muted`. |
+| `is-armed` | `ui.button` with `armed`: the second click of a two-click delete, a danger fill at the same size. |
+| `hel-frame-dialog` / `hel-frame-dialog-box` | `frameDialog` in `@helenite/ui-kit`: a large dialog an app draws itself (`--hel-frame-dialog-width`, `--hel-frame-dialog-height`). |
 | `hel-swatch-fill` | The part of a swatch the value is set on, inline: its background, corners, shadow or width, or the "Aa" of a font. |
 
 ### Form controls, tabs and toolbar

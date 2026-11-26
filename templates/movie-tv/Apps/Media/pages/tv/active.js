@@ -2,7 +2,10 @@
 // `c` is the context shared by every part (see index.js).
 import lib from "./lib.js";
 import { KEYS, LOGOS, ACTIVE_COLS } from "./consts.js";
-import { button, emptyState, loadingState, table } from "../../core/ui-kit.js";
+import { button, emptyState, loadingState, statusText, table } from "../../core/ui-kit.js";
+import { activeColumns, activeSection } from "../../core/active-table.js";
+import { progressBar } from "../../core/progress.js";
+import { STATUS_TONES } from "../../core/tones.js";
 import { formatSize } from "../../core/releases.js";
 import { rowStatus } from "../../core/rows.js";
 import { epKey } from "../../core/plex.js";
@@ -28,13 +31,7 @@ export function install(c) {
 		if (!items.length) return;
 		const sort = state.activeSort;
 		const total = items.reduce((n, i) => n + (i.queue ? 0 : i.size), 0);   // what is on disk; a download's size is not there yet
-		const sec = parent.createDiv({ cls: "dl-active" });
-		const head = sec.createDiv({ cls: "dl-active-head" });
-		head.createEl("h3", { cls: "dl-active-title", text: `On disk & downloading (${items.length}) · ${formatSize(total)}` });
-		if (state.free != null) {
-			const free = state.free >= 1e12 ? `${(state.free / 1e12).toFixed(2)} TB` : formatSize(state.free);
-			head.createSpan({ cls: "dl-free", text: `${free} free`, attr: { title: "Free space on Sonarr's root folder" } });
-		}
+		const sec = activeSection(parent, { count: items.length, total, free: state.free, service: "Sonarr" });
 		const slotOf = i => i.queue && c.sabSlots.get(i.queue.downloadId);
 		// A download's percent is SABnzbd's live one, so sorting by Status or Progress agrees with the bar.
 		const status = new Map(items.map(i => {
@@ -46,16 +43,32 @@ export function install(c) {
 		for (const i of items) if (i.queue && ["downloading", "paused", "queued"].includes(status.get(i.key).kind)) place.set(i.key, place.size + 1);
 		const score = (key, fmt) => (i, td) => { const sc = i.series.tvdbId && scoresOf(i.series), v = sc?.[key]; td.textContent = !sc ? "…" : v == null ? "–" : fmt(v); };
 
-		// ui-kit's table; the actions stay in the first column (fixed slots), so they are a column, not the kit's trailing `actions`.
+		// The actions stay in the first column (fixed slots), so they are a column, not the table's trailing `actions`.
 		const cells = {
+			act: (item, td) => {
+				const { series, queue: qi, group } = item;
+				const slot = slotOf(item), st = status.get(item.key);
+				// Always in the same order and the same slots: delete file(s), delete from Sonarr, pause/resume (downloads only).
+				const act = td.createDiv({ cls: "hel-table-buttons" });
+				const hasFiles = (series.statistics?.episodeFileCount ?? 0) > 0;
+				const tips = qi
+					? [["file", "Cancel this download"], ["all", `Cancel the download${hasFiles ? ", delete the files" : ""} and remove from Sonarr and the watchlist`]]
+					: [["file", "Delete the files, keep in Sonarr (unmonitored)"], ["all", "Delete the files and remove from Sonarr and the watchlist"]];
+				for (const [mode, tip] of tips) xButton(act, `${mode}:${item.key}`, tip, () => removeSeries(series, mode, group), mode === "file" ? "file" : "sonarr");
+				if (place.has(item.key) && slot && c.sabSet && !c.sabQueuePaused) {   // with the whole queue paused, resuming one job would do nothing
+					const paused = st.kind === "paused";
+					button(act, { icon: paused ? "play" : "pause", label: paused ? "Resume this download" : "Pause this download", variant: "icon", disabled: !!state.pausing, onClick: () => { togglePause(qi); } });
+				}
+			},
+			pos: item => (place.has(item.key) ? String(place.get(item.key)) : ""),
 			title: (item, td) => {
 				const { series, queue: qi } = item;
 				// The watchlist note's own link when there is one; otherwise just the title.
 				const note = notes.find(n => lib.matchSeries(n, [series], state.ids));
 				// Only what is on disk expands; a download is just its row until it has imported.
-				if (qi) td.createSpan({ cls: "dl-chev" });
+				if (qi) td.createSpan({ cls: "hel-table-spacer" });
 				else chevron(td, state.open.has(series.id), "Show the seasons on disk", () => toggleSeries(series));
-				if (note?.url) td.createEl("a", { text: series.title, attr: { href: note.url, title: `${series.title} on Serializd` } }).addEventListener("click", openUrl(note.url));
+				if (note?.url) button(td, { text: series.title, variant: "link", onClick: openUrl(note.url) }).el.title = `${series.title} on Serializd`;
 				else td.createSpan({ text: series.title });
 			},
 			episodes: item => item.detail,
@@ -67,113 +80,68 @@ export function install(c) {
 					: "";
 				td.classList.add("dl-st", `dl-st-${st.kind}`);
 				if (why) td.title = why;
-				td.textContent = st.label;
+				statusText(td, st.label, STATUS_TONES[st.kind]);
 			},
 			size: item => item.size ? formatSize(item.size) : "–",
-			progress: (item, td) => {
-				const { percent: pct, kind } = status.get(item.key);
-				const prog = td.createDiv({ cls: "dl-prog" });
-				if (pct == null) { prog.createDiv(); prog.createSpan({ cls: "dl-bar-label dl-bar-none", text: "–" }); return; }
-				prog.createDiv({ cls: `dl-bar dl-bar-${kind}` }).createDiv({ cls: "dl-bar-fill" }).style.width = `${pct}%`;
-				prog.createSpan({ cls: "dl-bar-label", text: `${pct}%` });
-			},
+			progress: (item, td) => { const { percent, kind } = status.get(item.key); progressBar(td, percent, kind); },
 			sz: score("sz", x => x.toFixed(2)),
 			rt: score("rt", x => `${x}%`),
-			// Last cell of the row: the kit has appended this row to the body already, so the on-disk tree rows go right after it.
-			aud: (item, td) => { score("aud", x => `${x}%`)(item, td); if (!item.queue && state.open.has(item.series.id)) drawTree(td.parentElement.parentElement, item.series); },
+			aud: score("aud", x => `${x}%`),
 		};
-		const columns = [
-			{ key: "act", title: "", cell: (item, td) => {
-				const { series, queue: qi, group } = item;
-				const slot = slotOf(item), st = status.get(item.key);
-				// Always in the same order and the same slots: delete file(s), delete from Sonarr, pause/resume (downloads only).
-				const act = td.createDiv({ cls: "dl-act" });
-				const hasFiles = (series.statistics?.episodeFileCount ?? 0) > 0;
-				const tips = qi
-					? [["file", "Cancel this download"], ["all", `Cancel the download${hasFiles ? ", delete the files" : ""} and remove from Sonarr and the watchlist`]]
-					: [["file", "Delete the files, keep in Sonarr (unmonitored)"], ["all", "Delete the files and remove from Sonarr and the watchlist"]];
-				for (const [mode, tip] of tips) xButton(act, `${mode}:${item.key}`, tip, () => removeSeries(series, mode, group), mode === "file" ? "file" : "sonarr");
-				if (place.has(item.key) && slot && c.sabSet && !c.sabQueuePaused) {   // with the whole queue paused, resuming one job would do nothing
-					const paused = st.kind === "paused";
-					button(act, { icon: paused ? "play" : "pause", label: paused ? "Resume this download" : "Pause this download", variant: "icon", disabled: !!state.pausing, onClick: () => { togglePause(qi); } }).el.classList.add("dl-ib");
-				}
-			} },
-			{ key: "pos", title: "#", className: "dl-num", cell: item => (place.has(item.key) ? String(place.get(item.key)) : "") },
-			...ACTIVE_COLS.map(([key, label, num]) => ({ key, title: LOGOS[key] ? "" : label, className: [key === "title" ? "dl-cell-title" : "", num ? "dl-num" : ""].join(" ").trim(), cell: cells[key] })),
-		];
-		const t = table(sec, {
-			className: "dl-table dl-active-table", columns,
-			rows: lib.sortActive(items, sort.key, sort.dir, i => status.get(i.key), i => scoresOf(i.series)),
-			rowData: item => (item.queue ? { dlQueue: item.group.key } : {}),
-		});
-		const cols = createEl("colgroup");
-		for (const { key } of columns) cols.createEl("col", { cls: `dl-col-${key}` });
-		t.el.prepend(cols);
-		// Header cells: the kit writes the titles; the sort arrows, logos and click-to-sort are this table's own.
-		const ths = t.el.tHead.rows[0].cells;
-		ths[0].setAttribute("aria-label", "Actions");
-		ths[1].title = "Place in the download queue";
-		ACTIVE_COLS.forEach(([key, label, num, sortable], i) => {
-			const th = ths[i + 2];
-			if (sortable !== false) th.classList.add("dl-th");
-			th.empty();
-			if (LOGOS[key]) th.setAttribute("aria-label", label);
-			const arrow = createSpan({ cls: "dl-arrow", text: sort.key === key ? (sort.dir === "asc" ? "▲" : "▼") : "" });
-			const name = createSpan({ cls: "dl-th-label", text: label });
-			if (LOGOS[key]) name.innerHTML = LOGOS[key];
-			th.append(...(num ? [arrow, name] : [name, arrow]));   // the arrow sits away from the edge the column aligns to
-			if (sortable === false) return;
-			th.addEventListener("click", () => {
+		// An on-disk tree row draws only its own cells; the rest stay empty.
+		const cellsOf = Object.fromEntries(Object.entries(cells).map(([key, cell]) => [key, (row, td) => (row.tree ? row.tree[key]?.(td) : cell(row, td))]));
+		table(sec, {
+			className: "dl-table dl-active-table", fixed: true, minWidth: "1100px",
+			columns: activeColumns({ cols: ACTIVE_COLS, logos: LOGOS, cells: cellsOf }),
+			// Under an open series row: its seasons on disk, and under an open season its episodes.
+			rows: lib.sortActive(items, sort.key, sort.dir, i => status.get(i.key), i => scoresOf(i.series))
+				.flatMap(item => (!item.queue && state.open.has(item.series.id) ? [item, ...treeRows(item.series)] : [item])),
+			rowData: row => (row.queue ? { dlQueue: row.group.key } : {}),
+			rowLevel: row => row.level ?? 0,
+			sort,
+			onSort: key => {
 				state.activeSort = { key, dir: sort.key === key && sort.dir === "asc" ? "desc" : "asc" };
 				c.save(KEYS.activeSort, state.activeSort);
 				draw();
-			});
+			},
 		});
 	}
 	function chevron(parent, open, tip, run) {
 		button(parent, { icon: open ? "chevron-down" : "chevron-right", label: open ? "Hide" : tip, variant: "icon", onClick: e => { e.stopPropagation(); run(); } }).el.classList.add("dl-chev");
 	}
-	// Under a series row: its seasons that have files, each expandable to its episodes on disk, each with a delete button
+	// The rows under a series: its seasons that have files, each expandable to its episodes on disk, each with a delete button
 	// (files only; the episodes stay in Sonarr, unmonitored so they are not fetched again).
-	function drawTree(body, series) {
+	function treeRows(series) {
 		const tree = state.trees[series.id];
-		const mk = cls => body.createEl("tr", { cls: `dl-row dl-tree ${cls}` });
-		const cells = (row, { act, title, detail = "", size = "", watch }) => {
-			const a = row.createEl("td").createDiv({ cls: "dl-act" });
-			act?.(a);
-			row.createEl("td", { cls: "dl-num" });
-			const t = row.createEl("td", { cls: "dl-cell-title" });
-			title(t);
-			row.createEl("td", { text: detail });
-			row.createEl("td"); row.createEl("td");
-			row.createEl("td", { cls: "dl-num", text: size });
-			const pw = row.createEl("td");
-			watch?.(pw);
-			for (let i = 0; i < 3; i++) row.createEl("td");
-		};
-		if (!tree) { cells(mk("dl-tree-note"), { title: t => loadingState(t) }); return; }
-		if (!tree.seasons.length) { cells(mk("dl-tree-note"), { title: t => emptyState(t, "No episode files on disk.") }); return; }
+		const note = draw => [{ level: 1, tree: { title: draw } }];
+		if (!tree) return note(td => loadingState(td));
+		if (!tree.seasons.length) return note(td => emptyState(td, "No episode files on disk.", { variant: "inline" }));
 		const count = n => `${n} episode${n === 1 ? "" : "s"}`;
 		const pmap = plexEpisodes({ series });
-		for (const s of tree.seasons) {
+		const del = (key, tip, episodes) => td => xButton(td.createDiv({ cls: "hel-table-buttons" }), key, tip, () => removeEpisodeFiles(series, episodes), "file");
+		return tree.seasons.flatMap(s => {
 			const key = `${series.id}:${s.seasonNumber}`, open = state.openSeason.has(key);
-			cells(mk("dl-tree-season"), {
-				act: a => xButton(a, `season:${key}`, `Delete the files of ${seasonName(s.seasonNumber)} (${count(s.episodes.length)}), keep the show in Sonarr`, () => removeEpisodeFiles(series, s.episodes), "file"),
-				title: t => { chevron(t, open, "Show the episodes on disk", () => { open ? state.openSeason.delete(key) : state.openSeason.add(key); draw(); }); t.createSpan({ text: seasonName(s.seasonNumber) }); },
-				detail: count(s.episodes.length),
-				watch: pmap ? w => { const n = s.episodes.filter(e => pmap.get(epKey(e))?.watched).length; if (n) w.createSpan({ cls: `dl-watch ${n === s.episodes.length ? "dl-watch-done" : "dl-watch-part"}`, text: n === s.episodes.length ? "✓ Watched" : `${n}/${s.episodes.length} watched`, attr: { title: "Watched in Plex" } }); } : undefined,
-				size: formatSize(s.size),
-			});
-			if (!open) continue;
-			for (const e of s.episodes) {
-				cells(mk("dl-tree-episode"), {
-					act: a => xButton(a, `ep:${e.id}`, `Delete the file of ${epCode(e)}, keep the show in Sonarr`, () => removeEpisodeFiles(series, [e]), "file"),
-					title: t => t.createSpan({ text: `${epCode(e)}  ${e.title}`, attr: { title: e.title } }),
-					watch: w => watchMark(w, pmap, e),
-					size: formatSize(e.size),
-				});
-			}
-		}
+			const watched = pmap ? s.episodes.filter(e => pmap.get(epKey(e))?.watched).length : 0;
+			const season = { level: 1, tree: {
+				act: del(`season:${key}`, `Delete the files of ${seasonName(s.seasonNumber)} (${count(s.episodes.length)}), keep the show in Sonarr`, s.episodes),
+				title: td => { chevron(td, open, "Show the episodes on disk", () => { open ? state.openSeason.delete(key) : state.openSeason.add(key); draw(); }); td.createSpan({ text: seasonName(s.seasonNumber) }); },
+				episodes: td => td.setText(count(s.episodes.length)),
+				progress: watched ? td => {
+					const all = watched === s.episodes.length;
+					const el = statusText(td, all ? "✓ Watched" : `${watched}/${s.episodes.length} watched`, all ? "success" : "warning");
+					el.classList.add("dl-watch");
+					el.title = "Watched in Plex";
+				} : undefined,
+				size: td => td.setText(formatSize(s.size)),
+			} };
+			if (!open) return [season];
+			return [season, ...s.episodes.map(e => ({ level: 2, tree: {
+				act: del(`ep:${e.id}`, `Delete the file of ${epCode(e)}, keep the show in Sonarr`, [e]),
+				title: td => td.createSpan({ text: `${epCode(e)} ${e.title}`, attr: { title: e.title } }),
+				progress: td => watchMark(td, pmap, e),
+				size: td => td.setText(formatSize(e.size)),
+			} }))];
+		});
 	}
 	// A delete button that confirms with a second click: the first click turns the x (or its icon) into a check, same
 	// size so nothing shifts, the second runs it, and it disarms by itself after ARM_MS.
@@ -181,7 +149,7 @@ export function install(c) {
 	function xButton(parent, key, tip, run, iconName) {
 		const armed = state.armed === key;
 		// aria-label only: Obsidian shows it as the tooltip, and a title too would add the browser's own.
-		const b = button(parent, { icon: armed ? "check" : iconName ?? "x", label: armed ? "Click again to confirm" : tip, variant: "icon", disabled: !c.client || !!state.removing, onClick: () => {
+		button(parent, { icon: armed ? "check" : iconName ?? "x", label: armed ? "Click again to confirm" : tip, variant: "icon", armed, disabled: !c.client || !!state.removing, onClick: () => {
 			if (armed && Date.now() - armedAt < ARM_GUARD_MS) return;
 			clearTimeout(armTimer);
 			if (armed) { state.armed = null; run(); return; }
@@ -189,10 +157,8 @@ export function install(c) {
 			armedAt = Date.now();
 			armTimer = c.later(() => { if (state.armed === key) { state.armed = null; draw(); } }, ARM_MS);
 			draw();
-		} }).el;
-		b.classList.add("dl-x", "dl-ib");
-		if (armed) b.classList.add("dl-x-armed");
+		} }).el.classList.add("dl-x");
 	}
 
-	Object.assign(c, { drawActive, chevron, drawTree, xButton, scoresOf });
+	Object.assign(c, { drawActive, chevron, treeRows, xButton, scoresOf });
 }

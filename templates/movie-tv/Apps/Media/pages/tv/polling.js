@@ -1,3 +1,4 @@
+import { setProgress } from "../../core/progress.js";
 import lib from "./lib.js";
 import { isPaused as sabIsPaused, percentFor as sabPercentFor } from "../../core/sabnzbd.js";
 
@@ -32,8 +33,7 @@ function patchProgress() {
 		const row = [...root.querySelectorAll("[data-dl-queue]")].find(r => r.dataset.dlQueue === g.key);
 		if (!row) continue;
 		const pct = percentFor(g.records[0]);
-		row.querySelector(".dl-bar-fill").style.width = `${pct}%`;
-		row.querySelector(".dl-bar-label").setText(`${Math.floor(pct)}%`);
+		setProgress(row, pct);
 	}
 }
 // Poll the queue every second. Progress is patched into the existing bars (the CSS width transition makes it glide); the page

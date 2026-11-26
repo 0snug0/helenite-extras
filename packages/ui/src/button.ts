@@ -9,6 +9,8 @@ export interface ButtonOptions {
   variant?: ButtonVariant;
   pressed?: boolean;
   disabled?: boolean;
+  /** The first click of a two-click delete has happened: drawn as a danger button of the same size, so nothing moves. */
+  armed?: boolean;
   /** Makes the button a drag source: a grab cursor, dimmed while dragged. Set the drag's data in your own `dragstart` listener on `el`. */
   draggable?: boolean;
   onClick?: (e: MouseEvent) => unknown;
@@ -71,6 +73,7 @@ export function button(parent: HTMLElement, o: ButtonOptions): ButtonHandle {
     el.setAttribute("aria-pressed", String(p));
   };
   if (o.pressed !== undefined) setPressed(o.pressed);
+  if (o.armed) el.classList.add("is-armed");
   sync();
   if (o.draggable) {
     el.setAttribute("draggable", "true");

@@ -31,6 +31,10 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | What a CSS value looks like: a colour, radius, shadow, length or font | `ui.swatch` |
 | How full something is (context, a quota, a budget), on one line, stacked or as a bare bar | `ui.meter` |
 | Amounts compared across days, weeks or other buckets | `ui.barChart` |
+| Things with a poster or cover (films, books) | `ui.mediaCard` in a `ui.mediaGrid`; the picture alone: `ui.artwork` |
+| Small figures with icons, a star rating, headline numbers | `ui.figures`, `ui.rating`, `ui.statTiles` |
+| A page or section title with buttons | `ui.sectionHeading` |
+| Things on the days of a month | `ui.monthGrid` |
 | Cards moved between columns (a kanban board) | `ui.board` |
 | A banner or inline message | `ui.callout` |
 | A small panel at a button or a caret, without blocking the page | `ui.popover` |

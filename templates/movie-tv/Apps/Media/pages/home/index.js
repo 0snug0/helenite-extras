@@ -13,8 +13,8 @@ import { renderRecs } from "./sections/recs.js";
 import { renderRow } from "./sections/row.js";
 import { renderStats } from "./sections/stats.js";
 import { loadNotes, loadTasks, renderRecent, renderTasks } from "./sections/tasks.js";
-import { clear, div, el, link } from "./ui.js";
-import { button, errorState, setBridge } from "../../core/ui-kit.js";
+import { clear, div } from "./ui.js";
+import { button, card, errorState, listRow, sectionHeading, setBridge } from "../../core/ui-kit.js";
 
 const RELEASES = { data: "99_Internal/Data/movie-releases.json", keys: ["released", "upcoming"] };
 
@@ -23,7 +23,7 @@ export default async function mount(host, pageCtx) {
 	setBridge(api);
 	let alive = true;
 	const root = host.ownerDocument.createElement("div");
-	root.className = "media-home media-scope";
+	root.className = "media-home";
 	host.appendChild(root);
 	const page = root.ownerDocument.createElement("div");
 	page.className = "home";
@@ -62,26 +62,28 @@ export default async function mount(host, pageCtx) {
 			showSelection(title, list) {
 				if (!selectionBox) return;
 				clear(selectionBox);
-				const head = div(selectionBox, "home-selection-head");
-				div(head, "home-panel-title", `${title} · ${list.length}`);
-				button(head, { text: "Close", onClick: () => clear(selectionBox) });
-				const ul = el(selectionBox, "ul", { cls: "home-selection-list" });
+				const panel = card(selectionBox, { title: `${title} · ${list.length}` });
+				panel.titleEl.classList.add("home-panel-title");
+				panel.head.classList.add("home-selection-head");
+				button(panel.head, { text: "Close", onClick: () => clear(selectionBox) }).el.classList.add("hel-toolbar-end");
+				const rows = div(panel.body, "home-selection-list");
 				for (const p of [...new Set(list)]) {
 					const name = p.split("/").pop().replace(/\.md$/, "");
-					link(el(ul, "li"), { text: name, title: p, onClick: e => ctx.openNote(p, e) });
+					listRow(rows, { title: name, onClick: e => ctx.openNote(p, e) }).title = p;
 				}
 				selectionBox.scrollIntoView?.({ block: "nearest" });
 			},
 		};
 
-		const bar = div(page, "home-bar");
-		div(bar, "home-title", "Home");
-		const actions = div(bar, "home-actions");
-		button(actions, { text: "Movies", onClick: () => { pageCtx.go("movies"); } });
-		button(actions, { text: "TV", onClick: () => { pageCtx.go("tv"); } });
-		button(actions, { text: "Refresh", onClick: ctx.refresh }).el.title = "Reload every section";
+		const bar = sectionHeading(page, { title: "Home", level: 1 });
+		bar.el.classList.add("home-bar");
+		bar.titleEl.classList.add("home-title");
+		bar.actions.classList.add("home-actions");
+		button(bar.actions, { text: "Movies", onClick: () => { pageCtx.go("movies"); } });
+		button(bar.actions, { text: "TV", onClick: () => { pageCtx.go("tv"); } });
+		button(bar.actions, { text: "Refresh", onClick: ctx.refresh }).el.title = "Reload every section";
 
-		const h = text => el(page, "h2", { cls: "home-h", text });
+		const h = text => sectionHeading(page, { title: text }).el.classList.add("home-h");
 		const slot = () => div(page, "home-section");
 		const draw = async (fn, where) => { try { await fn(where); } catch (e) { errorState(where, `Could not draw this section: ${e?.message ?? e}`); api.log?.(e); } };
 

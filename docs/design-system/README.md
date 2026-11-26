@@ -199,6 +199,35 @@ ui.barChart(el, {
 
 A column chart: one column per bucket, in the order given, scaled to the largest value. A non-zero bucket always shows (at least 2px tall); zero, negative or non-finite values draw no bar. `title` is the column's tooltip and `key` its `data-key`; the first and last `key` are written under the baseline. `label` names the chart for screen readers (it is an `img`, so the columns are not read: put the figures that matter in text or a `ui.table` beside it). Returns the element. It does not update: redraw it when the data changes.
 
+A sortable table: mark columns `sortable`, pass `sort: { key, dir }` and `onSort(key)`; you sort the rows and redraw (or `setSort` and `setRows`). `fixed` with a `width` on each column keeps columns still as rows change, `minWidth` scrolls the table sideways in a narrow pane, `align: 'end'` is for numbers, `truncate` cuts a long column. `rowLevel` with a `tree` column draws a tree, and `rowMuted` dims rows. A bar chart's `onSelect` makes each column with a value a button, `labels: 'all'` names every column and a bucket's `muted` marks one not reached yet.
+
+### ui.artwork, ui.mediaGrid, ui.mediaCard
+
+```ts
+const grid = ui.mediaGrid(el);                       // or { layout: 'strip', minWidth: 120 }
+const card = ui.mediaCard(grid, { art: { title: 'Heat', src: posterUrl, onClick: open }, title: 'Heat' });
+ui.rating(card.body, { value: 4.5 });
+ui.button(card.footer, { text: 'Search', onClick: search });
+```
+
+Things with artwork: films, books, albums. `artwork` draws the 2:3 picture alone (the title when there is no `src`; in an app frame the URL must be in the app's `net` origins). A `mediaCard` is a card led by one: `layout: 'row'` for search results, `plain` without a ring, `selected` while something is open for it, `focused` for a card a link led to. It returns the card handle plus `art`.
+
+### ui.figures, ui.rating, ui.statTiles
+
+`figures(el, [{ text, label, icon, onClick }], { columns: 2 })` draws small figures such as ratings, each with a Lucide icon name or a node, linked when it has `onClick`. `rating(el, { value, max })` is a read-only star rating. `statTiles(el, [{ value, label, title, onClick }])` is a row of headline numbers.
+
+### ui.sectionHeading
+
+`sectionHeading(el, { title, extra, level })` draws a page (1), section (2) or part (3) title and returns `{ el, titleEl, actions }`; draw buttons into `actions`.
+
+### ui.monthGrid
+
+```ts
+ui.monthGrid(el, { month: new Date(), events: (day) => byDay.get(day) ?? [], max: 3 });  // day is "YYYY-MM-DD"
+```
+
+A month in a week grid. Each event is `{ title, lead, tooltip, onClick }`. Days are all the same height; a day with more than `max` events shows "+N more", which opens them all in a popover. It does not move between months by itself: redraw it from your own buttons.
+
 ### ui.countBadge
 
 ```ts
@@ -569,10 +598,10 @@ ui.settings.vaultScope(c.body, {
 Vault apps (the sandboxed micro-apps that live in the vault) get the same parts from the package `@helenite/ui-kit`, not from `helenite`:
 
 ```ts
-import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, disclosure, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
+import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, disclosure, listRow, mediaCard, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, swatch, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, codeBlock, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that takes any Lucide name and draws it as inline SVG. The standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`, and `align-justify` and `rows-2` for `densityAction`) are inside the kit and draw at once; the rest are asked of the host over the bridge (call `setBridge`) and draw when it answers, so an app does not bundle the icon set. A name the host does not know is only set as `data-icon` on the icon element. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, swatch, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, codeBlock, meter, board, barChart, artwork, mediaGrid, mediaCard, figures, rating, statTiles, sectionHeading, monthGrid) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that takes any Lucide name and draws it as inline SVG. The standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`, and `align-justify` and `rows-2` for `densityAction`) are inside the kit and draw at once; the rest are asked of the host over the bridge (call `setBridge`) and draw when it answers, so an app does not bundle the icon set. A name the host does not know is only set as `data-icon` on the icon element. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`. Prefer `mediaGrid` and `mediaCard` for posters. For content a host modal cannot show (a table with its own buttons), `frameDialog({ label, onClose })` draws a large dialog in the frame: lift the frame with `api.ui.overlay(true)` while it is open.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 

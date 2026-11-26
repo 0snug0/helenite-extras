@@ -7,11 +7,11 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, TableHandle, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, CodeBlockOptions, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, TableHandle, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, CodeBlockOptions, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, TableSort, ArtworkOptions, MediaGridOptions, MediaCardOptions, MediaCardHandle, Figure, FiguresOptions, RatingOptions, StatTile, SectionHeadingOptions, SectionHeadingHandle, MonthEvent, MonthGridOptions, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
-  import { avatar, badge, barChart, board, button, callout, card, checkList, choiceList, chip, codeBlock, composer, countBadge, disclosure, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, swatch, table, tabs, textInput, thread, threadText, toggle, toolbar } from 'helenite/internal/ui/src/index';
+  import { avatar, badge, barChart, board, button, callout, card, checkList, choiceList, chip, codeBlock, composer, countBadge, disclosure, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, swatch, table, tabs, textInput, thread, threadText, toggle, toolbar, artwork, mediaGrid, mediaCard, figures, rating, statTiles, sectionHeading, monthGrid } from 'helenite/internal/ui/src/index';
   import { choose, confirm, form, prompt } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   import { dialog } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   import { menu, menuButton, moreButton } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -23,7 +23,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { card as settingsCard, openSubpage, section, subpageRow, summaryRow } from 'helenite/internal/obsidian-api/src/ui/design/settings';
   import { scopeBar } from 'helenite/internal/obsidian-api/src/ui/scope-bar';
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, TableHandle, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, CodeBlockOptions, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, } from 'helenite/internal/ui/src/index';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, TableHandle, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, CodeBlockOptions, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, TableSort, ArtworkOptions, MediaGridOptions, MediaCardOptions, MediaCardHandle, Figure, FiguresOptions, RatingOptions, StatTile, SectionHeadingOptions, SectionHeadingHandle, MonthEvent, MonthGridOptions, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   export type { DialogOptions, DialogAction, DialogContext, DialogSidePanel } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -73,6 +73,14 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       thread: typeof thread;
       threadText: typeof threadText;
       board: typeof board;
+      artwork: typeof artwork;
+      mediaGrid: typeof mediaGrid;
+      mediaCard: typeof mediaCard;
+      figures: typeof figures;
+      rating: typeof rating;
+      statTiles: typeof statTiles;
+      sectionHeading: typeof sectionHeading;
+      monthGrid: typeof monthGrid;
       confirm: typeof confirm;
       prompt: typeof prompt;
       choose: typeof choose;
@@ -142,6 +150,14 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           thread: typeof thread;
           threadText: typeof threadText;
           board: typeof board;
+          artwork: typeof artwork;
+          mediaGrid: typeof mediaGrid;
+          mediaCard: typeof mediaCard;
+          figures: typeof figures;
+          rating: typeof rating;
+          statTiles: typeof statTiles;
+          sectionHeading: typeof sectionHeading;
+          monthGrid: typeof monthGrid;
           confirm: typeof confirm;
           prompt: typeof prompt;
           choose: typeof choose;
@@ -181,7 +197,7 @@ declare module 'helenite/internal/ui/src/index' {
   export { segmented } from "helenite/internal/ui/src/segmented";
   export type { SegmentedOptions } from "helenite/internal/ui/src/segmented";
   export { table } from "helenite/internal/ui/src/table";
-  export type { TableOptions, TableColumn, TableGroup, TableHandle } from "helenite/internal/ui/src/table";
+  export type { TableOptions, TableColumn, TableGroup, TableHandle, TableSort } from "helenite/internal/ui/src/table";
   export { emptyState, errorState, loadingState, badge, statusDot, statusText } from "helenite/internal/ui/src/states";
   export type { Tone, StateVariant, ErrorStateOptions, StatusTextElement, LoadingStateOptions, LoadingStateElement } from "helenite/internal/ui/src/states";
   export { countBadge, chip } from "helenite/internal/ui/src/badges";
@@ -229,6 +245,12 @@ declare module 'helenite/internal/ui/src/index' {
   export type { ThreadOptions, Thread, ThreadEntry } from "helenite/internal/ui/src/thread";
   export { codeBlock } from "helenite/internal/ui/src/code-block";
   export type { CodeBlockOptions } from "helenite/internal/ui/src/code-block";
+  export { artwork, mediaGrid, mediaCard } from "helenite/internal/ui/src/media";
+  export type { ArtworkOptions, MediaGridOptions, MediaCardOptions, MediaCardHandle } from "helenite/internal/ui/src/media";
+  export { figures, rating, statTiles, sectionHeading } from "helenite/internal/ui/src/figures";
+  export type { Figure, FiguresOptions, RatingOptions, StatTile, SectionHeadingOptions, SectionHeadingHandle } from "helenite/internal/ui/src/figures";
+  export { monthGrid } from "helenite/internal/ui/src/month-grid";
+  export type { MonthEvent, MonthGridOptions } from "helenite/internal/ui/src/month-grid";
   export { keyValue } from "helenite/internal/ui/src/key-value";
   export type { KeyValueRow } from "helenite/internal/ui/src/key-value";
   export { setMenuRenderer, openMenu } from "helenite/internal/ui/src/menu";
@@ -255,6 +277,8 @@ declare module 'helenite/internal/ui/src/button' {
       variant?: ButtonVariant;
       pressed?: boolean;
       disabled?: boolean;
+      /** The first click of a two-click delete has happened: drawn as a danger button of the same size, so nothing moves. */
+      armed?: boolean;
       /** Makes the button a drag source: a grab cursor, dimmed while dragged. Set the drag's data in your own `dragstart` listener on `el`. */
       draggable?: boolean;
       onClick?: (e: MouseEvent) => unknown;
@@ -302,6 +326,24 @@ declare module 'helenite/internal/ui/src/table' {
        * from the one beside it). Sets `is-default` / `is-different` on the cell; return nothing for a normal cell.
        */
       state?: (row: R) => "default" | "different" | void;
+      /** The column's width ("96px"). With `fixed` on the table, columns stay still as rows change. */
+      width?: string;
+      /** `end` right-aligns the column, with tabular figures: for numbers. */
+      align?: "end";
+      /** One line, cut with an ellipsis. */
+      truncate?: boolean;
+      /** The column that shows a row's depth (`rowLevel`): its cells indent. */
+      tree?: boolean;
+      /** Its header sorts: a click calls `onSort` with the column's key. */
+      sortable?: boolean;
+      /** Draws the header's content in place of `title` (a brand mark); `headTitle` then names it. */
+      head?: (label: HTMLElement) => void;
+      /** The header's tooltip and accessible name. */
+      headTitle?: string;
+  }
+  export interface TableSort {
+      key: string;
+      dir: "asc" | "desc";
   }
   export interface TableGroup<R> {
       title: string | ((td: HTMLTableCellElement) => void);
@@ -316,11 +358,25 @@ declare module 'helenite/internal/ui/src/table' {
       rowData?: (row: R) => Record<string, string>;
       empty?: string;
       className?: string;
+      /** The column sorted by, shown by an arrow. The caller sorts the rows. */
+      sort?: TableSort;
+      /** A sortable header was clicked. The caller chooses the direction, sorts and redraws (or calls `setSort` and `setRows`). */
+      onSort?: (key: string) => void;
+      /** How deep a row sits under the one above (a tree): 0 (default), 1 or 2. */
+      rowLevel?: (row: R) => number;
+      /** Dims a row that cannot be used. */
+      rowMuted?: (row: R) => boolean;
+      /** Columns take their `width`s and stop following the content. */
+      fixed?: boolean;
+      /** The narrowest the table gets ("900px"); in a narrower pane it scrolls sideways inside `hel-table-scroll`. */
+      minWidth?: string;
   }
   export interface TableHandle<R> {
       el: HTMLTableElement;
       setRows(rows: R[]): void;
       setGroups(groups: TableGroup<R>[]): void;
+      /** Moves the sort arrow. */
+      setSort(sort: TableSort | undefined): void;
   }
   export function table<R>(parent: HTMLElement, o: TableOptions<R>): TableHandle<R>;
 }
@@ -538,6 +594,7 @@ declare module 'helenite/internal/ui/src/toolbar' {
   /** A row of controls (buttons, a search box, a dropdown). Returns the row; draw the controls into it. */
   export function toolbar(parent: HTMLElement, o?: {
       label?: string;
+      sticky?: boolean;
   }): HTMLElement;
 }
 
@@ -1112,8 +1169,9 @@ declare module 'helenite/internal/ui/src/meter' {
   } | {
       /** Only the full-width bar, for a table cell. */
       layout: "bar";
-      /** The reading in words, announced but not shown. */
+      /** The reading in words, announced; shown beside the bar with `showText`. */
       text?: string;
+      showText?: boolean;
   });
   /** A labelled usage meter (a quota, a budget, a context window). */
   export function meter(parent: HTMLElement, o: MeterOptions): HTMLElement;
@@ -1127,11 +1185,19 @@ declare module 'helenite/internal/ui/src/bar-chart' {
       value: number;
       /** The column's tooltip. */
       title?: string;
+      /** The name under the column when `labels` is "all" (or, as the first or last, under the baseline). Default `key`. */
+      label?: string;
+      /** Not reached yet (a week to come): a faint stub in place of a bar, and not selectable. */
+      muted?: boolean;
   }
   export interface BarChartOptions {
       /** What the chart shows ("Cost per day"). The chart's accessible name. */
       label: string;
       buckets: readonly BarChartBucket[];
+      /** `ends` (default) names the first and last bucket; `all` names every column. */
+      labels?: "ends" | "all";
+      /** Makes each column with a value a button, to list what is behind it. */
+      onSelect?: (bucket: BarChartBucket) => void;
   }
   /** A column chart: one column per bucket, scaled to the largest, the first and last bucket named under the baseline. */
   export function barChart(parent: HTMLElement, o: BarChartOptions): HTMLElement;
@@ -1205,6 +1271,135 @@ declare module 'helenite/internal/ui/src/code-block' {
   }
   /** Source code as written: monospace, selectable, never wrapped (a long line scrolls sideways). Change it with `textContent`. */
   export function codeBlock(parent: HTMLElement, code: string, o?: CodeBlockOptions): HTMLPreElement;
+}
+
+declare module 'helenite/internal/ui/src/media' {
+  import { type CardHandle } from "helenite/internal/ui/src/card";
+  export interface ArtworkOptions {
+      /** What it shows (a film's title). The accessible name, and the text drawn when there is no image. */
+      title: string;
+      /** The image's URL. In an app frame it must be in the app's `net` origins. */
+      src?: string | null;
+      /** The accessible name when it should say more than the title ("Heat on Letterboxd"). */
+      label?: string;
+      /** The tooltip of a clickable artwork. */
+      tooltip?: string;
+      /** Makes the artwork a link that calls this instead of navigating. */
+      onClick?: (e: MouseEvent) => void;
+  }
+  /** A poster: artwork at 2:3 (`--hel-art-ratio`), or the title where there is none. */
+  export function artwork(parent: HTMLElement, o: ArtworkOptions): HTMLElement;
+  export interface MediaGridOptions {
+      /** `grid` (default) fills the width with equal columns; `strip` is one row that scrolls sideways. */
+      layout?: "grid" | "strip";
+      /** The narrowest a column gets, in px. Default 150. */
+      minWidth?: number;
+  }
+  /** The container for media cards. Returns it; draw `mediaCard`s into it. */
+  export function mediaGrid(parent: HTMLElement, o?: MediaGridOptions): HTMLElement;
+  export interface MediaCardOptions {
+      art: ArtworkOptions;
+      /** Draws the title under the artwork, on at most two lines (it always takes two, so cards line up). */
+      title?: string;
+      /** A faint description under the title, cut after two lines. */
+      detail?: string;
+      /**
+       * `tile` (default): artwork on top, centred text, the footer pinned to the bottom. `row`: a small artwork beside the
+       * text, the footer at the end (a search result).
+       */
+      layout?: "tile" | "row";
+      /** No ring and no padding: artwork and text on the page. */
+      plain?: boolean;
+      /** Outlined: the card something is open for. */
+      selected?: boolean;
+      /** A strong ring: the card a link led to. */
+      focused?: boolean;
+  }
+  export interface MediaCardHandle extends CardHandle {
+      art: HTMLElement;
+  }
+  /** A card led by artwork. Draw text into `body` and buttons into `footer`. */
+  export function mediaCard(parent: HTMLElement, o: MediaCardOptions): MediaCardHandle;
+}
+
+declare module 'helenite/internal/ui/src/figures' {
+  export interface Figure {
+      /** The figure as written ("4.1", "92%"). */
+      text: string;
+      /** What it measures ("Critics score"): the tooltip and the accessible name's start. */
+      label?: string;
+      /** A Lucide icon name, or a node drawn as given (a brand mark). */
+      icon?: string | Node;
+      /** Makes the figure a link that calls this. */
+      onClick?: () => void;
+      /** Set as `data-key`, for tests and snippets. */
+      key?: string;
+  }
+  export interface FiguresOptions {
+      /** A fixed number of columns, spread to the edges. Default: one wrapping row, centred. */
+      columns?: 2;
+  }
+  /** A group of small figures with icons (ratings, scores), some linking out. */
+  export function figures(parent: HTMLElement, items: readonly Figure[], o?: FiguresOptions): HTMLElement;
+  export interface RatingOptions {
+      /** 0 to `max`, in halves or any fraction. Nothing (or 0) draws an empty space the same height. */
+      value?: number | null;
+      /** The number of stars. Default 5. */
+      max?: number;
+  }
+  /** A read-only star rating, partly filled for a fraction. */
+  export function rating(parent: HTMLElement, o: RatingOptions): HTMLElement;
+  export interface StatTile {
+      /** The headline number. */
+      value: string;
+      /** What it counts. */
+      label: string;
+      title?: string;
+      /** Makes the tile a button (to list what is behind the number). */
+      onClick?: () => void;
+  }
+  /** A row of headline numbers, each over its name. */
+  export function statTiles(parent: HTMLElement, tiles: readonly StatTile[]): HTMLElement;
+  export interface SectionHeadingOptions {
+      title: string;
+      /** A short note at the end of the line ("avg 3.8"). */
+      extra?: string;
+      /** The heading's level: 1 for a page title, 2 (default) for a section, 3 for a part of one. */
+      level?: 1 | 2 | 3;
+  }
+  export interface SectionHeadingHandle {
+      el: HTMLElement;
+      /** The `<h1>` to `<h3>`. */
+      titleEl: HTMLElement;
+      /** At the end of the line, for buttons. Not shown while empty. */
+      actions: HTMLElement;
+  }
+  /** A page or section title with room for a note and buttons at the end of its line. */
+  export function sectionHeading(parent: HTMLElement, o: SectionHeadingOptions): SectionHeadingHandle;
+}
+
+declare module 'helenite/internal/ui/src/month-grid' {
+  export interface MonthEvent {
+      title: string;
+      /** A short figure before the title (a rating, a time). */
+      lead?: string;
+      tooltip?: string;
+      onClick?: (e: MouseEvent) => void;
+  }
+  export interface MonthGridOptions {
+      /** Any day of the month to draw. */
+      month: Date;
+      /** The day marked as today. Default: now. */
+      today?: Date;
+      /** The events of a day of this month, by local date "YYYY-MM-DD". */
+      events: (day: string) => readonly MonthEvent[];
+      /** The rows a day has room for; with more events the last row says "+N more" and opens them all. Default 3. */
+      max?: number;
+      /** The first column: 1 (default) Monday, 0 Sunday. */
+      weekStart?: 0 | 1;
+  }
+  /** A month of days in a week grid, each with its events. Every day is the same height, so nothing moves between months. */
+  export function monthGrid(parent: HTMLElement, o: MonthGridOptions): HTMLElement;
 }
 
 declare module 'helenite/internal/ui/src/key-value' {

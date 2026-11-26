@@ -1,9 +1,11 @@
 import lib from "./lib.js";
 import { availabilityLabel } from "../../core/tmdb.js";
 import { scoreRow } from "../../core/scores.js";
-import { renderPoster } from "../../core/posters.js";
+import { posterCard } from "../../core/posters.js";
+import { filterBar } from "../../core/filter-bar.js";
+import { AVAIL_TONES } from "../../core/tones.js";
 import { SERVICES_KEY, SORT_KEY } from "./consts.js";
-import { badge, button, emptyState, errorState, segmented } from "../../core/ui-kit.js";
+import { badge, button, emptyState, errorState, mediaGrid, statusText } from "../../core/ui-kit.js";
 
 // Part of the Movies page; `c` is the context shared by every part (see index.js).
 export function install(c) {
@@ -51,58 +53,52 @@ function drawBody() {
 	c.drawActive(c.root);
 	c.addSearch.render(c.root);
 
-	const bar = c.root.createDiv({ cls: "dl-filters" });
-	const find = bar.createEl("input", { cls: "dl-textfilter", attr: { type: "search", placeholder: "Filter by title (Ctrl/Cmd+F)", "aria-label": "Filter by title", spellcheck: "false" } });
-	find.value = c.state.query;
-	find.addEventListener("input", () => { c.state.query = find.value; c.draw(); });
-	find.addEventListener("keydown", e => { if (e.key === "Escape" && c.state.query) { c.state.query = ""; c.draw(); c.root.querySelector(".dl-textfilter")?.focus(); } });
-	segmented(bar, {
-		options: lib.FILTERS.map(([id, label]) => ({ value: id, text: `${label} (${films.filter(f => lib.matchesFilter(f, id)).length})` })),
-		value: c.state.filter,
-		onChange: id => { c.state.filter = id; c.draw(); },
-	});
 	const availOf = f => f.tmdbId && c.state.avail[f.tmdbId];
-	{
-		const n = films.filter(f => lib.matchesServices(availOf(f), lib.SERVICES.map(([k]) => k))).length;
-		button(bar, { text: `My streaming (${n})`, pressed: c.state.streaming, onClick: () => { c.state.streaming = !c.state.streaming; c.save(SERVICES_KEY, c.state.streaming); c.draw(); } }).el.title = "Streaming on Netflix, HBO, Apple TV or Amazon";
-	}
-	const sort = bar.createEl("select", { cls: "dl-sort dropdown", attr: { "aria-label": "Sort films" } });
-	for (const [id, label] of lib.SORTS) sort.createEl("option", { text: label, attr: { value: id, ...(c.state.sort === id ? { selected: "" } : {}) } });
-	sort.addEventListener("change", () => { c.state.sort = sort.value; c.save(SORT_KEY, c.state.sort); c.draw(); if (c.state.sort === "release") c.fillDates(); });
+	const onServices = f => lib.matchesServices(availOf(f), lib.SERVICES.map(([k]) => k));
+	filterBar(c.root, {
+		query: c.state.query, onQuery: q => { c.state.query = q; c.draw(); },
+		filters: lib.FILTERS.map(([id, label]) => ({ value: id, text: `${label} (${films.filter(f => lib.matchesFilter(f, id)).length})` })),
+		filter: c.state.filter, onFilter: id => { c.state.filter = id; c.draw(); },
+		streaming: c.state.streaming, streamingCount: films.filter(onServices).length,
+		onStreaming: () => { c.state.streaming = !c.state.streaming; c.save(SERVICES_KEY, c.state.streaming); c.draw(); },
+		sorts: lib.SORTS, sort: c.state.sort, sortLabel: "Sort films",
+		onSort: v => { c.state.sort = v; c.save(SORT_KEY, c.state.sort); c.draw(); if (c.state.sort === "release") c.fillDates(); },
+	});
 
-	const shown = lib.sortFilms(films, c.state.sort, c.state.dates).filter(f => lib.matchesFilter(f, c.state.filter) && (!c.state.streaming || lib.matchesServices(availOf(f), lib.SERVICES.map(([k]) => k))) && matchesQuery(f));
+	const shown = lib.sortFilms(films, c.state.sort, c.state.dates).filter(f => lib.matchesFilter(f, c.state.filter) && (!c.state.streaming || onServices(f)) && matchesQuery(f));
 	if (!shown.length) emptyState(c.root, "No films match this filter.");
 
-	const grid = c.root.createDiv({ cls: "dl-grid" });
+	const grid = mediaGrid(c.root);
+	grid.classList.add("dl-grid");
 	for (const film of shown) {
 		const open = c.state.panel?.key === film.key;
-		const card = grid.createDiv({ cls: `dl-card${open ? " dl-card-open" : ""}${c.state.focus === film.key ? " media-movies-focus" : ""}`, attr: { "data-film-key": film.key } });
+		const card = posterCard(grid, { title: film.title, url: film.url, poster: film.poster, site: "Letterboxd", open: c.openUrl(film.url), selected: open, focused: c.state.focus === film.key });
+		if (c.state.focus === film.key) card.el.classList.add("media-movies-focus");
+		card.el.dataset.filmKey = film.key;
 
-		// A div with a background image, not an <img>: Minimal zooms any img:active on click.
-		const { link } = renderPoster(card, { title: film.title, url: film.url, poster: film.poster, site: "Letterboxd" });
-		if (film.url) link.addEventListener("click", c.openUrl(film.url));
-
-		card.createDiv({ cls: "dl-year", text: String(film.year ?? "") });
+		statusText(card.body, String(film.year ?? ""));
 		const when = c.state.sort === "added" ? film.added : c.state.sort === "release" ? lib.releaseExact(film, c.state.dates) : "";
-		if (when) card.createDiv({ cls: "dl-date", text: `${c.state.sort === "added" ? "Added" : "Out"} ${when}` });
-		const avail = film.tmdbId && c.state.avail[film.tmdbId];
+		if (when) statusText(card.body, `${c.state.sort === "added" ? "Added" : "Out"} ${when}`).classList.add("dl-date");
+		const avail = availOf(film);
 		const availText = availabilityLabel(avail, new Date().toISOString().slice(0, 10));
-		if (availText) card.createDiv({ cls: `dl-avail dl-avail-${avail.kind}`, text: availText, attr: { title: "Where to watch in the US (TMDB / JustWatch)" } });
+		if (availText) {
+			const el = statusText(card.body, availText, AVAIL_TONES[avail.kind]);
+			el.classList.add("dl-avail");
+			el.title = "Where to watch in the US (TMDB / JustWatch)";
+		}
 		const sc = film.tmdbId && c.scoresFor(film.tmdbId);
-		scoreRow(card, { lb: sc?.lb, rt: sc?.rt, aud: sc?.aud, lbUrl: film.url, rtUrl: sc?.rtUrl, imdb: sc?.imdb, imdbUrl: sc?.imdbUrl }, url => c.api.workspace.openUrl(url));
-		const tag = card.createDiv({ cls: "dl-source" });
-		if (film.path) tag.createEl("a", { text: film.pending ? "Pending" : "Watchlist", attr: { href: "#", title: film.path } }).addEventListener("click", c.openNote(film.path));
-		else tag.createSpan({ text: "Radarr", attr: { title: "Monitored in Radarr, not on the Letterboxd watchlist" } });
+		scoreRow(card.body, { lb: sc?.lb, rt: sc?.rt, aud: sc?.aud, lbUrl: film.url, rtUrl: sc?.rtUrl, imdb: sc?.imdb, imdbUrl: sc?.imdbUrl }, url => c.api.workspace.openUrl(url));
+		if (film.path) button(card.body, { text: film.pending ? "Pending" : "Watchlist", variant: "link", onClick: c.openNote(film.path) }).el.title = film.path;
+		else statusText(card.body, "Radarr").title = "Monitored in Radarr, not on the Letterboxd watchlist";
 
-		badge(card, ...statusChip(film)).classList.add("dl-chip");
+		badge(card.body, ...statusChip(film)).classList.add("dl-chip");
 
 		const radarrMovie = film.tmdbId && c.state.movies.find(m => m.tmdbId === film.tmdbId);
-		const row = card.createDiv({ cls: "dl-btn-row" });
-		const find = button(row, { text: open ? "Close" : "Search", disabled: !film.tmdbId || !c.client || !known || c.busy(), onClick: () => { c.toggleFilm(film); } }).el;
+		const find = button(card.footer, { text: open ? "Close" : "Search", disabled: !film.tmdbId || !c.client || !known || c.busy(), onClick: () => { c.toggleFilm(film); } }).el;
 		find.classList.add("dl-find");
 		if (!film.tmdbId) find.title = "This note has no tmdb_id";
-		if (radarrMovie) c.xButton(row, `film:${film.key}`, "Remove from Radarr (deletes any downloaded file) and the watchlist", () => c.removeMovie(radarrMovie, "all"));
-		else if (known && c.client) c.xButton(row, `unlist:${film.key}`, "Remove from the watchlist", () => c.unlistFilm(film));   // only once Radarr has said it does not have the film
+		if (radarrMovie) c.xButton(card.footer, `film:${film.key}`, "Remove from Radarr (deletes any downloaded file) and the watchlist", () => c.removeMovie(radarrMovie, "all"));
+		else if (known && c.client) c.xButton(card.footer, `unlist:${film.key}`, "Remove from the watchlist", () => c.unlistFilm(film));   // only once Radarr has said it does not have the film
 	}
 	c.drawModal(films);
 }

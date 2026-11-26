@@ -1,3 +1,4 @@
+import { setProgress } from "../../core/progress.js";
 import lib from "./lib.js";
 import { POLL_MS } from "./consts.js";
 import { isPaused as sabIsPaused, percentFor as sabPercentFor } from "../../core/sabnzbd.js";
@@ -51,8 +52,7 @@ function patchProgress() {
 		const row = c.root.querySelector(`[data-dl-queue="${q.id}"]`);
 		if (!row) continue;
 		const pct = c.percentFor(q);
-		row.querySelector(".dl-bar-fill").style.width = `${pct}%`;
-		row.querySelector(".dl-bar-label").setText(`${Math.floor(pct)}%`);
+		setProgress(row, pct);
 	}
 }
 const timer = setInterval(async () => {
