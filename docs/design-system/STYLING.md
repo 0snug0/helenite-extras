@@ -220,7 +220,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 
 | Class | What it is |
 | --- | --- |
-| `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. Finesse list rows: a smooth-rectangle row (`--hel-list-row-radius`), the icon muted until hover (then normal text) and accent on the chosen row, the focus ring of the other controls. |
+| `hel-list-row` | `ui.listRow`, a row in a sidebar pane list. `is-active` marks the current one. Finesse list rows: a smooth-rectangle row (`--hel-list-row-radius`), the icon muted until hover (then normal text) and accent on the chosen row, the focus ring of the other controls. For drag reordering the plugin handles the drag events and adds `is-being-dragged` (half opacity) to the dragged row and `is-drop-target` (a dashed accent outline) to the row under it. |
 | `hel-list-row-icon` | The row's icon. |
 | `hel-list-row-title` | The row's title. |
 | `hel-list-row-tag` | The row's tag ("not installed"). |
