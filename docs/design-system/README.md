@@ -24,7 +24,7 @@ That writes `packages/types/helenite.d.ts`, a `declare module 'helenite'` file. 
 import { ui, version } from 'helenite';
 ```
 
-`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
+`version` is the running Helenite version (`0.1.0` today). The public types are exported from the same module, type-only: `ButtonOptions`, `ButtonHandle`, `TableOptions`, `TableColumn`, `TableGroup`, `Field`, `Tone`, `StateVariant`, `ErrorStateOptions`, `CountBadgeOptions`, `CountBadgeHandle`, `CountBadgeTone`, `ChipOptions`, `FieldOptions`, `FieldHandle`, `TextInputOptions`, `SearchInputOptions`, `SliderOptions`, `ToggleOptions`, `ToggleHandle`, `DropdownOptions`, `DropdownHandle`, `TabSpec`, `TabsOptions`, `TabsHandle`, `FieldValues`, `CalloutOptions`, `CalloutHandle`, `CalloutTone`, `CardOptions`, `CardHandle`, `CardTone`, `CheckOption`, `CheckListOptions`, `CheckListHandle`, `ChoiceOption`, `ChoiceListOptions`, `ChoiceListHandle`, `ListRowOptions`, `ListRowAction`, `ListGroupOptions`, `ComposerOptions`, `ComposerHandle`, `KeyValueRow`, `ThreadOptions`, `Thread`, `ThreadEntry`, `MenuItemSpec`, `MenuOptions`, `MenuButtonOptions`, `MenuHandle`, `ActionId`, `ActionOptions`, `SubpageLink`, `ConfirmOptions`, `PromptOptions`, `ChooseOptions`, `FormOptions`, `DialogOptions`, `DialogAction`, `DialogContext`, `NoticeOptions`, `NoticeHandle`, `PaneHeaderAction`, `SettingsCardOptions`, `SettingsCardHandle`, `SettingsCardStatus`, `VaultScope`, `VaultScopeKind`, `VaultScopeOptions`, `VaultScopeHandle`.
 
 `helenite` is provided by Helenite at run time. Mark it external in your bundler (like `obsidian`). Obsidian itself has no such module, so `require('helenite')` throws there.
 
@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -295,6 +295,19 @@ ui.keyValue(el, [
 ```
 
 A definition list. A value is text, a list of strings (drawn as a list; `isNew` marks items with a "new" badge, accent or, with `newTone: 'warning'`, warning for something to look at twice such as an added permission), or a node drawn as given. An empty string or list shows `empty` ("None" by default).
+
+### ui.thread, ui.threadText
+
+```ts
+const talk = ui.thread(el);
+talk.event('Nov 25, 4:11 PM · Started a session');
+const asked = talk.entry();
+ui.threadText(ui.card(asked.el, { compact: true, title: 'Agent', icon: 'bot' }).body, 'Which branch?\nmain or next?');
+const answer = asked.replies().entry();
+ui.threadText(ui.card(answer.el, { compact: true, title: 'You', icon: 'user', tone: 'accent' }).body, 'main');
+```
+
+A threaded conversation. `entry()` adds a comment: draw its `ui.card` into the entry's `el`. `replies()` is the list under that entry (the same kind of list, added on the first call after what the entry then holds), indented along a rail. Past `maxIndent` levels (default 3) a replies list stays level with the one above. `event(text)` adds a muted line for something that happened. Anything else, such as a callout or a `ui.composer` for a reply, goes into a list's `el`. `ui.threadText(parent, text)` draws text as written, never as markup: line breaks are kept and long words wrap. The thread does not update itself: empty the container and redraw it.
 
 ### ui.confirm, ui.prompt, ui.choose, ui.form
 

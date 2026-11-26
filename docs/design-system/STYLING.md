@@ -32,6 +32,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
+| `--hel-thread-rail` | `var(--background-modifier-border)` | The rail beside a `hel-thread-replies` list |
+| `--hel-thread-indent` | `var(--size-4-3)` | The space on each side of that rail |
 | `--hel-pane-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-pane-header` |
 | `--hel-subpage-header-bg` | `var(--background-primary)` | The sticky `hel-subpage-header` (it covers the page as it scrolls under) |
 | `--hel-subpage-header-border` | `var(--background-modifier-border)` | The hairline under a `hel-subpage-header` |
@@ -227,6 +229,16 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-kv-row` | One key and its value. Rows share the list's columns (subgrid) and are split by a `--hel-kv-divider` hairline. |
 | `hel-kv-key` | The key (`<dt>`). |
 | `hel-kv-value` | The value (`<dd>`). `is-empty` when it shows the empty text. A list value stacks its items without bullets. A list item is `is-new` when `isNew` marks it, plus `is-warning` with `newTone: 'warning'`. |
+
+### Threads
+
+| Class | What it is |
+| --- | --- |
+| `hel-thread` | `ui.thread`: a threaded conversation (Finesse has none, so it is drawn from the tokens), its entries and event lines spaced apart. A `hel-callout` directly in a list drops its own margin. |
+| `hel-thread-entry` | One comment (an `<article>`): its card, then its replies. |
+| `hel-thread-replies` | The list under an entry, indented along a `--hel-thread-rail` rail by `--hel-thread-indent`. `is-flat` past `maxIndent` (3): no indent and no rail, so a long back-and-forth is not squeezed. |
+| `hel-thread-event` | A muted line for something that happened. It is also a `hel-thread-text`. |
+| `hel-thread-text` | `ui.threadText`: text as written, line breaks kept and long words wrapped. |
 
 ### Modals
 

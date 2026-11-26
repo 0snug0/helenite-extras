@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, Thread, ThreadEntry } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -55,6 +55,10 @@ const g = ui.listGroup(document.body, { title: 'Today', count: 2 });
 const rowEl: HTMLElement = ui.listRow(g.body, { title: 'Row', obsidianClass: 'tree-item', menu: () => [{ title: 'Open', onClick: () => undefined }] });
 ui.composer(rowEl, { submitOn: 'mod-enter', onSubmit: async (text: string) => text }).setBusy(false);
 ui.keyValue(document.body, [{ key: 'Hosts', value: ['a.com'], isNew: () => true }]);
+const talk: Thread = ui.thread(document.body, { maxIndent: 2 });
+const said: ThreadEntry = talk.entry();
+const under: HTMLElement = said.replies().event('Started');
+ui.threadText(under, 'a\nb');
 const reading: MeterOptions = { label: 'Context', value: 20, text: '40k / 200k', tone: 'success' };
 const gauge: HTMLElement = ui.meter(rowEl, reading);
 // @ts-expect-error: a meter needs its reading in words.
