@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, PopoverHandle } from 'helenite';
+import type { CardHandle, DisclosureHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, PopoverHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -77,6 +77,10 @@ const who: AvatarOptions = { text: 'Ada Lovelace', size: 'small' };
 const face: HTMLElement = ui.avatar(boardCard.meta, who);
 // @ts-expect-error: an avatar needs its text.
 ui.avatar(face, { size: 'large' });
+const step: DisclosureHandle = ui.disclosure(document.body, { title: 'Sync', summary: 'iCloud', onToggle: (open) => step.setOpen(open) });
+step.setSummary('Dropbox');
+// @ts-expect-error: a disclosure needs a title.
+ui.disclosure(document.body, {});
 // @ts-expect-error: a board card needs an id.
 lane.card({ title: 'No id' });
 const costs: BarChartOptions = { label: 'Cost per day', buckets: [{ key: 'Nov 25', value: 2, title: '$2.00' }] };

@@ -29,6 +29,8 @@ export { popover } from "./popover";
 export type { PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle } from "./popover";
 export { card } from "./card";
 export type { CardOptions, CardHandle, CardTone } from "./card";
+export { disclosure } from "./disclosure";
+export type { DisclosureOptions, DisclosureHandle } from "./disclosure";
 export { checkList } from "./check-list";
 export type { CheckOption, CheckListOptions, CheckListHandle } from "./check-list";
 export { choiceList } from "./choice-list";

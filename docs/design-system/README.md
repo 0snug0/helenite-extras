@@ -58,7 +58,7 @@ Supported ranges: an exact `x.y.z`, `>=x.y.z`, and `^x.y.z`. For `0.y.z`, `^0.1.
 
 ## Parts
 
-The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, the form controls, tabs, toolbar, callout, card, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
+The parts that draw into the page (button, segmented, table, the states, badge, dot, status text, count badge, chip, avatar, the form controls, tabs, toolbar, callout, card, disclosure, check list, choice list, list row and group, composer, key-value list, thread, action, menu button, the settings parts) take the element to draw into as their first argument and append to it; `ui.paneHeader` puts itself first in its pane. `ui.popover` takes its anchor first. Modals take `app` first, `ui.menu` takes an event or point, and `ui.notice` takes only its text.
 
 ### ui.button
 
@@ -286,6 +286,17 @@ A floating panel at an anchor, for a short question or detail about one thing on
 Options: `title`, `icon`, `label` (its accessible name when there is no title), `quote` (what it is about, such as the selected text: a `<blockquote>` first in the body, as written), `side`, `width` (px, 320), `returnFocus`, `document` (to draw a point in another window) and `onClose`. The handle has `el`, `head`, `body`, `footer` (hidden while empty), `titleEl`, `update` and `close`.
 
 Focus moves into it (to its first control, unless you focus one yourself). Escape, a click outside it and `close()` close it, and focus goes back to `returnFocus`, or to what had it before, unless the user has moved it elsewhere. Clicks on its anchor, a menu or a suggestion list do not count as outside, so an anchor button decides itself what a second click does. One popover is open at a time. `onClose` gets why: `'escape'`, `'outside'` or `'close'`.
+
+### ui.disclosure
+
+```ts
+const step = ui.disclosure(el, { title: 'Which sync service?', compact: true, onToggle: (open) => step.setOpen(open) });
+ui.badge(step.lead, '1', 'accent');
+ui.chip(step.lead, 'Sync');
+ui.choiceList(step.body, { label: 'Sync service', options: [{ value: 'iCloud', text: 'iCloud' }, { value: 'Dropbox', text: 'Dropbox' }], onChange: (v) => step.setSummary(v) });
+```
+
+A card whose head opens and closes its body: one step of an accordion, or details most people do not need. It takes `ui.card`'s options (`title` is required) and returns its handle, plus `lead` (badges and chips before the title), `peek` (content that stays on show while closed), `summaryEl`, `setSummary(text)` and `setOpen(open)`. It starts closed unless `open: true`. A click on the head, or Enter or Space while it has focus, asks for the other state: with `onToggle` the card waits for your `setOpen` (so you can keep one step open at a time), without it the card opens and closes itself. A button, link or form control inside the head keeps its own click. The title wraps; `summary` is one line, shown only while closed.
 
 ### ui.checkList, ui.choiceList
 
@@ -522,10 +533,10 @@ ui.settings.vaultScope(c.body, {
 Vault apps (the sandboxed micro-apps that live in the vault) get the same parts from the package `@helenite/ui-kit`, not from `helenite`:
 
 ```ts
-import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
+import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, disclosure, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, avatar, field and the input parts, tabs, toolbar, callout, card, disclosure, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
