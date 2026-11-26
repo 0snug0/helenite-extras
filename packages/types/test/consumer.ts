@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, Thread, ThreadEntry, BoardCardHandle } from 'helenite';
+import type { CardHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -68,6 +68,10 @@ const boardCard: BoardCardHandle = lane.card({ id: 'T-1', title: 'Fix it', tone:
 ui.badge(boardCard.meta, 'P1');
 // @ts-expect-error: a board card needs an id.
 lane.card({ title: 'No id' });
+const costs: BarChartOptions = { label: 'Cost per day', buckets: [{ key: 'Nov 25', value: 2, title: '$2.00' }] };
+const chart: HTMLElement = ui.barChart(rowEl, costs);
+// @ts-expect-error: a bucket needs its value.
+ui.barChart(chart, { label: 'Cost per day', buckets: [{ key: 'Nov 25' }] });
 const multi: Field = { id: 'caps', kind: 'multi', label: 'Capabilities', options: [{ value: 'read', label: 'Read' }] };
 const box: Field = { id: 'sync', kind: 'checkbox', label: 'Sync', detail: 'Every hour' };
 void ui.form({}, { title: 'Connect Git', fields: [multi, box], action: 'Connect' }).then((v: FieldValues | null) => v?.caps);

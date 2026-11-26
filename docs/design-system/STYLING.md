@@ -31,6 +31,8 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-meter-height` | `4px` | The thickness of that bar |
 | `--hel-board-lane-width` | `280px` | The width of a `hel-board-lane` |
 | `--hel-board-gap` | `var(--size-4-3)` | The space between a `hel-board`'s lanes |
+| `--hel-bar-chart-height` | `110px` | The height of a `hel-bar-chart`'s columns |
+| `--hel-bar-chart-color` | `var(--interactive-accent)` | The colour of its bars |
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
 | `--hel-list-row-radius` | `var(--hel-control-radius)` | The corner radius of a `hel-list-row` and a list group's header |
 | `--hel-kv-divider` | `var(--background-modifier-border)` | The hairline between the rows of a `hel-kv` |
@@ -120,6 +122,11 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | `hel-meter-bar` | The meter's track (`--hel-meter-width`, `--hel-meter-height`, `--hel-progress-track`); left out when there is no value. |
 | `hel-meter-fill` | The filled part of that track; its width is the value, its colour the tone. |
 | `hel-meter-text` | The reading in words, in tabular figures. |
+| `hel-bar-chart` | `ui.barChart`: a column chart, the plot over its axis labels. |
+| `hel-bar-chart-plot` | The columns on their baseline (`role="img"`, named by the label; `--hel-bar-chart-height`). |
+| `hel-bar-chart-col` | One bucket's column, as tall as the plot, with `data-key` and the tooltip. |
+| `hel-bar-chart-bar` | The bar in a non-zero column; its height is the share of the largest value, never under 2px (`--hel-bar-chart-color`). |
+| `hel-bar-chart-axis` | The first and last bucket's labels under the baseline; left out when there are no buckets. |
 | `hel-error` | `ui.errorState`, with its retry button. Finesse: centered is a panel with an 8% `--text-error` wash inside a 30% `--text-error` ring (`--hel-card-radius`); the text wraps and the retry button follows it. Variants: `is-inline`, `is-pane`, both unboxed. |
 | `hel-error-text` | The message inside `hel-error`; wraps long text. |
 | `hel-badge` | `ui.badge`. Tones: `is-default`, `is-accent`, `is-danger`, `is-success`, `is-warning`. Finesse Badges: a 10% tint of the tone (`--hel-badge-tone`, set per tone) inside a hairline ring of it, `--hel-badge-radius` corners, medium weight; the text is the tone's text colour (`--text-accent`, `--text-error`, `--text-success`; normal text for warning). |

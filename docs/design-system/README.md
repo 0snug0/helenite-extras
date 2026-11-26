@@ -151,6 +151,20 @@ With `onDrop` the cards can be dragged (`draggable: false` keeps one still). The
 
 `onOpen` makes the card a button, opened by a click, Enter or Space (not by the buttons and links inside it); `label` names it when the title is not enough.
 
+### ui.barChart
+
+```ts
+ui.barChart(el, {
+  label: 'Cost per day',
+  buckets: [
+    { key: '2026-11-24', value: 1.2, title: '2026-11-24: $1.20' },
+    { key: '2026-11-25', value: 0, title: '2026-11-25: no calls' },
+  ],
+});
+```
+
+A column chart: one column per bucket, in the order given, scaled to the largest value. A non-zero bucket always shows (at least 2px tall); zero, negative or non-finite values draw no bar. `title` is the column's tooltip and `key` its `data-key`; the first and last `key` are written under the baseline. `label` names the chart for screen readers (it is an `img`, so the columns are not read: put the figures that matter in text or a `ui.table` beside it). Returns the element. It does not update: redraw it when the data changes.
+
 ### ui.countBadge
 
 ```ts
@@ -484,7 +498,7 @@ Vault apps (the sandboxed micro-apps that live in the vault) get the same parts 
 import { button, segmented, table, emptyState, badge, statusDot, field, textInput, toggle, dropdown, tabs, callout, card, listRow, cardGrid, picker, setBridge, confirm, prompt, choose, form, menu, notice } from '@helenite/ui-kit';
 ```
 
-The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
+The parts that draw into the page (button, segmented, table, the states, badge, statusDot, statusText, countBadge, chip, field and the input parts, tabs, toolbar, callout, card, checkList, choiceList, listRow, listGroup, composer, keyValue, meter, board, barChart) are the same functions as in `helenite`: they take the element and the same options as above, and work directly inside the app's frame. Every app frame loads the design-system stylesheet, which carries the button variants (primary, danger, icon) itself, so the parts look the same as in plugins without any CSS from the app. It also carries a copy of Obsidian's switch and input looks for the form controls, since a frame has no Obsidian stylesheet (the frame's base stylesheet styles `select`, so a dropdown keeps a plain select look there). Importing `@helenite/ui-kit` installs an icon renderer that draws the standard action icons, `more-horizontal`, `chevron-right` and a few more (`check`, `plus`, `search`, `chevron-down`) as inline SVG; any other icon name is only set as `data-icon` on the icon element, so pass `setIconRenderer` your own renderer if you need more. ui-kit's own parts (cardGrid, posterRow, picker and calendarStrip) also need `@helenite/ui-kit/ui-kit.css` in the app's `view.css`.
 
 An app that inherits the theme (the default) gets the host's resolved theme variables on its frame's `body`, so they match the host exactly, and the theme's and snippets' CSS restyle the parts (see [STYLING.md](./STYLING.md)). The frame's page background always stays transparent, whatever a theme or snippet paints on `html` or `body`; to paint a background, style an element inside the app.
 
