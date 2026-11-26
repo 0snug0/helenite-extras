@@ -226,7 +226,7 @@ With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self 
 | `hel-list-row-tag` | The row's tag ("not installed"). |
 | `hel-list-row-sub` | The row's second line (`sub`). The row also gets `has-sub`, and `has-dot` when it has a status dot. |
 | `hel-list-row-chevron` | The trailing chevron (`chevron: true`): the row opens something. Faint; nudges right on hover. Hidden from screen readers. |
-| `hel-list-row-meta` | The row's faint meta text (a time, a folder). |
+| `hel-list-row-meta` | The row's faint meta text (a time, a folder). It gives way to the title: at most half the row, then an ellipsis. In a two-line row it ends the title's line. |
 | `hel-list-row-actions` | The row's icon buttons, shown on hover, focus or when active. |
 | `hel-list-row-action` | One of those buttons (a `hel-button`). |
 | `hel-list-group` | `ui.listGroup`. `is-collapsed` while collapsed. |
