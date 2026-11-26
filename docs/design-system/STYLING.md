@@ -31,6 +31,17 @@ Forwarding does not widen the app's access. An `inherit` app can read the theme'
 | `--hel-meter-height` | `4px` inline, `6px` stacked and bare | The thickness of that bar |
 | `--hel-board-lane-width` | `280px` | The width of a `hel-board-lane` |
 | `--hel-board-gap` | `var(--size-4-3)` | The space between a `hel-board`'s lanes |
+| `--hel-table-ring` | `var(--background-modifier-border)` | The ring around a `hel-table`. This and the other `--hel-table-*` knobs are not declared anywhere: set one on `body` or an ancestor |
+| `--hel-table-divider` | `var(--background-modifier-border)` | The hairline between its rows |
+| `--hel-table-head` | `var(--background-secondary)` | The wash of its header and group rows |
+| `--hel-table-hover` | `var(--background-modifier-hover)` | A body row under the pointer |
+| `--hel-table-active` | `var(--background-modifier-active-hover)` | A clickable row while pressed |
+| `--hel-table-radius` | `var(--hel-control-radius)` (6px) | The table's corners |
+| `--hel-progress-fill` | `var(--interactive-accent)` | The filled part of a loading bar, and the spinner's moving arc. Like the other `--hel-progress-*` variables it is not declared anywhere |
+| `--hel-progress-track` | `var(--background-modifier-border)` | The track behind a loading bar, a spinner and a `hel-meter` |
+| `--hel-progress-height` | `6px` | The thickness of a loading bar |
+| `--hel-slider-track` | `6px` | The thickness of a `hel-slider`'s track (a length, not a colour) |
+| `--hel-slider-thumb` | `#fff` | The fill of its thumb |
 | `--hel-bar-chart-height` | `110px` | The height of a `hel-bar-chart`'s columns |
 | `--hel-bar-chart-color` | `var(--interactive-accent)` | The colour of its bars |
 | `--hel-tab-indicator` | `var(--text-normal)` | The underline of the chosen `hel-tab` |
@@ -221,13 +232,14 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-check-text` | The row's text. |
 | `hel-check-detail` | The row's second line; also a form checkbox field's `detail`. |
 | `hel-choice-list` | `ui.choiceList`, a listbox of option rows. `is-multi` when any number can be picked. |
-| `hel-choice` | One option row. States: `is-selected`, `is-disabled`. In `ui.choose` the rows also have `hel-modal-choice`. Finesse Radio Buttons / Check Circles: a row with `--hel-ring` (its 1px border stays, transparent, for themes), `--hel-ring-hover` and a faint wash on hover, `--hel-ring-focus` on focus; a selected row has a 2px accent ring. |
+| `hel-choice` | One option row. States: `is-selected`, `is-disabled`; `is-expandable` (top-aligned) when its detail is long (over 60 characters, or more than one line), then `is-open` while that detail is shown in full. In `ui.choose` the rows also have `hel-modal-choice`. Finesse Radio Buttons / Check Circles: a row with `--hel-ring` (its 1px border stays, transparent, for themes), `--hel-ring-hover` and a faint wash on hover, `--hel-ring-focus` on focus; a selected row has a 2px accent ring. |
 | `hel-choice-icon` | The row's icon. |
 | `hel-choice-body` | The row's title line and detail. |
 | `hel-choice-title` | The title line: text and tag. |
 | `hel-choice-text` | The option's text. |
 | `hel-choice-tag` | The option's tag (a `hel-badge`). |
-| `hel-choice-detail` | The option's second line. |
+| `hel-choice-detail` | The option's second line. `is-clamped` keeps a long one to one line with an ellipsis. |
+| `hel-choice-more` | The chevron of an `is-expandable` row, turned over while `is-open`. A click opens or closes the detail without picking the option; Right and Left arrow do the same from the keyboard. Hidden from screen readers (the row has `aria-expanded` once toggled). |
 | `hel-choice-preview` | The option's `preview`, under its detail inside the row. |
 | `hel-choice-key` | The key hint (a `<kbd>`). |
 | `hel-choice-indicator` | The 16px circle before a row when the list has an `indicator`, ringed while unpicked: `is-radio` (a radio: filled with the accent and a light centre dot when selected) or `is-check` (a Check Circle: filled with the accent and a check mark when selected). |
