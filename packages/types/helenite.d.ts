@@ -7,11 +7,11 @@ declare module 'helenite' {
   export const version: typeof heleniteModule.version;
   /** Helenite's design-system parts. */
   export const ui: typeof heleniteModule.ui;
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, ConfirmOptions, PromptOptions, ChooseOptions, FormOptions, DialogOptions, DialogAction, DialogContext, DialogSidePanel, MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle, NoticeOptions, NoticeHandle, ActionId, ActionOptions, PaneHeaderAction, SubpageLink, SettingsCardOptions, SettingsCardHandle, SettingsCardStatus, VaultScope, VaultScopeKind, VaultScopeOptions, VaultScopeHandle } from 'helenite/internal/obsidian-api/src/helenite-module';
 }
 
 declare module 'helenite/internal/obsidian-api/src/helenite-module' {
-  import { avatar, badge, barChart, board, button, callout, card, checkList, choiceList, chip, composer, countBadge, disclosure, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, table, tabs, textInput, thread, threadText, toggle, toolbar } from 'helenite/internal/ui/src/index';
+  import { avatar, badge, barChart, board, button, callout, card, checkList, choiceList, chip, composer, countBadge, disclosure, dropdown, emptyState, errorState, field, keyValue, listGroup, listRow, loadingState, meter, searchInput, segmented, slider, statusDot, statusText, swatch, table, tabs, textInput, thread, threadText, toggle, toolbar } from 'helenite/internal/ui/src/index';
   import { choose, confirm, form, prompt } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   import { dialog } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   import { menu, menuButton, moreButton } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -23,7 +23,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
   import { card as settingsCard, openSubpage, section, subpageRow, summaryRow } from 'helenite/internal/obsidian-api/src/ui/design/settings';
   import { scopeBar } from 'helenite/internal/obsidian-api/src/ui/scope-bar';
   import { Setting } from 'helenite/internal/obsidian-api/src/ui/setting';
-  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, } from 'helenite/internal/ui/src/index';
+  export type { ButtonOptions, ButtonHandle, TableOptions, TableColumn, TableGroup, Field, Tone, StateVariant, ErrorStateOptions, CountBadgeOptions, CountBadgeHandle, CountBadgeTone, ChipOptions, FieldOptions, FieldHandle, TextInputOptions, SearchInputOptions, SliderOptions, ToggleOptions, ToggleHandle, DropdownOptions, DropdownHandle, TabSpec, TabsOptions, TabsHandle, FieldValues, CalloutOptions, CalloutHandle, CalloutTone, CardOptions, CardHandle, CardTone, DisclosureOptions, DisclosureHandle, CheckOption, CheckListOptions, CheckListHandle, ChoiceOption, ChoiceListOptions, ChoiceListHandle, ListRowOptions, ListRowAction, ListRowChip, ListGroupOptions, ComposerOptions, ComposerHandle, KeyValueRow, MeterOptions, BarChartOptions, BarChartBucket, ThreadOptions, Thread, ThreadEntry, BoardOptions, BoardHandle, BoardLaneOptions, BoardLaneHandle, BoardCardOptions, BoardCardHandle, AvatarOptions, SwatchOptions, SwatchKind, PopoverAnchor, PopoverCloseReason, PopoverOptions, PopoverHandle, } from 'helenite/internal/ui/src/index';
   export type { ConfirmOptions, PromptOptions, ChooseOptions, FormOptions } from 'helenite/internal/obsidian-api/src/ui/design/modals';
   export type { DialogOptions, DialogAction, DialogContext, DialogSidePanel } from 'helenite/internal/obsidian-api/src/ui/design/dialog';
   export type { MenuItemSpec, MenuOptions, MenuButtonOptions, MenuHandle } from 'helenite/internal/obsidian-api/src/ui/design/menu';
@@ -48,6 +48,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
       countBadge: typeof countBadge;
       chip: typeof chip;
       avatar: typeof avatar;
+      swatch: typeof swatch;
       field: typeof field;
       textInput: typeof textInput;
       searchInput: typeof searchInput;
@@ -115,6 +116,7 @@ declare module 'helenite/internal/obsidian-api/src/helenite-module' {
           countBadge: typeof countBadge;
           chip: typeof chip;
           avatar: typeof avatar;
+          swatch: typeof swatch;
           field: typeof field;
           textInput: typeof textInput;
           searchInput: typeof searchInput;
@@ -219,6 +221,8 @@ declare module 'helenite/internal/ui/src/index' {
   export type { BarChartOptions, BarChartBucket } from "helenite/internal/ui/src/bar-chart";
   export { avatar } from "helenite/internal/ui/src/avatar";
   export type { AvatarOptions } from "helenite/internal/ui/src/avatar";
+  export { swatch } from "helenite/internal/ui/src/swatch";
+  export type { SwatchOptions, SwatchKind } from "helenite/internal/ui/src/swatch";
   export { thread, threadText } from "helenite/internal/ui/src/thread";
   export type { ThreadOptions, Thread, ThreadEntry } from "helenite/internal/ui/src/thread";
   export { keyValue } from "helenite/internal/ui/src/key-value";
@@ -1134,6 +1138,32 @@ declare module 'helenite/internal/ui/src/avatar' {
   }
   /** Initials in a circle, for a person or an agent. A screen reader hears the whole `text`. */
   export function avatar(parent: HTMLElement, o: AvatarOptions): HTMLElement;
+}
+
+declare module 'helenite/internal/ui/src/swatch' {
+  /** What a swatch previews, each by the CSS property its value goes into. */
+  const PROPERTY: {
+      readonly color: "background";
+      readonly radius: "border-radius";
+      readonly shadow: "box-shadow";
+      readonly size: "width";
+      readonly "font-family": "font-family";
+      readonly "font-size": "font-size";
+      readonly "font-weight": "font-weight";
+  };
+  export type SwatchKind = keyof typeof PROPERTY;
+  export interface SwatchOptions {
+      /** What the value is: a colour (or gradient), a corner radius, a box shadow, a length, or one of three font values. */
+      kind: SwatchKind;
+      /** The CSS value on show, written out ("8px", "rebeccapurple") or a variable ("var(--radius-m)"). One CSS cannot read draws nothing. */
+      value: string;
+      /** What it previews (a token's name). The swatch's accessible name. */
+      label: string;
+      /** The tooltip; the value by default. */
+      title?: string;
+  }
+  /** A small preview of one CSS value, for a token table or a theme picker. */
+  export function swatch(parent: HTMLElement, o: SwatchOptions): HTMLElement;
 }
 
 declare module 'helenite/internal/ui/src/thread' {

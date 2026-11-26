@@ -2,7 +2,7 @@
 import { ui, version } from 'helenite';
 import type { ButtonOptions, Field, MenuItemSpec, ActionId } from 'helenite';
 import type { DropdownHandle, FieldHandle, Tone, ToggleHandle } from 'helenite';
-import type { CardHandle, DisclosureHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, PopoverHandle } from 'helenite';
+import type { CardHandle, DisclosureHandle, CheckListHandle, FieldValues, MeterOptions, BarChartOptions, Thread, ThreadEntry, BoardCardHandle, AvatarOptions, SwatchOptions, PopoverHandle } from 'helenite';
 
 ui.button(document.body, { text: 'x' });
 const v: string = version;
@@ -82,6 +82,10 @@ const who: AvatarOptions = { text: 'Ada Lovelace', size: 'small' };
 const face: HTMLElement = ui.avatar(boardCard.meta, who);
 // @ts-expect-error: an avatar needs its text.
 ui.avatar(face, { size: 'large' });
+const shade: SwatchOptions = { kind: 'color', value: 'var(--color-red)', label: '--color-red' };
+const chipOfColor: HTMLElement = ui.swatch(face, shade);
+// @ts-expect-error: not a kind of value.
+ui.swatch(chipOfColor, { kind: 'spacing', value: '4px', label: '--size-4-1' });
 const step: DisclosureHandle = ui.disclosure(document.body, { title: 'Sync', summary: 'iCloud', onToggle: (open) => step.setOpen(open) });
 step.setSummary('Dropbox');
 // @ts-expect-error: a disclosure needs a title.

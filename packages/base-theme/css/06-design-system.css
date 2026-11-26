@@ -147,6 +147,17 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-avatar[hidden] { display: none; }
 .hel-avatar.is-small { width: 20px; height: 20px; font-size: calc(var(--font-ui-smaller) * 0.8); }
 .hel-avatar.is-large { width: 40px; height: 40px; font-size: var(--font-ui-medium); }
+/* Swatch (ui.swatch): one CSS value on show in a 28px square; the value is set inline on the fill. A size is a bar on a 64px track, a font "Aa" in a 40px box. */
+.hel-swatch { display: inline-flex; flex: none; align-items: center; justify-content: center; box-sizing: border-box; width: 28px; height: 28px; vertical-align: middle; }
+.hel-swatch[hidden] { display: none; }
+.hel-swatch-fill { display: block; box-sizing: border-box; width: 100%; height: 100%; }
+.hel-swatch.is-color { overflow: hidden; border-radius: var(--radius-s); box-shadow: 0 0 0 1px var(--background-modifier-border); }
+.hel-swatch.is-radius > .hel-swatch-fill { border: 1px solid var(--interactive-accent); background-color: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
+.hel-swatch.is-shadow > .hel-swatch-fill { width: 20px; height: 20px; border-radius: var(--radius-s); background-color: color-mix(in srgb, var(--text-muted) 8%, var(--background-primary)); }
+.hel-swatch.is-size { justify-content: flex-start; overflow: hidden; width: 64px; height: 6px; border-radius: 999px; background-color: var(--hel-progress-track, var(--background-modifier-border)); }
+.hel-swatch.is-size > .hel-swatch-fill { flex: none; width: 0; max-width: 100%; background-color: var(--interactive-accent); }
+.hel-swatch:is(.is-font-family, .is-font-size, .is-font-weight) { width: 40px; overflow: hidden; color: var(--text-normal); font-size: var(--font-ui-medium); line-height: 1; white-space: nowrap; }
+.hel-swatch:is(.is-font-family, .is-font-size, .is-font-weight) > .hel-swatch-fill { width: auto; height: auto; }
 /* Meter (ui.meter): inline (one line, the default), stacked (label and reading above a full-width bar) or a bare bar. The font and the label's colour come from the parent; the sub line and a stacked reading are smaller and muted. */
 .hel-meter { display: inline-flex; align-items: center; gap: var(--size-2-3); }
 .hel-meter-label, .hel-meter-text { white-space: nowrap; }

@@ -47,6 +47,8 @@ export { barChart } from "./bar-chart";
 export type { BarChartOptions, BarChartBucket } from "./bar-chart";
 export { avatar } from "./avatar";
 export type { AvatarOptions } from "./avatar";
+export { swatch } from "./swatch";
+export type { SwatchOptions, SwatchKind } from "./swatch";
 export { thread, threadText } from "./thread";
 export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { keyValue } from "./key-value";
