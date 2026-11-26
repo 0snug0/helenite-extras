@@ -55,3 +55,7 @@ export { keyValue } from "./key-value";
 export type { KeyValueRow } from "./key-value";
 export { setMenuRenderer, openMenu } from "./menu";
 export type { MenuItemSpec, MenuRenderer } from "./menu";
+export { STANDARD_ACTIONS, ACTION_CONFIRMS } from "./actions";
+export type { ActionId } from "./actions";
+export { paneHeader, densityAction } from "./pane-header";
+export type { PaneHeaderAction, ListDensity } from "./pane-header";

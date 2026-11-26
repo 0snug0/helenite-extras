@@ -528,9 +528,10 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 :where(.hel-list-group-chevron.is-collapsed) svg { transform: rotate(-90deg); }
 .hel-list-group-count { margin-left: auto; font-weight: var(--font-normal); font-variant-numeric: tabular-nums; color: var(--text-faint); }
 .hel-list-group-body[hidden] { display: none; }
-/* The pane header: its icon buttons on a hairline, so the list below reads as its own surface. Obsidian's nav-header spacing stays. */
-.hel-pane-header { padding-bottom: var(--size-4-2); margin-bottom: var(--size-4-1); border-bottom: 1px solid var(--hel-pane-header-border, var(--background-modifier-border)); }
-.hel-pane-header .nav-buttons-container { gap: var(--size-2-2); }
+/* The pane header: its icon buttons on a hairline, so the list below reads as its own surface. The padding and flex row
+   repeat Obsidian's nav-header spacing (03), so an app frame, which loads only this file, draws it the same. */
+.hel-pane-header { padding: var(--size-4-2) var(--size-4-2) var(--size-4-2); margin-bottom: var(--size-4-1); border-bottom: 1px solid var(--hel-pane-header-border, var(--background-modifier-border)); }
+.hel-pane-header .nav-buttons-container { display: flex; justify-content: center; gap: var(--size-2-2); }
 
 /* composer */
 .hel-composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--size-4-2); align-items: end; }

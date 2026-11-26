@@ -2,7 +2,7 @@ import { setIconRenderer, type IconRenderer } from "@helenite/ui";
 
 // An app frame has no Obsidian `setIcon`, so ui-kit draws the icons its parts and the standard actions use as inline
 // SVG (Lucide shapes, 24x24, stroked with currentColor). Built with createElementNS, no HTML strings.
-type Shape = [tag: "path" | "circle" | "line", attrs: Record<string, string>];
+type Shape = [tag: "path" | "circle" | "line" | "rect", attrs: Record<string, string>];
 const p = (d: string): Shape => ["path", { d }];
 const c = (cx: number, cy: number, r: number): Shape => ["circle", { cx: String(cx), cy: String(cy), r: String(r) }];
 const l = (x1: number, y1: number, x2: number, y2: number): Shape => ["line", { x1: String(x1), y1: String(y1), x2: String(x2), y2: String(y2) }];
@@ -30,6 +30,9 @@ export const KIT_ICONS: Record<string, Shape[]> = {
   check: [p("M20 6 9 17l-5-5")],
   plus: [p("M5 12h14"), p("M12 5v14")],
   search: [c(11, 11, 8), p("m21 21-4.3-4.3")],
+  // densityAction's two states
+  "align-justify": [l(3, 6, 21, 6), l(3, 12, 21, 12), l(3, 18, 21, 18)],
+  "rows-2": [["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2" }], p("M3 12h18")],
 };
 
 const SVG = "http://www.w3.org/2000/svg";
