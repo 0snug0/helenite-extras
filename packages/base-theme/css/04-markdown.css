@@ -241,26 +241,6 @@ input[type=checkbox].task-list-item-checkbox:checked::after {
 .footnotes { font-size: var(--footnote-size); color: var(--footnote-color); }
 .footnote-ref, .cm-footref { vertical-align: super; font-size: var(--footnote-size); }
 
-/* Properties */
-.metadata-container {
-  background-color: var(--metadata-background); padding: var(--metadata-padding);
-  border-bottom: var(--metadata-divider-width) solid var(--metadata-divider-color);
-  margin-bottom: var(--p-spacing); font-family: var(--font-interface);
-}
-.metadata-properties-heading { color: var(--text-normal); font-size: var(--font-ui-medium); font-weight: var(--font-semibold); margin-bottom: var(--size-4-2); display: flex; align-items: center; gap: var(--size-2-3); }
-.metadata-content { display: flex; flex-direction: column; gap: var(--metadata-gap); }
-.metadata-property { display: flex; align-items: center; border-radius: var(--metadata-property-radius); background-color: var(--metadata-property-background); }
-.metadata-property:hover { background-color: var(--metadata-property-background-hover); box-shadow: var(--metadata-property-box-shadow-hover); }
-.metadata-property-key { display: flex; align-items: center; gap: var(--size-2-3); width: var(--metadata-label-width); flex: 0 0 var(--metadata-label-width); color: var(--metadata-label-text-color); font-size: var(--metadata-label-font-size); font-weight: var(--metadata-label-font-weight); padding: 0 var(--size-2-3); height: var(--metadata-input-height); --icon-size: var(--icon-s); }
-.metadata-property-value { flex: 1; display: flex; align-items: center; min-height: var(--metadata-input-height); color: var(--metadata-input-text-color); font-size: var(--metadata-input-font-size); padding: 0 var(--size-2-3); background: var(--metadata-input-background); }
-.multi-select-container { display: flex; flex-wrap: wrap; gap: var(--size-2-2); }
-.multi-select-pill {
-  display: inline-flex; align-items: center; gap: var(--size-2-1);
-  padding: var(--pill-padding-y) var(--pill-padding-x); border-radius: var(--pill-radius);
-  border: var(--pill-border-width) solid var(--pill-border-color);
-  background: var(--pill-background); color: var(--pill-color); font-weight: var(--pill-weight); line-height: 1;
-}
-
 /* Reading view section wrappers */
 .markdown-preview-section > div { position: relative; }
 .markdown-preview-pusher { height: 0.1px; }

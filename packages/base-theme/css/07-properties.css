@@ -1,0 +1,92 @@
+/* Properties (the metadata editor). Obsidian's DOM and classes, drawn from the --metadata-* variables so community
+   themes apply. The input rules are `:where()`-scoped to stay near element + attribute weight: they come after the
+   generic form controls, so they win a tie here and lose it to a theme or snippet. */
+.metadata-container {
+  background-color: var(--metadata-background); padding: var(--metadata-padding);
+  border-bottom: var(--metadata-divider-width) solid var(--metadata-divider-color);
+  margin-bottom: var(--p-spacing); font-family: var(--font-interface);
+}
+.workspace-leaf-content[data-type="file-properties"] .view-content > .metadata-container { padding: var(--size-4-2) var(--size-4-3); margin-bottom: 0; }
+.metadata-properties-heading { color: var(--text-normal); font-size: var(--font-ui-medium); font-weight: var(--font-semibold); margin-bottom: var(--size-4-2); display: flex; align-items: center; gap: var(--size-2-3); --icon-size: var(--icon-s); }
+.metadata-content, .metadata-properties { display: flex; flex-direction: column; gap: var(--metadata-gap); min-width: 0; }
+
+/* A row: icon and key in the label column, the value taking the rest and growing downward. */
+.metadata-property { display: flex; align-items: flex-start; min-width: 0; border-radius: var(--metadata-property-radius); background-color: var(--metadata-property-background); }
+.metadata-property:hover:not(:has(.metadata-property:hover)) { background-color: var(--metadata-property-background-hover); box-shadow: var(--metadata-property-box-shadow-hover); }
+.metadata-property:focus-visible, .metadata-property:focus-within:not(:has(.metadata-property:focus-within)) { outline: none; box-shadow: var(--metadata-property-box-shadow-focus); }
+.metadata-property-key { display: flex; align-items: center; flex: 0 0 var(--metadata-label-width); width: var(--metadata-label-width); max-width: 45%; min-width: 0; height: var(--metadata-input-height); padding-inline-start: var(--size-2-3); color: var(--metadata-label-text-color); font-size: var(--metadata-label-font-size); font-weight: var(--metadata-label-font-weight); --icon-size: var(--icon-s); }
+.metadata-property-icon { display: flex; flex: none; color: var(--text-faint); cursor: var(--cursor); }
+.metadata-property-value { display: flex; flex: 1 1 0; align-items: center; min-width: 0; min-height: var(--metadata-input-height); color: var(--metadata-input-text-color); font-size: var(--metadata-input-font-size); background: var(--metadata-input-background); border-radius: var(--metadata-property-radius); }
+.metadata-property-value > :where(:not(input)) { margin-inline-start: var(--size-2-3); }
+
+/* Inputs read as text until hovered or focused. */
+:where(.metadata-property) input:is([type=text], [type=number], [type=date], [type=datetime-local]) {
+  width: 100%; min-width: 0; height: var(--metadata-input-height); padding: 0 var(--size-2-3); margin: 0;
+  font-family: inherit; font-size: var(--metadata-input-font-size); color: var(--metadata-input-text-color);
+  background: transparent; border: 0; border-radius: var(--metadata-property-radius); box-shadow: none; outline: none;
+  text-overflow: ellipsis;
+}
+:where(.metadata-property) input:is([type=text], [type=number], [type=date], [type=datetime-local]):hover:not(:disabled) { background: var(--metadata-input-background-hover); box-shadow: none; }
+:where(.metadata-property) input:is([type=text], [type=number], [type=date], [type=datetime-local]):focus { background: var(--metadata-input-background-active); box-shadow: none; }
+:where(.metadata-property) input:disabled { opacity: 1; cursor: default; background: transparent; }
+:where(.metadata-property-key) input[type=text] { flex: 1 1 0; color: var(--metadata-label-text-color); font-size: var(--metadata-label-font-size); font-weight: var(--metadata-label-font-weight); }
+:where(.metadata-property-value) input:is([type=date], [type=datetime-local])::-webkit-calendar-picker-indicator { opacity: 0.5; cursor: var(--cursor); }
+:where(.metadata-property-value) input:is([type=date], [type=datetime-local])::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+:where(.metadata-property-value) input:is([type=date], [type=datetime-local]) { width: auto; max-width: 100%; }
+/* A date and time needs more than a narrow value column: it moves under its key instead of being cut off. */
+.metadata-property[data-property-type="datetime"] { flex-wrap: wrap; }
+.metadata-property[data-property-type="datetime"] > .metadata-property-value { flex-basis: 15em; }
+.metadata-property-value > .checkbox-container { flex: none; }
+.metadata-input-longtext { min-width: 0; overflow-wrap: anywhere; }
+
+/* Lists: pills that wrap inside the value column, the input taking what is left of the line. */
+.multi-select-container { display: flex; flex-wrap: wrap; gap: var(--size-2-2); }
+.metadata-property-value > .multi-select-container { flex: 1 1 0; align-items: center; min-width: 0; padding-block: var(--size-2-1); }
+.multi-select-pill {
+  display: inline-flex; align-items: center; gap: var(--size-2-1); max-width: 100%;
+  padding: var(--pill-padding-y) var(--pill-padding-x); border-radius: var(--pill-radius);
+  border: var(--pill-border-width) solid var(--pill-border-color);
+  background: var(--pill-background); color: var(--pill-color); font-weight: var(--pill-weight); line-height: 1.2;
+}
+.multi-select-pill:hover { background: var(--pill-background-hover); border-color: var(--pill-border-color-hover); color: var(--pill-color-hover); }
+.multi-select-pill-content { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.multi-select-pill-content a.tag { padding: 0; border: 0; background: none; font-size: inherit; line-height: inherit; }
+.multi-select-pill-remove-button { display: flex; flex: none; color: var(--pill-color-remove); cursor: var(--cursor); --icon-size: var(--icon-xs); }
+.multi-select-pill-remove-button:hover { color: var(--pill-color-remove-hover); }
+:where(.metadata-property-value) .multi-select-input[type=text] { flex: 1 1 1em; width: 1em; padding-inline: var(--size-2-1); height: calc(var(--metadata-input-height) - var(--size-4-1)); }
+
+/* A URL or wikilink value: the link on one line, the edit button after it. */
+.metadata-link { display: flex; flex: 1 1 0; align-items: center; gap: var(--size-2-2); min-width: 0; }
+.metadata-link-inner { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.metadata-link-flair { flex: none; margin-inline-start: auto; --icon-size: var(--icon-xs); }
+
+/* Row actions show with the pointer or the keyboard on the row. */
+.metadata-property-delete { flex: none; height: var(--metadata-input-height); padding-block: 0; --icon-size: var(--icon-xs); }
+.metadata-link-flair, .metadata-property-delete { opacity: 0; }
+.metadata-property:is(:hover, :focus-within) > .metadata-property-delete,
+.metadata-property:is(:hover, :focus-within) > .metadata-property-value > .metadata-link > .metadata-link-flair { opacity: var(--icon-opacity); }
+.metadata-property > .metadata-property-delete:hover { opacity: var(--icon-opacity-hover); color: var(--text-error); }
+.metadata-property > .metadata-property-value > .metadata-link > .metadata-link-flair:hover { opacity: var(--icon-opacity-hover); }
+
+/* A nested object: its fields drop to the full width under the key once opened. */
+.metadata-property-group { display: flex; flex: 1 1 0; flex-direction: column; gap: var(--metadata-gap); min-width: 0; }
+.metadata-property-group-heading { display: flex; align-items: center; gap: var(--size-2-2); min-height: var(--metadata-input-height); color: var(--text-muted); cursor: var(--cursor); --icon-size: var(--icon-xs); }
+.metadata-property-group-heading > .collapse-indicator { display: flex; }
+.metadata-property-group:not(.is-collapsed) > .metadata-property-group-heading > .collapse-indicator > .svg-icon { transform: rotate(90deg); }
+.metadata-property-group > .metadata-properties { padding-inline-start: var(--size-4-2); border-inline-start: var(--border-width) solid var(--metadata-border-color); }
+.metadata-property:has(> .metadata-property-value > .metadata-property-group:not(.is-collapsed)) { flex-wrap: wrap; }
+.metadata-property:has(> .metadata-property-value > .metadata-property-group:not(.is-collapsed)) > .metadata-property-value { order: 1; flex-basis: 100%; align-items: stretch; }
+.metadata-property:has(> .metadata-property-value > .metadata-property-group:not(.is-collapsed)) > .metadata-property-delete { margin-inline-start: auto; }
+
+/* Under the rows */
+.metadata-add-button { display: flex; align-items: center; align-self: flex-start; gap: var(--size-2-3); width: fit-content; margin-top: var(--size-4-1); padding: var(--size-2-2) var(--size-2-3); border-radius: var(--metadata-property-radius); color: var(--text-muted); font-size: var(--metadata-label-font-size); cursor: var(--cursor); --icon-size: var(--icon-s); }
+.metadata-add-button:hover { background-color: var(--background-modifier-hover); color: var(--text-normal); }
+.metadata-add-button:focus-visible { outline: none; box-shadow: var(--metadata-property-box-shadow-focus); }
+.metadata-add-button > .text-button-icon { display: flex; }
+input.metadata-add-input[type=text] { display: block; flex: none; box-sizing: border-box; width: 100%; margin-top: var(--size-4-1); }
+
+/* Frontmatter that does not parse */
+.metadata-invalid { display: flex; flex-direction: column; align-items: flex-start; gap: var(--size-4-2); min-width: 0; }
+.metadata-invalid > * { margin: 0; max-width: 100%; }
+.metadata-invalid-error { color: var(--text-error); font-size: var(--font-ui-small); overflow-wrap: anywhere; }
+.metadata-invalid-source { box-sizing: border-box; width: 100%; overflow: auto; padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); background-color: var(--code-background); font-size: var(--code-size); white-space: pre-wrap; }
