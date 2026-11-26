@@ -70,3 +70,22 @@ describe("Finesse suggester popover", () => {
     for (const name of ["suggestion-container", "suggestion", "suggestion-item", "suggestion-empty", "mod-search-suggestion", "--hel-suggest-min-width", "--hel-suggest-max-width", "--hel-suggest-max-height"]) expect(styling).toContain(`| \`${name}\` |`);
   });
 });
+
+describe("Prompt rows and search field", () => {
+  const overlays = theme("05-overlays-and-controls.css");
+
+  it("keeps a plain row a block, so highlighted text stays together, at one class's specificity", () => {
+    expect(overlays).toContain(".suggestion-item:where(:not(.mod-complex)) { display: block; }");
+  });
+
+  it("marks the matched letters with tokens", () => {
+    expect(overlays).toContain(".suggestion-highlight { color: var(--text-accent); font-weight: var(--font-semibold); }");
+  });
+
+  it("leaves the search field out of the boxed text field, at rest and focused, without adding specificity", () => {
+    const boxed = overlays.split("\n").filter((l) => /^input\[type=text\]/.test(l));
+    expect(boxed.length).toBe(2);
+    for (const line of boxed) expect(line).toMatch(/^input\[type=text\]:where\(:not\(\.prompt-input\)\)/);
+    expect(overlays).toMatch(/^\.prompt-input \{[^}]*border: 0; background: transparent; font-family: inherit;/m);
+  });
+});

@@ -67,10 +67,13 @@
   border-radius: var(--radius-l); box-shadow: var(--shadow-l); overflow: hidden; align-self: flex-start; margin-top: 10vh;
 }
 .prompt-input-container { display: flex; padding: var(--size-4-2); border-bottom: var(--border-width) solid var(--background-modifier-border); }
-.prompt-input { flex: 1; height: 40px; border: 0; background: transparent; font-size: var(--font-ui-medium); color: var(--text-normal); padding: 0 var(--size-4-2); outline: none; box-shadow: none; }
+.prompt-input { flex: 1; height: 40px; border: 0; background: transparent; font-family: inherit; font-size: var(--font-ui-medium); color: var(--text-normal); padding: 0 var(--size-4-2); outline: none; box-shadow: none; }
 .prompt-results { padding: var(--size-4-1); overflow-y: auto; }
 .suggestion-item { display: flex; align-items: center; justify-content: space-between; padding: var(--size-4-2) var(--size-4-3); border-radius: var(--radius-s); color: var(--text-normal); font-size: var(--font-ui-medium); cursor: var(--cursor); }
 .suggestion-item.is-selected { background-color: var(--background-modifier-hover); }
+/* A plain row is a block, as in Obsidian: as flex items, a highlighted match and the text around it would be pushed apart. */
+.suggestion-item:where(:not(.mod-complex)) { display: block; }
+.suggestion-highlight { color: var(--text-accent); font-weight: var(--font-semibold); }
 .suggestion-note { color: var(--text-muted); font-size: var(--font-ui-smaller); }
 .suggestion-hotkey kbd, kbd { font-family: var(--font-monospace); font-size: var(--font-ui-smaller); background: var(--background-modifier-border); color: var(--text-muted); border-radius: var(--radius-s); padding: 1px 4px; }
 .prompt-instructions { display: flex; gap: var(--size-4-3); padding: var(--size-4-2) var(--size-4-3); border-top: var(--border-width) solid var(--background-modifier-border); color: var(--text-muted); font-size: var(--font-ui-smaller); }
@@ -119,14 +122,15 @@ button.mod-cta { background-color: var(--interactive-accent); color: var(--text-
 button.mod-cta:hover { background-color: var(--interactive-accent-hover); }
 button.mod-warning { background-color: var(--background-modifier-error); color: var(--text-on-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
 button.mod-warning:hover { background-color: color-mix(in srgb, var(--background-modifier-error) 88%, black); }
-input[type=text], input[type=search], input[type=number], input[type=password], input[type=email], input[type=url], textarea {
+/* The prompt's search field has no box of its own. :where keeps these at one attribute's specificity. */
+input[type=text]:where(:not(.prompt-input)), input[type=search], input[type=number], input[type=password], input[type=email], input[type=url], textarea {
   height: var(--input-height); padding: 0 var(--size-4-2);
   font-family: inherit; font-size: var(--font-ui-small); font-weight: var(--input-font-weight); color: var(--text-normal);
   background-color: var(--background-modifier-form-field);
   border: var(--input-border-width) solid var(--background-modifier-border);
   border-radius: var(--input-radius); outline: none;
 }
-input[type=text]:focus, input[type=search]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus { border-color: var(--background-modifier-border-focus); box-shadow: 0 0 0 2px hsla(var(--interactive-accent-hsl), 0.25); }
+input[type=text]:where(:not(.prompt-input)):focus, input[type=search]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus { border-color: var(--background-modifier-border-focus); box-shadow: 0 0 0 2px hsla(var(--interactive-accent-hsl), 0.25); }
 .dropdown {
   -webkit-appearance: none; appearance: none;
   height: var(--input-height); padding: var(--dropdown-padding);

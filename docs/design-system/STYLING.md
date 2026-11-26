@@ -252,6 +252,18 @@ Obsidian's classes, made by `AbstractInputSuggest` and `EditorSuggest` (and the 
 | `suggestion-empty` | A muted line a suggester adds in place of rows (`suggestions.addMessage`). |
 | `mod-search-suggestion` | On the container of every input and editor suggester, as in Obsidian. It looks like any `suggestion-container`; select it to restyle only these. |
 
+An input suggester follows its text box while the page scrolls or the window resizes, and closes once the box is out of sight.
+
+### Prompts
+
+Obsidian's classes, made by `SuggestModal` and `FuzzySuggestModal` (the command palette and the switchers).
+
+| Class | What it is |
+| --- | --- |
+| `prompt-input` | The search field. No box of its own: no border, background or focus ring, so the base text field look leaves it out. |
+| `suggestion-item` | One result row. A block; add `mod-complex` for a flex row with `suggestion-content` on the left and `suggestion-aux` on the right. |
+| `suggestion-highlight` | The letters of a row that matched the search (`renderMatches`): the accent colour, semibold. |
+
 ### Boards
 
 | Class | What it is |
