@@ -37,6 +37,8 @@ export { composer } from "./composer";
 export type { ComposerOptions, ComposerHandle, ComposerField, ComposerAttachment, SlashCommand } from "./composer";
 export { meter } from "./meter";
 export type { MeterOptions } from "./meter";
+export { thread, threadText } from "./thread";
+export type { ThreadOptions, Thread, ThreadEntry } from "./thread";
 export { keyValue } from "./key-value";
 export type { KeyValueRow } from "./key-value";
 export { setMenuRenderer, openMenu } from "./menu";
