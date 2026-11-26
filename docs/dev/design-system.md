@@ -22,7 +22,7 @@ Open Settings, **Design system** in Home. It draws every part, live in the curre
 | One choice from a few | `ui.segmented` (or `ui.tabs` when each choice shows its own panel) |
 | One choice from many | `ui.dropdown`; rows with details, picked inline: `ui.choiceList` |
 | Several on/off choices | `ui.checkList` |
-| A labelled input | `ui.field` with `ui.textInput`, `ui.toggle`, `ui.dropdown` or `ui.slider` in its `control` |
+| A labelled input | `ui.field` with `ui.textInput`, `ui.toggle`, `ui.dropdown` or `ui.slider` in its `control`; `fill: true` for a full-width one |
 | A list of records | `ui.table`, with `ui.action` buttons in its `actions` column |
 | Rows in a sidebar pane | `ui.listRow` in a `ui.listGroup`, with `ui.paneHeader` above |
 | Nothing to show, loading, failed | `ui.emptyState`, `ui.loadingState`, `ui.errorState` |

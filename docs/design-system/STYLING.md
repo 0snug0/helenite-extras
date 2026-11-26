@@ -150,7 +150,7 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 
 | Class | What it is |
 | --- | --- |
-| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-invalid` while an error is shown (its control also gets `aria-invalid="true"`, which rings it in `--hel-error-ring`). |
+| `hel-field` | `ui.field`. `is-inline` puts the label and the control on one row; `is-fill` (`fill: true`) makes a text box, dropdown, search box, choice list or check list in `hel-field-control` take the slot's width; `is-invalid` while an error is shown (its control also gets `aria-invalid="true"`, which rings it in `--hel-error-ring`). |
 | `hel-field-label` | The field's `<label>`, medium weight in normal text. |
 | `hel-field-control` | The slot the control is drawn into. |
 | `hel-field-hint` | The helper text line, in muted text. |
