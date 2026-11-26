@@ -56,11 +56,19 @@ export interface ChipOptions {
   /** Shows a remove button. A click removes the chip, then calls this. */
   onRemove?: () => void;
   title?: string;
+  /** A decorative icon before the text, the size of it. */
+  icon?: string;
 }
 
-/** A tag-like label, optionally removable. */
+/** A tag-like label, optionally with an icon, optionally removable. */
 export function chip(parent: HTMLElement, text: string, o: ChipOptions = {}): HTMLElement {
-  const el = make(parent, "span", ["hel-chip", `is-${o.tone ?? "default"}`], text);
+  const el = make(parent, "span", ["hel-chip", `is-${o.tone ?? "default"}`]);
+  if (o.icon) {
+    const icon = make(el, "span", ["hel-chip-icon"]);
+    icon.setAttribute("aria-hidden", "true");
+    renderIcon(icon, o.icon);
+  }
+  el.append(text);
   if (o.title) el.title = o.title;
   if (o.onRemove) {
     const onRemove = o.onRemove;

@@ -98,6 +98,8 @@ export class SampleView extends ItemView {
     el.toggleClass('hel-board-page', this.page === 'board');
     if (this.page === 'board') return drawBoard(el, this.plugin, (dragging) => this.hold(dragging));
     const page = el.createDiv();
+    // The page's padding and the space between its cards and states.
+    page.addClass('hel-page');
     if (this.page === 'items') drawItems(page, this.plugin, this.filter);
     else if (this.page === 'inputs') drawInputs(page);
     else if (this.page === 'status') drawStatus(page);

@@ -264,9 +264,10 @@ ui.countBadge(row, 2, { tone: 'danger', icon: 'circle-help', label: 'waiting' })
 ```ts
 ui.chip(el, 'project');
 ui.chip(el, 'draft', { tone: 'accent', title: 'Status', onRemove: () => removeTag('draft') });
+ui.chip(el, 'Reading list', { icon: 'file-text' });
 ```
 
-A tag-like label. With `onRemove` it has an × button; a click removes the chip from the page and then calls `onRemove`.
+A tag-like label. `icon` draws a decorative icon before the text, the size of it. With `onRemove` it has an × button; a click removes the chip from the page and then calls `onRemove`.
 
 ### ui.field and the input parts
 
@@ -607,6 +608,16 @@ ui.settings.vaultScope(c.body, {
 `card` is a bordered card for a settings tab: its `head` is a `Setting` with the icon, name, description and an optional status line (`setStatus(null)` removes it), and `body` is for more rows.
 
 `vaultScope` is the row that says which vaults may use something: a dropdown of Allow all, Only these vaults, All except these vaults and Not available in vaults, and for a list, a check list of the vaults under it. `kinds` picks and orders the choices; add `'all-off'` to offer "Allow all, off by default" (every vault may use it, but it is off until a vault turns it on). The labels are fixed, so every page says the same thing. A new list starts from the vaults allowed today; from `'all-off'`, "Only these vaults" starts from the vaults marked `on: true` (where it is on today), so vaults where it is only off by default stay out. "Only these vaults" with nothing to list shows an empty list and calls `onChange` only once a vault is ticked. `confirmAll` is asked before Allow all, and a no puts the dropdown back. A vault's `disabled` is the reason it cannot be changed, shown under its name. `homeNote` adds "Home can always use it." above the list. `inline: true` draws the dropdown and the list straight into the element you pass (a table cell, or a card's `head.controlEl`) instead of in a settings row of its own; the handle's `row` is then `null`. `disabled` (and `setDisabled`) shows the scope without letting it change, for something that is always allowed. `setValue` shows a value without calling `onChange`; a value whose kind is not in `kinds` is ignored.
+
+## Page spacing
+
+```ts
+const page = this.contentEl.createDiv({ cls: 'hel-page' }); // or this.contentEl.addClass('hel-page')
+ui.card(page, { title: 'Reading list' });
+ui.emptyState(page, 'Nothing here yet.');
+```
+
+A view's content has no padding of its own. `hel-page` pads it and keeps cards, disclosure cards, centered empty and error states, stat tiles and media grids from touching what is around them, in the page and in its `ui.settings.section`s. A view that is a board uses `hel-board-page` instead (see `ui.board`).
 
 ## Vault apps
 
