@@ -238,6 +238,7 @@
   --metadata-property-background-hover: transparent;
   --metadata-property-background-active: var(--background-modifier-hover);
   --metadata-property-box-shadow-hover: 0 0 0 1px var(--background-modifier-border-hover);
+  --metadata-property-box-shadow-focus: 0 0 0 2px var(--interactive-accent);
 
   /* Window */
   --titlebar-background: var(--background-secondary);
