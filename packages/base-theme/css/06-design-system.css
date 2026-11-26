@@ -14,6 +14,7 @@ body {
   --hel-thread-indent: var(--size-4-3);
   --hel-modal-side-width: 300px;
   --hel-modal-side-divider: var(--background-modifier-border);
+  --hel-modal-bleed: 4px; /* the room inside a modal's scrolling content for the rings of what touches its edges */
   --hel-segment-track: var(--background-modifier-hover);
   --hel-segment-active-bg: var(--background-primary);
   --hel-segment-active-fg: var(--text-normal);
@@ -584,8 +585,12 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 .hel-modal .hel-modal-check { display: flex; gap: var(--size-4-2); align-items: center; color: var(--text-normal); }
 .hel-modal-error { color: var(--text-error); font-size: var(--font-ui-small); line-height: var(--line-height-normal); margin-top: var(--size-4-2); padding: var(--size-2-3) var(--size-4-3); border-radius: var(--hel-control-radius); background: color-mix(in srgb, var(--background-modifier-error) 8%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--background-modifier-error) 25%, transparent); }
 .hel-modal-error:empty { display: none; }
-/* The actions live inside the scrolling .modal-content, so pin them to its bottom: a tall dialog never hides its buttons. */
-.hel-modal-actions { display: flex; justify-content: flex-end; align-items: center; gap: var(--size-4-2); margin-top: var(--size-4-6); position: sticky; bottom: 0; z-index: 1; padding-top: var(--size-4-2); background: var(--modal-background); }
+/* .modal-content scrolls, so it clips rings (box-shadows) painted outside whatever touches its edges. It is padded to
+   make room, with an equal negative margin into the modal's frame, so nothing moves. */
+.hel-modal > .modal-content { margin: calc(-1 * var(--hel-modal-bleed)); padding: var(--hel-modal-bleed); }
+/* The actions live inside the scrolling .modal-content, so pin them to its bottom: a tall dialog never hides its buttons.
+   The row reaches over the content's padding, so nothing shows through around it while the body scrolls under. */
+.hel-modal-actions { display: flex; justify-content: flex-end; align-items: center; gap: var(--size-4-2); margin: var(--size-4-6) calc(-1 * var(--hel-modal-bleed)) calc(-1 * var(--hel-modal-bleed)); position: sticky; bottom: calc(-1 * var(--hel-modal-bleed)); z-index: 1; padding: var(--size-4-2) var(--hel-modal-bleed) var(--hel-modal-bleed); background: var(--modal-background); }
 .hel-modal-actions > .hel-button[hidden] { display: none; }
 .hel-modal-actions:has(.hel-button.is-busy) { cursor: progress; }
 .hel-modal-choices { max-height: 50vh; overflow-y: auto; padding: 2px; }
