@@ -234,6 +234,16 @@ Each control also carries Obsidian's class for the same control, so a theme's lo
 | `hel-choice-item` | The wrapper of an option that has a `trailing` slot: it draws the row's ring (the 2px accent ring when its option is selected), around the option and the slot. |
 | `hel-choice-extra` | The `trailing` slot beside the option (outside the `role=option` element). |
 
+### File and folder trees
+
+A tree keeps Obsidian's DOM (`tree-item`, `tree-item-self`, `tree-item-inner`), and base.css styles its states, set with the `--nav-item-*` variables a theme already uses. The plugin handles the events and adds the classes.
+
+| Selector | What it is |
+| --- | --- |
+| `.tree-item-self.is-being-dragged` | The row being dragged: half opacity. |
+| `.tree-item-self.is-being-dragged-over` | The row the drag would drop on: the hover fill and a dashed accent outline. |
+| `.tree-item-self > input.hel-input` | An inline rename box (`ui.textInput` put in place of the row's name): as tall as the row allows, so no row moves, with the design system's focus ring. |
+
 ### List rows and groups
 
 With `obsidianClass: 'tree-item'` a row also carries Obsidian's `tree-item-self is-clickable nav-file-title`, its title `tree-item-inner nav-file-title-content` and its tag `nav-file-tag`; with `obsidianClass: 'nav-file-title'` only the `nav-file-*` classes. The row's own looks are under `:where()`, so base.css and a theme win for those rows. A group's chevron also has Obsidian's `collapse-icon`.

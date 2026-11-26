@@ -304,6 +304,12 @@ body:not(.show-view-header) .view-header { display: none; }
 .tree-item-self.is-clickable:hover { background-color: var(--nav-item-background-hover); color: var(--nav-item-color-hover); font-weight: var(--nav-item-weight-hover); }
 .tree-item-self.is-active { background-color: var(--nav-item-background-active); color: var(--nav-item-color-active); font-weight: var(--nav-item-weight-active); }
 .tree-item-self.is-selected { background-color: var(--nav-item-background-selected); color: var(--nav-item-color-selected); }
+/* Drag and drop: the plugin that draws the tree handles the events and adds these classes (Obsidian's names). */
+.tree-item-self.is-being-dragged { opacity: 0.5; }
+.tree-item-self.is-being-dragged-over { background-color: var(--nav-item-background-hover); outline: 1px dashed var(--interactive-accent); }
+/* Inline rename: the box takes the name's line plus a little, pulled into the row's padding, so no row moves and the
+   text stays where the name was. The design system's focus ring is a shadow, so it takes no room. */
+.tree-item-self > input.hel-input { box-sizing: border-box; flex: 1; min-width: 0; height: calc(1em * var(--line-height-tight) + 2 * var(--size-2-1)); margin: calc(-1 * var(--size-2-1)) 0 calc(-1 * var(--size-2-1)) calc(-1 * var(--size-2-2)); border: 0; padding: 0 var(--size-2-2); font: inherit; line-height: var(--line-height-tight); }
 .tree-item-inner { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
 .tree-item-icon { display: flex; align-items: center; justify-content: center; position: absolute; left: var(--size-2-2); top: 0; height: 100%; width: var(--size-4-5); color: var(--nav-collapse-icon-color); --icon-size: var(--icon-xs); --icon-stroke: var(--icon-xs-stroke-width); }
 .tree-item-icon.is-collapsed svg, .collapse-icon.is-collapsed svg { transform: rotate(-90deg); color: var(--nav-collapse-icon-color-collapsed); }
