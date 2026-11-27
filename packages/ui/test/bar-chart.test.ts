@@ -75,6 +75,11 @@ describe("Finesse bar chart styling", () => {
     expect(rule(".hel-bar-chart-col")).toContain("min-width: 1px");
   });
 
+  it("keeps a clickable column's layout over the base theme's button rule, which is no less specific", () => {
+    const button = css.split("\n").find((l) => l.startsWith("button.hel-bar-chart-col {")) ?? "";
+    for (const d of ["display: flex;", "flex-direction: column;", "align-items: stretch;", "justify-content: flex-end;", "gap: 0;", "height: 100%;"]) expect(button).toContain(d);
+  });
+
   it("uses tokens only, so light and dark follow the theme", () => {
     expect(chartRules.length).toBeGreaterThan(0);
     expect(chartRules.join("\n")).not.toMatch(/#[0-9a-fA-F]{3,8}\b|rgb\(/);
