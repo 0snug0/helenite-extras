@@ -27,15 +27,21 @@ export function emptyState(parent: HTMLElement, text: string, o: { variant?: Sta
 export interface LoadingStateOptions {
   /** A determinate progress bar, 0 to 1. Leave out for the spinner. */
   progress?: number;
+  /** How long before the line shows, in ms, so a fast load never flashes it. Default 200; 0 shows it at once. */
+  delayMs?: number;
 }
 
 /** What `loadingState` returns; `setProgress` moves the bar (`undefined` goes back to the spinner). */
 export type LoadingStateElement = HTMLElement & { setProgress(p: number | undefined): void };
 
-/** A "Loading…" line with a spinner, or with a progress bar when `progress` (0 to 1) is given. */
+/**
+ * A "Loading…" line with a spinner, or with a progress bar when `progress` (0 to 1) is given. It takes its space at
+ * once and becomes visible after `delayMs`, so draw it as soon as the wait starts and remove it when the data is there.
+ */
 export function loadingState(parent: HTMLElement, text = "Loading…", o: LoadingStateOptions = {}): LoadingStateElement {
   const el = make(parent, "div", ["hel-loading"]) as LoadingStateElement;
   el.setAttribute("role", "status");
+  if (o.delayMs !== undefined) el.style.setProperty("--hel-loading-delay", `${Math.max(0, o.delayMs)}ms`);
   make(el, "span", ["hel-spinner"]).setAttribute("aria-hidden", "true");
   make(el, "span", ["hel-loading-text"], text);
   const bar = make(el, "div", ["hel-progress"]);
@@ -58,6 +64,32 @@ export function loadingState(parent: HTMLElement, text = "Loading…", o: Loadin
   };
   el.setProgress(o.progress);
   return el;
+}
+
+/** What `loadingLine` returns. */
+export interface LoadingLine {
+  /** As `loadingState`. `key` names the wait (default: the text): a new one starts the delay afresh. */
+  draw(parent: HTMLElement, text?: string, o?: LoadingStateOptions & { key?: string }): LoadingStateElement;
+  /** The wait is over: the next one starts its delay afresh. */
+  clear(): void;
+}
+
+/**
+ * The loading line of a view that redraws while it waits, made once per view. The delay before it shows runs from when
+ * the wait began, so redraws more frequent than the delay cannot keep it hidden.
+ */
+export function loadingLine(): LoadingLine {
+  let key: string | undefined;
+  let since = 0;
+  return {
+    draw(parent, text = "Loading…", o = {}) {
+      const now = Date.now();
+      const wait = o.key ?? text;
+      if (wait !== key) { key = wait; since = now; }
+      return loadingState(parent, text, { ...o, delayMs: Math.max(0, (o.delayMs ?? 200) - (now - since)) });
+    },
+    clear() { key = undefined; },
+  };
 }
 
 export interface ErrorStateOptions {

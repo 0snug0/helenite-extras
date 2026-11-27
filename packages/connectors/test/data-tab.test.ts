@@ -137,6 +137,35 @@ describe('Settings → Data tab', () => {
     const tab: any = createDataSettingTab({ app: app as any, plugin: { app, manifest: { id: 'helenite' } } as any, data: { status: async () => { throw new Error('offline'); }, save: async () => {} }, openReview: () => {} });
     document.body.append(tab.containerEl);
     await tab.display();
-    expect(tab.containerEl.querySelector('[role=alert]')!.textContent).toBe('Could not load data settings: offline');
+    expect(tab.containerEl.querySelector('[role=alert] .hel-error-text')!.textContent).toBe('Could not load data settings: offline');
+    expect(tab.containerEl.querySelector('.hel-loading, .hel-empty')).toBeNull();
+  });
+
+  it('shows a loading line under the heading until the status arrives', async () => {
+    let answer!: (v: DataStatusView) => void;
+    const { app } = await makeApp();
+    const tab: any = createDataSettingTab({ app: app as any, plugin: { app, manifest: { id: 'helenite' } } as any, data: { status: () => new Promise((r) => { answer = r; }), save: async () => {} }, openReview: () => {} });
+    document.body.append(tab.containerEl);
+    const done = tab.display();
+    expect(tab.containerEl.querySelector('.hel-loading')!.textContent).toBe('Loading data sources…');
+    expect(tab.containerEl.querySelector('.hel-empty')).toBeNull();
+    answer({ contracts: [], connectors: [], data: { bindings: {}, settings: {} } });
+    await done;
+    expect(tab.containerEl.querySelector('.hel-loading')).toBeNull();
+    expect(tab.containerEl.querySelector('.hel-empty')).toBeTruthy();
+  });
+
+  it('Try again reads the status again after a failure', async () => {
+    let fail = true;
+    const { app } = await makeApp();
+    const status = async (): Promise<DataStatusView> => { if (fail) throw new Error('offline'); return { contracts: [], connectors: [], data: { bindings: {}, settings: {} } }; };
+    const tab: any = createDataSettingTab({ app: app as any, plugin: { app, manifest: { id: 'helenite' } } as any, data: { status, save: async () => {} }, openReview: () => {} });
+    document.body.append(tab.containerEl);
+    await tab.display();
+    fail = false;
+    button(tab.containerEl, 'Try again').click();
+    await tick(5);
+    expect(tab.containerEl.querySelector('.hel-error')).toBeNull();
+    expect(tab.containerEl.querySelector('.hel-empty')).toBeTruthy();
   });
 });

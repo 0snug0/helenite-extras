@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { badge, emptyState, errorState, loadingState, statusDot, statusText } from "../src";
+import { badge, emptyState, errorState, loadingLine, loadingState, statusDot, statusText } from "../src";
 
 const host = () => document.body.appendChild(document.createElement("div"));
 
@@ -109,12 +109,43 @@ describe("loadingState: spinner and determinate progress", () => {
     expect(bar.getAttribute("aria-valuenow")).toBe("0");
   });
 
+  it("waits before showing by the theme's default, and delayMs sets the wait (0: at once)", () => {
+    const wait = (el: HTMLElement) => el.style.getPropertyValue("--hel-loading-delay");
+    expect(wait(loadingState(host()))).toBe("");
+    expect(wait(loadingState(host(), "x", { delayMs: 0 }))).toBe("0ms");
+    expect(wait(loadingState(host(), "x", { delayMs: 500 }))).toBe("500ms");
+    expect(wait(loadingState(host(), "x", { delayMs: -5 }))).toBe("0ms");
+  });
+
   it("setProgress(undefined) goes back to the spinner", () => {
     const l = loadingState(host(), "Working", { progress: 0.5 });
     l.setProgress(undefined);
     expect(l.classList.contains("is-determinate")).toBe(false);
     expect(l.querySelector(".hel-progress")!.hasAttribute("aria-valuenow")).toBe(false);
     expect(l.querySelector<HTMLElement>(".hel-progress-fill")!.style.width).toBe("");
+  });
+});
+
+describe("loadingLine: a wait that is redrawn", () => {
+  it("counts its delay from when the wait began, and afresh for another wait or after clear", () => {
+    vi.useFakeTimers({ now: 1000 });
+    try {
+      const line = loadingLine();
+      const wait = (text: string, o?: { key?: string }) => line.draw(host(), text, o).style.getPropertyValue("--hel-loading-delay");
+      expect(wait("Loading…")).toBe("200ms");
+      vi.advanceTimersByTime(150);
+      expect(wait("Loading…")).toBe("50ms");
+      vi.advanceTimersByTime(150);
+      expect(wait("Loading…")).toBe("0ms");
+      expect(wait("Importing…")).toBe("200ms");
+      expect(wait("Importing…", { key: "b" })).toBe("200ms");
+      vi.advanceTimersByTime(80);
+      expect(wait("Still importing…", { key: "b" })).toBe("120ms");
+      line.clear();
+      expect(wait("Still importing…", { key: "b" })).toBe("200ms");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

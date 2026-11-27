@@ -60,6 +60,8 @@ export function drawStatus(el: HTMLElement): void {
   const waiting = ui.settings.section(el, 'Loading');
   ui.loadingState(waiting, 'Loading items…');
   ui.loadingState(waiting, 'Importing', { progress: 0.4 });
+  // A view that redraws while it waits keeps one line, so the delay before it shows is not started again.
+  ui.loadingLine().draw(waiting, 'Reading items…');
 
   ui.emptyState(ui.settings.section(el, 'Empty state'), 'No items yet.');
   ui.errorState(ui.settings.section(el, 'Error state'), 'Could not load the items.', () => void ui.notice('Trying again.'));

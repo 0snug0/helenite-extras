@@ -103,6 +103,8 @@ ui.emptyState(el, 'No accounts yet.', { variant: 'inline' });
 ui.errorState(el, 'Could not connect.', retry, { variant: 'inline', retryLabel: 'Reconnect' });
 ```
 
+Draw `loadingState` as soon as a wait starts, and keep `emptyState` for data that has been read and holds nothing: a view that says "No tickets" while it is still reading is wrong. A loading line becomes visible only after 200 ms, so a fast load never flashes it (`delayMs` changes the wait; `0` shows it at once). Redrawing it starts the wait again, so leave the one on screen in place while the same load runs; a view that has to redraw meanwhile keeps one `const line = ui.loadingLine()` and calls `line.draw(el, 'Loading…')` on each redraw (and `line.clear()` once loaded). When the read fails, say so with `errorState` and a retry.
+
 `variant` says where the state sits:
 
 | Variant | Looks like | Use it in |

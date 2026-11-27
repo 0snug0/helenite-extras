@@ -1,7 +1,7 @@
 import { button } from "./button";
 import { renderIcon } from "./icons";
 import { joinField } from "./field";
-import { make } from "./states";
+import { errorState, loadingState, make } from "./states";
 
 let composerCounter = 0;
 
@@ -62,7 +62,8 @@ export interface ComposerOptions {
   attachLabel?: string;
   /**
    * Turns on a "/" menu: typing "/" at the start of the box lists these, filtered as you type. Arrow keys move, Enter or
-   * Tab inserts `/name ` and Escape closes. Called once, the first time the menu opens.
+   * Tab inserts `/name ` and Escape closes. Called when the menu first opens, one call at a time; an empty list or a
+   * failure is asked for again on the next keystroke, a non-empty list is kept.
    */
   slashCommands?: () => SlashCommand[] | Promise<SlashCommand[]>;
 }
@@ -235,8 +236,12 @@ function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashComma
   input.setAttribute("aria-controls", id);
   input.setAttribute("aria-expanded", "false");
 
+  // Only a non-empty list is kept: an empty one or a failure (a bridge not connected yet) is asked for again.
   let all: SlashCommand[] | null = null;
   let loading: Promise<void> | null = null;
+  let failed = false;
+  /** Shows the loading row once a load has taken 200 ms, so a quick one never opens an empty menu. */
+  let slow = 0;
   let shown: SlashCommand[] = [];
   let active = 0;
 
@@ -247,6 +252,8 @@ function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashComma
     return m ? m[1].toLowerCase() : null;
   };
   const close = (): void => {
+    window.clearTimeout(slow);
+    slow = 0;
     shown = [];
     menu.hidden = true;
     menu.textContent = "";
@@ -288,20 +295,40 @@ function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashComma
     close();
     input.dispatchEvent(new Event("input", { bubbles: true }));
   };
-  const update = (): void => {
+  /** A loading row or an error in place of the list; the keys then pick nothing. */
+  const status = (draw: () => HTMLElement): void => {
+    shown = [];
+    menu.textContent = "";
+    // mousedown, not click: keeps focus (and the menu) while its retry button is pressed.
+    draw().addEventListener("mousedown", (e) => e.preventDefault());
+    menu.hidden = false;
+    place();
+    input.setAttribute("aria-expanded", "true");
+    input.removeAttribute("aria-activedescendant");
+  };
+  /** `settled`: called as a load ends, so a failure or an empty list shows as such instead of loading again. */
+  const update = (settled = false): void => {
     const q = query();
     if (q === null) return close();
     if (!all) {
+      if (settled) return failed ? status(() => errorState(menu, "Could not load commands.", () => update(), { variant: "inline" })) : close();
+      failed = false;
       loading ??= Promise.resolve()
         .then(load)
-        .then((list) => void (all = list ?? []))
-        .catch((err) => {
-          console.error(err);
-          all = [];
-        })
+        .then(
+          (list) => void (all = list?.length ? list : null),
+          (err) => {
+            console.error(err);
+            failed = true;
+          },
+        )
         .then(() => {
-          if (input.ownerDocument.activeElement === input) update();
+          loading = null;
+          window.clearTimeout(slow);
+          slow = 0;
+          if (input.ownerDocument.activeElement === input) update(true);
         });
+      if (!slow && !menu.querySelector(".hel-loading")) slow = window.setTimeout(() => status(() => loadingState(menu, "Loading commands…", { delayMs: 0 })), 200);
       return;
     }
     // Matches at the start of the name (or of its part after "plugin:") first, then anywhere in it, then in the description.
@@ -334,8 +361,8 @@ function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashComma
     highlight(0);
   };
 
-  input.addEventListener("input", update);
-  input.addEventListener("click", update);
+  input.addEventListener("input", () => update());
+  input.addEventListener("click", () => update());
   input.addEventListener("blur", close);
   // Registered before the composer's own Enter handler, so a pick never sends.
   input.addEventListener("keydown", (e) => {
@@ -344,6 +371,12 @@ function slashMenu(el: HTMLElement, input: ComposerField, load: () => SlashComma
       e.preventDefault();
       e.stopImmediatePropagation();
     };
+    // Loading or failed: nothing to move to or pick, and Enter does not send what is half typed.
+    if (!shown.length) {
+      if (e.key === "Escape") (stop(), close());
+      else if (e.key === "Enter" || e.key === "Tab") stop();
+      return;
+    }
     if (e.key === "ArrowDown") (stop(), highlight(active + 1));
     else if (e.key === "ArrowUp") (stop(), highlight(active - 1));
     else if ((e.key === "Enter" && !e.shiftKey && !e.metaKey && !e.ctrlKey) || e.key === "Tab") (stop(), pick(shown[active]));
