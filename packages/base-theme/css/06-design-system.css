@@ -101,6 +101,9 @@ button:where(.hel-button).mod-warning:hover { background-color: color-mix(in srg
 /* Loading (Finesse-style, from the shared tokens): a spinner and the text; a bar under them when the progress is known.
    --hel-progress-* default to the accent and the form-field ring, so the Finesse tokens only have to set those. */
 .hel-loading { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--size-4-2); font-size: var(--font-ui-small); }
+/* Hidden for a moment first, so a load that is over at once never flashes a spinner. */
+.hel-loading { animation: hel-appear 1ms linear var(--hel-loading-delay, 200ms) backwards; }
+@keyframes hel-appear { from { visibility: hidden; } }
 .hel-spinner { width: 14px; height: 14px; flex-shrink: 0; box-sizing: border-box; border: 2px solid var(--hel-progress-track, var(--background-modifier-border)); border-top-color: var(--hel-progress-fill, var(--interactive-accent)); border-radius: 50%; animation: hel-spin 0.8s linear infinite; }
 @keyframes hel-spin { to { transform: rotate(360deg); } }
 .hel-progress { display: none; flex-basis: 100%; height: var(--hel-progress-height, 6px); overflow: hidden; border-radius: 999px; background-color: var(--hel-progress-track, var(--background-modifier-border)); }

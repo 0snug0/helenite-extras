@@ -129,7 +129,7 @@ Cell states: `is-fit` (a `fit: true` column, header and cells: as wide as its co
 | Class | What it is |
 | --- | --- |
 | `hel-empty` | `ui.emptyState`. Finesse: centered is a quiet panel (dashed `--background-modifier-border-hover` outline, `--hel-card-radius`, secondary background). Variants: `is-inline` (also `setting-item-description`), `is-pane` (also `pane-empty`), both unboxed. An inline empty or error state with something after it keeps a `--size-4-3` space below. |
-| `hel-loading` | `ui.loadingState`. `is-determinate` swaps the spinner for the progress bar (`progress` option or `setProgress`). Colours: `--hel-progress-fill` (default the accent) and `--hel-progress-track`; height `--hel-progress-height` (6px). |
+| `hel-loading` | `ui.loadingState`. Becomes visible after `--hel-loading-delay` (default 200ms; the `delayMs` option sets it). `is-determinate` swaps the spinner for the progress bar (`progress` option or `setProgress`). Colours: `--hel-progress-fill` (default the accent) and `--hel-progress-track`; height `--hel-progress-height` (6px). |
 | `hel-spinner` | The loading line's spinning ring (the `hel-spin` animation, slower under reduced motion). |
 | `hel-loading-text` | The loading line's text. |
 | `hel-progress` | The loading line's bar track (a `progressbar` with `aria-valuenow`); shown only with `is-determinate`. |

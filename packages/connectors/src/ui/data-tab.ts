@@ -47,14 +47,19 @@ export function createDataSettingTab(deps: DataTabDeps): PluginSettingTab {
     const { containerEl } = t;
     containerEl.empty();
     const top = ui.settings.section(containerEl, 'Data sources', { desc: "Which connector answers each kind of data this vault's notes ask for (calendar events, mail, …), in order." });
+    const loading = ui.loadingState(top, 'Loading data sources…');
     let status: DataStatusView;
     try {
       status = await deps.data.status();
     } catch (e) {
-      if (mine === token) ui.errorState(top, `Could not load data settings: ${(e as Error).message}`, undefined, { variant: 'inline' });
+      if (mine === token) {
+        loading.remove();
+        ui.errorState(top, `Could not load data settings: ${(e as Error).message}`, () => void render(t), { variant: 'inline' });
+      }
       return;
     }
     if (mine !== token) return;
+    loading.remove();
     const byId = new Map(status.connectors.map((x) => [x.id, x]));
     const vault = new Set(status.connectors.filter((x) => x.kind === 'vault').map((x) => x.id));
 
