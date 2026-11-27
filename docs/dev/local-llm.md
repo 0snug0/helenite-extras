@@ -1,8 +1,9 @@
-# Local model for quick decisions
+# Local model: quick decisions and short texts
 
 `@helenite/local-llm` lets Helenite hand a small either-or question to a cheap model running on this computer, so
 it doesn't cost agent tokens. Every question names a rule-based `fallback`, which answers whenever the model is
 off, missing, slow, unsure, or not allowed to run by the power rule. Nothing may depend on the model being there.
+It can also [write a short text](#writing-text), under the same rules.
 
 To see it working, install the demo vault: `node demos/local-llm/install.mjs` (see `demos/local-llm/README.md`).
 
@@ -26,6 +27,27 @@ const d = await window.helenite.localLlm.decide({
 2 to 12 options; context is capped at 6000 characters. Treat a `model` answer as a guess: show it as a hint, or
 use it to pick between things that are all safe. `localLlm.status()` says what would answer and why not.
 
+## Writing text
+
+```ts
+const g = await window.helenite.localLlm.generate?.({
+  task: 'Summarise the input in one sentence.',  // trusted instructions
+  input: note,                                    // data, never instructions
+  maxTokens: 200,
+  caller: 'My plugin',
+});
+// g.text ('' on a fallback), g.source ('model' | 'fallback'), g.why, g.model?, g.ms
+```
+
+`task` is capped at 1000 characters, `input` at 6000, `maxTokens` at 1600 (default 400) and the reply at 8000
+characters. The setting `timeoutMs`, the off switch and the power rule apply, and every call is in the local-model
+log. A reply that is empty or cut off at the token limit is a fallback (Apple's model reports no cut-off, so check
+the reply has the form you asked for). The text is untrusted: clean it before you show it or write it to a note.
+
+A decision model only picks options, so writing goes to the runtime decisions use when it can write, else the first
+installed one that can (Apple's model, Ollama, LM Studio). `status().writer` is that runtime and model, or null with
+`writerReason` when nothing would write now.
+
 ## Backends
 
 Looked for in this order; the first with a usable model wins.
@@ -38,7 +60,8 @@ Looked for in this order; the first with a usable model wins.
 | Ollama | `chat`: OpenAI-compatible, held to the option ids by a JSON schema | `127.0.0.1:11434` |
 | LM Studio | `chat` | `127.0.0.1:1234` |
 
-The smallest suitable model is used unless `model` is set. Embedding and fill-in models are skipped. A decision
+The smallest suitable model is used unless `model` is set. Embedding and fill-in models are skipped, and so are
+Ollama's cloud models, which run on a paid service. A decision
 model's answer below `minConfidence` (0.6) goes to the fallback. The confidence is the chosen
 option's probability, and stands in for the reason a decision model doesn't write ("76% sure"). The decision format
 is verified against a live Ollama (`kev:4b-q8_0`); Ollaya serves the same format but has not been run here.
@@ -60,11 +83,12 @@ The pieces:
   `helenite-apple-llm --check` prints `{"available":true}` or `{"available":false,"reason":"…","detail":"…"}`
   (reasons: `osTooOld`, `deviceNotEligible`, `appleIntelligenceNotEnabled`, `modelNotReady`, `unavailable`). With no
   arguments it reads `{"question","options":[{"id","description"}],"context"?}` on stdin and prints
-  `{"choice","why"}`, or `{"error"}` with exit code 1. `choice` is held to the option ids by a
+  `{"choice","why"}`, or `{"error"}` with exit code 1. With `--generate` it reads `{"task","input"?,"maxTokens"?}`
+  and prints `{"text"}`. `choice` is held to the option ids by a
   `DynamicGenerationSchema`. One process per decision; about 0.1 s for `--check` and under 2 s for a decision on
   an M-series Mac.
 - `@helenite/local-llm`: the `apple` runtime kind. The package never starts a process: the app passes
-  `apple: { check(), run(request, { signal }) }` to `createLocalLlm`. Left out (Windows, Linux, tests), the
+  `apple: { check(), run(request, { signal }), generate(request, { signal }) }` to `createLocalLlm`. Left out (Windows, Linux, tests), the
   runtime is never found. The harness applies `timeoutMs` itself and aborts `signal`.
 - `apps/desktop/src/main/local-llm/apple-model.ts`: finds the helper (`HELENITE_APPLE_LLM`, then
   `Resources/local-llm-apple/` in a packaged app, then `packages/local-llm-apple/build/`) and runs it. No helper,
@@ -97,6 +121,13 @@ last step of the setup wizard; a vault's Harnesses page shows what Home chose (`
 The New vault wizard's Obsidian scan asks about each plugin that needs a Helenite version and marks the ones the
 model reads as "likely looks only" or "likely built in" (`apps/desktop/src/main/home/obsidian-hints.ts`). The scan
 shows at once; the hints fill in when they arrive.
+
+## Ticket drafts
+
+The work queue's "Add a ticket" dialog can have a local model write the title and tidy the description from a prompt
+(off until the user turns it on there). The ticket is saved at once with the prompt's first line as its title; the
+draft is applied when it arrives, with the prompt kept word for word under "Original prompt"
+(`plugins/core-work-queue/src/draft.ts`).
 
 ## Design reviews
 
